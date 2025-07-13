@@ -6,7 +6,7 @@ import viteLogo from "/vite.svg";
 export default function App() {
   const navigate = useNavigate();
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-[#0a0f2c] text-white">
       {/* Floating Oval Header */}
       <header className="fixed top-4 left-1/2 -translate-x-1/2 text-black rounded-full shadow-lg px-6 py-3 flex items-center justify-between w-[90%] max-w-5xl z-50">
         {/* Logo */}
