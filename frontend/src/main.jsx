@@ -1,23 +1,13 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import './index.css'
-import App from './App.jsx'
-import Login from './Login.jsx'
-import Signup from './Signup.jsx'
-import UserDashboard from './userDashboard.jsx'
-import MentorDashboard from './mentorDashboard.jsx'
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import { BrowserRouter } from 'react-router-dom';
+import App from './App';
+import './index.css';
 
-createRoot(document.getElementById('root')).render(
-  <StrictMode>
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <React.StrictMode>
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<App />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/userdashboard" element={<UserDashboard />} />
-        <Route path="/mentordashboard" element={<MentorDashboard />} />
-      </Routes>
+      <App />
     </BrowserRouter>
-  </StrictMode>,
-)
+  </React.StrictMode>
+);
