@@ -1,6 +1,5 @@
-
 import HeroSection from "../components/HeroSection";
-import Navbar from "../components/NavBar";
+import Navbar from "../components/Navbar";
 
 
 
@@ -12,7 +11,7 @@ const Hero = () => {
         <Navbar />
 
         <HeroSection />
-      
+
     </div>
   );
 };

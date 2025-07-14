@@ -9,7 +9,7 @@ import SafePayments from './pages/SafePayments';
 import UseCases from './pages/UseCases';
 import FinalCTA from './pages/FinalCTA';
 import Footer from './pages/Footer';
-import Navbar from './components/NavBar';
+import Navbar from './components/Navbar';
 
 const App = () => {
   return (

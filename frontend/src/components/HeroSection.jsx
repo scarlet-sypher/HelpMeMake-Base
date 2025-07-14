@@ -9,7 +9,7 @@ const HeroSection = () => {
 
   useEffect(() => {
     setIsLoaded(true);
-    
+
     const handleMouseMove = (e) => {
       setMousePosition({
         x: (e.clientX / window.innerWidth) * 100,
@@ -26,17 +26,17 @@ const HeroSection = () => {
       {/* Enhanced Animated Background */}
       <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
         {/* Dynamic Gradient Overlay */}
-        <div 
+        <div
           className="absolute inset-0 opacity-50 transition-all duration-1000"
           style={{
-            background: `radial-gradient(circle at ${mousePosition.x}% ${mousePosition.y}%, 
-              rgba(139, 92, 246, 0.3) 0%, 
-              rgba(59, 130, 246, 0.2) 30%, 
-              rgba(16, 185, 129, 0.1) 60%, 
+            background: `radial-gradient(circle at ${mousePosition.x}% ${mousePosition.y}%,
+              rgba(139, 92, 246, 0.3) 0%,
+              rgba(59, 130, 246, 0.2) 30%,
+              rgba(16, 185, 129, 0.1) 60%,
               transparent 100%)`
           }}
         />
-        
+
         {/* Animated Particles */}
         <div className="absolute inset-0">
           {[...Array(20)].map((_, i) => (
@@ -64,27 +64,27 @@ const HeroSection = () => {
       <div className="absolute bottom-0 left-0 right-0 w-full">
         <svg viewBox="0 0 1440 400" className="w-full h-80 md:h-96" preserveAspectRatio="none">
           {/* Animated Mountain Layers */}
-          <path 
-            d="M0,400 L0,180 Q200,120 400,150 Q600,100 800,130 Q1000,80 1200,110 Q1300,90 1440,100 L1440,400 Z" 
-            fill="url(#mountain1)" 
+          <path
+            d="M0,400 L0,180 Q200,120 400,150 Q600,100 800,130 Q1000,80 1200,110 Q1300,90 1440,100 L1440,400 Z"
+            fill="url(#mountain1)"
             className="animate-mountain-1"
           />
-          <path 
-            d="M0,400 L0,220 Q300,170 600,200 Q900,150 1200,180 Q1320,160 1440,170 L1440,400 Z" 
-            fill="url(#mountain2)" 
+          <path
+            d="M0,400 L0,220 Q300,170 600,200 Q900,150 1200,180 Q1320,160 1440,170 L1440,400 Z"
+            fill="url(#mountain2)"
             className="animate-mountain-2"
           />
-          <path 
-            d="M0,400 L0,280 Q400,240 800,270 Q1000,250 1200,260 Q1320,250 1440,255 L1440,400 Z" 
-            fill="url(#mountain3)" 
+          <path
+            d="M0,400 L0,280 Q400,240 800,270 Q1000,250 1200,260 Q1320,250 1440,255 L1440,400 Z"
+            fill="url(#mountain3)"
             className="animate-mountain-3"
           />
-          <path 
-            d="M0,400 L0,320 Q300,300 600,310 Q900,290 1200,300 Q1320,295 1440,300 L1440,400 Z" 
-            fill="url(#mountain4)" 
+          <path
+            d="M0,400 L0,320 Q300,300 600,310 Q900,290 1200,300 Q1320,295 1440,300 L1440,400 Z"
+            fill="url(#mountain4)"
             className="animate-mountain-4"
           />
-          
+
           <defs>
             <linearGradient id="mountain1" x1="0%" y1="0%" x2="0%" y2="100%">
               <stop offset="0%" stopColor="rgba(139, 92, 246, 0.4)" />
@@ -122,7 +122,7 @@ const HeroSection = () => {
                   Now Live - AI-Powered Mentorship
                 </span>
               </div>
-              
+
               <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-8 leading-tight">
                 <span className="bg-gradient-to-r from-white via-emerald-200 to-blue-200 bg-clip-text text-transparent animate-gradient">
                   Build your dream
@@ -132,7 +132,7 @@ const HeroSection = () => {
                   project today
                 </span>
               </h1>
-              
+
               <p className="text-xl md:text-2xl text-white/90 mb-10 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
                 Connect with <span className="text-emerald-400 font-semibold">vetted mentors</span> to learn tech stacks, build your portfolio, or understand complex components—safely and effectively.
               </p>
@@ -146,7 +146,7 @@ const HeroSection = () => {
                     <ArrowRight className="ml-3 w-5 h-5 group-hover:translate-x-1 transition-transform" />
                   </span>
                 </button>
-                
+
                 <button className="group border-2 border-white/30 text-white px-10 py-5 rounded-full font-semibold hover:bg-white/10 hover:border-white/50 transition-all duration-300 flex items-center justify-center backdrop-blur-sm">
                   <Video className="mr-3 w-5 h-5 group-hover:scale-110 transition-transform" />
                   Watch Demo
@@ -176,9 +176,9 @@ const HeroSection = () => {
               <div className="relative bg-gradient-to-r from-white/10 to-white/5 backdrop-blur-xl rounded-3xl p-8 border border-white/20 shadow-2xl">
                 {/* Hero Image */}
                 <div className="relative mb-6 rounded-2xl overflow-hidden">
-                  <img 
-                    src={heroImage} 
-                    alt="Mentorship Platform" 
+                  <img
+                    src={heroImage}
+                    alt="Mentorship Platform"
                     className="w-full h-64 object-cover rounded-2xl hover:scale-110 transition-transform duration-300"
                     onError={(e) => {
                       e.target.style.display = 'none';
@@ -207,7 +207,7 @@ const HeroSection = () => {
                       <span className="text-sm text-white/80">Live Session</span>
                     </div>
                   </div>
-                  
+
                   <div className="grid grid-cols-2 gap-4 mb-6">
                     <div className="bg-gradient-to-br from-indigo-500 to-purple-500 rounded-xl p-6 flex items-center justify-center transform hover:scale-105 transition-transform">
                       <Users className="w-10 h-10 text-white" />
@@ -251,58 +251,58 @@ const HeroSection = () => {
           0%, 100% { transform: translateY(0px) rotate(0deg); }
           50% { transform: translateY(-20px) rotate(10deg); }
         }
-        
+
         @keyframes gradient {
           0%, 100% { background-position: 0% 50%; }
           50% { background-position: 100% 50%; }
         }
-        
+
         @keyframes spin-slow {
           from { transform: rotate(0deg); }
           to { transform: rotate(360deg); }
         }
-        
+
         .animate-gradient {
           background-size: 200% 200%;
           animation: gradient 3s ease infinite;
         }
-        
+
         .animate-spin-slow {
           animation: spin-slow 8s linear infinite;
         }
-        
+
         .animate-mountain-1 {
           animation: float 6s ease-in-out infinite;
         }
-        
+
         .animate-mountain-2 {
           animation: float 8s ease-in-out infinite reverse;
         }
-        
+
         .animate-mountain-3 {
           animation: float 10s ease-in-out infinite;
         }
-        
+
         .animate-mountain-4 {
           animation: float 12s ease-in-out infinite reverse;
         }
-        
+
         .animation-delay-200 {
           animation-delay: 200ms;
         }
-        
+
         .animation-delay-400 {
           animation-delay: 400ms;
         }
-        
+
         .animation-delay-500 {
           animation-delay: 500ms;
         }
-        
+
         .animation-delay-1000 {
           animation-delay: 1000ms;
         }
-        
+
         .animation-delay-1500 {
           animation-delay: 1500ms;
         }
