@@ -3,13 +3,24 @@ import heroImage from '../assets/heroImage.png';
 import React, { useState, useEffect } from 'react';
 import { ChevronRight, Users, Code, Video, Shield, Star, ArrowRight, Menu, X, Sparkles, Zap } from 'lucide-react';
 
+const NUM_SPARKLES = 20;
+
 const HeroSection = () => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isLoaded, setIsLoaded] = useState(false);
+  const [sparkles, setSparkles] = useState([]);
 
   useEffect(() => {
     setIsLoaded(true);
-
+    // Generate sparkles only once on mount
+    setSparkles(
+      Array.from({ length: NUM_SPARKLES }, () => ({
+        left: `${Math.random() * 100}%`,
+        top: `${Math.random() * 100}%`,
+        duration: 3 + Math.random() * 4,
+        delay: Math.random() * 2
+      }))
+    );
     const handleMouseMove = (e) => {
       setMousePosition({
         x: (e.clientX / window.innerWidth) * 100,
@@ -39,15 +50,15 @@ const HeroSection = () => {
 
         {/* Animated Particles */}
         <div className="absolute inset-0">
-          {[...Array(20)].map((_, i) => (
+          {sparkles.map((sparkle, i) => (
             <div
               key={i}
               className="absolute w-2 h-2 bg-white rounded-full opacity-20"
               style={{
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
-                animation: `float ${3 + Math.random() * 4}s ease-in-out infinite`,
-                animationDelay: `${Math.random() * 2}s`
+                left: sparkle.left,
+                top: sparkle.top,
+                animation: `float ${sparkle.duration}s ease-in-out infinite`,
+                animationDelay: `${sparkle.delay}s`
               }}
             />
           ))}
