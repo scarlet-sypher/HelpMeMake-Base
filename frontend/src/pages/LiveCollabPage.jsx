@@ -264,18 +264,34 @@ const LiveCollabPage = () => {
                   </button>
                 </div>
                 
-                <div className="aspect-video bg-slate-800/50 rounded-xl p-6 border-2 border-blue-500/30 shadow-inner">
-                  <div className="h-full bg-gradient-to-br from-slate-900 to-slate-800 rounded-lg p-4 font-mono text-sm">
-                    <div className="text-emerald-400 mb-2">// React Component</div>
-                    <div className="text-blue-400">const <span className="text-yellow-400">TodoApp</span> = () =&gt; {`{`}</div>
-                    <div className="text-white ml-4">const [todos, setTodos] = useState([]);</div>
-                    <div className="text-white ml-4">const [input, setInput] = useState('');</div>
-                    <div className="text-gray-500 mt-2 ml-4">// Add todo function</div>
-                    <div className="text-blue-400 ml-4">const addTodo = () =&gt; {`{`}</div>
-                    <div className="text-white ml-8">setTodos([...todos, input]);</div>
-                    <div className="text-white ml-8">setInput('');</div>
-                    <div className="text-blue-400 ml-4">{`}`};</div>
-                    <div className="text-blue-400 mt-2">{`}`};</div>
+               <div className="p-4 bg-gray-900">
+                  <div className="aspect-video bg-slate-800/50 rounded-xl p-3 sm:p-6 border-2 border-blue-500/30 shadow-inner">
+                    <div className="h-full bg-gradient-to-br from-slate-900 to-slate-800 rounded-lg p-2 sm:p-4 font-mono text-xs sm:text-sm overflow-auto">
+                      <div className="text-emerald-400 mb-2">// React Component</div>
+                      <div className="text-blue-400">
+                        const <span className="text-yellow-400">TodoApp</span> = () =&gt; {`{`}
+                      </div>
+                      <div className="text-white ml-2 sm:ml-4 break-all">
+                        const [todos, setTodos] = useState([]);
+                      </div>
+                      <div className="text-white ml-2 sm:ml-4 break-all">
+                        const [input, setInput] = useState('');
+                      </div>
+                      <div className="text-gray-500 mt-2 ml-2 sm:ml-4">
+                        // Add todo function
+                      </div>
+                      <div className="text-blue-400 ml-2 sm:ml-4">
+                        const addTodo = () =&gt; {`{`}
+                      </div>
+                      <div className="text-white ml-4 sm:ml-8 break-all">
+                        setTodos([...todos, input]);
+                      </div>
+                      <div className="text-white ml-4 sm:ml-8 break-all">
+                        setInput('');
+                      </div>
+                      <div className="text-blue-400 ml-2 sm:ml-4">{`}`};</div>
+                      <div className="text-blue-400 mt-2">{`}`};</div>
+                    </div>
                   </div>
                 </div>
               </div>
