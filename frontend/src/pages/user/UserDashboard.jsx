@@ -3,9 +3,10 @@ import React, { useState } from 'react';
 import StatCard from '../../components/user/StatCard';
 import SessionCard from '../../components/user/SessionCard';
 import MessageCard from '../../components/user/MessageCard';
-// import TimelineItem from '../../components/user/TimelineItem';
-// import AchievementBadge from '../../components/user/AchievementBadge';
-// import MilestonePoint from '../../components/user/MilestonePoint';
+import TimelineItem from '../../components/user/TimelineItem';
+import AchievementBadge from '../../components/user/AchievementBadge';
+import MilestonePoint from '../../components/user/MilestonePoint';
+import HeroProfile from '../../components/user/HeroProfile';
 
 import { 
   Calendar, 
@@ -28,7 +29,7 @@ import {
   Menu,
   X,
   Home,
-  User,
+  Folder,
   Settings,
   LogOut,
   BookOpen,
@@ -38,49 +39,10 @@ import {
 
 
 
-
-const TimelineItem = ({ icon: Icon, title, subtitle, color }) => (
-  <div className="flex items-center space-x-3">
-    <div className={`w-8 h-8 rounded-full bg-white/10 flex items-center justify-center ${color}`}>
-      <Icon size={16} />
-    </div>
-    <div>
-      <p className="text-sm font-medium text-white">{title}</p>
-      <p className="text-xs text-blue-300">{subtitle}</p>
-    </div>
-  </div>
-);
-
-const AchievementBadge = ({ title, description, achieved, icon }) => (
-  <div className={`p-4 rounded-xl border ${achieved ? 'bg-gradient-to-r from-yellow-500/20 to-orange-500/20 border-yellow-500/30' : 'bg-white/5 border-white/10'}`}>
-    <div className="text-center">
-      <div className="text-2xl mb-2">{icon}</div>
-      <h3 className="font-semibold text-white text-sm">{title}</h3>
-      <p className="text-xs text-blue-300 mt-1">{description}</p>
-    </div>
-  </div>
-);
-
-const MilestonePoint = ({ title, userVerified, mentorVerified, index }) => {
-  const isCompleted = userVerified && mentorVerified;
-  const isPartial = userVerified || mentorVerified;
-  
-  return (
-    <div className="relative z-10 flex flex-col items-center">
-      <div className={`w-4 h-4 rounded-full border-2 ${
-        isCompleted ? 'bg-emerald-500 border-emerald-500' : 
-        isPartial ? 'bg-yellow-500 border-yellow-500' : 
-        'bg-white/20 border-white/40'
-      }`}></div>
-      <span className="text-xs text-white mt-2 text-center">{title}</span>
-    </div>
-  );
-};
-
 const Sidebar = ({ isOpen, toggleSidebar }) => {
   const menuItems = [
     { icon: Home, label: 'Dashboard', active: true },
-    { icon: User, label: 'Profile' },
+    { icon: Folder, label: 'Projects' },
     { icon: BookOpen, label: 'Sessions' },
     { icon: MessageCircle, label: 'Messages' },
     { icon: Star, label: 'Achievements' },
@@ -104,7 +66,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
       } lg:translate-x-0`}>
         <div className="p-6">
           <div className="flex items-center justify-between mb-8">
-            <h2 className="text-xl font-bold text-white">MentorShip</h2>
+            <h2 className="text-xl font-bold text-white">HelpMeMake</h2>
             <button 
               onClick={toggleSidebar}
               className="lg:hidden text-white hover:text-gray-300"
@@ -233,15 +195,43 @@ const UserDashboard = () => {
   ];
 
   const achievements = [
-    { id: 1, title: 'Pirate King', description: 'Complete 100 sessions successfully', achieved: true, icon: '👑' },
-    { id: 2, title: 'Treasure Hunter', description: 'Discover 50 hidden knowledge gems', achieved: true, icon: '💎' },
-    { id: 3, title: 'Fleet Admiral', description: 'Mentor 10 other crew members', achieved: false, icon: '⚓' },
-    { id: 4, title: 'Devil Fruit Master', description: 'Master 5 different skill areas', achieved: true, icon: '🌟' }
+    { 
+      id: 1, 
+      title: 'Pirate King', 
+      description: 'Complete 100 sessions successfully', 
+      achieved: true, 
+      icon: '👑',
+      rarity: 'legendary' 
+    },
+    { 
+      id: 2, 
+      title: 'Treasure Hunter', 
+      description: 'Discover 50 hidden knowledge gems', 
+      achieved: true, 
+      icon: '💎',
+      rarity: 'epic' 
+    },
+    { 
+      id: 3, 
+      title: 'Fleet Admiral', 
+      description: 'Mentor 10 other crew members', 
+      achieved: false, 
+      icon: '⚓',
+      rarity: 'rare' 
+    },
+    { 
+      id: 4, 
+      title: 'Devil Fruit Master', 
+      description: 'Master 5 different skill areas', 
+      achieved: true, 
+      icon: '🌟',
+      rarity: 'epic' 
+    }
   ];
 
   const milestones = [
     { id: 1, title: "Initial Meeting", userVerified: true, mentorVerified: true },
-    { id: 2, title: "Requirements Finalized", userVerified: true, mentorVerified: false },
+    { id: 2, title: "Requirements", userVerified: true, mentorVerified: false },
     { id: 3, title: "Mid Review", userVerified: false, mentorVerified: false },
     { id: 4, title: "Final Submission", userVerified: false, mentorVerified: false },
     { id: 5, title: "Project Delivery", userVerified: false, mentorVerified: false }
@@ -253,6 +243,30 @@ const UserDashboard = () => {
     { icon: Send, label: 'Send Message', color: 'from-emerald-500 to-teal-500' },
     { icon: BarChart3, label: 'View Analytics', color: 'from-orange-500 to-red-500' }
   ];
+
+  const userData = {
+  name: "Monkey D. Luffy",
+  title: "Future Pirate King",
+  description: "Ready to conquer the Grand Line with knowledge and determination!",
+  profileImage: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&h=150&fit=crop&crop=face",
+  isOnline: true,
+  level: 47,
+  xp: 8750,
+  nextLevelXp: 10000,
+  location: "East Blue",
+  joinDate: "May 2023",
+  rating: 4.9,
+  socialLinks: {
+    linkedin: "#",
+    github: "#",
+    twitter: "#"
+  },
+  stats: {
+    completedSessions: 156,
+    totalEarnings: "₹45,000",
+    streakDays: 23
+  }
+};
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 flex">
@@ -284,38 +298,7 @@ const UserDashboard = () => {
         <div className="relative z-10 p-4 lg:p-6 space-y-6">
           
           {/* Hero Profile Section */}
-          <div className="bg-gradient-to-r from-blue-600/30 via-purple-600/30 to-pink-600/30 backdrop-blur-sm rounded-3xl p-6 lg:p-8 text-white border border-white/20 shadow-2xl">
-            <div className="flex flex-col lg:flex-row items-center lg:items-start space-y-4 lg:space-y-0 lg:space-x-6">
-              <div className="relative">
-                <img 
-                  src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&h=150&fit=crop&crop=face" 
-                  alt="Profile" 
-                  className="w-24 h-24 lg:w-28 lg:h-28 rounded-full border-4 border-white/30 shadow-xl"
-                />
-                <div className="absolute -bottom-2 -right-2 w-6 h-6 bg-emerald-500 rounded-full border-2 border-white/50 animate-pulse"></div>
-              </div>
-              <div className="flex-1 text-center lg:text-left">
-                <h1 className="text-3xl lg:text-4xl font-bold bg-gradient-to-r from-blue-200 to-purple-200 bg-clip-text text-transparent">
-                  Monkey D. Luffy
-                </h1>
-                <p className="text-lg lg:text-xl text-blue-200 mt-1">Future Pirate King</p>
-                <p className="text-sm text-blue-300 mt-2 max-w-lg">
-                  Ready to conquer the Grand Line with knowledge and determination!
-                </p>
-                <div className="flex items-center justify-center lg:justify-start space-x-4 mt-4">
-                  <a href="#" className="text-white hover:text-blue-200 transition-colors transform hover:scale-110">
-                    <Linkedin size={20} />
-                  </a>
-                  <a href="#" className="text-white hover:text-gray-200 transition-colors transform hover:scale-110">
-                    <Github size={20} />
-                  </a>
-                  <a href="#" className="text-white hover:text-blue-200 transition-colors transform hover:scale-110">
-                    <Twitter size={20} />
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
+          <HeroProfile user={userData} />
 
           {/* Stats Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 lg:gap-6">
@@ -325,21 +308,49 @@ const UserDashboard = () => {
           </div>
 
           {/* Quick Actions */}
-          <div className="bg-white/10 backdrop-blur-sm rounded-3xl shadow-2xl p-6 border border-white/20">
-            <h2 className="text-xl font-bold text-white mb-6 flex items-center">
-              <Zap className="mr-2 text-yellow-400" size={24} />
-              Quick Actions
-            </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-              {quickActions.map((action, index) => (
-                <button
-                  key={index}
-                  className={`p-4 lg:p-6 rounded-2xl bg-gradient-to-r ${action.color} text-white hover:shadow-xl transform hover:scale-105 transition-all duration-300 group`}
-                >
-                  <action.icon size={24} className="mb-2 group-hover:scale-110 transition-transform" />
-                  <span className="text-sm font-medium block">{action.label}</span>
-                </button>
-              ))}
+
+          <div className="bg-white/10 backdrop-blur-sm rounded-3xl shadow-2xl p-6 border border-white/20 relative overflow-hidden">
+            {/* Animated background elements */}
+            <div className="absolute -top-10 -right-10 w-20 h-20 bg-yellow-400/20 rounded-full blur-xl animate-pulse"></div>
+            <div className="absolute -bottom-10 -left-10 w-16 h-16 bg-blue-400/20 rounded-full blur-xl animate-pulse"></div>
+            
+            <div className="relative z-10">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-bold text-white flex items-center">
+                  <Zap className="mr-2 text-yellow-400" size={24} />
+                  Quick Actions
+                </h2>
+                <div className="flex items-center space-x-2">
+                  <div className="w-2 h-2 bg-yellow-400 rounded-full animate-ping"></div>
+                  <span className="text-sm text-yellow-300 font-medium">Ready to Launch</span>
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+                {quickActions.map((action, index) => (
+                  <button
+                    key={index}
+                    className={`group relative p-4 lg:p-6 rounded-2xl bg-gradient-to-r ${action.color} text-white hover:shadow-2xl transform hover:scale-105 transition-all duration-300 overflow-hidden`}
+                  >
+                    {/* Shine effect */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+                    
+                    {/* Content */}
+                    <div className="relative z-10 flex flex-col items-center">
+                      <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center mb-3 group-hover:bg-white/30 transition-colors">
+                        <action.icon size={24} className="group-hover:scale-110 transition-transform" />
+                      </div>
+                      <span className="text-sm font-medium text-center">{action.label}</span>
+                      
+                      {/* Action indicator */}
+                      <div className="mt-2 w-8 h-0.5 bg-white/40 rounded-full group-hover:bg-white/60 transition-colors"></div>
+                    </div>
+                    
+                    {/* Hover glow */}
+                    <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-lg"></div>
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
 
@@ -366,20 +377,58 @@ const UserDashboard = () => {
               </div>
 
               {/* Project Milestone Tracker */}
-              <div className="bg-white/10 backdrop-blur-sm rounded-3xl shadow-2xl p-6 border border-white/20">
-                <h2 className="text-xl font-bold text-white mb-6 flex items-center">
-                  <Target className="mr-2 text-purple-400" size={20} />
-                  Project Milestone Tracker
-                </h2>
-                <div className="flex items-center justify-between mb-4">
-                  <span className="text-sm text-blue-200">Current Project: Grand Line Navigation System</span>
-                  <span className="text-sm font-medium text-purple-400">40% Complete</span>
+              <div className="bg-white/10 backdrop-blur-sm rounded-3xl shadow-2xl p-4 sm:p-6 border border-white/20">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 sm:mb-6 space-y-2 sm:space-y-0">
+                  <h2 className="text-lg sm:text-xl font-bold text-white flex items-center">
+                    <Target className="mr-2 text-purple-400" size={20} />
+                    Project Milestone Tracker
+                  </h2>
+                  <div className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-purple-400 rounded-full animate-pulse"></div>
+                    <span className="text-xs sm:text-sm text-purple-300 font-medium">Live Updates</span>
+                  </div>
                 </div>
-                <div className="flex items-center justify-between relative mb-4">
-                  <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-white/20 -translate-y-1/2"></div>
-                  {milestones.map((milestone, index) => (
-                    <MilestonePoint key={milestone.id} {...milestone} index={index} />
-                  ))}
+                
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 sm:mb-6 space-y-2 sm:space-y-0">
+                  <div className="flex flex-col sm:flex-row sm:items-center space-y-1 sm:space-y-0 sm:space-x-4">
+                    <span className="text-sm text-blue-200 font-medium">Current Project:</span>
+                    <span className="text-sm sm:text-base text-white font-semibold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text ">
+                      Grand Line Navigation System
+                    </span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <div className="w-16 sm:w-20 h-2 bg-white/20 rounded-full overflow-hidden">
+                      <div className="h-full bg-gradient-to-r from-purple-400 to-pink-500 rounded-full transition-all duration-500" style={{ width: '40%' }}></div>
+                    </div>
+                    <span className="text-sm font-bold text-purple-400">40%</span>
+                  </div>
+                </div>
+                
+                {/* Enhanced Milestone Container */}
+                <div className="bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-2xl p-2 sm:p-4 border border-white/10">
+                  <MilestonePoint milestones={milestones} />
+                </div>
+                
+                {/* Additional Project Info */}
+                <div className="mt-4 sm:mt-6 grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+                  <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 sm:p-4 text-center border border-white/20">
+                    <div className="text-lg sm:text-xl font-bold text-emerald-400">
+                      {milestones.filter(m => m.userVerified && m.mentorVerified).length}
+                    </div>
+                    <div className="text-xs sm:text-sm text-emerald-300">Completed</div>
+                  </div>
+                  <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 sm:p-4 text-center border border-white/20">
+                    <div className="text-lg sm:text-xl font-bold text-yellow-400">
+                      {milestones.filter(m => (m.userVerified || m.mentorVerified) && !(m.userVerified && m.mentorVerified)).length}
+                    </div>
+                    <div className="text-xs sm:text-sm text-yellow-300">In Progress</div>
+                  </div>
+                  <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 sm:p-4 text-center border border-white/20">
+                    <div className="text-lg sm:text-xl font-bold text-slate-400">
+                      {milestones.filter(m => !m.userVerified && !m.mentorVerified).length}
+                    </div>
+                    <div className="text-xs sm:text-sm text-slate-300">Pending</div>
+                  </div>
                 </div>
               </div>
 
@@ -438,9 +487,13 @@ const UserDashboard = () => {
                   <TrendingUp className="mr-2 text-yellow-400" size={20} />
                   Activity Timeline
                 </h2>
-                <div className="space-y-4">
-                  {timelineItems.map((item) => (
-                    <TimelineItem key={item.id} {...item} />
+                <div className="space-y-2">
+                  {timelineItems.map((item, index) => (
+                    <TimelineItem 
+                      key={item.id} 
+                      {...item} 
+                      isLast={index === timelineItems.length - 1}
+                    />
                   ))}
                 </div>
               </div>
