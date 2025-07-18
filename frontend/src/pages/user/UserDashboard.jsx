@@ -9,6 +9,9 @@ import MilestonePoint from '../../components/user/MilestonePoint';
 import HeroProfile from '../../components/user/HeroProfile';
 import Sidebar from '../../components/user/Sidebar';
 
+import { importAllUserImages } from '../../utils/importAllUserImages';
+const user = importAllUserImages();
+
 import { 
   Calendar, 
   MessageCircle, 
@@ -49,7 +52,7 @@ const UserDashboard = () => {
     {
       id: 1,
       mentorName: 'Dracule Mihawk',
-      mentorImage: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face',
+      mentorImage: user['mihawk.jpg'],
       sessionTitle: 'Advanced Sword Techniques',
       date: 'Today',
       time: '3:00 PM',
@@ -60,7 +63,7 @@ const UserDashboard = () => {
     {
       id: 2,
       mentorName: 'Nico Robin',
-      mentorImage: 'https://images.unsplash.com/photo-1494790108755-2616b45e1b5e?w=150&h=150&fit=crop&crop=face',
+      mentorImage: user['robin.jpg'],
       sessionTitle: 'Ancient History Research',
       date: 'Tomorrow',
       time: '10:00 AM',
@@ -71,7 +74,7 @@ const UserDashboard = () => {
     {
       id: 3,
       mentorName: 'Silvers Rayleigh',
-      mentorImage: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face',
+      mentorImage: user['Rayleigh.jpg'],
       sessionTitle: 'Haki Training Fundamentals',
       date: 'Dec 22',
       time: '2:00 PM',
@@ -85,7 +88,7 @@ const UserDashboard = () => {
     {
       id: 1,
       senderName: 'Boa Hancock',
-      senderImage: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face',
+      senderImage: user['hancock.jpg'],
       message: 'Great progress on your project! The design looks amazing.',
       timestamp: '2 mins ago',
       isOnline: true,
@@ -95,7 +98,7 @@ const UserDashboard = () => {
     {
       id: 2,
       senderName: 'Marco the Phoenix',
-      senderImage: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face',
+      senderImage: user['marco.jpg'],
       message: 'Ready for tomorrow\'s healing techniques session?',
       timestamp: '1 hour ago',
       isOnline: false,
@@ -105,7 +108,7 @@ const UserDashboard = () => {
     {
       id: 3,
       senderName: 'Portgas D. Ace',
-      senderImage: 'https://images.unsplash.com/photo-1547425260-76bcadfb4f2c?w=150&h=150&fit=crop&crop=face',
+      senderImage: user['ace.jpg'],
       message: 'Don\'t forget to bring your fire safety equipment!',
       timestamp: '3 hours ago',
       isOnline: true,
@@ -175,7 +178,7 @@ const UserDashboard = () => {
     name: "Monkey D. Luffy",
     title: "Future Pirate King",
     description: "Ready to conquer the Grand Line with knowledge and determination!",
-    profileImage: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&h=150&fit=crop&crop=face",
+    profileImage: user['luffy.jpg'],
     isOnline: true,
     level: 47,
     xp: 8750,
