@@ -7,7 +7,7 @@ export default function MentorDashboard() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-7">
           <div className="bg-white/20 rounded-xl p-6">
             <h2 className="text-xl font-semibold mb-2">Mentee Requests</h2>
-            <p className="text-purple-100">No requests yet. Awaiting new mentees!!</p>
+            <p className="text-purple-100">No requests yet. Awaiting new  mentees!!</p>
           </div>
           <div className="bg-white/20 rounded-xl p-6">
             <h2 className="text-xl font-semibold mb-2">Session Management</h2>
