@@ -193,28 +193,37 @@ const UserDashboard = () => {
   ];
 
   const recentMessages = [
-    {
-      id: 1,
-      senderName: 'Boa Hancock',
-      senderImage: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face',
-      message: 'Great progress on your project! The design looks amazing.',
-      timestamp: '2 mins ago'
-    },
-    {
-      id: 2,
-      senderName: 'Marco the Phoenix',
-      senderImage: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face',
-      message: 'Ready for tomorrow\'s healing techniques session?',
-      timestamp: '1 hour ago'
-    },
-    {
-      id: 3,
-      senderName: 'Portgas D. Ace',
-      senderImage: 'https://images.unsplash.com/photo-1547425260-76bcadfb4f2c?w=150&h=150&fit=crop&crop=face',
-      message: 'Don\'t forget to bring your fire safety equipment!',
-      timestamp: '3 hours ago'
-    }
-  ];
+  {
+    id: 1,
+    senderName: 'Boa Hancock',
+    senderImage: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face',
+    message: 'Great progress on your project! The design looks amazing.',
+    timestamp: '2 mins ago',
+    isOnline: true,
+    isUnread: true,
+    messageType: 'text'
+  },
+  {
+    id: 2,
+    senderName: 'Marco the Phoenix',
+    senderImage: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face',
+    message: 'Ready for tomorrow\'s healing techniques session?',
+    timestamp: '1 hour ago',
+    isOnline: false,
+    isUnread: false,
+    messageType: 'text'
+  },
+  {
+    id: 3,
+    senderName: 'Portgas D. Ace',
+    senderImage: 'https://images.unsplash.com/photo-1547425260-76bcadfb4f2c?w=150&h=150&fit=crop&crop=face',
+    message: 'Don\'t forget to bring your fire safety equipment!',
+    timestamp: '3 hours ago',
+    isOnline: true,
+    isUnread: true,
+    messageType: 'text'
+  }
+];
 
   const timelineItems = [
     { id: 1, icon: Award, title: 'Achievement Unlocked: Devil Fruit Master', subtitle: '2 hours ago', color: 'text-yellow-400' },
