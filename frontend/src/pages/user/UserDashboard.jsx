@@ -7,6 +7,7 @@ import TimelineItem from '../../components/user/TimelineItem';
 import AchievementBadge from '../../components/user/AchievementBadge';
 import MilestonePoint from '../../components/user/MilestonePoint';
 import HeroProfile from '../../components/user/HeroProfile';
+import Sidebar from '../../components/user/Sidebar';
 
 import { 
   Calendar, 
@@ -26,86 +27,12 @@ import {
   Zap,
   Activity,
   Flame,
-  Menu,
-  X,
-  Home,
-  Folder,
-  Settings,
-  LogOut,
-  BookOpen,
-  Star
+  Menu
 } from 'lucide-react';
-
-
-
-
-const Sidebar = ({ isOpen, toggleSidebar }) => {
-  const menuItems = [
-    { icon: Home, label: 'Dashboard', active: true },
-    { icon: Folder, label: 'Projects' },
-    { icon: BookOpen, label: 'Sessions' },
-    { icon: MessageCircle, label: 'Messages' },
-    { icon: Star, label: 'Achievements' },
-    { icon: BarChart3, label: 'Analytics' },
-    { icon: Settings, label: 'Settings' },
-  ];
-
-  return (
-    <>
-      {/* Mobile overlay */}
-      {isOpen && (
-        <div 
-          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
-          onClick={toggleSidebar}
-        />
-      )}
-      
-      {/* Sidebar */}
-      <div className={`fixed left-0 top-0 h-full w-64 bg-gradient-to-b from-slate-900 via-blue-900 to-indigo-900 border-r border-white/10 z-50 transform transition-transform duration-300 ${
-        isOpen ? 'translate-x-0' : '-translate-x-full'
-      } lg:translate-x-0`}>
-        <div className="p-6">
-          <div className="flex items-center justify-between mb-8">
-            <h2 className="text-xl font-bold text-white">HelpMeMake</h2>
-            <button 
-              onClick={toggleSidebar}
-              className="lg:hidden text-white hover:text-gray-300"
-            >
-              <X size={24} />
-            </button>
-          </div>
-          
-          <nav className="space-y-2">
-            {menuItems.map((item, index) => (
-              <a
-                key={index}
-                href="#"
-                className={`flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-200 ${
-                  item.active 
-                    ? 'bg-blue-600/50 text-white border border-blue-400/30' 
-                    : 'text-gray-300 hover:bg-white/10 hover:text-white'
-                }`}
-              >
-                <item.icon size={20} />
-                <span className="font-medium">{item.label}</span>
-              </a>
-            ))}
-          </nav>
-        </div>
-        
-        <div className="absolute bottom-0 left-0 right-0 p-6">
-          <button className="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-red-500/20 hover:text-red-300 transition-all duration-200 w-full">
-            <LogOut size={20} />
-            <span className="font-medium">Logout</span>
-          </button>
-        </div>
-      </div>
-    </>
-  );
-};
 
 const UserDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [activeItem, setActiveItem] = useState('dashboard');
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
@@ -155,37 +82,37 @@ const UserDashboard = () => {
   ];
 
   const recentMessages = [
-  {
-    id: 1,
-    senderName: 'Boa Hancock',
-    senderImage: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face',
-    message: 'Great progress on your project! The design looks amazing.',
-    timestamp: '2 mins ago',
-    isOnline: true,
-    isUnread: true,
-    messageType: 'text'
-  },
-  {
-    id: 2,
-    senderName: 'Marco the Phoenix',
-    senderImage: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face',
-    message: 'Ready for tomorrow\'s healing techniques session?',
-    timestamp: '1 hour ago',
-    isOnline: false,
-    isUnread: false,
-    messageType: 'text'
-  },
-  {
-    id: 3,
-    senderName: 'Portgas D. Ace',
-    senderImage: 'https://images.unsplash.com/photo-1547425260-76bcadfb4f2c?w=150&h=150&fit=crop&crop=face',
-    message: 'Don\'t forget to bring your fire safety equipment!',
-    timestamp: '3 hours ago',
-    isOnline: true,
-    isUnread: true,
-    messageType: 'text'
-  }
-];
+    {
+      id: 1,
+      senderName: 'Boa Hancock',
+      senderImage: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face',
+      message: 'Great progress on your project! The design looks amazing.',
+      timestamp: '2 mins ago',
+      isOnline: true,
+      isUnread: true,
+      messageType: 'text'
+    },
+    {
+      id: 2,
+      senderName: 'Marco the Phoenix',
+      senderImage: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face',
+      message: 'Ready for tomorrow\'s healing techniques session?',
+      timestamp: '1 hour ago',
+      isOnline: false,
+      isUnread: false,
+      messageType: 'text'
+    },
+    {
+      id: 3,
+      senderName: 'Portgas D. Ace',
+      senderImage: 'https://images.unsplash.com/photo-1547425260-76bcadfb4f2c?w=150&h=150&fit=crop&crop=face',
+      message: 'Don\'t forget to bring your fire safety equipment!',
+      timestamp: '3 hours ago',
+      isOnline: true,
+      isUnread: true,
+      messageType: 'text'
+    }
+  ];
 
   const timelineItems = [
     { id: 1, icon: Award, title: 'Achievement Unlocked: Devil Fruit Master', subtitle: '2 hours ago', color: 'text-yellow-400' },
@@ -245,33 +172,52 @@ const UserDashboard = () => {
   ];
 
   const userData = {
-  name: "Monkey D. Luffy",
-  title: "Future Pirate King",
-  description: "Ready to conquer the Grand Line with knowledge and determination!",
-  profileImage: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&h=150&fit=crop&crop=face",
-  isOnline: true,
-  level: 47,
-  xp: 8750,
-  nextLevelXp: 10000,
-  location: "East Blue",
-  joinDate: "May 2023",
-  rating: 4.9,
-  socialLinks: {
-    linkedin: "#",
-    github: "#",
-    twitter: "#"
-  },
-  stats: {
-    completedSessions: 156,
-    totalEarnings: "₹45,000",
-    streakDays: 23
-  }
-};
+    name: "Monkey D. Luffy",
+    title: "Future Pirate King",
+    description: "Ready to conquer the Grand Line with knowledge and determination!",
+    profileImage: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&h=150&fit=crop&crop=face",
+    isOnline: true,
+    level: 47,
+    xp: 8750,
+    nextLevelXp: 10000,
+    location: "East Blue",
+    joinDate: "May 2023",
+    rating: 4.9,
+    socialLinks: {
+      linkedin: "#",
+      github: "#",
+      twitter: "#"
+    },
+    stats: {
+      completedSessions: 156,
+      totalEarnings: "₹45,000",
+      streakDays: 23
+    }
+  };
+
+  // Function to get the page title based on active item
+  const getPageTitle = () => {
+    const titles = {
+      dashboard: 'Dashboard',
+      projects: 'Projects',
+      sessions: 'Sessions',
+      messages: 'Messages',
+      achievements: 'Achievements',
+      analytics: 'Analytics',
+      settings: 'Settings'
+    };
+    return titles[activeItem] || 'Dashboard';
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 flex">
       {/* Sidebar */}
-      <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
+      <Sidebar 
+        isOpen={sidebarOpen} 
+        toggleSidebar={toggleSidebar} 
+        activeItem={activeItem}
+        setActiveItem={setActiveItem}
+      />
       
       {/* Main Content */}
       <div className="flex-1 lg:ml-64">
@@ -280,11 +226,11 @@ const UserDashboard = () => {
           <div className="flex items-center justify-between">
             <button 
               onClick={toggleSidebar}
-              className="text-white hover:text-gray-300"
+              className="text-white hover:text-gray-300 transition-colors"
             >
               <Menu size={24} />
             </button>
-            <h1 className="text-xl font-bold text-white">Dashboard</h1>
+            <h1 className="text-xl font-bold text-white">{getPageTitle()}</h1>
             <div className="w-6"></div>
           </div>
         </div>
@@ -308,7 +254,6 @@ const UserDashboard = () => {
           </div>
 
           {/* Quick Actions */}
-
           <div className="bg-white/10 backdrop-blur-sm rounded-3xl shadow-2xl p-6 border border-white/20 relative overflow-hidden">
             {/* Animated background elements */}
             <div className="absolute -top-10 -right-10 w-20 h-20 bg-yellow-400/20 rounded-full blur-xl animate-pulse"></div>
