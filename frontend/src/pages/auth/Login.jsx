@@ -1,282 +1,549 @@
 import { useState, useEffect } from "react";
+import { ChevronRight, Code, Users, Zap, Shield, Eye, EyeOff } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-const NUM_PARTICLES = 30;
+import baka from '../../assets/LoginImages/baka.jpg';
+import kakashi from '../../assets/LoginImages/kakashi.jpg';
+import ken from '../../assets/LoginImages/ken.jpg';
+import luffy from '../../assets/LoginImages/Luuuffy.jpg';
+import saitama from '../../assets/LoginImages/saitama.jpg';
 
-// Image array - replace with your actual image imports
+const NUM_PARTICLES = 25;
+
+
 const heroImages = [
-  "/assets/heroImage1.png",
-  "/assets/heroImage2.png", 
-  "/assets/heroImage3.png",
-  "/assets/heroImage4.png",
-  "/assets/heroImage5.png"
+  { 
+    id: 1, 
+    title: 'Mentorship', 
+    subtitle: 'Connect with industry experts and accelerate your learning journey',
+    image: baka
+  },
+  { 
+    id: 2, 
+    title: 'Growth', 
+    subtitle: 'Build amazing projects with guidance from experienced mentors',
+    image: kakashi
+  },
+  { 
+    id: 3, 
+    title: 'Innovation', 
+    subtitle: 'Turn your innovative ideas into reality with expert support',
+    image: ken
+  },
+  { 
+    id: 4, 
+    title: 'Speed', 
+    subtitle: 'Fast-track your career with personalized mentorship',
+    image: luffy
+  },
+  { 
+    id: 5, 
+    title: 'Excellence', 
+    subtitle: 'Achieve excellence through collaborative learning',
+    image: saitama
+  }
 ];
+
+// InputField component
+const InputField = ({ label, name, value, onChange, required, placeholder, error, type = "text" }) => (
+  <div className="group">
+    <label className="block text-sm font-semibold text-slate-200 mb-2 transition-colors duration-200 group-focus-within:text-emerald-400">
+      {label} {required && <span className="text-red-400">*</span>}
+    </label>
+    <input
+      type={type}
+      name={name}
+      value={value}
+      onChange={onChange}
+      required={required}
+      placeholder={placeholder}
+      className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300 backdrop-blur-sm hover:bg-slate-800/70"
+    />
+    {error && <p className="text-red-400 text-sm mt-1">{error}</p>}
+  </div>
+);
+
+// PasswordField component
+const PasswordField = ({ label, name, value, onChange, required, placeholder, error }) => {
+  const [showPassword, setShowPassword] = useState(false);
+  
+  return (
+    <div className="group">
+      <label className="block text-sm font-semibold text-slate-200 mb-2 transition-colors duration-200 group-focus-within:text-emerald-400">
+        {label} {required && <span className="text-red-400">*</span>}
+      </label>
+      <div className="relative">
+        <input
+          type={showPassword ? "text" : "password"}
+          name={name}
+          value={value}
+          onChange={onChange}
+          required={required}
+          placeholder={placeholder}
+          className="w-full px-4 py-3 pr-12 bg-slate-800/50 border border-slate-700 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300 backdrop-blur-sm hover:bg-slate-800/70"
+        />
+        <button
+          type="button"
+          onClick={() => setShowPassword(!showPassword)}
+          className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-emerald-400 transition-colors duration-200"
+        >
+          {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+        </button>
+      </div>
+      {error && <p className="text-red-400 text-sm mt-1">{error}</p>}
+    </div>
+  );
+}
+
 
 export default function Login() {
   const [form, setForm] = useState({ username: "", password: "" });
-  const [error, setError] = useState("");
+  const [errors, setErrors] = useState({});
+  const [feedbackMessage, setFeedbackMessage] = useState("");
+  const [messageType, setMessageType] = useState("");
   const [particles, setParticles] = useState([]);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Initialize particles with more variety
+    // Initialize particles
     setParticles(
-      Array.from({ length: NUM_PARTICLES }, () => ({
-        left: `${Math.random() * 100}%`,
-        top: `${Math.random() * 100}%`,
-        duration: 2 + Math.random() * 6,
-        delay: Math.random() * 3,
-        size: 1 + Math.random() * 3,
-        opacity: 0.1 + Math.random() * 0.3
+      Array.from({ length: NUM_PARTICLES }, (_, i) => ({
+        id: i,
+        left: Math.random() * 100,
+        top: Math.random() * 100,
+        duration: 4 + Math.random() * 6,
+        delay: Math.random() * 5,
+        size: 1 + Math.random() * 2,
+        opacity: 0.1 + Math.random() * 0.2,
       }))
     );
 
-    // Fade in animation
-    setTimeout(() => setIsVisible(true), 100);
+    // Immediate visibility - remove artificial delays
+    setIsVisible(true);
+    setImageLoaded(true);
 
     // Image carousel
     const imageInterval = setInterval(() => {
       setCurrentImageIndex((prev) => (prev + 1) % heroImages.length);
-    }, 4000);
+    }, 4500);
 
     return () => clearInterval(imageInterval);
   }, []);
 
   function handleChange(e) {
-    setForm({ ...form, [e.target.name]: e.target.value });
-    setError("");
+    const { name, value } = e.target;
+    setForm({ ...form, [name]: value });
+    
+    if (errors[name]) {
+      setErrors(prev => ({ ...prev, [name]: '' }));
+    }
+    if (feedbackMessage) {
+      setFeedbackMessage("");
+      setMessageType("");
+    }
   }
 
-  function handleSubmit(e) {
+  const validateForm = () => {
+    const newErrors = {};
+    
+    if (!form.username.trim()) {
+      newErrors.username = 'Username is required';
+    }
+    if (!form.password.trim()) {
+      newErrors.password = 'Password is required';
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  async function handleSubmit(e) {
     e.preventDefault();
-    if (form.username === "user" && form.password === "123") {
-      navigate("/userdashboard");
-    } else if (form.username === "mentor" && form.password === "123") {
-      navigate("/mentordashboard");
-    } else {
-      setError("Invalid username or password");
+    
+    if (!validateForm()) {
+      return;
+    }
+
+    setIsSubmitting(true);
+    setFeedbackMessage("");
+    setMessageType("");
+
+    try {
+      await new Promise(resolve => setTimeout(resolve, 1500));
+
+      if (form.username === "user" && form.password === "123") {
+        setFeedbackMessage("🎉 Login successful! Redirecting to dashboard...");
+        setMessageType("success");
+        setTimeout(() => {
+          navigate("/userdashboard");
+        }, 2000);
+      } else if (form.username === "mentor" && form.password === "123") {
+        setFeedbackMessage("🎉 Login successful! Redirecting to mentor dashboard...");
+        setMessageType("success");
+        setTimeout(() => {
+          navigate("/mentordashboard");
+        }, 2000);
+      } else {
+        setFeedbackMessage("❌ Wrong user ID or password. Please try again.");
+        setMessageType("error");
+      }
+    } catch (error) {
+      setFeedbackMessage("⚠️ Something went wrong. Please try again.");
+      setMessageType("error");
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
   function handleOAuth(provider) {
-    alert(`Sign in with ${provider}`);
+    setFeedbackMessage(`🔄 Redirecting to ${provider}...`);
+    setMessageType("success");
+    setTimeout(() => {
+      setFeedbackMessage("");
+      setMessageType("");
+    }, 2000);
   }
 
   return (
-    <div className="min-h-screen flex items-stretch bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white relative overflow-hidden">
-      {/* Enhanced Particle Background */}
-      <div className="absolute inset-0 z-0">
-        {particles.map((p, i) => (
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">
+      {/* Animated Background */}
+      <div className="absolute inset-0 pointer-events-none">
+        {/* Gradient Orbs */}
+        <div className="absolute top-10 left-10 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-10 right-10 w-80 h-80 bg-purple-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute top-1/2 left-1/4 w-48 h-48 bg-cyan-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+        
+        {/* Floating Particles */}
+        {particles.map((particle) => (
           <div
-            key={i}
-            className="absolute bg-white rounded-full"
+            key={particle.id}
+            className="absolute rounded-full bg-emerald-400/20 animate-pulse"
             style={{
-              left: p.left,
-              top: p.top,
-              width: `${p.size}px`,
-              height: `${p.size}px`,
-              opacity: p.opacity,
-              animation: `float ${p.duration}s ease-in-out infinite, pulse ${p.duration * 2}s ease-in-out infinite`,
-              animationDelay: `${p.delay}s`
+              left: `${particle.left}%`,
+              top: `${particle.top}%`,
+              width: `${particle.size}px`,
+              height: `${particle.size}px`,
+              opacity: particle.opacity,
+              animationDuration: `${particle.duration}s`,
+              animationDelay: `${particle.delay}s`
             }}
           />
         ))}
       </div>
 
-      {/* Animated Background Elements */}
-      <div className="absolute inset-0 z-0">
-        <div className="absolute top-10 left-10 w-20 h-20 bg-purple-500/20 rounded-full blur-xl animate-pulse"></div>
-        <div className="absolute bottom-20 right-20 w-32 h-32 bg-blue-500/20 rounded-full blur-xl animate-pulse" style={{ animationDelay: '1s' }}></div>
-        <div className="absolute top-1/2 left-1/4 w-16 h-16 bg-pink-500/20 rounded-full blur-xl animate-pulse" style={{ animationDelay: '2s' }}></div>
-      </div>
+      {/* Main Content */}
+      <div className="relative z-10 min-h-screen flex flex-col lg:flex-row items-center">
+        
+        {/* Left Hero Section */}
+        <div className="flex lg:flex w-1/2 h-screen items-start justify-center -mt-24 lg:-mt-30">
 
-      {/* Left Image Section with Carousel */}
-      <div className="hidden lg:flex w-1/2 items-center justify-center relative z-10 p-8">
-        <div className="relative w-full h-full max-w-lg">
-          {heroImages.map((img, index) => (
-            <div
-              key={index}
-              className={`absolute inset-0 transition-all duration-1000 transform ${
-                index === currentImageIndex 
-                  ? 'opacity-100 scale-100 rotate-0' 
-                  : 'opacity-0 scale-95 rotate-3'
-              }`}
-            >
-              <img 
-                src={img} 
-                alt={`Mentorship ${index + 1}`} 
-                className="w-full h-full object-cover rounded-3xl shadow-2xl border border-white/10"
-              />
-            </div>
-          ))}
-          
-          {/* Image Indicators */}
-          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
-            {heroImages.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => setCurrentImageIndex(index)}
-                className={`w-3 h-3 rounded-full transition-all duration-300 ${
+
+
+
+        {/* <div className="flex w-full lg:w-1/2 items-center justify-center p-4 lg:p-8"></div> */}
+        
+
+          <div className={`relative w-full h-4/5 max-w-lg transition-all duration-700 ${
+            imageLoaded ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'
+          }`}>
+            {heroImages.map((img, index) => (
+              <div
+                key={img.id}
+                className={`absolute inset-0 transition-all duration-1000 ease-in-out ${
                   index === currentImageIndex 
-                    ? 'bg-white shadow-lg' 
-                    : 'bg-white/30 hover:bg-white/50'
+                    ? 'opacity-100 scale-100 z-10' 
+                    : 'opacity-0 scale-95 z-0'
                 }`}
-              />
+              >
+                <div className="w-full h-full rounded-3xl shadow-2xl border border-white/20 overflow-hidden relative group">
+                  {/* Gradient Background instead of anime image */}
+                  <img 
+                    src={img.image} 
+                    alt={img.title} 
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
+                  />
+                    <div className="absolute inset-0 bg-black/20"></div>
+                    
+                    {/* Decorative elements */}
+                    <div className="absolute top-8 left-8 w-16 h-16 border-2 border-white/30 rounded-full"></div>
+                    <div className="absolute top-1/3 right-8 w-8 h-8 bg-white/20 rounded-lg rotate-45"></div>
+                    <div className="absolute bottom-1/3 left-12 w-12 h-12 bg-white/10 rounded-full"></div>
+                  
+                  
+                  {/* Overlay with gradient */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+                  
+                  {/* Content Overlay */}
+                  <div className="absolute bottom-0 left-0 right-0 p-8 text-white">
+                    <h3 className="text-3xl font-bold mb-3">{img.title}</h3>
+                    <p className="text-lg opacity-90 leading-relaxed">{img.subtitle}</p>
+                  </div>
+                  
+                  {/* Floating Animation Elements */}
+                  <div className="absolute top-6 right-6 w-3 h-3 bg-emerald-400/60 rounded-full animate-pulse"></div>
+                  <div className="absolute top-20 right-12 w-2 h-2 bg-purple-400/60 rounded-full animate-ping"></div>
+                  <div className="absolute bottom-20 right-8 w-4 h-4 bg-cyan-400/40 rounded-full animate-bounce" style={{ animationDelay: '0.5s' }}></div>
+                </div>
+              </div>
             ))}
+            
+            {/* Image Indicators */}
+            <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-3">
+              {heroImages.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentImageIndex(index)}
+                  className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                    index === currentImageIndex 
+                      ? 'bg-emerald-400 shadow-lg scale-125' 
+                      : 'bg-white/40 hover:bg-white/60 hover:scale-110'
+                  }`}
+                />
+              ))}
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Right Form Section */}
-      <div className="flex w-full lg:w-1/2 items-center justify-center relative z-10 p-4 sm:p-8">
-        <div className={`bg-white/10 backdrop-blur-lg rounded-2xl shadow-xl p-6 sm:p-8 w-full max-w-md border border-white/20 transition-all duration-1000 transform ${
-          isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-        }`}>
-          {/* Header */}
-          <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold mb-2 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-              Welcome Back
-            </h2>
-            <p className="text-purple-200 text-sm">Sign in to your account</p>
-          </div>
+        {/* Right Form Section */}
+        <div className="flex w-full lg:w-1/2 items-center justify-center p-4 lg:p-8">
+          <div className={`bg-slate-800/30 backdrop-blur-xl rounded-3xl shadow-2xl px-6 py-8 lg:px-10 lg:py-12 w-full max-w-2xl border border-slate-700/50 transition-all duration-700 ${
+            isVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-8 scale-95'
+          } hover:border-emerald-500/30 hover:shadow-emerald-500/10`}>
+            
+            {/* Header */}
+            <div className="text-center mb-8 space-y-4">
+              <div className="inline-flex items-center gap-3 px-4 py-2 bg-emerald-500/10 rounded-full border border-emerald-500/20 mb-4">
+                <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
+                <span className="text-emerald-300 text-sm font-medium">Welcome Back</span>
+              </div>
+              
+              {/* Logo with Code Icon */}
+              <div className="flex items-center justify-center gap-3 mb-4">
+                <div className="relative">
+                  <div className="w-12 h-12 bg-gradient-to-r from-emerald-500 to-cyan-500 rounded-xl flex items-center justify-center shadow-lg transform hover:scale-110 transition-transform duration-300">
+                    <Code className="w-6 h-6 text-white" />
+                  </div>
+                  <div className="absolute -top-1 -right-1 w-4 h-4 bg-purple-500 rounded-full flex items-center justify-center animate-bounce">
+                    <span className="text-white text-xs">✨</span>
+                  </div>
+                </div>
+                <div className="text-left">
+                  <h1 className="text-4xl font-bold bg-gradient-to-r from-white via-emerald-200 to-cyan-300 bg-clip-text text-transparent">
+                    HelpMeMake
+                  </h1>
+                  <p className="text-sm text-slate-400">Code. Learn. Grow.</p>
+                </div>
+              </div>
+              
+              <p className="text-lg text-slate-300 leading-relaxed">
+                Sign in to continue your coding journey
+              </p>
 
-          {/* Form */}
-          <div onSubmit={handleSubmit} className="space-y-6">
-            <div className="group">
-              <label className="block mb-2 font-medium text-purple-200 transition-colors group-focus-within:text-purple-400">
-                Username
-              </label>
-              <input 
-                name="username" 
-                value={form.username} 
-                onChange={handleChange} 
-                required 
-                className="w-full px-4 py-3 rounded-lg bg-white/20 text-white placeholder-purple-300 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:bg-white/30 transition-all duration-300 border border-white/10"
-                placeholder="Enter your username"
-              />
+              {/* Feature Icons */}
+              <div className="flex justify-center gap-6 mt-6">
+                <div className="flex flex-col items-center gap-1 transform hover:scale-110 transition-transform duration-200">
+                  <div className="w-8 h-8 bg-purple-500/20 rounded-lg flex items-center justify-center">
+                    <Users className="w-4 h-4 text-purple-400" />
+                  </div>
+                  <span className="text-xs text-slate-400">Mentors</span>
+                </div>
+                <div className="flex flex-col items-center gap-1 transform hover:scale-110 transition-transform duration-200">
+                  <div className="w-8 h-8 bg-emerald-500/20 rounded-lg flex items-center justify-center">
+                    <Zap className="w-4 h-4 text-emerald-400" />
+                  </div>
+                  <span className="text-xs text-slate-400">Projects</span>
+                </div>
+                <div className="flex flex-col items-center gap-1 transform hover:scale-110 transition-transform duration-200">
+                  <div className="w-8 h-8 bg-cyan-500/20 rounded-lg flex items-center justify-center">
+                    <Shield className="w-4 h-4 text-cyan-400" />
+                  </div>
+                  <span className="text-xs text-slate-400">Secure</span>
+                </div>
+              </div>
             </div>
 
-            <div className="group">
-              <label className="block mb-2 font-medium text-purple-200 transition-colors group-focus-within:text-purple-400">
-                Password
-              </label>
-              <div className="relative">
-                <input 
-                  type={showPassword ? "text" : "password"} 
-                  name="password" 
-                  value={form.password} 
-                  onChange={handleChange} 
-                  required 
-                  className="w-full px-4 py-3 rounded-lg bg-white/20 text-white placeholder-purple-300 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:bg-white/30 transition-all duration-300 border border-white/10 pr-12"
-                  placeholder="Enter your password"
+            {/* Feedback Message */}
+            {feedbackMessage && (
+              <div className={`mb-6 p-4 rounded-xl border backdrop-blur-sm transition-all duration-500 ${
+                messageType === 'success' 
+                  ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300' 
+                  : 'bg-red-500/10 border-red-500/30 text-red-300'
+              }`}>
+                <div className="flex items-center gap-3">
+                  <div className={`w-2 h-2 rounded-full ${
+                    messageType === 'success' ? 'bg-emerald-400' : 'bg-red-400'
+                  } animate-pulse`}></div>
+                  <span className="font-medium">{feedbackMessage}</span>
+                </div>
+              </div>
+            )}
+
+            {/* Login Form */}
+            <div className="bg-slate-800/40 rounded-2xl p-6 border border-slate-700/50 backdrop-blur-sm hover:border-emerald-500/30 transition-all duration-300">
+              <div className="space-y-6">
+                <InputField
+                  label="Username"
+                  name="username"
+                  value={form.username}
+                  onChange={handleChange}
+                  required
+                  placeholder="Enter your username"
+                  error={errors.username}
                 />
-                <button
+
+                <PasswordField
+                  label="Password"
+                  name="password"
+                  value={form.password}
+                  onChange={handleChange}
+                  required
+                  placeholder="Enter your password"
+                  error={errors.password}
+                />
+
+                {/* Remember Me & Forgot Password */}
+                <div className="flex items-center justify-between text-sm">
+                  <label className="flex items-center gap-2 cursor-pointer group">
+                    <input
+                      type="checkbox"
+                      className="w-4 h-4 rounded border-2 border-slate-600 bg-slate-800/50 checked:bg-emerald-500 checked:border-emerald-500 focus:ring-2 focus:ring-emerald-500 focus:ring-offset-0 transition-all duration-200"
+                    />
+                    <span className="text-slate-300 group-hover:text-slate-200 transition-colors duration-200">Remember me</span>
+                  </label>
+                  <button className="text-emerald-400 hover:text-emerald-300 transition-colors duration-200 hover:underline">
+                    Forgot password?
+                  </button>
+                </div>
+
+                <button 
                   type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-purple-300 hover:text-white transition-colors"
+                  onClick={handleSubmit}
+                  disabled={isSubmitting}
+                  className="w-full bg-gradient-to-r from-emerald-600 via-green-600 to-teal-600 hover:from-emerald-700 hover:via-green-700 hover:to-teal-700 text-white font-bold py-4 px-8 rounded-xl transition-all duration-300 transform hover:scale-105 hover:shadow-2xl hover:shadow-emerald-500/25 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 relative overflow-hidden group"
                 >
-                  {showPassword ? "👁️" : "👁️‍🗨️"}
+                  <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+                  <span className="relative flex items-center justify-center gap-3">
+                    {isSubmitting ? (
+                      <>
+                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                        Signing In...
+                      </>
+                    ) : (
+                      <>
+                        <span>Sign In</span>
+                        <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-200" />
+                      </>
+                    )}
+                  </span>
                 </button>
               </div>
             </div>
 
-            {error && (
-              <div className="text-red-400 text-sm text-center bg-red-900/20 p-3 rounded-lg border border-red-500/30 animate-pulse">
-                {error}
-              </div>
-            )}
+            {/* Divider */}
+            <div className="flex items-center my-6">
+              <div className="flex-1 border-t border-slate-700/50"></div>
+              <span className="px-4 text-slate-400 text-sm font-medium">or continue with</span>
+              <div className="flex-1 border-t border-slate-700/50"></div>
+            </div>
 
-            <button 
-              type="submit" 
-              onClick={handleSubmit}
-              className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold py-3 rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-lg active:scale-95"
-            >
-              Sign In
-            </button>
-          </div>
+            {/* OAuth Buttons */}
+            <div className="flex flex-col sm:flex-row gap-3 mb-6">
+              <button 
+                onClick={() => handleOAuth("Google")} 
+                className="flex-1 bg-slate-800/40 hover:bg-slate-800/60 text-white px-4 py-3 rounded-xl transition-all duration-300 font-semibold border border-slate-700/50 hover:border-slate-600/70 transform hover:scale-105 active:scale-95 flex items-center justify-center gap-3 backdrop-blur-sm group"
+              >
+                <div className="w-5 h-5 bg-gradient-to-r from-red-500 to-orange-500 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-200">
+                  <span className="text-white text-xs font-bold">G</span>
+                </div> 
+                <span>Google</span>
+              </button>
+              <button 
+                onClick={() => handleOAuth("GitHub")} 
+                className="flex-1 bg-slate-800/40 hover:bg-slate-800/60 text-white px-4 py-3 rounded-xl transition-all duration-300 font-semibold border border-slate-700/50 hover:border-slate-600/70 transform hover:scale-105 active:scale-95 flex items-center justify-center gap-3 backdrop-blur-sm group"
+              >
+                <div className="w-5 h-5 bg-gradient-to-r from-gray-800 to-gray-900 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-200">
+                  <span className="text-white text-xs">🐙</span>
+                </div> 
+                <span>GitHub</span>
+              </button>
+            </div>
 
-          {/* Divider */}
-          <div className="flex items-center my-6">
-            <div className="flex-1 border-t border-white/20"></div>
-            <span className="px-4 text-purple-200 text-sm">or continue with</span>
-            <div className="flex-1 border-t border-white/20"></div>
-          </div>
 
-          {/* OAuth Buttons */}
-          <div className="flex flex-col sm:flex-row gap-3">
-            <button 
-              onClick={() => handleOAuth("Google")} 
-              className="flex-1 bg-white/20 hover:bg-white/30 text-white px-4 py-3 rounded-lg transition-all duration-300 font-semibold border border-white/10 hover:border-white/30 transform hover:scale-105 active:scale-95 flex items-center justify-center gap-2"
-            >
-              <span>🔍</span> Google
-            </button>
-            <button 
-              onClick={() => handleOAuth("GitHub")} 
-              className="flex-1 bg-white/20 hover:bg-white/30 text-white px-4 py-3 rounded-lg transition-all duration-300 font-semibold border border-white/10 hover:border-white/30 transform hover:scale-105 active:scale-95 flex items-center justify-center gap-2"
-            >
-              <span>🐙</span> GitHub
-            </button>
-          </div>
-
-          {/* Footer */}
-          <div className="text-center mt-6 pt-6 border-t border-white/20">
-            <span className="text-purple-200 text-sm">Don't have an account? </span>
-            <a 
-              href="/signup" 
-              className="text-purple-400 hover:text-purple-300 font-semibold transition-colors hover:underline"
-            >
-              Sign up
-            </a>
+            {/* Footer */}
+            <div className="text-center pt-4 border-t border-slate-700/50">
+              <p className="text-slate-400">
+                New to HelpMeMake?{" "}
+                <button className="text-emerald-400 hover:text-emerald-300 font-semibold transition-all duration-300 hover:underline inline-flex items-center gap-1">
+                  Join the community
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </p>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Enhanced CSS Animations */}
-      <style>{`
+      <style jsx>{`
         @keyframes float {
           0%, 100% { 
             transform: translateY(0px) rotate(0deg); 
           }
-          33% { 
-            transform: translateY(-15px) rotate(5deg); 
-          }
-          66% { 
-            transform: translateY(-5px) rotate(-5deg); 
-          }
-        }
-        
-        @keyframes pulse {
-          0%, 100% { 
-            opacity: 0.1; 
+          25% { 
+            transform: translateY(-10px) rotate(1deg); 
           }
           50% { 
-            opacity: 0.4; 
+            transform: translateY(-5px) rotate(-0.5deg); 
+          }
+          75% { 
+            transform: translateY(-7px) rotate(0.5deg); 
           }
         }
-        
-        @keyframes fadeInUp {
-          from {
+
+        @keyframes fade-in {
+          0% {
             opacity: 0;
-            transform: translateY(30px);
+            transform: translateY(-10px);
           }
-          to {
+          100% {
             opacity: 1;
             transform: translateY(0);
           }
         }
-        
-        .animate-fadeInUp {
-          animation: fadeInUp 0.6s ease-out;
+
+        @keyframes slide-in {
+          0% {
+            opacity: 0;
+            transform: translateY(-20px);
+          }
+          100% {
+            opacity: 1;
+            transform: translateY(0);
+          }
         }
-        
-        /* Mobile-specific styles */
+
+        .animate-fade-in {
+          animation: fade-in 0.6s ease-out;
+        }
+
+        .animate-slide-in {
+          animation: slide-in 0.5s ease-out;
+        }
+
+        /* Mobile responsiveness */
         @media (max-width: 1024px) {
           .min-h-screen {
+            padding: 1rem;
+          }
+        }
+
+        @media (max-width: 768px) {
+          .h-screen {
             min-height: 100vh;
-            min-height: 100dvh;
+            height: auto;
           }
         }
       `}</style>
