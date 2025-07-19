@@ -236,18 +236,10 @@ export default function Login() {
       </div>
 
       {/* Main Content */}
-      <div className="relative z-10 min-h-screen flex flex-col lg:flex-row items-center">
-
+      <div className="relative z-10 min-h-screen flex flex-col lg:flex-row items-center justify-center">
         {/* Left Hero Section */}
-        <div className="flex lg:flex w-1/2 h-screen items-start justify-center -mt-24 lg:-mt-30">
-
-
-
-
-        {/* <div className="flex w-full lg:w-1/2 items-center justify-center p-4 lg:p-8"></div> */}
-
-
-          <div className={`relative w-full h-4/5 max-w-lg transition-all duration-700 ${
+        <div className="hidden lg:flex w-1/2 h-full items-center justify-center">
+          <div className={`relative w-full h-[32rem] max-w-lg transition-all duration-700 ${
             imageLoaded ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'
           }`}>
             {heroImages.map((img, index) => (
@@ -258,20 +250,21 @@ export default function Login() {
                     ? 'opacity-100 scale-100 z-10'
                     : 'opacity-0 scale-95 z-0'
                 }`}
+                style={{ pointerEvents: index === currentImageIndex ? 'auto' : 'none' }}
               >
                 <div className="w-full h-full rounded-3xl shadow-2xl border border-white/20 overflow-hidden relative group">
-                  {/* Gradient Background instead of anime image */}
                   <img
                     src={img.image}
                     alt={img.title}
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    style={{ minHeight: '100%', minWidth: '100%', display: 'block' }}
                   />
-                    <div className="absolute inset-0 bg-black/20"></div>
+                  <div className="absolute inset-0 bg-black/20"></div>
 
-                    {/* Decorative elements */}
-                    <div className="absolute top-8 left-8 w-16 h-16 border-2 border-white/30 rounded-full"></div>
-                    <div className="absolute top-1/3 right-8 w-8 h-8 bg-white/20 rounded-lg rotate-45"></div>
-                    <div className="absolute bottom-1/3 left-12 w-12 h-12 bg-white/10 rounded-full"></div>
+                  {/* Decorative elements */}
+                  <div className="absolute top-8 left-8 w-16 h-16 border-2 border-white/30 rounded-full"></div>
+                  <div className="absolute top-1/3 right-8 w-8 h-8 bg-white/20 rounded-lg rotate-45"></div>
+                  <div className="absolute bottom-1/3 left-12 w-12 h-12 bg-white/10 rounded-full"></div>
 
 
                   {/* Overlay with gradient */}
