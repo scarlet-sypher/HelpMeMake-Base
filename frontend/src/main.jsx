@@ -3,8 +3,8 @@ import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 import App from './App';
-import Login from './Login';
-import Signup from './Signup';
+import Login from './pages/auth/Login';     
+import Signup from './pages/auth/Signup';   
 import MentorDashboard from './pages/mentor/MentorDashboard';
 import UserDashboard from './pages/user/UserDashboard';
 

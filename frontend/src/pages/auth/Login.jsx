@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const NUM_PARTICLES = 30;
 
@@ -18,6 +19,7 @@ export default function Login() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Initialize particles with more variety
@@ -51,9 +53,9 @@ export default function Login() {
   function handleSubmit(e) {
     e.preventDefault();
     if (form.username === "user" && form.password === "123") {
-      alert("Login successful! Redirecting to user dashboard...");
+      navigate("/userdashboard");
     } else if (form.username === "mentor" && form.password === "123") {
-      alert("Login successful! Redirecting to mentor dashboard...");
+      navigate("/mentordashboard");
     } else {
       setError("Invalid username or password");
     }
