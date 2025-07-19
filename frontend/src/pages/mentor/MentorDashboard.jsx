@@ -15,7 +15,8 @@ function MentorDashboard() {
 
           />
         <div className="flex-1 flex flex-col overflow-hidden">
-          <Header />
+          <Header sideBarcollapsed ={sidebarcollapsed} 
+          onToggleSidebar={()=> setsidebarcollapsed(!sidebarcollapsed)}/>
         </div>  
       </div>
     </div>

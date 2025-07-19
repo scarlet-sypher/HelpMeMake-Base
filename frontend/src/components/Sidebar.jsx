@@ -37,7 +37,6 @@ const menuItems = [
     id: "calendarCheck",
     icon: CalendarCheck,
     label: "Calendar",
-    
   },
   {
     id: "notebookPen",
@@ -68,8 +67,7 @@ const menuItems = [
     id: "settings",
     icon: Settings,
     label: "Settings",
-    // badge: "New",
-     submenu: [
+    submenu: [
       { id: "accountMenu", label: "Account" },
       { id: "editOption", label: "Edit Profile" },
     ],
@@ -83,19 +81,19 @@ const menuItems = [
       { id: "blogs", label: "Write Blogs" },
     ],
   },
-  
 ];
 
-function Sidebar( {collapsed, onToggle, currentPage, onPageChange }) {
+function Sidebar({ collapsed, onToggle, currentPage, onPageChange }) {
   const [openSubmenuId, setOpenSubmenuId] = useState(null);
 
   const toggleSubmenu = (id) => {
     setOpenSubmenuId((prev) => (prev === id ? null : id));
   };
+
   return (
-    <div className={`${
-        collapsed ? "w-20" : "w-72"
-      } h-screen transition duration-300 ease-in-out bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-r border-slate-200/50 dark:border-slate-700/50 flex flex-col justify-between z-10`}>
+    <div
+      className={` ${collapsed ? 'w-20' : 'w-64'} h-screen transition duration-300 ease-in-out bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-r border-slate-200/50 dark:border-slate-700/50 flex flex-col justify-between z-10`}
+    >
       {/* Top Section */}
       <div>
         {/* Logo */}
@@ -126,13 +124,13 @@ function Sidebar( {collapsed, onToggle, currentPage, onPageChange }) {
                   onPageChange?.(item.id);
                   if (item.submenu) toggleSubmenu(item.id);
                 }}
-                className={`w-full flex items-center justify-start space-x-3 p-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200 ${
+                className={`w-full flex ${collapsed ? "justify-center" : "justify-start"} items-center justify-start space-x-3 p-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200 ${
                   currentPage === item.id || item.active
                     ? "bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg shadow-blue-500/25"
                     : "text-slate-600 dark:text-slate-300"
                 }`}
               >
-                <item.icon className="w-5 h-5" />
+                <item.icon className="w-5 h-5 flex-shrink-0" />
                 {!collapsed && (
                   <>
                     <span className="font-medium flex-1 text-left">

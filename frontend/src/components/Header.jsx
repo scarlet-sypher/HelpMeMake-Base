@@ -9,7 +9,7 @@ import {
   Settings,
   ChevronDown,
 } from "lucide-react";
-function Header() {
+function Header({ sideBarcollapsed, onToggleSidebar }) {
   return (
     <div
       className="
@@ -41,6 +41,7 @@ function Header() {
               transition-colors
               dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800
             "
+            onClick={onToggleSidebar}
           >
             <Menu
               className="
