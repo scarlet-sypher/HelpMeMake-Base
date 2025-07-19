@@ -238,7 +238,8 @@ export default function Login() {
       {/* Main Content */}
       <div className="relative z-10 min-h-screen flex flex-col lg:flex-row items-center justify-center">
         {/* Left Hero Section */}
-        <div className="hidden lg:flex w-1/2 h-full items-center justify-center">
+        <div className="flex lg:flex w-1/2 h-screen items-start justify-center -mt-24 lg:-mt-32">
+
           <div className={`relative w-full h-[32rem] max-w-lg transition-all duration-700 ${
             imageLoaded ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'
           }`}>
