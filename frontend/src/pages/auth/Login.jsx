@@ -8,9 +8,10 @@ import ken from '../../assets/LoginImages/ken.jpg';
 import luffy from '../../assets/LoginImages/Luuuffy.jpg';
 import saitama from '../../assets/LoginImages/saitama.jpg';
 
+
 const NUM_PARTICLES = 25;
 
-
+// Mock images for demonstration
 const heroImages = [
   {
     id: 1,
@@ -43,6 +44,7 @@ const heroImages = [
     image: saitama
   }
 ];
+
 
 // InputField component
 const InputField = ({ label, name, value, onChange, required, placeholder, error, type = "text" }) => (
@@ -95,7 +97,6 @@ const PasswordField = ({ label, name, value, onChange, required, placeholder, er
   );
 }
 
-
 export default function Login() {
   const [form, setForm] = useState({ username: "", password: "" });
   const [errors, setErrors] = useState({});
@@ -107,6 +108,7 @@ export default function Login() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
   const navigate = useNavigate();
+
 
   useEffect(() => {
     // Initialize particles
@@ -122,7 +124,6 @@ export default function Login() {
       }))
     );
 
-    // Immediate visibility - remove artificial delays
     setIsVisible(true);
     setImageLoaded(true);
 
@@ -185,7 +186,7 @@ export default function Login() {
         setFeedbackMessage("🎉 Login successful! Redirecting to mentor dashboard...");
         setMessageType("success");
         setTimeout(() => {
-          navigate("/mentordashboard");
+            navigate("/mentordashboard");
         }, 2000);
       } else {
         setFeedbackMessage("❌ Wrong user ID or password. Please try again.");
@@ -213,9 +214,9 @@ export default function Login() {
       {/* Animated Background */}
       <div className="absolute inset-0 pointer-events-none">
         {/* Gradient Orbs */}
-        <div className="absolute top-10 left-10 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-10 right-10 w-80 h-80 bg-purple-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
-        <div className="absolute top-1/2 left-1/4 w-48 h-48 bg-cyan-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+        <div className="absolute top-10 left-10 w-32 h-32 sm:w-48 sm:h-48 lg:w-64 lg:h-64 bg-emerald-500/10 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-10 right-10 w-48 h-48 sm:w-64 sm:h-64 lg:w-80 lg:h-80 bg-purple-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute top-1/2 left-1/4 w-32 h-32 sm:w-48 sm:h-48 bg-cyan-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
 
         {/* Floating Particles */}
         {particles.map((particle) => (
@@ -236,248 +237,101 @@ export default function Login() {
       </div>
 
       {/* Main Content */}
-      <div className="relative z-10 min-h-screen flex flex-col lg:flex-row items-center justify-center">
-        {/* Left Hero Section */}
-        <div className="flex lg:flex w-1/2 h-screen items-start justify-center -mt-24 lg:-mt-32">
-
-          <div className={`relative w-full h-[32rem] max-w-lg transition-all duration-700 ${
-            imageLoaded ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'
-          }`}>
-            {heroImages.map((img, index) => (
-              <div
-                key={img.id}
-                className={`absolute inset-0 transition-all duration-1000 ease-in-out ${
-                  index === currentImageIndex
-                    ? 'opacity-100 scale-100 z-10'
-                    : 'opacity-0 scale-95 z-0'
-                }`}
-                style={{ pointerEvents: index === currentImageIndex ? 'auto' : 'none' }}
-              >
-                <div className="w-full h-full rounded-3xl shadow-2xl border border-white/20 overflow-hidden relative group">
-                  <img
-                    src={img.image}
-                    alt={img.title}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                    style={{ minHeight: '100%', minWidth: '100%', display: 'block' }}
-                  />
-                  <div className="absolute inset-0 bg-black/20"></div>
-
-                  {/* Decorative elements */}
-                  <div className="absolute top-8 left-8 w-16 h-16 border-2 border-white/30 rounded-full"></div>
-                  <div className="absolute top-1/3 right-8 w-8 h-8 bg-white/20 rounded-lg rotate-45"></div>
-                  <div className="absolute bottom-1/3 left-12 w-12 h-12 bg-white/10 rounded-full"></div>
-
-
-                  {/* Overlay with gradient */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
-
-                  {/* Content Overlay */}
-                  <div className="absolute bottom-0 left-0 right-0 p-8 text-white">
-                    <h3 className="text-3xl font-bold mb-3">{img.title}</h3>
-                    <p className="text-lg opacity-90 leading-relaxed">{img.subtitle}</p>
-                  </div>
-
-                  {/* Floating Animation Elements */}
-                  <div className="absolute top-6 right-6 w-3 h-3 bg-emerald-400/60 rounded-full animate-pulse"></div>
-                  <div className="absolute top-20 right-12 w-2 h-2 bg-purple-400/60 rounded-full animate-ping"></div>
-                  <div className="absolute bottom-20 right-8 w-4 h-4 bg-cyan-400/40 rounded-full animate-bounce" style={{ animationDelay: '0.5s' }}></div>
-                </div>
-              </div>
-            ))}
-
-            {/* Image Indicators */}
-            <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-3">
-              {heroImages.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentImageIndex(index)}
-                  className={`w-3 h-3 rounded-full transition-all duration-300 ${
+      <div className="relative z-10 min-h-screen">
+        {/* Desktop Layout */}
+        <div className="hidden lg:flex min-h-screen items-center">
+          {/* Left Hero Section - Desktop Only */}
+          <div className="flex w-1/2 items-center justify-center px-4 xl:px-8">
+            <div className={`relative w-full h-[32rem] max-w-lg transition-all duration-700 ${
+              imageLoaded ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'
+            }`}>
+              {heroImages.map((img, index) => (
+                <div
+                  key={img.id}
+                  className={`absolute inset-0 transition-all duration-1000 ease-in-out ${
                     index === currentImageIndex
-                      ? 'bg-emerald-400 shadow-lg scale-125'
-                      : 'bg-white/40 hover:bg-white/60 hover:scale-110'
+                      ? 'opacity-100 scale-100 z-10'
+                      : 'opacity-0 scale-95 z-0'
                   }`}
-                />
+                  style={{ pointerEvents: index === currentImageIndex ? 'auto' : 'none' }}
+                >
+                  <div className="w-full h-full rounded-3xl shadow-2xl border border-white/20 overflow-hidden relative group">
+                    <img
+                      src={img.image}
+                      alt={img.title}
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      style={{ minHeight: '100%', minWidth: '100%', display: 'block' }}
+                    />
+                    <div className="absolute inset-0 bg-black/20"></div>
+
+                    {/* Decorative elements */}
+                    <div className="absolute top-8 left-8 w-16 h-16 border-2 border-white/30 rounded-full"></div>
+                    <div className="absolute top-1/3 right-8 w-8 h-8 bg-white/20 rounded-lg rotate-45"></div>
+                    <div className="absolute bottom-1/3 left-12 w-12 h-12 bg-white/10 rounded-full"></div>
+
+                    {/* Overlay with gradient */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+
+                    {/* Content Overlay */}
+                    <div className="absolute bottom-0 left-0 right-0 p-8 text-white">
+                      <h3 className="text-3xl font-bold mb-3">{img.title}</h3>
+                      <p className="text-lg opacity-90 leading-relaxed">{img.subtitle}</p>
+                    </div>
+
+                    {/* Floating Animation Elements */}
+                    <div className="absolute top-6 right-6 w-3 h-3 bg-emerald-400/60 rounded-full animate-pulse"></div>
+                    <div className="absolute top-20 right-12 w-2 h-2 bg-purple-400/60 rounded-full animate-ping"></div>
+                    <div className="absolute bottom-20 right-8 w-4 h-4 bg-cyan-400/40 rounded-full animate-bounce" style={{ animationDelay: '0.5s' }}></div>
+                  </div>
+                </div>
               ))}
+
+              {/* Image Indicators */}
+              <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-3">
+                {heroImages.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setCurrentImageIndex(index)}
+                    className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                      index === currentImageIndex
+                        ? 'bg-emerald-400 shadow-lg scale-125'
+                        : 'bg-white/40 hover:bg-white/60 hover:scale-110'
+                    }`}
+                  />
+                ))}
+              </div>
             </div>
+          </div>
+
+          {/* Right Form Section - Desktop */}
+          <div className="flex w-1/2 items-center justify-center px-4 xl:px-8">
+            <LoginForm 
+              form={form}
+              errors={errors}
+              feedbackMessage={feedbackMessage}
+              messageType={messageType}
+              isVisible={isVisible}
+              isSubmitting={isSubmitting}
+              handleChange={handleChange}
+              handleSubmit={handleSubmit}
+              handleOAuth={handleOAuth}
+            />
           </div>
         </div>
 
-        {/* Right Form Section */}
-        <div className="flex w-full lg:w-1/2 items-center justify-center p-4 lg:p-8">
-          <div className={`bg-slate-800/30 backdrop-blur-xl rounded-3xl shadow-2xl px-6 py-8 lg:px-10 lg:py-12 w-full max-w-2xl border border-slate-700/50 transition-all duration-700 ${
-            isVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-8 scale-95'
-          } hover:border-emerald-500/30 hover:shadow-emerald-500/10`}>
-
-            {/* Header */}
-            <div className="text-center mb-8 space-y-4">
-              <div className="inline-flex items-center gap-3 px-4 py-2 bg-emerald-500/10 rounded-full border border-emerald-500/20 mb-4">
-                <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
-                <span className="text-emerald-300 text-sm font-medium">Welcome Back</span>
-              </div>
-
-              {/* Logo with Code Icon */}
-              <div className="flex items-center justify-center gap-3 mb-4">
-                <div className="relative">
-                  <div className="w-12 h-12 bg-gradient-to-r from-emerald-500 to-cyan-500 rounded-xl flex items-center justify-center shadow-lg transform hover:scale-110 transition-transform duration-300">
-                    <Code className="w-6 h-6 text-white" />
-                  </div>
-                  <div className="absolute -top-1 -right-1 w-4 h-4 bg-purple-500 rounded-full flex items-center justify-center animate-bounce">
-                    <span className="text-white text-xs">✨</span>
-                  </div>
-                </div>
-                <div className="text-left">
-                  <h1 className="text-4xl font-bold bg-gradient-to-r from-white via-emerald-200 to-cyan-300 bg-clip-text text-transparent">
-                    HelpMeMake
-                  </h1>
-                  <p className="text-sm text-slate-400">Code. Learn. Grow.</p>
-                </div>
-              </div>
-
-              <p className="text-lg text-slate-300 leading-relaxed">
-                Sign in to continue your coding journey
-              </p>
-
-              {/* Feature Icons */}
-              <div className="flex justify-center gap-6 mt-6">
-                <div className="flex flex-col items-center gap-1 transform hover:scale-110 transition-transform duration-200">
-                  <div className="w-8 h-8 bg-purple-500/20 rounded-lg flex items-center justify-center">
-                    <Users className="w-4 h-4 text-purple-400" />
-                  </div>
-                  <span className="text-xs text-slate-400">Mentors</span>
-                </div>
-                <div className="flex flex-col items-center gap-1 transform hover:scale-110 transition-transform duration-200">
-                  <div className="w-8 h-8 bg-emerald-500/20 rounded-lg flex items-center justify-center">
-                    <Zap className="w-4 h-4 text-emerald-400" />
-                  </div>
-                  <span className="text-xs text-slate-400">Projects</span>
-                </div>
-                <div className="flex flex-col items-center gap-1 transform hover:scale-110 transition-transform duration-200">
-                  <div className="w-8 h-8 bg-cyan-500/20 rounded-lg flex items-center justify-center">
-                    <Shield className="w-4 h-4 text-cyan-400" />
-                  </div>
-                  <span className="text-xs text-slate-400">Secure</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Feedback Message */}
-            {feedbackMessage && (
-              <div className={`mb-6 p-4 rounded-xl border backdrop-blur-sm transition-all duration-500 ${
-                messageType === 'success'
-                  ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300'
-                  : 'bg-red-500/10 border-red-500/30 text-red-300'
-              }`}>
-                <div className="flex items-center gap-3">
-                  <div className={`w-2 h-2 rounded-full ${
-                    messageType === 'success' ? 'bg-emerald-400' : 'bg-red-400'
-                  } animate-pulse`}></div>
-                  <span className="font-medium">{feedbackMessage}</span>
-                </div>
-              </div>
-            )}
-
-            {/* Login Form */}
-            <div className="bg-slate-800/40 rounded-2xl p-6 border border-slate-700/50 backdrop-blur-sm hover:border-emerald-500/30 transition-all duration-300">
-              <div className="space-y-6">
-                <InputField
-                  label="Username"
-                  name="username"
-                  value={form.username}
-                  onChange={handleChange}
-                  required
-                  placeholder="Enter your username"
-                  error={errors.username}
-                />
-
-                <PasswordField
-                  label="Password"
-                  name="password"
-                  value={form.password}
-                  onChange={handleChange}
-                  required
-                  placeholder="Enter your password"
-                  error={errors.password}
-                />
-
-                {/* Remember Me & Forgot Password */}
-                <div className="flex items-center justify-between text-sm">
-                  <label className="flex items-center gap-2 cursor-pointer group">
-                    <input
-                      type="checkbox"
-                      className="w-4 h-4 rounded border-2 border-slate-600 bg-slate-800/50 checked:bg-emerald-500 checked:border-emerald-500 focus:ring-2 focus:ring-emerald-500 focus:ring-offset-0 transition-all duration-200"
-                    />
-                    <span className="text-slate-300 group-hover:text-slate-200 transition-colors duration-200">Remember me</span>
-                  </label>
-                  <button className="text-emerald-400 hover:text-emerald-300 transition-colors duration-200 hover:underline">
-                    Forgot password?
-                  </button>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={handleSubmit}
-                  disabled={isSubmitting}
-                  className="w-full bg-gradient-to-r from-emerald-600 via-green-600 to-teal-600 hover:from-emerald-700 hover:via-green-700 hover:to-teal-700 text-white font-bold py-4 px-8 rounded-xl transition-all duration-300 transform hover:scale-105 hover:shadow-2xl hover:shadow-emerald-500/25 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 relative overflow-hidden group"
-                >
-                  <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
-                  <span className="relative flex items-center justify-center gap-3">
-                    {isSubmitting ? (
-                      <>
-                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                        Signing In...
-                      </>
-                    ) : (
-                      <>
-                        <span>Sign In</span>
-                        <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-200" />
-                      </>
-                    )}
-                  </span>
-                </button>
-              </div>
-            </div>
-
-            {/* Divider */}
-            <div className="flex items-center my-6">
-              <div className="flex-1 border-t border-slate-700/50"></div>
-              <span className="px-4 text-slate-400 text-sm font-medium">or continue with</span>
-              <div className="flex-1 border-t border-slate-700/50"></div>
-            </div>
-
-            {/* OAuth Buttons */}
-            <div className="flex flex-col sm:flex-row gap-3 mb-6">
-              <button
-                onClick={() => handleOAuth("Google")}
-                className="flex-1 bg-slate-800/40 hover:bg-slate-800/60 text-white px-4 py-3 rounded-xl transition-all duration-300 font-semibold border border-slate-700/50 hover:border-slate-600/70 transform hover:scale-105 active:scale-95 flex items-center justify-center gap-3 backdrop-blur-sm group"
-              >
-                <div className="w-5 h-5 bg-gradient-to-r from-red-500 to-orange-500 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-200">
-                  <span className="text-white text-xs font-bold">G</span>
-                </div>
-                <span>Google</span>
-              </button>
-              <button
-                onClick={() => handleOAuth("GitHub")}
-                className="flex-1 bg-slate-800/40 hover:bg-slate-800/60 text-white px-4 py-3 rounded-xl transition-all duration-300 font-semibold border border-slate-700/50 hover:border-slate-600/70 transform hover:scale-105 active:scale-95 flex items-center justify-center gap-3 backdrop-blur-sm group"
-              >
-                <div className="w-5 h-5 bg-gradient-to-r from-gray-800 to-gray-900 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-200">
-                  <span className="text-white text-xs">🐙</span>
-                </div>
-                <span>GitHub</span>
-              </button>
-            </div>
-
-
-            {/* Footer */}
-            <div className="text-center pt-4 border-t border-slate-700/50">
-              <p className="text-slate-400">
-                New to HelpMeMake?{" "}
-                <a href='/signup' className="text-emerald-400 hover:text-emerald-300 font-semibold transition-all duration-300 hover:underline inline-flex items-center gap-1">
-                  Join the community
-                  <ChevronRight className="w-4 h-4" />
-                </a>
-              </p>
-            </div>
-          </div>
+        {/* Mobile/Tablet Layout - Form Only */}
+        <div className="flex lg:hidden min-h-screen items-center justify-center px-4 py-8">
+          <LoginForm 
+            form={form}
+            errors={errors}
+            feedbackMessage={feedbackMessage}
+            messageType={messageType}
+            isVisible={isVisible}
+            isSubmitting={isSubmitting}
+            handleChange={handleChange}
+            handleSubmit={handleSubmit}
+            handleOAuth={handleOAuth}
+          />
         </div>
       </div>
 
@@ -526,21 +380,196 @@ export default function Login() {
         .animate-slide-in {
           animation: slide-in 0.5s ease-out;
         }
-
-        /* Mobile responsiveness */
-        @media (max-width: 1024px) {
-          .min-h-screen {
-            padding: 1rem;
-          }
-        }
-
-        @media (max-width: 768px) {
-          .h-screen {
-            min-height: 100vh;
-            height: auto;
-          }
-        }
       `}</style>
+    </div>
+  );
+}
+
+// Extracted LoginForm component for reusability
+function LoginForm({ 
+  form, 
+  errors, 
+  feedbackMessage, 
+  messageType, 
+  isVisible, 
+  isSubmitting, 
+  handleChange, 
+  handleSubmit, 
+  handleOAuth 
+}) {
+  return (
+    <div className={`bg-slate-800/30 backdrop-blur-xl rounded-3xl shadow-2xl p-6 sm:p-8 lg:p-10 w-full max-w-lg xl:max-w-2xl border border-slate-700/50 transition-all duration-700 ${
+      isVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-8 scale-95'
+    } hover:border-emerald-500/30 hover:shadow-emerald-500/10`}>
+
+      {/* Header */}
+      <div className="text-center mb-6 lg:mb-8 space-y-3 lg:space-y-4">
+        <div className="inline-flex items-center gap-2 lg:gap-3 px-3 lg:px-4 py-2 bg-emerald-500/10 rounded-full border border-emerald-500/20 mb-3 lg:mb-4">
+          <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
+          <span className="text-emerald-300 text-xs lg:text-sm font-medium">Welcome Back</span>
+        </div>
+
+        {/* Logo with Code Icon */}
+        <div className="flex items-center justify-center gap-3 mb-3 lg:mb-4">
+          <div className="relative">
+            <div className="w-10 h-10 lg:w-12 lg:h-12 bg-gradient-to-r from-emerald-500 to-cyan-500 rounded-xl flex items-center justify-center shadow-lg transform hover:scale-110 transition-transform duration-300">
+              <Code className="w-5 h-5 lg:w-6 lg:h-6 text-white" />
+            </div>
+            <div className="absolute -top-1 -right-1 w-4 h-4 bg-purple-500 rounded-full flex items-center justify-center animate-bounce">
+              <span className="text-white text-xs">✨</span>
+            </div>
+          </div>
+          <div className="text-left">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-white via-emerald-200 to-cyan-300 bg-clip-text text-transparent">
+              HelpMeMake
+            </h1>
+            <p className="text-xs lg:text-sm text-slate-400">Code. Learn. Grow.</p>
+          </div>
+        </div>
+
+        <p className="text-base lg:text-lg text-slate-300 leading-relaxed">
+          Sign in to continue your coding journey
+        </p>
+
+        {/* Feature Icons */}
+        <div className="flex justify-center gap-4 lg:gap-6 mt-4 lg:mt-6">
+          <div className="flex flex-col items-center gap-1 transform hover:scale-110 transition-transform duration-200">
+            <div className="w-7 h-7 lg:w-8 lg:h-8 bg-purple-500/20 rounded-lg flex items-center justify-center">
+              <Users className="w-3 h-3 lg:w-4 lg:h-4 text-purple-400" />
+            </div>
+            <span className="text-xs text-slate-400">Mentors</span>
+          </div>
+          <div className="flex flex-col items-center gap-1 transform hover:scale-110 transition-transform duration-200">
+            <div className="w-7 h-7 lg:w-8 lg:h-8 bg-emerald-500/20 rounded-lg flex items-center justify-center">
+              <Zap className="w-3 h-3 lg:w-4 lg:h-4 text-emerald-400" />
+            </div>
+            <span className="text-xs text-slate-400">Projects</span>
+          </div>
+          <div className="flex flex-col items-center gap-1 transform hover:scale-110 transition-transform duration-200">
+            <div className="w-7 h-7 lg:w-8 lg:h-8 bg-cyan-500/20 rounded-lg flex items-center justify-center">
+              <Shield className="w-3 h-3 lg:w-4 lg:h-4 text-cyan-400" />
+            </div>
+            <span className="text-xs text-slate-400">Secure</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Feedback Message */}
+      {feedbackMessage && (
+        <div className={`mb-4 lg:mb-6 p-3 lg:p-4 rounded-xl border backdrop-blur-sm transition-all duration-500 ${
+          messageType === 'success'
+            ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300'
+            : 'bg-red-500/10 border-red-500/30 text-red-300'
+        }`}>
+          <div className="flex items-center gap-2 lg:gap-3">
+            <div className={`w-2 h-2 rounded-full ${
+              messageType === 'success' ? 'bg-emerald-400' : 'bg-red-400'
+            } animate-pulse`}></div>
+            <span className="font-medium text-sm lg:text-base">{feedbackMessage}</span>
+          </div>
+        </div>
+      )}
+
+      {/* Login Form */}
+      <div className="bg-slate-800/40 rounded-2xl p-4 lg:p-6 border border-slate-700/50 backdrop-blur-sm hover:border-emerald-500/30 transition-all duration-300">
+        <div className="space-y-4 lg:space-y-6">
+          <InputField
+            label="Username"
+            name="username"
+            value={form.username}
+            onChange={handleChange}
+            required
+            placeholder="Enter your username"
+            error={errors.username}
+          />
+
+          <PasswordField
+            label="Password"
+            name="password"
+            value={form.password}
+            onChange={handleChange}
+            required
+            placeholder="Enter your password"
+            error={errors.password}
+          />
+
+          {/* Remember Me & Forgot Password */}
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0 text-sm">
+            <label className="flex items-center gap-2 cursor-pointer group">
+              <input
+                type="checkbox"
+                className="w-4 h-4 rounded border-2 border-slate-600 bg-slate-800/50 checked:bg-emerald-500 checked:border-emerald-500 focus:ring-2 focus:ring-emerald-500 focus:ring-offset-0 transition-all duration-200"
+              />
+              <span className="text-slate-300 group-hover:text-slate-200 transition-colors duration-200">Remember me</span>
+            </label>
+            <button className="text-emerald-400 hover:text-emerald-300 transition-colors duration-200 hover:underline text-left sm:text-right">
+              Forgot password?
+            </button>
+          </div>
+
+          <button
+            type="button"
+            onClick={handleSubmit}
+            disabled={isSubmitting}
+            className="w-full bg-gradient-to-r from-emerald-600 via-green-600 to-teal-600 hover:from-emerald-700 hover:via-green-700 hover:to-teal-700 text-white font-bold py-3 lg:py-4 px-6 lg:px-8 rounded-xl transition-all duration-300 transform hover:scale-105 hover:shadow-2xl hover:shadow-emerald-500/25 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 relative overflow-hidden group"
+          >
+            <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+            <span className="relative flex items-center justify-center gap-2 lg:gap-3">
+              {isSubmitting ? (
+                <>
+                  <div className="w-4 h-4 lg:w-5 lg:h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                  <span className="text-sm lg:text-base">Signing In...</span>
+                </>
+              ) : (
+                <>
+                  <span className="text-sm lg:text-base">Sign In</span>
+                  <ChevronRight className="w-4 h-4 lg:w-5 lg:h-5 group-hover:translate-x-1 transition-transform duration-200" />
+                </>
+              )}
+            </span>
+          </button>
+        </div>
+      </div>
+
+      {/* Divider */}
+      <div className="flex items-center my-4 lg:my-6">
+        <div className="flex-1 border-t border-slate-700/50"></div>
+        <span className="px-3 lg:px-4 text-slate-400 text-xs lg:text-sm font-medium">or continue with</span>
+        <div className="flex-1 border-t border-slate-700/50"></div>
+      </div>
+
+      {/* OAuth Buttons */}
+      <div className="flex flex-col sm:flex-row gap-3 mb-4 lg:mb-6">
+        <button
+          onClick={() => handleOAuth("Google")}
+          className="flex-1 bg-slate-800/40 hover:bg-slate-800/60 text-white px-4 py-3 rounded-xl transition-all duration-300 font-semibold border border-slate-700/50 hover:border-slate-600/70 transform hover:scale-105 active:scale-95 flex items-center justify-center gap-3 backdrop-blur-sm group"
+        >
+          <div className="w-4 h-4 lg:w-5 lg:h-5 bg-gradient-to-r from-red-500 to-orange-500 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-200">
+            <span className="text-white text-xs font-bold">G</span>
+          </div>
+          <span className="text-sm lg:text-base">Google</span>
+        </button>
+        <button
+          onClick={() => handleOAuth("GitHub")}
+          className="flex-1 bg-slate-800/40 hover:bg-slate-800/60 text-white px-4 py-3 rounded-xl transition-all duration-300 font-semibold border border-slate-700/50 hover:border-slate-600/70 transform hover:scale-105 active:scale-95 flex items-center justify-center gap-3 backdrop-blur-sm group"
+        >
+          <div className="w-4 h-4 lg:w-5 lg:h-5 bg-gradient-to-r from-gray-800 to-gray-900 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-200">
+            <span className="text-white text-xs">🐙</span>
+          </div>
+          <span className="text-sm lg:text-base">GitHub</span>
+        </button>
+      </div>
+
+      {/* Footer */}
+      <div className="text-center pt-3 lg:pt-4 border-t border-slate-700/50">
+        <p className="text-slate-400 text-sm lg:text-base">
+          New to HelpMeMake?{" "}
+          <a href='/signup' className="text-emerald-400 hover:text-emerald-300 font-semibold transition-all duration-300 hover:underline inline-flex items-center gap-1">
+            Join the community
+            <ChevronRight className="w-3 h-3 lg:w-4 lg:h-4" />
+          </a>
+        </p>
+      </div>
     </div>
   );
 }
