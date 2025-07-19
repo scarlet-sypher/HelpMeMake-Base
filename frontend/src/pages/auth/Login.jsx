@@ -12,33 +12,33 @@ const NUM_PARTICLES = 25;
 
 
 const heroImages = [
-  { 
-    id: 1, 
-    title: 'Mentorship', 
+  {
+    id: 1,
+    title: 'Mentorship',
     subtitle: 'Connect with industry experts and accelerate your learning journey',
     image: baka
   },
-  { 
-    id: 2, 
-    title: 'Growth', 
+  {
+    id: 2,
+    title: 'Growth',
     subtitle: 'Build amazing projects with guidance from experienced mentors',
     image: kakashi
   },
-  { 
-    id: 3, 
-    title: 'Innovation', 
+  {
+    id: 3,
+    title: 'Innovation',
     subtitle: 'Turn your innovative ideas into reality with expert support',
     image: ken
   },
-  { 
-    id: 4, 
-    title: 'Speed', 
+  {
+    id: 4,
+    title: 'Speed',
     subtitle: 'Fast-track your career with personalized mentorship',
     image: luffy
   },
-  { 
-    id: 5, 
-    title: 'Excellence', 
+  {
+    id: 5,
+    title: 'Excellence',
     subtitle: 'Achieve excellence through collaborative learning',
     image: saitama
   }
@@ -66,7 +66,7 @@ const InputField = ({ label, name, value, onChange, required, placeholder, error
 // PasswordField component
 const PasswordField = ({ label, name, value, onChange, required, placeholder, error }) => {
   const [showPassword, setShowPassword] = useState(false);
-  
+
   return (
     <div className="group">
       <label className="block text-sm font-semibold text-slate-200 mb-2 transition-colors duration-200 group-focus-within:text-emerald-400">
@@ -137,7 +137,7 @@ export default function Login() {
   function handleChange(e) {
     const { name, value } = e.target;
     setForm({ ...form, [name]: value });
-    
+
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: '' }));
     }
@@ -149,21 +149,21 @@ export default function Login() {
 
   const validateForm = () => {
     const newErrors = {};
-    
+
     if (!form.username.trim()) {
       newErrors.username = 'Username is required';
     }
     if (!form.password.trim()) {
       newErrors.password = 'Password is required';
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   async function handleSubmit(e) {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
@@ -216,7 +216,7 @@ export default function Login() {
         <div className="absolute top-10 left-10 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl animate-pulse"></div>
         <div className="absolute bottom-10 right-10 w-80 h-80 bg-purple-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
         <div className="absolute top-1/2 left-1/4 w-48 h-48 bg-cyan-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
-        
+
         {/* Floating Particles */}
         {particles.map((particle) => (
           <div
@@ -237,7 +237,7 @@ export default function Login() {
 
       {/* Main Content */}
       <div className="relative z-10 min-h-screen flex flex-col lg:flex-row items-center">
-        
+
         {/* Left Hero Section */}
         <div className="flex lg:flex w-1/2 h-screen items-start justify-center -mt-24 lg:-mt-30">
 
@@ -245,7 +245,7 @@ export default function Login() {
 
 
         {/* <div className="flex w-full lg:w-1/2 items-center justify-center p-4 lg:p-8"></div> */}
-        
+
 
           <div className={`relative w-full h-4/5 max-w-lg transition-all duration-700 ${
             imageLoaded ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'
@@ -254,35 +254,35 @@ export default function Login() {
               <div
                 key={img.id}
                 className={`absolute inset-0 transition-all duration-1000 ease-in-out ${
-                  index === currentImageIndex 
-                    ? 'opacity-100 scale-100 z-10' 
+                  index === currentImageIndex
+                    ? 'opacity-100 scale-100 z-10'
                     : 'opacity-0 scale-95 z-0'
                 }`}
               >
                 <div className="w-full h-full rounded-3xl shadow-2xl border border-white/20 overflow-hidden relative group">
                   {/* Gradient Background instead of anime image */}
-                  <img 
-                    src={img.image} 
-                    alt={img.title} 
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
+                  <img
+                    src={img.image}
+                    alt={img.title}
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                   />
                     <div className="absolute inset-0 bg-black/20"></div>
-                    
+
                     {/* Decorative elements */}
                     <div className="absolute top-8 left-8 w-16 h-16 border-2 border-white/30 rounded-full"></div>
                     <div className="absolute top-1/3 right-8 w-8 h-8 bg-white/20 rounded-lg rotate-45"></div>
                     <div className="absolute bottom-1/3 left-12 w-12 h-12 bg-white/10 rounded-full"></div>
-                  
-                  
+
+
                   {/* Overlay with gradient */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
-                  
+
                   {/* Content Overlay */}
                   <div className="absolute bottom-0 left-0 right-0 p-8 text-white">
                     <h3 className="text-3xl font-bold mb-3">{img.title}</h3>
                     <p className="text-lg opacity-90 leading-relaxed">{img.subtitle}</p>
                   </div>
-                  
+
                   {/* Floating Animation Elements */}
                   <div className="absolute top-6 right-6 w-3 h-3 bg-emerald-400/60 rounded-full animate-pulse"></div>
                   <div className="absolute top-20 right-12 w-2 h-2 bg-purple-400/60 rounded-full animate-ping"></div>
@@ -290,7 +290,7 @@ export default function Login() {
                 </div>
               </div>
             ))}
-            
+
             {/* Image Indicators */}
             <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-3">
               {heroImages.map((_, index) => (
@@ -298,8 +298,8 @@ export default function Login() {
                   key={index}
                   onClick={() => setCurrentImageIndex(index)}
                   className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                    index === currentImageIndex 
-                      ? 'bg-emerald-400 shadow-lg scale-125' 
+                    index === currentImageIndex
+                      ? 'bg-emerald-400 shadow-lg scale-125'
                       : 'bg-white/40 hover:bg-white/60 hover:scale-110'
                   }`}
                 />
@@ -313,14 +313,14 @@ export default function Login() {
           <div className={`bg-slate-800/30 backdrop-blur-xl rounded-3xl shadow-2xl px-6 py-8 lg:px-10 lg:py-12 w-full max-w-2xl border border-slate-700/50 transition-all duration-700 ${
             isVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-8 scale-95'
           } hover:border-emerald-500/30 hover:shadow-emerald-500/10`}>
-            
+
             {/* Header */}
             <div className="text-center mb-8 space-y-4">
               <div className="inline-flex items-center gap-3 px-4 py-2 bg-emerald-500/10 rounded-full border border-emerald-500/20 mb-4">
                 <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
                 <span className="text-emerald-300 text-sm font-medium">Welcome Back</span>
               </div>
-              
+
               {/* Logo with Code Icon */}
               <div className="flex items-center justify-center gap-3 mb-4">
                 <div className="relative">
@@ -338,7 +338,7 @@ export default function Login() {
                   <p className="text-sm text-slate-400">Code. Learn. Grow.</p>
                 </div>
               </div>
-              
+
               <p className="text-lg text-slate-300 leading-relaxed">
                 Sign in to continue your coding journey
               </p>
@@ -369,8 +369,8 @@ export default function Login() {
             {/* Feedback Message */}
             {feedbackMessage && (
               <div className={`mb-6 p-4 rounded-xl border backdrop-blur-sm transition-all duration-500 ${
-                messageType === 'success' 
-                  ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300' 
+                messageType === 'success'
+                  ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300'
                   : 'bg-red-500/10 border-red-500/30 text-red-300'
               }`}>
                 <div className="flex items-center gap-3">
@@ -419,7 +419,7 @@ export default function Login() {
                   </button>
                 </div>
 
-                <button 
+                <button
                   type="button"
                   onClick={handleSubmit}
                   disabled={isSubmitting}
@@ -452,22 +452,22 @@ export default function Login() {
 
             {/* OAuth Buttons */}
             <div className="flex flex-col sm:flex-row gap-3 mb-6">
-              <button 
-                onClick={() => handleOAuth("Google")} 
+              <button
+                onClick={() => handleOAuth("Google")}
                 className="flex-1 bg-slate-800/40 hover:bg-slate-800/60 text-white px-4 py-3 rounded-xl transition-all duration-300 font-semibold border border-slate-700/50 hover:border-slate-600/70 transform hover:scale-105 active:scale-95 flex items-center justify-center gap-3 backdrop-blur-sm group"
               >
                 <div className="w-5 h-5 bg-gradient-to-r from-red-500 to-orange-500 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-200">
                   <span className="text-white text-xs font-bold">G</span>
-                </div> 
+                </div>
                 <span>Google</span>
               </button>
-              <button 
-                onClick={() => handleOAuth("GitHub")} 
+              <button
+                onClick={() => handleOAuth("GitHub")}
                 className="flex-1 bg-slate-800/40 hover:bg-slate-800/60 text-white px-4 py-3 rounded-xl transition-all duration-300 font-semibold border border-slate-700/50 hover:border-slate-600/70 transform hover:scale-105 active:scale-95 flex items-center justify-center gap-3 backdrop-blur-sm group"
               >
                 <div className="w-5 h-5 bg-gradient-to-r from-gray-800 to-gray-900 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-200">
                   <span className="text-white text-xs">🐙</span>
-                </div> 
+                </div>
                 <span>GitHub</span>
               </button>
             </div>
@@ -477,10 +477,10 @@ export default function Login() {
             <div className="text-center pt-4 border-t border-slate-700/50">
               <p className="text-slate-400">
                 New to HelpMeMake?{" "}
-                <button className="text-emerald-400 hover:text-emerald-300 font-semibold transition-all duration-300 hover:underline inline-flex items-center gap-1">
+                <a href='/signup' className="text-emerald-400 hover:text-emerald-300 font-semibold transition-all duration-300 hover:underline inline-flex items-center gap-1">
                   Join the community
                   <ChevronRight className="w-4 h-4" />
-                </button>
+                </a>
               </p>
             </div>
           </div>
@@ -489,17 +489,17 @@ export default function Login() {
 
       <style jsx>{`
         @keyframes float {
-          0%, 100% { 
-            transform: translateY(0px) rotate(0deg); 
+          0%, 100% {
+            transform: translateY(0px) rotate(0deg);
           }
-          25% { 
-            transform: translateY(-10px) rotate(1deg); 
+          25% {
+            transform: translateY(-10px) rotate(1deg);
           }
-          50% { 
-            transform: translateY(-5px) rotate(-0.5deg); 
+          50% {
+            transform: translateY(-5px) rotate(-0.5deg);
           }
-          75% { 
-            transform: translateY(-7px) rotate(0.5deg); 
+          75% {
+            transform: translateY(-7px) rotate(0.5deg);
           }
         }
 
