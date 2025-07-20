@@ -2,20 +2,26 @@ import React from "react";
 import StatusGrid from "./StatusGrid";
 import Quick from "./Quick";
 import Tracker from "./Tracker";
-function Dashboard(){
-    return (
-        <div className="space-y-6">
-            {/* Status grid */}
-            < StatusGrid />
-            
-            {/* Quick Actions */}
-            <Quick />
+import Timer from "./Timer";
+import SessionsChat from "./SessionsChat";
+function Dashboard() {
+  return (
+    <div className="space-y-6">
+      {/* Status grid */}
+      <StatusGrid />
 
-            {/* project tracker */}
-            <Tracker />
-            
-        </div>
-    )
+      {/* Quick Actions */}
+      <Quick />
+
+      {/* project tracker */}
+      <Tracker />
+
+      {/* Working hours section */}
+      <Timer />
+      {/* Upcoming sessions */}
+      <SessionsChat />
+    </div>
+  );
 }
 
 export default Dashboard;

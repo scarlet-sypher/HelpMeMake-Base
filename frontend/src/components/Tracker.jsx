@@ -1,11 +1,16 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Rocket,
   Target,
   CheckCircle,
   Clock,
   Flag,
+  PieChart,
 } from "lucide-react";
+import { Pie } from "react-chartjs-2";
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+
+ChartJS.register(ArcElement, Tooltip, Legend);
 
 const milestones = [
   { title: "Kickoff", icon: Rocket, status: "completed" },
@@ -15,13 +20,57 @@ const milestones = [
   { title: "Completed", icon: CheckCircle, status: "upcoming" },
 ];
 
-const MilestonePoint = ({ milestones }) => {
-  return (
-    <div className="relative flex flex-col sm:flex-row items-center sm:justify-around w-full gap-y-8 sm:gap-y-0 sm:gap-x-4 py-4">
-      {/* Horizontal line for desktop */}
-      <div className="hidden sm:block absolute top-1/2 left-0 right-0 h-1 bg-gradient-to-r from-green-400 via-yellow-400 to-gray-400 dark:to-slate-700 opacity-30 transform -translate-y-1/2" />
+const TooltipPie = ({ visible }) => {
+  const data = {
+    labels: ["Completed", "In Progress", "Pending"],
+    datasets: [
+      {
+        data: [2, 1, 2],
+        backgroundColor: ["#22c55e", "#eab308", "#6b7280"],
+        borderColor: ["#16a34a", "#ca8a04", "#4b5563"],
+        borderWidth: 2,
+      },
+    ],
+  };
 
-      {/* Vertical line for mobile */}
+  const options = {
+    plugins: {
+      legend: {
+        display: true,
+        position: 'bottom',
+        labels: {
+          color: '#cbd5e1',
+          font: { size: 12 },
+        },
+      },
+    },
+    responsive: true,
+    maintainAspectRatio: false,
+    animation: {
+      animateRotate: true,
+      duration: 1000,
+    },
+  };
+
+  if (!visible) return null;
+
+  return (
+    <div className="absolute top-0 right-0 w-48 h-48 bg-white dark:bg-slate-900 p-4 rounded-xl shadow-2xl z-50 animate-fadeIn">
+      <Pie data={data} options={options} />
+    </div>
+  );
+};
+
+const MilestonePoint = ({ milestones }) => {
+  const [showChart, setShowChart] = useState(false);
+
+  return (
+    <div
+      className="relative flex flex-col sm:flex-row items-center sm:justify-around w-full gap-y-8 sm:gap-y-0 sm:gap-x-4 py-4"
+      onMouseEnter={() => setShowChart(true)}
+      onMouseLeave={() => setShowChart(false)}
+    >
+      <div className="hidden sm:block absolute top-1/2 left-0 right-0 h-1 bg-gradient-to-r from-green-400 via-yellow-400 to-gray-400 dark:to-slate-700 opacity-30 transform -translate-y-1/2" />
       <div className="block sm:hidden absolute left-1/2 top-0 bottom-0 w-1 bg-gradient-to-b from-green-400 via-yellow-400 to-gray-400 dark:to-slate-700 opacity-30 transform -translate-x-1/2" />
 
       {milestones.map((milestone, index) => {
@@ -42,9 +91,9 @@ const MilestonePoint = ({ milestones }) => {
           : "bg-gray-100/30 dark:bg-slate-800/40";
 
         return (
-          <div key={index} className="flex flex-col items-center text-center z-10 group">
+          <div key={index} className="flex flex-col items-center text-center z-10 relative hover:cursor-pointer">
             <div
-              className={`p-4 border-2 rounded-full backdrop-blur-xl transition-transform duration-300 group-hover:scale-105 shadow-sm ${color} ${bgClass}`}
+              className={`p-4 border-2 rounded-full backdrop-blur-xl transition-transform duration-300 hover:scale-105 shadow-sm ${color} ${bgClass}`}
             >
               <Icon size={24} />
             </div>
@@ -54,15 +103,14 @@ const MilestonePoint = ({ milestones }) => {
           </div>
         );
       })}
+      <TooltipPie visible={showChart} />
     </div>
   );
 };
 
-
 const MilestoneTracker = () => {
   return (
     <div className="bg-white/60 dark:bg-gradient-to-br dark:from-slate-900 dark:via-blue-950 dark:to-indigo-900 px-6 py-6 rounded-3xl shadow-xl border border-white/10 dark:border-white/10 transition-colors">
-      {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-center mb-6">
         <h2 className="text-xl font-bold text-slate-800 dark:text-white flex items-center">
           <Target className="mr-2 text-purple-600 dark:text-purple-400" size={20} />
@@ -74,7 +122,6 @@ const MilestoneTracker = () => {
         </div>
       </div>
 
-      {/* Project Info */}
       <div className="flex flex-col sm:flex-row justify-between items-center mb-4 space-y-2 sm:space-y-0">
         <div className="flex items-center space-x-2">
           <span className="text-sm text-blue-700 dark:text-blue-300">Current Project:</span>
@@ -93,12 +140,10 @@ const MilestoneTracker = () => {
         </div>
       </div>
 
-      {/* Milestone Graph */}
       <div className="bg-white/30 dark:bg-white/5 border border-white/10 dark:border-white/10 rounded-2xl p-6 mb-6 relative">
         <MilestonePoint milestones={milestones} />
       </div>
 
-      {/* Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="bg-white/40 dark:bg-white/10 backdrop-blur-sm rounded-xl p-4 text-center border border-white/20 dark:border-white/10">
           <div className="text-xl font-bold text-emerald-600 dark:text-emerald-400">2</div>
