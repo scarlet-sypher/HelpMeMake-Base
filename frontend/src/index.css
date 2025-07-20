@@ -3,7 +3,8 @@
 body, html {
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
+  /* box-sizing: border-box; */
+  height: 100%;
 }
 
 .no-scrollbar::-webkit-scrollbar {
@@ -12,4 +13,7 @@ body, html {
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+#root {
+  height: 100%;
 }
