@@ -182,6 +182,12 @@ export default function Login() {
         setTimeout(() => {
           navigate("/userdashboard");
         }, 2000);
+      } else if (form.username === "admin" && form.password === "123") {
+        setFeedbackMessage("🎉 Login successful! Redirecting to admin dashboard...");
+        setMessageType("success");
+        setTimeout(() => {
+            navigate("/admindashboard");
+        }, 2000);
       } else if (form.username === "mentor" && form.password === "123") {
         setFeedbackMessage("🎉 Login successful! Redirecting to mentor dashboard...");
         setMessageType("success");
@@ -305,7 +311,7 @@ export default function Login() {
 
           {/* Right Form Section - Desktop */}
           <div className="flex w-1/2 items-center justify-center px-4 xl:px-8">
-            <LoginForm 
+            <LoginForm
               form={form}
               errors={errors}
               feedbackMessage={feedbackMessage}
@@ -321,7 +327,7 @@ export default function Login() {
 
         {/* Mobile/Tablet Layout - Form Only */}
         <div className="flex lg:hidden min-h-screen items-center justify-center px-4 py-8">
-          <LoginForm 
+          <LoginForm
             form={form}
             errors={errors}
             feedbackMessage={feedbackMessage}
@@ -386,16 +392,16 @@ export default function Login() {
 }
 
 // Extracted LoginForm component for reusability
-function LoginForm({ 
-  form, 
-  errors, 
-  feedbackMessage, 
-  messageType, 
-  isVisible, 
-  isSubmitting, 
-  handleChange, 
-  handleSubmit, 
-  handleOAuth 
+function LoginForm({
+  form,
+  errors,
+  feedbackMessage,
+  messageType,
+  isVisible,
+  isSubmitting,
+  handleChange,
+  handleSubmit,
+  handleOAuth
 }) {
   return (
     <div className={`bg-slate-800/30 backdrop-blur-xl rounded-3xl shadow-2xl p-6 sm:p-8 lg:p-10 w-full max-w-lg xl:max-w-2xl border border-slate-700/50 transition-all duration-700 ${
