@@ -4,6 +4,7 @@ import Dropdown from "../../components/auth/Dropdown";
 import ImageUploader from "../../components/auth/ImageUploader";
 import MultiSelectInput from "../../components/auth/MultiSelectInput";
 import PasswordField from "../../components/auth/PasswordField";
+import Navbar from "../../components/Navbar";
 
 const NUM_PARTICLES = 30;
 
@@ -162,8 +163,10 @@ export default function Signup() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">
+
+      <Navbar/>
       {/* Animated Background */}
-      <div className="absolute inset-0">
+      <div className="absolute inset-0 " >
         {/* Gradient Orbs */}
         <div className="absolute top-20 left-20 w-72 h-72 bg-emerald-500/10 rounded-full blur-3xl animate-pulse"></div>
         <div className="absolute bottom-20 right-20 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
@@ -210,7 +213,7 @@ export default function Signup() {
           </div>
 
           {/* Form */}
-          <form className="space-y-8">
+          <form className="space-y-8" onSubmit={handleSubmit}>
             
             {/* Personal Details */}
             <div className="bg-slate-800/30 rounded-2xl p-8 border border-slate-700/30 backdrop-blur-sm hover:border-emerald-500/20 transition-all duration-300 group">
