@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Sidebar from "../../components/user/Sidebar";
-import { Users, UserCheck, Briefcase, CheckCircle, DollarSign } from "lucide-react";
+import { Users, UserCheck, Briefcase, CheckCircle, IndianRupee } from "lucide-react";
 
 const adminMenuItems = [
   { icon: Users, label: "Dashboard", id: "dashboard" },
@@ -13,7 +13,7 @@ const statCards = [
   { label: "Total Mentors", value: 150, icon: UserCheck, color: "from-purple-500 to-pink-500" },
   { label: "Active Projects", value: 45, icon: Briefcase, color: "from-green-500 to-emerald-500" },
   { label: "Completed Projects", value: 320, icon: CheckCircle, color: "from-indigo-500 to-blue-500" },
-  { label: "Total Payment Collected", value: "$25,000", icon: DollarSign, color: "from-yellow-400 to-orange-500" },
+  { label: "Total Payment Collected", value: "25,000", icon: IndianRupee, color: "from-yellow-400 to-orange-500" },
 ];
 
 export default function AdminDashboard() {
