@@ -1,5 +1,6 @@
 import React from 'react';
-import { 
+import { useNavigate } from "react-router-dom";
+import {
   Home,
   Folder,
   Settings,
@@ -31,16 +32,22 @@ const Sidebar = ({ isOpen, toggleSidebar, activeItem, setActiveItem }) => {
     }
   };
 
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    navigate("/login");
+  }
+
   return (
     <>
       {/* Mobile overlay */}
       {isOpen && (
-        <div 
+        <div
           className="fixed inset-0 bg-black/50 z-40 lg:hidden"
           onClick={toggleSidebar}
         />
       )}
-      
+
       {/* Sidebar */}
       <div className={`fixed left-0 top-0 h-full w-64 bg-gradient-to-b from-slate-900 via-blue-900 to-indigo-900 border-r border-white/10 z-50 transform transition-transform duration-300 ${
         isOpen ? 'translate-x-0' : '-translate-x-full'
@@ -53,28 +60,28 @@ const Sidebar = ({ isOpen, toggleSidebar, activeItem, setActiveItem }) => {
               </div>
               <h2 className="text-xl font-bold text-white">HelpMeMake</h2>
             </div>
-            <button 
+            <button
               onClick={toggleSidebar}
               className="lg:hidden text-white hover:text-gray-300 transition-colors"
             >
               <X size={24} />
             </button>
           </div>
-          
+
           <nav className="space-y-2">
             {menuItems.map((item) => (
               <button
                 key={item.id}
                 onClick={() => handleItemClick(item.id)}
                 className={`flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-200 w-full text-left ${
-                  activeItem === item.id 
-                    ? 'bg-blue-600/50 text-white border border-blue-400/30 shadow-lg' 
+                  activeItem === item.id
+                    ? 'bg-blue-600/50 text-white border border-blue-400/30 shadow-lg'
                     : 'text-gray-300 hover:bg-white/10 hover:text-white'
                 }`}
               >
-                <item.icon 
-                  size={20} 
-                  className={`${activeItem === item.id ? 'text-blue-300' : ''}`} 
+                <item.icon
+                  size={20}
+                  className={`${activeItem === item.id ? 'text-blue-300' : ''}`}
                 />
                 <span className="font-medium">{item.label}</span>
                 {activeItem === item.id && (
@@ -84,9 +91,9 @@ const Sidebar = ({ isOpen, toggleSidebar, activeItem, setActiveItem }) => {
             ))}
           </nav>
         </div>
-        
+
         <div className="absolute bottom-0 left-0 right-0 p-6">
-          <button className="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-red-500/20 hover:text-red-300 transition-all duration-200 w-full">
+          <button onClick = {handleLogout} className="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-red-500/20 hover:text-red-300 transition-all duration-200 w-full">
             <LogOut size={20} />
             <span className="font-medium">Logout</span>
           </button>
