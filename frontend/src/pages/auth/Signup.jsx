@@ -3,6 +3,7 @@ import InputField from "../../components/auth/InputField";
 import Dropdown from "../../components/auth/Dropdown";
 import MultiSelectInput from "../../components/auth/MultiSelectInput";
 import PasswordField from "../../components/auth/PasswordField";
+import axios from "axios";
 
 const NUM_PARTICLES = 30;
 
@@ -116,6 +117,10 @@ export default function Signup() {
 
     try {
       await new Promise((resolve) => setTimeout(resolve, 2000));
+      axios
+        .post("http://localhost:3000/signup", userData)
+        .then((res) => console.log(res.data))
+        .catch((err) => console.error(err));
       console.log("User Data:", userData);
       alert("🎉 Welcome aboard! Your HelpMeMake journey begins now!");
     } catch (error) {
@@ -127,7 +132,6 @@ export default function Signup() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">
-
       {/* Main Content */}
       <div className="relative z-10 min-h-screen flex items-center justify-center p-4 py-8">
         <div
@@ -219,7 +223,6 @@ export default function Signup() {
                   onChange={handleChange}
                   placeholder="+1 (555) 000-0000"
                 />
-
               </div>
             </div>
 
