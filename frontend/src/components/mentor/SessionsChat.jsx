@@ -1,7 +1,5 @@
 import React, { useState } from "react";
-import StatusGrid from "./StatusGrid";
-import Quick from "./Quick";
-import Tracker from "./Tracker";
+import { CalendarCheck } from "lucide-react";
 import {
   BarChart3,
   Clock,
