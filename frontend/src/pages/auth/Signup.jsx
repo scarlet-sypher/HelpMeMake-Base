@@ -4,6 +4,7 @@ import Dropdown from "../../components/auth/Dropdown";
 import MultiSelectInput from "../../components/auth/MultiSelectInput";
 import PasswordField from "../../components/auth/PasswordField";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const NUM_PARTICLES = 30;
 
@@ -39,6 +40,7 @@ export default function Signup() {
     agreeToTerms: false,
   });
 
+  const navigate = useNavigate();
   const [errors, setErrors] = useState({});
   const [isVisible, setIsVisible] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -105,6 +107,7 @@ export default function Signup() {
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -119,10 +122,9 @@ export default function Signup() {
       await new Promise((resolve) => setTimeout(resolve, 2000));
       axios
         .post("http://localhost:3000/signup", userData)
-        .then((res) => console.log(res.data))
-        .catch((err) => console.error(err));
       console.log("User Data:", userData);
       alert("🎉 Welcome aboard! Your HelpMeMake journey begins now!");
+      navigate("/userdashboard");
     } catch (error) {
       alert("Oops! Something went wrong. Please try again.");
     } finally {
