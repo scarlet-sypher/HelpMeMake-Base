@@ -6,7 +6,7 @@ import Timer from "./Timer";
 import SessionsChat from "./SessionsChat";
 function Dashboard() {
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 bg-gradient-to-br ">
       {/* Status grid */}
       <StatusGrid />
 

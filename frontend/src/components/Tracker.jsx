@@ -37,9 +37,9 @@ const TooltipPie = ({ visible }) => {
     plugins: {
       legend: {
         display: true,
-        position: 'bottom',
+        position: "bottom",
         labels: {
-          color: '#cbd5e1',
+          color: "#cbd5e1",
           font: { size: 12 },
         },
       },
@@ -55,7 +55,7 @@ const TooltipPie = ({ visible }) => {
   if (!visible) return null;
 
   return (
-    <div className="absolute top-0 right-0 w-48 h-48 bg-white dark:bg-slate-900 p-4 rounded-xl shadow-2xl z-50 animate-fadeIn">
+    <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 p-4 rounded-xl shadow-2xl z-50 animate-fadeIn backdrop-blur-md border border-white/10">
       <Pie data={data} options={options} />
     </div>
   );
@@ -93,7 +93,7 @@ const MilestonePoint = ({ milestones }) => {
         return (
           <div key={index} className="flex flex-col items-center text-center z-10 relative hover:cursor-pointer">
             <div
-              className={`p-4 border-2 rounded-full backdrop-blur-xl transition-transform duration-300 hover:scale-105 shadow-sm ${color} ${bgClass}`}
+              className={`p-4 border-2 rounded-full backdrop-blur-xl transition-transform duration-300 hover:scale-105 shadow-md ${color} ${bgClass} bg-white/10 hover:shadow-lg hover:ring-2 hover:ring-white/20`}
             >
               <Icon size={24} />
             </div>
@@ -110,22 +110,22 @@ const MilestonePoint = ({ milestones }) => {
 
 const MilestoneTracker = () => {
   return (
-    <div className="bg-white/60 dark:bg-gradient-to-br dark:from-slate-900 dark:via-blue-950 dark:to-indigo-900 px-6 py-6 rounded-3xl shadow-xl border border-white/10 dark:border-white/10 transition-colors">
+    <div className="bg-gradient-to-br from-[#0f172a] via-[#1e3a8a] to-[#312e81] p-6 rounded-3xl shadow-2xl border border-white/10 backdrop-blur-md transition-all">
       <div className="flex flex-col sm:flex-row justify-between items-center mb-6">
-        <h2 className="text-xl font-bold text-slate-800 dark:text-white flex items-center">
-          <Target className="mr-2 text-purple-600 dark:text-purple-400" size={20} />
+        <h2 className="text-xl font-bold text-white flex items-center">
+          <Target className="mr-2 text-purple-400" size={20} />
           Project Milestone Tracker
         </h2>
         <div className="flex items-center space-x-2">
-          <div className="w-2 h-2 bg-purple-600 dark:bg-purple-400 rounded-full animate-pulse" />
-          <span className="text-sm text-purple-500 dark:text-purple-300">Live Updates</span>
+          <div className="w-2 h-2 bg-purple-400 rounded-full animate-pulse" />
+          <span className="text-sm text-purple-300">Live Updates</span>
         </div>
       </div>
 
       <div className="flex flex-col sm:flex-row justify-between items-center mb-4 space-y-2 sm:space-y-0">
         <div className="flex items-center space-x-2">
-          <span className="text-sm text-blue-700 dark:text-blue-300">Current Project:</span>
-          <span className="text-sm font-semibold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 text-transparent bg-clip-text">
+          <span className="text-sm text-blue-300">Current Project:</span>
+          <span className="text-sm font-semibold bg-gradient-to-r from-blue-400 to-purple-400 text-transparent bg-clip-text">
             Grand Line Navigation System
           </span>
         </div>
@@ -136,26 +136,26 @@ const MilestoneTracker = () => {
               style={{ width: "40%" }}
             />
           </div>
-          <span className="text-sm font-bold text-purple-600 dark:text-purple-400">40%</span>
+          <span className="text-sm font-bold text-purple-400">40%</span>
         </div>
       </div>
 
-      <div className="bg-white/30 dark:bg-white/5 border border-white/10 dark:border-white/10 rounded-2xl p-6 mb-6 relative">
+      <div className="bg-white/10 dark:bg-white/5 border border-white/10 rounded-2xl p-6 mb-6 relative backdrop-blur-sm shadow-md">
         <MilestonePoint milestones={milestones} />
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="bg-white/40 dark:bg-white/10 backdrop-blur-sm rounded-xl p-4 text-center border border-white/20 dark:border-white/10">
-          <div className="text-xl font-bold text-emerald-600 dark:text-emerald-400">2</div>
-          <div className="text-sm text-emerald-500 dark:text-emerald-300">Completed</div>
+        <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 text-center border border-white/20 shadow-md hover:scale-105 transition-all">
+          <div className="text-xl font-bold text-emerald-400">2</div>
+          <div className="text-sm text-emerald-300">Completed</div>
         </div>
-        <div className="bg-white/40 dark:bg-white/10 backdrop-blur-sm rounded-xl p-4 text-center border border-white/20 dark:border-white/10">
-          <div className="text-xl font-bold text-yellow-600 dark:text-yellow-400">1</div>
-          <div className="text-sm text-yellow-500 dark:text-yellow-300">In Progress</div>
+        <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 text-center border border-white/20 shadow-md hover:scale-105 transition-all">
+          <div className="text-xl font-bold text-yellow-400">1</div>
+          <div className="text-sm text-yellow-300">In Progress</div>
         </div>
-        <div className="bg-white/40 dark:bg-white/10 backdrop-blur-sm rounded-xl p-4 text-center border border-white/20 dark:border-white/10">
-          <div className="text-xl font-bold text-gray-600 dark:text-slate-400">2</div>
-          <div className="text-sm text-gray-500 dark:text-slate-300">Pending</div>
+        <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 text-center border border-white/20 shadow-md hover:scale-105 transition-all">
+          <div className="text-xl font-bold text-slate-400">2</div>
+          <div className="text-sm text-slate-300">Pending</div>
         </div>
       </div>
     </div>

@@ -60,7 +60,7 @@ const QuickActionsCarousel = () => {
   };
 
   return (
-    <div className="w-full relative">
+    <div className="w-full relative ">
       {/* Navigation Buttons */}
       <button
         onClick={scrollLeft}
