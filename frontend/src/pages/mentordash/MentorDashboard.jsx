@@ -1,7 +1,7 @@
 import React ,{useState} from 'react';
-import MentorSidebar from "../components/mentor/MentorSidebar";
-import Header from "../components/mentor/Header";
-import Dashboard from "../components/mentor/Dashboard";
+import MentorSidebar from "../../components/mentor/MentorSidebar";
+import Header from "../../components/mentor/Header";
+import Dashboard from "../../components/mentor/Dashboard";
 
 function MentorDashboard() {
   const[sidebarcollapsed, setsidebarcollapsed] = useState(false);
