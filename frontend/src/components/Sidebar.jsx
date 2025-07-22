@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Mail,
   Bell,
@@ -90,6 +91,11 @@ function Sidebar({ collapsed, onToggle, currentPage, onPageChange }) {
   const toggleSubmenu = (id) => {
     setOpenSubmenuId((prev) => (prev === id ? null : id));
   };
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    navigate("/login");
+  }
 
   return (
     <div
@@ -195,9 +201,9 @@ function Sidebar({ collapsed, onToggle, currentPage, onPageChange }) {
         )}
 
         {/* Logout Button */}
-        <button
+        <button 
           className="w-full flex items-center justify-center space-x-2 p-3 text-sm font-semibold text-red-500 hover:text-white hover:bg-red-500 hover:scale-105 transition-all duration-300 rounded-xl shadow-md bg-white/5"
-          onClick={() => alert("Logging out...")}
+          onClick={handleLogout}
         >
           <LogOut className="w-4 h-4" />
           {!collapsed && <span>Logout</span>}
