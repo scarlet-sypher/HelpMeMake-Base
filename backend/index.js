@@ -23,6 +23,41 @@ app.post("/signup", async (req, res) => {
   }
 });
 
+
+
+
+app.post('/login', async (req, res) => {
+
+  try {
+    let {password}= req.body;
+    const existingUser = await User.findOne({fullName: req.body.username });
+    console.log(existingUser)
+
+
+    if (!existingUser) {
+      return res.status(401).json({ message: "❌ User not found" });
+    }
+
+    // Simple password check (only for dev)
+    if (existingUser.password !== password) {
+      return res.status(401).json({ message: "❌ Incorrect password" });
+    }
+
+    // Success
+    return res.status(200).json({
+      message: "✅ Login successful",
+      user: {
+        role: existingUser.role,
+
+      }
+    });
+
+  } catch (err) {
+    console.error("Login Error:", err);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
 app.listen(PORT, () => {
   console.log("app is listening on port");
   mongoose
