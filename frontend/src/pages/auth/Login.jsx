@@ -1,13 +1,20 @@
 import { useState, useEffect } from "react";
-import { ChevronRight, Code, Users, Zap, Shield, Eye, EyeOff } from "lucide-react";
+import {
+  ChevronRight,
+  Code,
+  Users,
+  Zap,
+  Shield,
+  Eye,
+  EyeOff,
+} from "lucide-react";
 import { useNavigate } from "react-router-dom";
-
-import baka from '../../assets/LoginImages/baka.jpg';
-import kakashi from '../../assets/LoginImages/kakashi.jpg';
-import ken from '../../assets/LoginImages/ken.jpg';
-import luffy from '../../assets/LoginImages/Luuuffy.jpg';
-import saitama from '../../assets/LoginImages/saitama.jpg';
-
+import axios from "axios";
+import baka from "../../assets/LoginImages/baka.jpg";
+import kakashi from "../../assets/LoginImages/kakashi.jpg";
+import ken from "../../assets/LoginImages/ken.jpg";
+import luffy from "../../assets/LoginImages/Luuuffy.jpg";
+import saitama from "../../assets/LoginImages/saitama.jpg";
 
 const NUM_PARTICLES = 25;
 
@@ -15,39 +22,48 @@ const NUM_PARTICLES = 25;
 const heroImages = [
   {
     id: 1,
-    title: 'Mentorship',
-    subtitle: 'Connect with industry experts and accelerate your learning journey',
-    image: baka
+    title: "Mentorship",
+    subtitle:
+      "Connect with industry experts and accelerate your learning journey",
+    image: baka,
   },
   {
     id: 2,
-    title: 'Growth',
-    subtitle: 'Build amazing projects with guidance from experienced mentors',
-    image: kakashi
+    title: "Growth",
+    subtitle: "Build amazing projects with guidance from experienced mentors",
+    image: kakashi,
   },
   {
     id: 3,
-    title: 'Innovation',
-    subtitle: 'Turn your innovative ideas into reality with expert support',
-    image: ken
+    title: "Innovation",
+    subtitle: "Turn your innovative ideas into reality with expert support",
+    image: ken,
   },
   {
     id: 4,
-    title: 'Speed',
-    subtitle: 'Fast-track your career with personalized mentorship',
-    image: luffy
+    title: "Speed",
+    subtitle: "Fast-track your career with personalized mentorship",
+    image: luffy,
   },
   {
     id: 5,
-    title: 'Excellence',
-    subtitle: 'Achieve excellence through collaborative learning',
-    image: saitama
-  }
+    title: "Excellence",
+    subtitle: "Achieve excellence through collaborative learning",
+    image: saitama,
+  },
 ];
 
-
 // InputField component
-const InputField = ({ label, name, value, onChange, required, placeholder, error, type = "text" }) => (
+const InputField = ({
+  label,
+  name,
+  value,
+  onChange,
+  required,
+  placeholder,
+  error,
+  type = "text",
+}) => (
   <div className="group">
     <label className="block text-sm font-semibold text-slate-200 mb-2 transition-colors duration-200 group-focus-within:text-emerald-400">
       {label} {required && <span className="text-red-400">*</span>}
@@ -66,7 +82,15 @@ const InputField = ({ label, name, value, onChange, required, placeholder, error
 );
 
 // PasswordField component
-const PasswordField = ({ label, name, value, onChange, required, placeholder, error }) => {
+const PasswordField = ({
+  label,
+  name,
+  value,
+  onChange,
+  required,
+  placeholder,
+  error,
+}) => {
   const [showPassword, setShowPassword] = useState(false);
 
   return (
@@ -95,7 +119,7 @@ const PasswordField = ({ label, name, value, onChange, required, placeholder, er
       {error && <p className="text-red-400 text-sm mt-1">{error}</p>}
     </div>
   );
-}
+};
 
 export default function Login() {
   const [form, setForm] = useState({ username: "", password: "" });
@@ -108,7 +132,6 @@ export default function Login() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
   const navigate = useNavigate();
-
 
   useEffect(() => {
     // Initialize particles
@@ -140,7 +163,7 @@ export default function Login() {
     setForm({ ...form, [name]: value });
 
     if (errors[name]) {
-      setErrors(prev => ({ ...prev, [name]: '' }));
+      setErrors((prev) => ({ ...prev, [name]: "" }));
     }
     if (feedbackMessage) {
       setFeedbackMessage("");
@@ -152,10 +175,10 @@ export default function Login() {
     const newErrors = {};
 
     if (!form.username.trim()) {
-      newErrors.username = 'Username is required';
+      newErrors.username = "Username is required";
     }
     if (!form.password.trim()) {
-      newErrors.password = 'Password is required';
+      newErrors.password = "Password is required";
     }
 
     setErrors(newErrors);
@@ -164,7 +187,6 @@ export default function Login() {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    
 
     if (!validateForm()) {
       return;
@@ -175,36 +197,60 @@ export default function Login() {
     setMessageType("");
 
     try {
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+      const response = await axios.post("http://localhost:3000/login", form);
+      alert("🎉 Welcome aboard! Your HelpMeMake journey begins now!");
 
-      if (form.username === "user" && form.password === "123") {
-        setFeedbackMessage("🎉 Login successful! Redirecting to dashboard...");
-        setMessageType("success");
-        setTimeout(() => {
-          navigate("/userdashboard");
-        }, 2000);
-      } else if (form.username === "admin" && form.password === "123") {
-        setFeedbackMessage("🎉 Login successful! Redirecting to admin dashboard...");
-        setMessageType("success");
-        setTimeout(() => {
-            navigate("/admindashboard");
-        }, 2000);
-      } else if (form.username === "mentor" && form.password === "123") {
-        setFeedbackMessage("🎉 Login successful! Redirecting to mentor dashboard...");
-        setMessageType("success");
-        setTimeout(() => {
-            navigate("/mentordashboard");
-        }, 2000);
+      const user = response.data.user;
+      console.log(user.data);
+
+      console.log("User from server:", user);
+
+      if (user.role === "admin") {
+        navigate("/admindashboard");
+      } else if (user.role === "mentor") {
+        navigate("/mentordashboard");
       } else {
-        setFeedbackMessage("❌ Wrong user ID or password. Please try again.");
-        setMessageType("error");
+        navigate("/userdashboard");
       }
     } catch (error) {
-      setFeedbackMessage("⚠️ Something went wrong. Please try again.");
-      setMessageType("error");
+      console.log(error);
+      alert("Oops! Something went wrong. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
+    console.log(form);
+
+    //   try{
+    //     if (form.username === "user" && form.password === "123") {
+    //       setFeedbackMessage("🎉 Login successful! Redirecting to dashboard...");
+    //       setMessageType("success");
+    //       setTimeout(() => {
+    //         navigate("/userdashboard");
+    //       }, 2000);
+    //     } else if (form.username === "admin" && form.password === "123") {
+    //       setFeedbackMessage("🎉 Login successful! Redirecting to admin dashboard...");
+    //       setMessageType("success");
+    //       setTimeout(() => {
+    //           navigate("/admindashboard");
+    //       }, 2000);
+    //     } else if (form.username === "mentor" && form.password === "123") {
+    //       setFeedbackMessage("🎉 Login successful! Redirecting to mentor dashboard...");
+    //       setMessageType("success");
+    //       setTimeout(() => {
+    //           navigate("/mentordashboard");
+    //       }, 2000);
+    //     } else {
+    //       setFeedbackMessage("❌ Wrong user ID or password. Please try again.");
+    //       setMessageType("error");
+    //     }
+    //   } catch (error) {
+    //     setFeedbackMessage("⚠️ Something went wrong. Please try again.");
+    //     setMessageType("error");
+    //   } finally {
+    //     setIsSubmitting(false);
+    //   }
+    // }
   }
 
   function handleOAuth(provider) {
@@ -222,8 +268,14 @@ export default function Login() {
       <div className="absolute inset-0 pointer-events-none">
         {/* Gradient Orbs */}
         <div className="absolute top-10 left-10 w-32 h-32 sm:w-48 sm:h-48 lg:w-64 lg:h-64 bg-emerald-500/10 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-10 right-10 w-48 h-48 sm:w-64 sm:h-64 lg:w-80 lg:h-80 bg-purple-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
-        <div className="absolute top-1/2 left-1/4 w-32 h-32 sm:w-48 sm:h-48 bg-cyan-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+        <div
+          className="absolute bottom-10 right-10 w-48 h-48 sm:w-64 sm:h-64 lg:w-80 lg:h-80 bg-purple-500/10 rounded-full blur-3xl animate-pulse"
+          style={{ animationDelay: "1s" }}
+        ></div>
+        <div
+          className="absolute top-1/2 left-1/4 w-32 h-32 sm:w-48 sm:h-48 bg-cyan-500/10 rounded-full blur-3xl animate-pulse"
+          style={{ animationDelay: "2s" }}
+        ></div>
 
         {/* Floating Particles */}
         {particles.map((particle) => (
@@ -237,7 +289,7 @@ export default function Login() {
               height: `${particle.size}px`,
               opacity: particle.opacity,
               animationDuration: `${particle.duration}s`,
-              animationDelay: `${particle.delay}s`
+              animationDelay: `${particle.delay}s`,
             }}
           />
         ))}
@@ -249,25 +301,36 @@ export default function Login() {
         <div className="hidden lg:flex min-h-screen items-center">
           {/* Left Hero Section - Desktop Only */}
           <div className="flex w-1/2 items-center justify-center px-4 xl:px-8">
-            <div className={`relative w-full h-[32rem] max-w-lg transition-all duration-700 ${
-              imageLoaded ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'
-            }`}>
+            <div
+              className={`relative w-full h-[32rem] max-w-lg transition-all duration-700 ${
+                imageLoaded
+                  ? "opacity-100 translate-x-0"
+                  : "opacity-0 -translate-x-10"
+              }`}
+            >
               {heroImages.map((img, index) => (
                 <div
                   key={img.id}
                   className={`absolute inset-0 transition-all duration-1000 ease-in-out ${
                     index === currentImageIndex
-                      ? 'opacity-100 scale-100 z-10'
-                      : 'opacity-0 scale-95 z-0'
+                      ? "opacity-100 scale-100 z-10"
+                      : "opacity-0 scale-95 z-0"
                   }`}
-                  style={{ pointerEvents: index === currentImageIndex ? 'auto' : 'none' }}
+                  style={{
+                    pointerEvents:
+                      index === currentImageIndex ? "auto" : "none",
+                  }}
                 >
                   <div className="w-full h-full rounded-3xl shadow-2xl border border-white/20 overflow-hidden relative group">
                     <img
                       src={img.image}
                       alt={img.title}
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                      style={{ minHeight: '100%', minWidth: '100%', display: 'block' }}
+                      style={{
+                        minHeight: "100%",
+                        minWidth: "100%",
+                        display: "block",
+                      }}
                     />
                     <div className="absolute inset-0 bg-black/20"></div>
 
@@ -282,13 +345,18 @@ export default function Login() {
                     {/* Content Overlay */}
                     <div className="absolute bottom-0 left-0 right-0 p-8 text-white">
                       <h3 className="text-3xl font-bold mb-3">{img.title}</h3>
-                      <p className="text-lg opacity-90 leading-relaxed">{img.subtitle}</p>
+                      <p className="text-lg opacity-90 leading-relaxed">
+                        {img.subtitle}
+                      </p>
                     </div>
 
                     {/* Floating Animation Elements */}
                     <div className="absolute top-6 right-6 w-3 h-3 bg-emerald-400/60 rounded-full animate-pulse"></div>
                     <div className="absolute top-20 right-12 w-2 h-2 bg-purple-400/60 rounded-full animate-ping"></div>
-                    <div className="absolute bottom-20 right-8 w-4 h-4 bg-cyan-400/40 rounded-full animate-bounce" style={{ animationDelay: '0.5s' }}></div>
+                    <div
+                      className="absolute bottom-20 right-8 w-4 h-4 bg-cyan-400/40 rounded-full animate-bounce"
+                      style={{ animationDelay: "0.5s" }}
+                    ></div>
                   </div>
                 </div>
               ))}
@@ -301,8 +369,8 @@ export default function Login() {
                     onClick={() => setCurrentImageIndex(index)}
                     className={`w-3 h-3 rounded-full transition-all duration-300 ${
                       index === currentImageIndex
-                        ? 'bg-emerald-400 shadow-lg scale-125'
-                        : 'bg-white/40 hover:bg-white/60 hover:scale-110'
+                        ? "bg-emerald-400 shadow-lg scale-125"
+                        : "bg-white/40 hover:bg-white/60 hover:scale-110"
                     }`}
                   />
                 ))}
@@ -344,7 +412,8 @@ export default function Login() {
 
       <style jsx>{`
         @keyframes float {
-          0%, 100% {
+          0%,
+          100% {
             transform: translateY(0px) rotate(0deg);
           }
           25% {
@@ -402,18 +471,23 @@ function LoginForm({
   isSubmitting,
   handleChange,
   handleSubmit,
-  handleOAuth
+  handleOAuth,
 }) {
   return (
-    <div className={`bg-slate-800/30 backdrop-blur-xl rounded-3xl shadow-2xl p-6 sm:p-8 lg:p-10 w-full max-w-lg xl:max-w-2xl border border-slate-700/50 transition-all duration-700 ${
-      isVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-8 scale-95'
-    } hover:border-emerald-500/30 hover:shadow-emerald-500/10`}>
-
+    <div
+      className={`bg-slate-800/30 backdrop-blur-xl rounded-3xl shadow-2xl p-6 sm:p-8 lg:p-10 w-full max-w-lg xl:max-w-2xl border border-slate-700/50 transition-all duration-700 ${
+        isVisible
+          ? "opacity-100 translate-y-0 scale-100"
+          : "opacity-0 translate-y-8 scale-95"
+      } hover:border-emerald-500/30 hover:shadow-emerald-500/10`}
+    >
       {/* Header */}
       <div className="text-center mb-6 lg:mb-8 space-y-3 lg:space-y-4">
         <div className="inline-flex items-center gap-2 lg:gap-3 px-3 lg:px-4 py-2 bg-emerald-500/10 rounded-full border border-emerald-500/20 mb-3 lg:mb-4">
           <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
-          <span className="text-emerald-300 text-xs lg:text-sm font-medium">Welcome Back</span>
+          <span className="text-emerald-300 text-xs lg:text-sm font-medium">
+            Welcome Back
+          </span>
         </div>
 
         {/* Logo with Code Icon */}
@@ -430,7 +504,9 @@ function LoginForm({
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-white via-emerald-200 to-cyan-300 bg-clip-text text-transparent">
               HelpMeMake
             </h1>
-            <p className="text-xs lg:text-sm text-slate-400">Code. Learn. Grow.</p>
+            <p className="text-xs lg:text-sm text-slate-400">
+              Code. Learn. Grow.
+            </p>
           </div>
         </div>
 
@@ -463,16 +539,22 @@ function LoginForm({
 
       {/* Feedback Message */}
       {feedbackMessage && (
-        <div className={`mb-4 lg:mb-6 p-3 lg:p-4 rounded-xl border backdrop-blur-sm transition-all duration-500 ${
-          messageType === 'success'
-            ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300'
-            : 'bg-red-500/10 border-red-500/30 text-red-300'
-        }`}>
+        <div
+          className={`mb-4 lg:mb-6 p-3 lg:p-4 rounded-xl border backdrop-blur-sm transition-all duration-500 ${
+            messageType === "success"
+              ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-300"
+              : "bg-red-500/10 border-red-500/30 text-red-300"
+          }`}
+        >
           <div className="flex items-center gap-2 lg:gap-3">
-            <div className={`w-2 h-2 rounded-full ${
-              messageType === 'success' ? 'bg-emerald-400' : 'bg-red-400'
-            } animate-pulse`}></div>
-            <span className="font-medium text-sm lg:text-base">{feedbackMessage}</span>
+            <div
+              className={`w-2 h-2 rounded-full ${
+                messageType === "success" ? "bg-emerald-400" : "bg-red-400"
+              } animate-pulse`}
+            ></div>
+            <span className="font-medium text-sm lg:text-base">
+              {feedbackMessage}
+            </span>
           </div>
         </div>
       )}
@@ -507,7 +589,9 @@ function LoginForm({
                 type="checkbox"
                 className="w-4 h-4 rounded border-2 border-slate-600 bg-slate-800/50 checked:bg-emerald-500 checked:border-emerald-500 focus:ring-2 focus:ring-emerald-500 focus:ring-offset-0 transition-all duration-200"
               />
-              <span className="text-slate-300 group-hover:text-slate-200 transition-colors duration-200">Remember me</span>
+              <span className="text-slate-300 group-hover:text-slate-200 transition-colors duration-200">
+                Remember me
+              </span>
             </label>
             <button className="text-emerald-400 hover:text-emerald-300 transition-colors duration-200 hover:underline text-left sm:text-right">
               Forgot password?
@@ -541,7 +625,9 @@ function LoginForm({
       {/* Divider */}
       <div className="flex items-center my-4 lg:my-6">
         <div className="flex-1 border-t border-slate-700/50"></div>
-        <span className="px-3 lg:px-4 text-slate-400 text-xs lg:text-sm font-medium">or continue with</span>
+        <span className="px-3 lg:px-4 text-slate-400 text-xs lg:text-sm font-medium">
+          or continue with
+        </span>
         <div className="flex-1 border-t border-slate-700/50"></div>
       </div>
 
@@ -571,7 +657,10 @@ function LoginForm({
       <div className="text-center pt-3 lg:pt-4 border-t border-slate-700/50">
         <p className="text-slate-400 text-sm lg:text-base">
           New to HelpMeMake?{" "}
-          <a href='/signup' className="text-emerald-400 hover:text-emerald-300 font-semibold transition-all duration-300 hover:underline inline-flex items-center gap-1">
+          <a
+            href="/signup"
+            className="text-emerald-400 hover:text-emerald-300 font-semibold transition-all duration-300 hover:underline inline-flex items-center gap-1"
+          >
             Join the community
             <ChevronRight className="w-3 h-3 lg:w-4 lg:h-4" />
           </a>
