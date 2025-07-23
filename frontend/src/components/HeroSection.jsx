@@ -1,7 +1,19 @@
-import heroImage from '../assets/heroImage.png';
-
-import React, { useState, useEffect } from 'react';
-import { ChevronRight, Users, Code, Video, Shield, Star, ArrowRight, Menu, X, Sparkles, Zap } from 'lucide-react';
+import heroImage from "../assets/heroImage.png";
+import { useState,useEffect } from "react";
+import { Link } from "react-router-dom";
+import {
+  ChevronRight,
+  Users,
+  Code,
+  Video,
+  Shield,
+  Star,
+  ArrowRight,
+  Menu,
+  X,
+  Sparkles,
+  Zap,
+} from "lucide-react";
 
 const NUM_SPARKLES = 20;
 
@@ -18,18 +30,20 @@ const HeroSection = () => {
         left: `${Math.random() * 100}%`,
         top: `${Math.random() * 100}%`,
         duration: 3 + Math.random() * 4,
-        delay: Math.random() * 2
+        delay: Math.random() * 2,
       }))
     );
+
+   
     const handleMouseMove = (e) => {
       setMousePosition({
         x: (e.clientX / window.innerWidth) * 100,
-        y: (e.clientY / window.innerHeight) * 100
+        y: (e.clientY / window.innerHeight) * 100,
       });
     };
 
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => window.removeEventListener("mousemove", handleMouseMove);
   }, []);
 
   return (
@@ -44,7 +58,7 @@ const HeroSection = () => {
               rgba(139, 92, 246, 0.3) 0%,
               rgba(59, 130, 246, 0.2) 30%,
               rgba(16, 185, 129, 0.1) 60%,
-              transparent 100%)`
+              transparent 100%)`,
           }}
         />
 
@@ -58,7 +72,7 @@ const HeroSection = () => {
                 left: sparkle.left,
                 top: sparkle.top,
                 animation: `float ${sparkle.duration}s ease-in-out infinite`,
-                animationDelay: `${sparkle.delay}s`
+                animationDelay: `${sparkle.delay}s`,
               }}
             />
           ))}
@@ -73,7 +87,11 @@ const HeroSection = () => {
 
       {/* Enhanced Mountain Landscape - Full Width */}
       <div className="absolute bottom-0 left-0 right-0 w-full">
-        <svg viewBox="0 0 1440 400" className="w-full h-80 md:h-96" preserveAspectRatio="none">
+        <svg
+          viewBox="0 0 1440 400"
+          className="w-full h-80 md:h-96"
+          preserveAspectRatio="none"
+        >
           {/* Animated Mountain Layers */}
           <path
             d="M0,400 L0,180 Q200,120 400,150 Q600,100 800,130 Q1000,80 1200,110 Q1300,90 1440,100 L1440,400 Z"
@@ -126,7 +144,13 @@ const HeroSection = () => {
         <div className="max-w-7xl mx-auto">
           <div className="lg:grid lg:grid-cols-2 lg:gap-16 items-center">
             {/* Left Column - Enhanced Text */}
-            <div className={`text-center lg:text-left transform transition-all duration-1000 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
+            <div
+              className={`text-center lg:text-left transform transition-all duration-1000 ${
+                isLoaded
+                  ? "translate-y-0 opacity-100"
+                  : "translate-y-10 opacity-0"
+              }`}
+            >
               <div className="mb-6">
                 <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-gradient-to-r from-emerald-500/20 to-blue-500/20 text-emerald-300 border border-emerald-500/30 backdrop-blur-sm">
                   <Sparkles className="w-4 h-4 mr-2" />
@@ -145,18 +169,26 @@ const HeroSection = () => {
               </h1>
 
               <p className="text-xl md:text-2xl text-white/90 mb-10 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
-                Connect with <span className="text-emerald-400 font-semibold">vetted mentors</span> to learn tech stacks, build your portfolio, or understand complex components—safely and effectively.
+                Connect with{" "}
+                <span className="text-emerald-400 font-semibold">
+                  vetted mentors
+                </span>{" "}
+                to learn tech stacks, build your portfolio, or understand
+                complex components—safely and effectively.
               </p>
 
               {/* Enhanced CTA Buttons */}
               <div className="flex flex-col sm:flex-row gap-6 justify-center lg:justify-start">
-                <button className="group relative bg-gradient-to-r from-emerald-500 to-blue-500 text-white px-10 py-5 rounded-full font-semibold hover:from-emerald-600 hover:to-blue-600 transition-all duration-300 transform hover:scale-105 hover:shadow-2xl flex items-center justify-center overflow-hidden">
+                <Link to='/signup'>
+                <button   className="group relative bg-gradient-to-r from-emerald-500 to-blue-500 text-white px-10 py-5 rounded-full font-semibold
+                 hover:from-emerald-600 hover:to-blue-600 transition-all duration-300 transform hover:scale-105 hover:shadow-2xl flex items-center
+                  justify-center overflow-hidden">
                   <div className="absolute inset-0 bg-gradient-to-r from-emerald-400 to-blue-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   <span className="relative z-10 flex items-center">
                     Get Started Free
                     <ArrowRight className="ml-3 w-5 h-5 group-hover:translate-x-1 transition-transform" />
                   </span>
-                </button>
+                </button></Link>
 
                 <button className="group border-2 border-white/30 text-white px-10 py-5 rounded-full font-semibold hover:bg-white/10 hover:border-white/50 transition-all duration-300 flex items-center justify-center backdrop-blur-sm">
                   <Video className="mr-3 w-5 h-5 group-hover:scale-110 transition-transform" />
@@ -171,7 +203,9 @@ const HeroSection = () => {
                   <div className="text-sm text-white/70">Expert Mentors</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-3xl font-bold text-white mb-1">1.2k+</div>
+                  <div className="text-3xl font-bold text-white mb-1">
+                    1.2k+
+                  </div>
                   <div className="text-sm text-white/70">Success Stories</div>
                 </div>
                 <div className="text-center">
@@ -182,7 +216,13 @@ const HeroSection = () => {
             </div>
 
             {/* Right Column - Enhanced Hero Image */}
-            <div className={`mt-16 lg:mt-0 relative transform transition-all duration-1000 delay-500 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
+            <div
+              className={`mt-16 lg:mt-0 relative transform transition-all duration-1000 delay-500 ${
+                isLoaded
+                  ? "translate-y-0 opacity-100"
+                  : "translate-y-10 opacity-0"
+              }`}
+            >
               {/* Main Hero Image Container */}
               <div className="relative bg-gradient-to-r from-white/10 to-white/5 backdrop-blur-xl rounded-3xl p-8 border border-white/20 shadow-2xl">
                 {/* Hero Image */}
@@ -192,15 +232,17 @@ const HeroSection = () => {
                     alt="Mentorship Platform"
                     className="w-full h-64 object-cover rounded-2xl hover:scale-110 transition-transform duration-300"
                     onError={(e) => {
-                      e.target.style.display = 'none';
-                      e.target.nextSibling.style.display = 'block';
+                      e.target.style.display = "none";
+                      e.target.nextSibling.style.display = "block";
                     }}
                   />
                   {/* Fallback if image doesn't load */}
                   <div className="hidden w-full h-64 bg-gradient-to-br from-indigo-500 via-purple-500 to-blue-500  rounded-2xl items-center justify-center">
                     <div className="text-center text-white">
                       <Users className="w-16 h-16 mx-auto mb-4 opacity-80" />
-                      <p className="text-lg font-semibold text-center">Connect & Learn</p>
+                      <p className="text-lg font-semibold text-center">
+                        Connect & Learn
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -215,7 +257,9 @@ const HeroSection = () => {
                     </div>
                     <div className="flex items-center space-x-2">
                       <Zap className="w-5 h-5 text-yellow-400" />
-                      <span className="text-sm text-white/80">Live Session</span>
+                      <span className="text-sm text-white/80">
+                        Live Session
+                      </span>
                     </div>
                   </div>
 
@@ -232,11 +276,15 @@ const HeroSection = () => {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-2">
                       <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                      <span className="text-sm text-white/80">12 mentors online</span>
+                      <span className="text-sm text-white/80">
+                        12 mentors online
+                      </span>
                     </div>
                     <div className="flex items-center space-x-2">
                       <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
-                      <span className="text-sm text-white/80">Active sessions</span>
+                      <span className="text-sm text-white/80">
+                        Active sessions
+                      </span>
                     </div>
                   </div>
                 </div>
