@@ -25,17 +25,30 @@ const generateOTP = () => {
 };
 
 // Send OTP email
-const sendOTPEmail = async (email, otp, name = 'User') => {
+const sendOTPEmail = async (email, otp, name = 'User', type = 'verification') => {
   try {
+    const isPasswordReset = type === 'reset';
+    const subject = isPasswordReset 
+      ? 'Reset Your HelpMeMake Password - OTP Code'
+      : 'Verify Your HelpMeMake Account - OTP Code';
+    
+    const title = isPasswordReset 
+      ? '🔐 Password Reset Request'
+      : '🚀 Welcome to HelpMeMake!';
+    
+    const message = isPasswordReset
+      ? 'We received a request to reset your password. Please use the following code to reset your password:'
+      : 'Thank you for joining our community! Please verify your email address by entering the following 6-digit code:';
+
     const mailOptions = {
       from: process.env.EMAIL_FROM,
       to: email,
-      subject: 'Verify Your HelpMeMake Account - OTP Code',
+      subject: subject,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f8fafc;">
           <div style="background: linear-gradient(135deg, #0f172a 0%, #7c3aed 100%); padding: 30px; border-radius: 20px; text-align: center; margin-bottom: 30px;">
             <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: bold;">
-              🚀 Welcome to HelpMeMake!
+              ${title}
             </h1>
             <p style="color: #e2e8f0; margin: 10px 0 0 0; font-size: 16px;">
               Code. Learn. Grow.
@@ -48,12 +61,12 @@ const sendOTPEmail = async (email, otp, name = 'User') => {
             </h2>
             
             <p style="color: #475569; font-size: 16px; line-height: 1.6; margin-bottom: 30px;">
-              Thank you for joining our community! Please verify your email address by entering the following 6-digit code:
+              ${message}
             </p>
             
             <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 25px; border-radius: 15px; text-align: center; margin: 30px 0;">
               <p style="color: #ffffff; margin: 0 0 10px 0; font-size: 14px; font-weight: 500;">
-                Your Verification Code
+                Your ${isPasswordReset ? 'Password Reset' : 'Verification'} Code
               </p>
               <h1 style="color: #ffffff; margin: 0; font-size: 36px; font-weight: bold; letter-spacing: 8px; font-family: 'Courier New', monospace;">
                 ${otp}
@@ -67,7 +80,10 @@ const sendOTPEmail = async (email, otp, name = 'User') => {
             </div>
             
             <p style="color: #64748b; font-size: 14px; line-height: 1.5; margin-bottom: 0;">
-              If you did not create an account with HelpMeMake, please ignore this email. This verification code will expire automatically.
+              ${isPasswordReset 
+                ? 'If you did not request a password reset, please ignore this email. Your password will remain unchanged.'
+                : 'If you did not create an account with HelpMeMake, please ignore this email. This verification code will expire automatically.'
+              }
             </p>
           </div>
           
@@ -89,12 +105,12 @@ const sendOTPEmail = async (email, otp, name = 'User') => {
     };
 
     const info = await transporter.sendMail(mailOptions);
-    console.log('OTP email sent successfully:', info.messageId);
+    console.log(`${type} email sent successfully:`, info.messageId);
     return { success: true, messageId: info.messageId };
 
   } catch (error) {
-    console.error('Failed to send OTP email:', error);
-    throw new Error('Failed to send verification email');
+    console.error(`Failed to send ${type} email:`, error);
+    throw new Error(`Failed to send ${type === 'reset' ? 'password reset' : 'verification'} email`);
   }
 };
 
