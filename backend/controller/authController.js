@@ -377,7 +377,14 @@ const authController = {
         });
       }
 
-
+      // Check if account is active (OTP verified)
+      if (!user.isAccountActive) {
+        return res.status(401).json({
+          success: false,
+          message: 'Please verify your email first. Check your inbox for the verification code.',
+          requiresVerification: true
+        });
+      }
 
       // Verify password
       const isValidPassword = await bcrypt.compare(password, user.password);
