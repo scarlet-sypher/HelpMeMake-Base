@@ -16,10 +16,20 @@ router.get('/google',
 );
 
 router.get('/google/callback',
-  passport.authenticate('google', { 
-    session: false,
-    failureRedirect: `${process.env.UI_URL}/login?error=google_auth_failed`
-  }),
+  (req, res, next) => {
+    passport.authenticate('google', {
+      session: false,
+      failureRedirect: `${process.env.UI_URL}/login?error=google_auth_failed`
+    })(req, res, (err) => {
+      if (err) {
+        if (err.message === 'USER_EXISTS') {
+          return res.redirect(`${process.env.UI_URL}/user-exists`);
+        }
+        return res.redirect(`${process.env.UI_URL}/login?error=google_auth_failed`);
+      }
+      next();
+    });
+  },
   authController.googleCallback
 );
 
@@ -32,10 +42,20 @@ router.get('/github',
 );
 
 router.get('/github/callback',
-  passport.authenticate('github', {
-    session: false,
-    failureRedirect: `${process.env.UI_URL}/login?error=github_auth_failed`
-  }),
+  (req, res, next) => {
+    passport.authenticate('github', {
+      session: false,
+      failureRedirect: `${process.env.UI_URL}/login?error=github_auth_failed`
+    })(req, res, (err) => {
+      if (err) {
+        if (err.message === 'USER_EXISTS') {
+          return res.redirect(`${process.env.UI_URL}/user-exists`);
+        }
+        return res.redirect(`${process.env.UI_URL}/login?error=github_auth_failed`);
+      }
+      next();
+    });
+  },
   authController.githubCallback
 );
 
