@@ -8,10 +8,11 @@ import Signup from './pages/auth/Signup';
 import MentorDashboard from './pages/mentordash/MentorDashboard';
 import UserDashboard from './pages/user/UserDashboard';
 import AdminDashboard from './pages/admin/AdminDashboard';
-
-import './index.css';
 import SelectRole from './pages/auth/SelectRole';
 import VerifyOTP from './components/auth/VerifyOTP';
+import ProtectedRoute from './components/ProtectedRoute'; // Add this import
+
+import './index.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
@@ -20,11 +21,32 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <Route path="/" element={<App />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
-        <Route path="/userdashboard" element={<UserDashboard />} />
-        <Route path="/mentordashboard" element={<MentorDashboard />} />
-        <Route path="/admindashboard" element={<AdminDashboard />} />
-        <Route path="/select-role" element={<SelectRole />} />
-        <Route path="/verify-otp" element={<VerifyOTP/>} />
+        <Route path="/verify-otp" element={<VerifyOTP />} />
+        
+        {/* Protected Routes */}
+        <Route path="/userdashboard" element={
+          <ProtectedRoute requiredRole="user">
+            <UserDashboard />
+          </ProtectedRoute>
+        } />
+        
+        <Route path="/mentordashboard" element={
+          <ProtectedRoute requiredRole="mentor">
+            <MentorDashboard />
+          </ProtectedRoute>
+        } />
+        
+        <Route path="/admindashboard" element={
+          <ProtectedRoute requiredRole="admin">
+            <AdminDashboard />
+          </ProtectedRoute>
+        } />
+        
+        <Route path="/select-role" element={
+          <ProtectedRoute>
+            <SelectRole />
+          </ProtectedRoute>
+        } />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>
