@@ -152,6 +152,8 @@ const PasswordField = ({
   );
 };
 
+
+
 export default function Signup() {
   const [form, setForm] = useState({ 
     email: "", 
@@ -200,6 +202,31 @@ export default function Signup() {
   const hideToast = () => {
     setToast({ ...toast, isVisible: false });
   };
+
+  
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const error = urlParams.get('error');
+    
+    if (error) {
+      switch (error) {
+        case 'authentication_failed':
+          showToast("Authentication failed. Please try again.", "error");
+          break;
+        case 'google_auth_failed':
+          showToast("Google authentication failed. Please try again.", "error");
+          break;
+        case 'server_error':
+          showToast("Server error occurred. Please try again later.", "error");
+          break;
+        default:
+          showToast("An error occurred during authentication.", "error");
+      }
+      
+      // Clean up URL
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }, []);
 
   function handleChange(e) {
     const { name, value, type, checked } = e.target;
@@ -260,39 +287,47 @@ export default function Signup() {
     setIsSubmitting(true);
 
     try {
-      // Simulate API call delay
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      
-      const response = await axios.post("http://localhost:3000/signup", {
-        email: form.email,
-        password: form.password,
+      const response = await fetch("http://localhost:8000/auth/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include", // Important for CORS with cookies
+        body: JSON.stringify({
+          email: form.email,
+          password: form.password,
+        }),
       });
 
-      showToast("🎉 Account created successfully! Welcome to HelpMeMake!", "success");
-      
-      // Navigate to login or dashboard after a short delay
-      setTimeout(() => {
-        navigate("/login");
-      }, 2000);
+      const data = await response.json();
+
+      if (response.ok) {
+        showToast("🎉 Account created successfully! Welcome to HelpMeMake!", "success");
+        
+        // Navigate to login page after successful signup
+        setTimeout(() => {
+          navigate("/login");
+        }, 2000);
+      } else {
+        showToast(data.message || "Failed to create account", "error");
+      }
 
     } catch (error) {
       console.error("Signup error:", error);
-      if (error.response?.data?.message) {
-        showToast(error.response.data.message, "error");
-      } else {
-        showToast("Something went wrong. Please try again.", "error");
-      }
+      showToast("Something went wrong. Please try again.", "error");
     } finally {
       setIsSubmitting(false);
     }
   }
 
   function handleOAuth(provider) {
-    showToast(`🔄 Redirecting to ${provider}...`, "warning");
-    // Add your OAuth logic here
-    setTimeout(() => {
-      hideToast();
-    }, 2000);
+    if (provider === "Google") {
+      // Redirect to backend Google OAuth route
+      window.location.href = "http://localhost:8000/auth/google";
+    } else if (provider === "GitHub") {
+      // You can implement GitHub OAuth later if needed
+      showToast("GitHub OAuth coming soon!", "warning");
+    }
   }
 
   return (
