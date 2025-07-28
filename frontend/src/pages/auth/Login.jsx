@@ -1,13 +1,5 @@
 import { useState, useEffect } from "react";
-import {
-  ChevronRight,
-  Code,
-  Users,
-  Zap,
-  Shield,
-  Eye,
-  EyeOff,
-} from "lucide-react";
+import { ChevronRight,Code, Users, Zap,Shield,Eye,EyeOff} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import baka from "../../assets/LoginImages/baka.jpg";
