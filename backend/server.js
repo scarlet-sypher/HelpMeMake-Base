@@ -4,7 +4,8 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const passport = require('./config/passport');
-const db = require("./connection/conn")
+const db = require("./connection/conn") ;
+const userRoutes = require('./routes/userRoute');
 
 
 const authRoutes = require('./routes/authRoute');
@@ -34,6 +35,7 @@ app.use(passport.initialize());
 // Routes
 app.use('/auth', authRoutes);
 
+app.use('/user', userRoutes);
 
 
 app.get('/health', (req, res) => {
