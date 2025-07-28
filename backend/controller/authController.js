@@ -54,6 +54,33 @@ const authController = {
     }
   },
 
+  githubCallback: async (req, res) => {
+    try {
+      const user = req.user;
+      
+      if (!user) {
+        return res.redirect(`${process.env.UI_URL}/login?error=authentication_failed`);
+      }
+
+      const token = generateToken(user._id);
+      setTokenCookie(res, token);
+
+      if (!user.role) {
+        return res.redirect(`${process.env.UI_URL}/select-role`);
+      }
+
+      const dashboardUrl = user.role === 'mentor' 
+        ? `${process.env.UI_URL}/mentor/dashboard`
+        : `${process.env.UI_URL}/user/dashboard`;
+      
+      return res.redirect(dashboardUrl);
+
+    } catch (error) {
+      console.error('GitHub callback error:', error);
+      return res.redirect(`${process.env.UI_URL}/login?error=server_error`);
+    }
+  },
+
  
   getUser: async (req, res) => {
     try {
