@@ -15,8 +15,7 @@ const heroImages = [
   {
     id: 1,
     title: "Mentorship",
-    subtitle:
-      "Connect with industry experts and accelerate your learning journey",
+    subtitle:"Connect with industry experts and accelerate your learning journey",
     image: baka,
   },
   {
@@ -189,28 +188,59 @@ export default function Login() {
     setMessageType("");
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      const response = await axios.post("http://localhost:3000/login", form);
-      alert("🎉 Welcome aboard! Your HelpMeMake journey begins now!");
+      const response = await fetch("http://localhost:8000/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({
+          email: form.username, // Your form uses 'username' but send as 'email'
+          password: form.password,
+        }),
+      });
 
-      const user = response.data.user;
-      console.log(user.data);
+      const data = await response.json();
 
-      console.log("User from server:", user);
+      if (response.ok) {
+        setFeedbackMessage("🎉 Login successful! Redirecting...");
+        setMessageType("success");
 
-      if (user.role === "admin") {
-        navigate("/admindashboard");
-      } else if (user.role === "mentor") {
-        navigate("/mentordashboard");
+        setTimeout(() => {
+          if (data.requiresRoleSelection) {
+            navigate("/select-role");
+          } else {
+            // Navigate based on user role
+            const dashboardMap = {
+              admin: "/admindashboard",
+              mentor: "/mentordashboard",
+              user: "/userdashboard"
+            };
+            navigate(dashboardMap[data.user.role] || "/userdashboard");
+          }
+        }, 2000);
+
       } else {
-        navigate("/userdashboard");
+        if (data.requiresVerification) {
+          setFeedbackMessage("📧 Please verify your email first. Check your inbox.");
+          setMessageType("error");
+          setTimeout(() => {
+            navigate(`/verify-otp?email=${encodeURIComponent(form.username)}`);
+          }, 3000);
+        } else {
+          setFeedbackMessage(data.message || "❌ Login failed. Please try again.");
+          setMessageType("error");
+        }
       }
+
     } catch (error) {
-      console.log(error);
-      alert("Oops! Something went wrong. Please try again.");
+      console.error("Login error:", error);
+      setFeedbackMessage("⚠️ Something went wrong. Please try again.");
+      setMessageType("error");
     } finally {
       setIsSubmitting(false);
     }
+
     console.log(form);
 
     //   try{

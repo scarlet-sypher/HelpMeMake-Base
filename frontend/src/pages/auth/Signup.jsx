@@ -292,22 +292,30 @@ export default function Signup() {
         headers: {
           "Content-Type": "application/json",
         },
-        credentials: "include", // Important for CORS with cookies
+        credentials: "include",
         body: JSON.stringify({
           email: form.email,
           password: form.password,
+          name: form.name || form.email.split('@')[0] // Extract name from email if not provided
         }),
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        showToast("🎉 Account created successfully! Welcome to HelpMeMake!", "success");
-        
-        // Navigate to login page after successful signup
-        setTimeout(() => {
-          navigate("/login");
-        }, 2000);
+        if (data.requiresVerification) {
+          showToast("📧 Verification code sent! Check your email.", "success");
+          
+          // Navigate to OTP verification page
+          setTimeout(() => {
+            navigate(`/verify-otp?email=${encodeURIComponent(form.email)}`);
+          }, 2000);
+        } else {
+          showToast("🎉 Account created successfully!", "success");
+          setTimeout(() => {
+            navigate("/login");
+          }, 2000);
+        }
       } else {
         showToast(data.message || "Failed to create account", "error");
       }
