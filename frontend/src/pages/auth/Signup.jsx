@@ -325,8 +325,8 @@ export default function Signup() {
       // Redirect to backend Google OAuth route
       window.location.href = "http://localhost:8000/auth/google";
     } else if (provider === "GitHub") {
-      // You can implement GitHub OAuth later if needed
-      showToast("GitHub OAuth coming soon!", "warning");
+    
+      window.location.href = "http://localhost:8000/auth/github";
     }
   }
 
