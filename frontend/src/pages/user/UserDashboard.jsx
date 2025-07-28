@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState , useEffect } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import StatCard from '../../components/user/StatCard';
 import SessionCard from '../../components/user/SessionCard';
@@ -11,7 +11,7 @@ import Sidebar from '../../components/user/Sidebar';
 
 
 import { importAllUserImages } from '../../utils/importAllUserImages';
-const user = importAllUserImages();
+const userImg = importAllUserImages();
 
 import { 
   Calendar, 
@@ -74,7 +74,7 @@ const UserDashboard = () => {
     {
       id: 1,
       mentorName: 'Dracule Mihawk',
-      mentorImage: user['mihawk.jpg'],
+      mentorImage: userImg['mihawk.jpg'],
       sessionTitle: 'Advanced Sword Techniques',
       date: 'Today',
       time: '3:00 PM',
@@ -85,7 +85,7 @@ const UserDashboard = () => {
     {
       id: 2,
       mentorName: 'Nico Robin',
-      mentorImage: user['robin.jpg'],
+      mentorImage: userImg['robin.jpg'],
       sessionTitle: 'Ancient History Research',
       date: 'Tomorrow',
       time: '10:00 AM',
@@ -96,7 +96,7 @@ const UserDashboard = () => {
     {
       id: 3,
       mentorName: 'Silvers Rayleigh',
-      mentorImage: user['Rayleigh.jpg'],
+      mentorImage: userImg['Rayleigh.jpg'],
       sessionTitle: 'Haki Training Fundamentals',
       date: 'Dec 22',
       time: '2:00 PM',
@@ -110,7 +110,7 @@ const UserDashboard = () => {
     {
       id: 1,
       senderName: 'Boa Hancock',
-      senderImage: user['hancock.jpg'],
+      senderImage: userImg['hancock.jpg'],
       message: 'Great progress on your project! The design looks amazing.',
       timestamp: '2 mins ago',
       isOnline: true,
@@ -120,7 +120,7 @@ const UserDashboard = () => {
     {
       id: 2,
       senderName: 'Marco the Phoenix',
-      senderImage: user['marco.jpg'],
+      senderImage: userImg['marco.jpg'],
       message: 'Ready for tomorrow\'s healing techniques session?',
       timestamp: '1 hour ago',
       isOnline: false,
@@ -130,7 +130,7 @@ const UserDashboard = () => {
     {
       id: 3,
       senderName: 'Portgas D. Ace',
-      senderImage: user['ace.jpg'],
+      senderImage: userImg['ace.jpg'],
       message: 'Don\'t forget to bring your fire safety equipment!',
       timestamp: '3 hours ago',
       isOnline: true,
@@ -200,7 +200,7 @@ const UserDashboard = () => {
     name: "Monkey D. Luffy",
     title: "Future Pirate King",
     description: "Ready to conquer the Grand Line with knowledge and determination!",
-    profileImage: user['luffy.jpg'],
+    profileImage: userImg['luffy.jpg'],
     isOnline: true,
     level: 47,
     xp: 8750,
