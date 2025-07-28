@@ -24,6 +24,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <Route path="/signup" element={<Signup />} />
         <Route path="/verify-otp" element={<VerifyOTP />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/select-role" element={<SelectRole />} />
         
         {/* Protected Routes */}
         <Route path="/userdashboard" element={
@@ -44,11 +45,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           </ProtectedRoute>
         } />
         
-        <Route path="/select-role" element={
-          <ProtectedRoute>
-            <SelectRole />
-          </ProtectedRoute>
-        } />
+        
       </Routes>
     </BrowserRouter>
   </React.StrictMode>

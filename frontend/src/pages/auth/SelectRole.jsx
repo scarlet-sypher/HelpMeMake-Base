@@ -38,6 +38,8 @@ const SelectRole = () => {
         }
       } catch (error) {
         console.error("Error fetching user info:", error);
+        console.error("Response status:", error.response?.status);
+        console.error("Response data:", error.response?.data);
         navigate("/login", { replace: true });
       } finally {
         setIsLoading(false);
