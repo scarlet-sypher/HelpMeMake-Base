@@ -3,13 +3,19 @@ const User = require('../../Model/User');
 
 
 const cookieExtractor = (req) => {
-
   let token = null;
   if (req && req.cookies && req.cookies.access_token) {
     token = req.cookies.access_token;
   }
   
 
+  if (!token && req.headers.authorization) {
+    const authHeader = req.headers.authorization;
+    if (authHeader.startsWith('Bearer ')) {
+      token = authHeader.substring(7);
+    }
+  }
+  return token;
 };
 
 const jwtStrategy = new JwtStrategy({
@@ -17,16 +23,17 @@ const jwtStrategy = new JwtStrategy({
   secretOrKey: process.env.JWT_SECRET,
   passReqToCallback: true
 }, async (req, payload, done) => {
+
   try {
-
-
+   
     const user = await User.findById(payload.userId).select('-password');
     
     if (!user) {
       return done(null, false, { message: 'User not found' });
     }
 
-
+    
+    return done(null, user);
 
   } catch (error) {
     console.error('JWT Strategy Error:', error);
