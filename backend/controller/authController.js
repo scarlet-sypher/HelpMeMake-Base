@@ -445,6 +445,121 @@ const authController = {
         message: 'Logout failed'
       });
     }
+  },
+
+  forgotPassword: async (req, res) => {
+    try {
+      const { email } = req.body;
+
+      if (!email) {
+        return res.status(400).json({
+          success: false,
+          message: 'Email is required'
+        });
+      }
+
+      // Find user by email
+      const user = await User.findOne({ 
+        email, 
+        isAccountActive: true 
+      });
+
+      if (!user) {
+        return res.status(404).json({
+          success: false,
+          message: 'No account found with this email address'
+        });
+      }
+
+      // Only allow password reset for local auth users
+      if (user.authProvider !== 'local') {
+        return res.status(400).json({
+          success: false,
+          message: `This account was created using ${user.authProvider}. Please use ${user.authProvider} to sign in.`
+        });
+      }
+
+      // Generate OTP for password reset
+      const otp = generateOTP();
+      const otpExpires = new Date(Date.now() + (parseInt(process.env.OTP_EXPIRES_IN) || 10) * 60 * 1000);
+
+      user.otp = otp;
+      user.otpExpires = otpExpires;
+      await user.save();
+
+      // Send OTP email
+      await sendOTPEmail(email, otp, user.name, 'reset');
+
+      res.json({
+        success: true,
+        message: 'Password reset code sent to your email.'
+      });
+
+    } catch (error) {
+      console.error('Forgot password error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to send password reset code'
+      });
+    }
+  },
+
+  resetPassword: async (req, res) => {
+    try {
+      const { email, otp, newPassword } = req.body;
+
+      if (!email || !otp || !newPassword) {
+        return res.status(400).json({
+          success: false,
+          message: 'Email, OTP, and new password are required'
+        });
+      }
+
+      if (newPassword.length < 8) {
+        return res.status(400).json({
+          success: false,
+          message: 'Password must be at least 8 characters long'
+        });
+      }
+
+      // Find user with matching email and OTP
+      const user = await User.findOne({
+        email,
+        otp,
+        otpExpires: { $gt: new Date() },
+        isAccountActive: true,
+        authProvider: 'local'
+      });
+
+      if (!user) {
+        return res.status(400).json({
+          success: false,
+          message: 'Invalid or expired OTP'
+        });
+      }
+
+      // Hash new password
+      const saltRounds = 12;
+      const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
+
+      // Update password and clear OTP
+      user.password = hashedPassword;
+      user.otp = null;
+      user.otpExpires = null;
+      await user.save();
+
+      res.json({
+        success: true,
+        message: 'Password reset successfully! You can now login with your new password.'
+      });
+
+    } catch (error) {
+      console.error('Reset password error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to reset password'
+      });
+    }
   }
 };
 
