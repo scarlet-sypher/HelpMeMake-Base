@@ -27,7 +27,7 @@ const SelectRole = () => {
           
           // If user already has a role, redirect them
           if (data.user.role) {
-            const dashboardUrl = data.user.role === 'mentor' ? '/mentor/dashboard' : '/user/dashboard';
+            const dashboardUrl = data.user.role === 'mentor' ? '/mentordashboard' : '/userdashboard';
             navigate(dashboardUrl, { replace: true });
             return;
           }
@@ -66,7 +66,7 @@ const SelectRole = () => {
 
       if (response.ok) {
         // Success! Redirect to appropriate dashboard
-        const dashboardUrl = selectedRole === 'mentor' ? '/mentor/dashboard' : '/user/dashboard';
+        const dashboardUrl = selectedRole === 'mentor' ? '/mentordashboard' : '/userdashboard';
         navigate(dashboardUrl, { replace: true });
       } else {
         console.error("Error setting role:", data.message);

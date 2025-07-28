@@ -153,7 +153,7 @@ const authController = {
           role: user.role,
           authProvider: user.authProvider
         },
-        redirectUrl: role === 'mentor' ? '/mentor/dashboard' : '/user/dashboard'
+        redirectUrl: role === 'mentor' ? '/mentordashboard' : '/userdashboard'
       });
 
     } catch (error) {
