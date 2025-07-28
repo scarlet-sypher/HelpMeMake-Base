@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const User = require('../Model/User');
+const { generateOTP, sendOTPEmail } = require('../config/emailService');
 
 
 const generateToken = (userId) => {
@@ -163,41 +164,194 @@ const authController = {
 
   signup: async (req, res) => {
     try {
-      const { email, password } = req.body;
+      const { email, password, name } = req.body;
 
+      // Validation
+      if (!email || !password) {
+        return res.status(400).json({
+          success: false,
+          message: 'Email and password are required'
+        });
+      }
 
+      if (password.length < 8) {
+        return res.status(400).json({
+          success: false,
+          message: 'Password must be at least 8 characters long'
+        });
+      }
+
+      // Check if user already exists
       const existingUser = await User.findOne({ email });
-      if (existingUser) {
+      if (existingUser && existingUser.isAccountActive) {
         return res.status(400).json({
           success: false,
           message: 'User already exists with this email'
         });
       }
 
+      // Generate OTP
+      const otp = generateOTP();
+      const otpExpires = new Date(Date.now() + (parseInt(process.env.OTP_EXPIRES_IN) || 10) * 60 * 1000);
 
+      // Hash password
       const saltRounds = 12;
       const hashedPassword = await bcrypt.hash(password, saltRounds);
 
+      if (existingUser && !existingUser.isAccountActive) {
+        // Update existing inactive user
+        existingUser.password = hashedPassword;
+        existingUser.name = name || existingUser.name;
+        existingUser.otp = otp;
+        existingUser.otpExpires = otpExpires;
+        await existingUser.save();
+      } else {
+        // Create new user (inactive until OTP verification)
+        const newUser = new User({
+          email,
+          password: hashedPassword,
+          name,
+          authProvider: 'local',
+          role: null, // Will be set after selecting role
+          isAccountActive: false,
+          isEmailVerified: false,
+          otp,
+          otpExpires
+        });
+        await newUser.save();
+      }
 
-      const newUser = new User({
-        email,
-        password: hashedPassword,
-        authProvider: 'local',
-        role: 'user' 
-      });
-
-      await newUser.save();
+      // Send OTP email
+      await sendOTPEmail(email, otp, name);
 
       res.status(201).json({
         success: true,
-        message: 'Account created successfully'
+        message: 'Account created successfully. Please check your email for the verification code.',
+        requiresVerification: true
       });
 
     } catch (error) {
       console.error('Signup error:', error);
+      
+      if (error.message === 'Failed to send verification email') {
+        return res.status(500).json({
+          success: false,
+          message: 'Account created but failed to send verification email. Please try again.'
+        });
+      }
+
       res.status(500).json({
         success: false,
         message: 'Failed to create account'
+      });
+    }
+  },
+
+  // Verify OTP
+  verifyOTP: async (req, res) => {
+    try {
+      const { email, otp } = req.body;
+
+      if (!email || !otp) {
+        return res.status(400).json({
+          success: false,
+          message: 'Email and OTP are required'
+        });
+      }
+
+      // Find user with matching email and OTP
+      const user = await User.findOne({
+        email,
+        otp,
+        otpExpires: { $gt: new Date() },
+        isAccountActive: false
+      });
+
+      if (!user) {
+        return res.status(400).json({
+          success: false,
+          message: 'Invalid or expired OTP'
+        });
+      }
+
+      // Activate account and clear OTP
+      user.isAccountActive = true;
+      user.isEmailVerified = true;
+      user.otp = null;
+      user.otpExpires = null;
+      await user.save();
+
+      // Generate JWT token
+      const token = generateToken(user._id);
+      setTokenCookie(res, token);
+
+      res.json({
+        success: true,
+        message: 'Email verified successfully! Account is now active.',
+        user: {
+          _id: user._id,
+          email: user.email,
+          name: user.name,
+          role: user.role
+        },
+        requiresRoleSelection: user.role === null
+      });
+
+    } catch (error) {
+      console.error('OTP verification error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to verify OTP'
+      });
+    }
+  },
+
+  // Resend OTP
+  resendOTP: async (req, res) => {
+    try {
+      const { email } = req.body;
+
+      if (!email) {
+        return res.status(400).json({
+          success: false,
+          message: 'Email is required'
+        });
+      }
+
+      // Find inactive user
+      const user = await User.findOne({
+        email,
+        isAccountActive: false
+      });
+
+      if (!user) {
+        return res.status(404).json({
+          success: false,
+          message: 'No pending verification found for this email'
+        });
+      }
+
+      // Generate new OTP
+      const otp = generateOTP();
+      const otpExpires = new Date(Date.now() + (parseInt(process.env.OTP_EXPIRES_IN) || 10) * 60 * 1000);
+
+      user.otp = otp;
+      user.otpExpires = otpExpires;
+      await user.save();
+
+      // Send new OTP email
+      await sendOTPEmail(email, otp, user.name);
+
+      res.json({
+        success: true,
+        message: 'New verification code sent to your email.'
+      });
+
+    } catch (error) {
+      console.error('Resend OTP error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to resend verification code'
       });
     }
   },
