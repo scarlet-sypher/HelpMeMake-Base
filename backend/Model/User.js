@@ -35,7 +35,7 @@ const userSchema = new mongoose.Schema({
   },
   authProvider: {
     type: String,
-    enum: ['local', 'google'],
+    enum: ['local', 'google', 'github'],
     default: 'local'
   },
   isEmailVerified: {
@@ -49,6 +49,7 @@ const userSchema = new mongoose.Schema({
 
 userSchema.index({ email: 1 });
 userSchema.index({ googleId: 1 });
+userSchema.index({ githubId: 1 });
 
 
 
