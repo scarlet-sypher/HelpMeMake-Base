@@ -26,65 +26,77 @@ const setTokenCookie = (res, token) => {
 const authController = {
  
     googleCallback: async (req, res) => {
-    try {
-      const user = req.user;
-      
-      if (!user) {
-        return res.redirect(`${process.env.UI_URL}/login?error=authentication_failed`);
+      try {
+        const user = req.user;
+        
+        if (!user) {
+          return res.redirect(`${process.env.UI_URL}/login?error=authentication_failed`);
+        }
+        
+        const token = generateToken(user._id);
+        setTokenCookie(res, token);
+
+        if (!user.role) {
+          return res.redirect(`${process.env.UI_URL}/select-role`);
+        }
+
+        const dashboardMap = {
+          admin: '/admindashboard',
+          mentor: '/mentordashboard', 
+          user: '/userdashboard'
+        };
+
+        const dashboardUrl = `${process.env.UI_URL}${dashboardMap[user.role] || '/userdashboard'}`;
+        return res.redirect(dashboardUrl);
+
+      } catch (error) {
+        console.error('Google callback error:', error);
+        
+        // Check if it's a USER_EXISTS error
+        if (error.message === 'USER_EXISTS') {
+          return res.redirect(`${process.env.UI_URL}/user-exists`);
+        }
+        
+        return res.redirect(`${process.env.UI_URL}/login?error=server_error`);
       }
-      
-      const token = generateToken(user._id);
-      setTokenCookie(res, token);
+    },
 
+    // Update githubCallback method
+    githubCallback: async (req, res) => {
+      try {
+        const user = req.user;
+        
+        if (!user) {
+          return res.redirect(`${process.env.UI_URL}/login?error=authentication_failed`);
+        }
 
-      if (!user.role) {
-        return res.redirect(`${process.env.UI_URL}/select-role`);
+        const token = generateToken(user._id);
+        setTokenCookie(res, token);
+
+        if (!user.role) {
+          return res.redirect(`${process.env.UI_URL}/select-role`);
+        }
+
+        const dashboardMap = {
+          admin: '/admindashboard',
+          mentor: '/mentordashboard',
+          user: '/userdashboard'
+        };
+
+        const dashboardUrl = `${process.env.UI_URL}${dashboardMap[user.role] || '/userdashboard'}`;
+        return res.redirect(dashboardUrl);
+
+      } catch (error) {
+        console.error('GitHub callback error:', error);
+        
+        // Check if it's a USER_EXISTS error
+        if (error.message === 'USER_EXISTS') {
+          return res.redirect(`${process.env.UI_URL}/user-exists`);
+        }
+        
+        return res.redirect(`${process.env.UI_URL}/login?error=server_error`);
       }
-
-      const dashboardMap = {
-        admin: '/admindashboard',
-        mentor: '/mentordashboard', 
-        user: '/userdashboard'
-      };
-
-      const dashboardUrl = `${process.env.UI_URL}${dashboardMap[user.role] || '/userdashboard'}`;
-      return res.redirect(dashboardUrl);
-
-    } catch (error) {
-      console.error('Google callback error:', error);
-      return res.redirect(`${process.env.UI_URL}/login?error=server_error`);
-    }
-  },
-
-  githubCallback: async (req, res) => {
-    try {
-      const user = req.user;
-      
-      if (!user) {
-        return res.redirect(`${process.env.UI_URL}/login?error=authentication_failed`);
-      }
-
-      const token = generateToken(user._id);
-      setTokenCookie(res, token);
-
-      if (!user.role) {
-        return res.redirect(`${process.env.UI_URL}/select-role`);
-      }
-
-      const dashboardMap = {
-        admin: '/admindashboard',
-        mentor: '/mentordashboard',
-        user: '/userdashboard'
-      };
-
-      const dashboardUrl = `${process.env.UI_URL}${dashboardMap[user.role] || '/userdashboard'}`;
-      return res.redirect(dashboardUrl);
-
-    } catch (error) {
-      console.error('GitHub callback error:', error);
-      return res.redirect(`${process.env.UI_URL}/login?error=server_error`);
-    }
-  },
+    },
 
  
   getUser: async (req, res) => {
