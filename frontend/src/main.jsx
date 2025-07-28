@@ -10,9 +10,10 @@ import UserDashboard from './pages/user/UserDashboard';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import SelectRole from './pages/auth/SelectRole';
 import VerifyOTP from './components/auth/VerifyOTP';
-import ProtectedRoute from './components/ProtectedRoute'; // Add this import
+import ProtectedRoute from './components/ProtectedRoute'; 
 
 import './index.css';
+import ForgotPassword from './components/auth/ForgotPassword';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
@@ -22,6 +23,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/verify-otp" element={<VerifyOTP />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
         
         {/* Protected Routes */}
         <Route path="/userdashboard" element={

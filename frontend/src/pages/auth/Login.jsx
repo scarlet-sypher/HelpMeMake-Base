@@ -243,12 +243,13 @@ export default function Login() {
   }
 
   function handleOAuth(provider) {
-    setFeedbackMessage(`🔄 Redirecting to ${provider}...`);
-    setMessageType("success");
-    setTimeout(() => {
-      setFeedbackMessage("");
-      setMessageType("");
-    }, 2000);
+    if (provider === "Google") {
+      // Redirect to backend Google OAuth route
+      window.location.href = "http://localhost:8000/auth/google";
+    } else if (provider === "GitHub") {
+    
+      window.location.href = "http://localhost:8000/auth/github";
+    }
   }
 
   return (
