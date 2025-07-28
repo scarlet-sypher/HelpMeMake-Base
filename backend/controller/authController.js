@@ -25,17 +25,15 @@ const setTokenCookie = (res, token) => {
 
 const authController = {
  
-  googleCallback: async (req, res) => {
+    googleCallback: async (req, res) => {
     try {
       const user = req.user;
       
       if (!user) {
         return res.redirect(`${process.env.UI_URL}/login?error=authentication_failed`);
       }
-
-
+      
       const token = generateToken(user._id);
-
       setTokenCookie(res, token);
 
 
@@ -43,10 +41,13 @@ const authController = {
         return res.redirect(`${process.env.UI_URL}/select-role`);
       }
 
-      const dashboardUrl = user.role === 'mentor' 
-        ? `${process.env.UI_URL}/mentor/dashboard`
-        : `${process.env.UI_URL}/user/dashboard`;
-      
+      const dashboardMap = {
+        admin: '/admindashboard',
+        mentor: '/mentordashboard', 
+        user: '/userdashboard'
+      };
+
+      const dashboardUrl = `${process.env.UI_URL}${dashboardMap[user.role] || '/userdashboard'}`;
       return res.redirect(dashboardUrl);
 
     } catch (error) {
@@ -70,10 +71,13 @@ const authController = {
         return res.redirect(`${process.env.UI_URL}/select-role`);
       }
 
-      const dashboardUrl = user.role === 'mentor' 
-        ? `${process.env.UI_URL}/mentor/dashboard`
-        : `${process.env.UI_URL}/user/dashboard`;
-      
+      const dashboardMap = {
+        admin: '/admindashboard',
+        mentor: '/mentordashboard',
+        user: '/userdashboard'
+      };
+
+      const dashboardUrl = `${process.env.UI_URL}${dashboardMap[user.role] || '/userdashboard'}`;
       return res.redirect(dashboardUrl);
 
     } catch (error) {
