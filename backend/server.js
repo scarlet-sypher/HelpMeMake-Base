@@ -6,6 +6,7 @@ const cookieParser = require('cookie-parser');
 const passport = require('./config/passport');
 const db = require("./connection/conn") ;
 const userRoutes = require('./routes/userRoute');
+const mentorRoutes = require('./routes/mentorRoute');
 
 
 const authRoutes = require('./routes/authRoute');
@@ -36,6 +37,7 @@ app.use(passport.initialize());
 app.use('/auth', authRoutes);
 
 app.use('/user', userRoutes);
+app.use('/mentor', mentorRoutes);
 
 
 app.get('/health', (req, res) => {
