@@ -5,8 +5,8 @@ const githubStrategy = require('./strategies/github-login');
 
 
 passport.use('google', googleStrategy);
-passport.use('jwt', jwtStrategy);
 passport.use('github', githubStrategy);
+passport.use('jwt', jwtStrategy);
 
 
 

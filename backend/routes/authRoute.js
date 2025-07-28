@@ -23,6 +23,23 @@ router.get('/google/callback',
   authController.googleCallback
 );
 
+// GitHub OAuth Routes
+router.get('/github',
+  passport.authenticate('github', {
+    scope: ['user:email'],
+    session: false
+  })
+);
+
+router.get('/github/callback',
+  passport.authenticate('github', {
+    session: false,
+    failureRedirect: `${process.env.UI_URL}/login?error=github_auth_failed`
+  }),
+  authController.githubCallback
+);
+
+
 // Regular Authentication Routes
 router.post('/signup', authController.signup);
 router.post('/login', authController.login);
