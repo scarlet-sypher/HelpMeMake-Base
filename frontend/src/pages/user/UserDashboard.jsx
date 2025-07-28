@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-
+import { useAuth } from '../../hooks/useAuth';
 import StatCard from '../../components/user/StatCard';
 import SessionCard from '../../components/user/SessionCard';
 import MessageCard from '../../components/user/MessageCard';
@@ -8,6 +8,7 @@ import AchievementBadge from '../../components/user/AchievementBadge';
 import MilestonePoint from '../../components/user/MilestonePoint';
 import HeroProfile from '../../components/user/HeroProfile';
 import Sidebar from '../../components/user/Sidebar';
+
 
 import { importAllUserImages } from '../../utils/importAllUserImages';
 const user = importAllUserImages();
@@ -34,8 +35,29 @@ import {
 } from 'lucide-react';
 
 const UserDashboard = () => {
+  const { user, loading, isAuthenticated } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeItem, setActiveItem] = useState('dashboard');
+
+   useEffect(() => {
+    if (!loading && !isAuthenticated) {
+      window.location.href = '/login';
+    }
+  }, [loading, isAuthenticated]);
+
+  // Show loading spinner while checking auth
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 flex items-center justify-center">
+        <div className="text-white text-lg">Loading...</div>
+      </div>
+    );
+  }
+
+  // Don't render dashboard if not authenticated
+  if (!isAuthenticated) {
+    return null;
+  }
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);

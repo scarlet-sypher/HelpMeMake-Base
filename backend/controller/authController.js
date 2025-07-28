@@ -437,13 +437,15 @@ const authController = {
   },
 
 
+
   logout: (req, res) => {
     try {
-    
+      // Clear the cookie with the same options used when setting it
       res.clearCookie('access_token', {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax'
+        sameSite: 'lax',
+        path: '/' // Add this to ensure proper clearing
       });
 
       res.json({

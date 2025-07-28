@@ -1,4 +1,5 @@
 import React from 'react';
+import { useAuth } from '../../hooks/useAuth';
 import { useNavigate } from "react-router-dom";
 import {
   Home,
@@ -32,22 +33,13 @@ const Sidebar = ({ isOpen, toggleSidebar, activeItem, setActiveItem }) => {
     }
   };
 
+  const { logout } = useAuth(); 
+
   const navigate = useNavigate();
 
-const handleLogout = async () => {
-  try {
-    await fetch('http://localhost:8000/auth/logout', {
-      method: 'POST',
-      credentials: 'include'
-    });
-
-    navigate("/login");
-  } catch (error) {
-    console.error('Logout failed:', error);
-  
-    navigate("/login");
-  }
-}
+  const handleLogout = () => {
+    logout(); 
+  };
 
   return (
     <>
