@@ -11,6 +11,7 @@ import AdminDashboard from './pages/admin/AdminDashboard';
 
 import './index.css';
 import SelectRole from './pages/auth/SelectRole';
+import VerifyOTP from './components/VerifyOTP';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
@@ -23,6 +24,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <Route path="/mentordashboard" element={<MentorDashboard />} />
         <Route path="/admindashboard" element={<AdminDashboard />} />
         <Route path="/select-role" element={<SelectRole />} />
+        <Route path="/verify-otp" element={<VerifyOTP />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>

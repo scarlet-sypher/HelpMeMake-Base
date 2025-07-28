@@ -378,7 +378,7 @@ export default function VerifyOTP() {
         </div>
       </div>
 
-      <style jsx>{`
+      <style>{`
         @keyframes slide-in {
           0% {
             opacity: 0;
