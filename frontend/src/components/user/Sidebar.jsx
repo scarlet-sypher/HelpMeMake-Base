@@ -34,9 +34,20 @@ const Sidebar = ({ isOpen, toggleSidebar, activeItem, setActiveItem }) => {
 
   const navigate = useNavigate();
 
-  const handleLogout = () => {
+const handleLogout = async () => {
+  try {
+    await fetch('http://localhost:8000/auth/logout', {
+      method: 'POST',
+      credentials: 'include'
+    });
+
+    navigate("/login");
+  } catch (error) {
+    console.error('Logout failed:', error);
+  
     navigate("/login");
   }
+}
 
   return (
     <>
