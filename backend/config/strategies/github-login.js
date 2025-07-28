@@ -2,6 +2,7 @@ const GitHubStrategy = require('passport-github2').Strategy;
 const User = require('../../Model/User');
 
 const githubStrategy = new GitHubStrategy({
+    
   clientID: process.env.GITHUB_CLIENT_ID,
   clientSecret: process.env.GITHUB_CLIENT_SECRET,
   callbackURL: `${process.env.SERVER_URL}/auth/github/callback`,

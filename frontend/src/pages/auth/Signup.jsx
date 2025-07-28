@@ -713,8 +713,9 @@ function SignupForm({
         <button
           type="button"
           onClick={() => handleOAuth("GitHub")}
-          className="flex-1 bg-slate-800/40 hover:bg-slate-800/60 text-white px-4 py-3 rounded-xl transition-all duration-300 font-semibold border border-slate-700/50 hover:border-slate-600/70 transform hover:scale-105 active:scale-95 flex items-center justify-center gap-3 backdrop-blur-sm group"
-        >
+          className="flex-1 bg-slate-800/40 hover:bg-slate-800/60 text-white px-4 py-3 rounded-xl 
+          transition-all duration-300 font-semibold border border-slate-700/50 hover:border-slate-600/70 
+          transform hover:scale-105 active:scale-95 flex items-center justify-center gap-3 backdrop-blur-sm group">
           <div className="w-4 h-4 lg:w-5 lg:h-5 bg-gradient-to-r from-gray-800 to-gray-900 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-200">
             <span className="text-white text-xs">🐙</span>
           </div>
