@@ -10,6 +10,7 @@ import UserDashboard from './pages/user/UserDashboard';
 import AdminDashboard from './pages/admin/AdminDashboard';
 
 import './index.css';
+import SelectRole from './pages/auth/SelectRole';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
@@ -21,6 +22,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <Route path="/userdashboard" element={<UserDashboard />} />
         <Route path="/mentordashboard" element={<MentorDashboard />} />
         <Route path="/admindashboard" element={<AdminDashboard />} />
+        <Route path="/select-role" element={<SelectRole />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>
