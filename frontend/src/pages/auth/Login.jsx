@@ -122,6 +122,7 @@ export default function Login() {
   const [isVisible, setIsVisible] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -197,6 +198,7 @@ export default function Login() {
         body: JSON.stringify({
           email: form.username, // Your form uses 'username' but send as 'email'
           password: form.password,
+          rememberMe,
         }),
       });
 
@@ -380,6 +382,7 @@ export default function Login() {
               handleChange={handleChange}
               handleSubmit={handleSubmit}
               handleOAuth={handleOAuth}
+              setRememberMe={setRememberMe}
             />
           </div>
         </div>
@@ -578,6 +581,8 @@ function LoginForm({
               <input
                 type="checkbox"
                 className="w-4 h-4 rounded border-2 border-slate-600 bg-slate-800/50 checked:bg-emerald-500 checked:border-emerald-500 focus:ring-2 focus:ring-emerald-500 focus:ring-offset-0 transition-all duration-200"
+                checked={rememberMe}
+                onChange={() => setRememberMe(!rememberMe)}
               />
               <span className="text-slate-300 group-hover:text-slate-200 transition-colors duration-200">
                 Remember me
