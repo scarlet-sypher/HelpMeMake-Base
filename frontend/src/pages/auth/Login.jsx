@@ -582,7 +582,9 @@ function LoginForm({
                 Remember me
               </span>
             </label>
-            <button className="text-emerald-400 hover:text-emerald-300 transition-colors duration-200 hover:underline text-left sm:text-right">
+            <button 
+              onClick={() => window.location.href = "/forgot-password"}
+              className="text-emerald-400 hover:text-emerald-300 transition-colors duration-200 hover:underline text-left sm:text-right">
               Forgot password?
             </button>
           </div>
