@@ -221,36 +221,7 @@ export default function Login() {
     }
     console.log(form);
 
-    //   try{
-    //     if (form.username === "user" && form.password === "123") {
-    //       setFeedbackMessage("🎉 Login successful! Redirecting to dashboard...");
-    //       setMessageType("success");
-    //       setTimeout(() => {
-    //         navigate("/userdashboard");
-    //       }, 2000);
-    //     } else if (form.username === "admin" && form.password === "123") {
-    //       setFeedbackMessage("🎉 Login successful! Redirecting to admin dashboard...");
-    //       setMessageType("success");
-    //       setTimeout(() => {
-    //           navigate("/admindashboard");
-    //       }, 2000);
-    //     } else if (form.username === "mentor" && form.password === "123") {
-    //       setFeedbackMessage("🎉 Login successful! Redirecting to mentor dashboard...");
-    //       setMessageType("success");
-    //       setTimeout(() => {
-    //           navigate("/mentordashboard");
-    //       }, 2000);
-    //     } else {
-    //       setFeedbackMessage("❌ Wrong user ID or password. Please try again.");
-    //       setMessageType("error");
-    //     }
-    //   } catch (error) {
-    //     setFeedbackMessage("⚠️ Something went wrong. Please try again.");
-    //     setMessageType("error");
-    //   } finally {
-    //     setIsSubmitting(false);
-    //   }
-    // }
+   
   }
 
   function handleOAuth(provider) {
