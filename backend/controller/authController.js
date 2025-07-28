@@ -361,7 +361,14 @@ const authController = {
     try {
       const { email, password } = req.body;
 
+      if (!email || !password) {
+        return res.status(400).json({
+          success: false,
+          message: 'Email and password are required'
+        });
+      }
 
+      // Find user by email
       const user = await User.findOne({ email });
       if (!user || user.authProvider !== 'local') {
         return res.status(401).json({
@@ -371,6 +378,8 @@ const authController = {
       }
 
 
+
+      // Verify password
       const isValidPassword = await bcrypt.compare(password, user.password);
       if (!isValidPassword) {
         return res.status(401).json({
@@ -379,7 +388,7 @@ const authController = {
         });
       }
 
-
+      // Generate JWT token
       const token = generateToken(user._id);
       setTokenCookie(res, token);
 
@@ -391,7 +400,8 @@ const authController = {
           email: user.email,
           name: user.name,
           role: user.role
-        }
+        },
+        requiresRoleSelection: user.role === null
       });
 
     } catch (error) {

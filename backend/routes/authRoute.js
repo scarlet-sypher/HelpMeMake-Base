@@ -42,6 +42,8 @@ router.get('/github/callback',
 
 // Regular Authentication Routes
 router.post('/signup', authController.signup);
+router.post('/verify-otp', authController.verifyOTP);
+router.post('/resend-otp', authController.resendOTP);
 router.post('/login', authController.login);
 
 // Protected Routes (require JWT)
