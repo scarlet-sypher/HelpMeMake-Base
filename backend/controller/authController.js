@@ -4,24 +4,23 @@ const User = require('../Model/User');
 const { generateOTP, sendOTPEmail } = require('../config/emailService');
 
 
-const generateToken = (userId) => {
+const generateToken = (userId, expiresIn = '7d') => {
   return jwt.sign(
     { userId },
     process.env.JWT_SECRET,
-    { expiresIn: '7d' } 
-    
+    { expiresIn }
   );
 };
 
-
-const setTokenCookie = (res, token) => {
+const setTokenCookie = (res, token, rememberMe = false) => {
   res.cookie('access_token', token, {
-    httpOnly: true, 
-    secure: process.env.NODE_ENV === 'production', 
-    sameSite: 'lax', 
-    maxAge: 7 * 24 * 60 * 60 * 1000 
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    maxAge: rememberMe ?  60 * 60 * 1000 : undefined // 30 days or session
   });
 };
+
 
 const authController = {
  
@@ -375,7 +374,7 @@ const authController = {
 
   login: async (req, res) => {
     try {
-      const { email, password } = req.body;
+      const { email, password, rememberMe } = req.body;
 
       if (!email || !password) {
         return res.status(400).json({
@@ -384,7 +383,6 @@ const authController = {
         });
       }
 
-      // Find user by email
       const user = await User.findOne({ email });
       if (!user || user.authProvider !== 'local') {
         return res.status(401).json({
@@ -393,7 +391,6 @@ const authController = {
         });
       }
 
-      // Check if account is active (OTP verified)
       if (!user.isAccountActive) {
         return res.status(401).json({
           success: false,
@@ -402,7 +399,6 @@ const authController = {
         });
       }
 
-      // Verify password
       const isValidPassword = await bcrypt.compare(password, user.password);
       if (!isValidPassword) {
         return res.status(401).json({
@@ -411,9 +407,8 @@ const authController = {
         });
       }
 
-      // Generate JWT token
-      const token = generateToken(user._id);
-      setTokenCookie(res, token);
+      const token = generateToken(user._id, rememberMe ? '1h' : undefined);
+      setTokenCookie(res, token, rememberMe);
 
       res.json({
         success: true,
@@ -435,6 +430,7 @@ const authController = {
       });
     }
   },
+
 
 
   logout: (req, res) => {
