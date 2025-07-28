@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { ChevronRight,Code, Users, Zap,Shield,Eye,EyeOff} from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import baka from "../../assets/LoginImages/baka.jpg";
 import kakashi from "../../assets/LoginImages/kakashi.jpg";
 import ken from "../../assets/LoginImages/ken.jpg";
@@ -399,6 +398,7 @@ export default function Login() {
             handleChange={handleChange}
             handleSubmit={handleSubmit}
             handleOAuth={handleOAuth}
+            setRememberMe={setRememberMe}
           />
         </div>
       </div>
@@ -465,6 +465,8 @@ function LoginForm({
   handleChange,
   handleSubmit,
   handleOAuth,
+  rememberMe,         
+  setRememberMe,       
 }) {
   return (
     <div
