@@ -347,29 +347,6 @@ const UserDashboard = () => {
           {/* Hero Profile Section */}
           <HeroProfile user={userProfileData} />
 
-          {/* User Info Display */}
-          <div className="bg-white/10 backdrop-blur-sm rounded-3xl shadow-2xl p-6 border border-white/20">
-            <h2 className="text-xl font-bold text-white mb-4">Profile Information</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <div className="text-sm text-blue-200">Name</div>
-                <div className="text-white font-medium">{userData.name || userData.displayName || "Not provided"}</div>
-              </div>
-              <div className="space-y-2">
-                <div className="text-sm text-blue-200">Email</div>
-                <div className="text-white font-medium">{userData.email}</div>
-              </div>
-              <div className="space-y-2">
-                <div className="text-sm text-blue-200">Role</div>
-                <div className="text-white font-medium capitalize">{userData.role}</div>
-              </div>
-              <div className="space-y-2">
-                <div className="text-sm text-blue-200">Joined</div>
-                <div className="text-white font-medium">{formatDate(userData.joinDate || userData.createdAt)}</div>
-              </div>
-            </div>
-          </div>
-
           {/* Stats Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 lg:gap-6">
             {userStats.map((stat, index) => (
