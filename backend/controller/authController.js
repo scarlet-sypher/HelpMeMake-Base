@@ -101,21 +101,61 @@ const authController = {
  
   getUser: async (req, res) => {
     try {
-     
       const user = req.user;
-      
+      let roleSpecificData = null;
+
+      // Fetch role-specific data if user has a role
+      if (user.role === 'user') {
+        try {
+          const Learner = require('../Model/Learner');
+          roleSpecificData = await Learner.findOne({ userId: user._id });
+          
+          // Create learner profile if it doesn't exist
+          if (!roleSpecificData) {
+            roleSpecificData = new Learner({
+              userId: user._id
+            });
+            await roleSpecificData.save();
+          }
+        } catch (error) {
+          console.error('Error fetching learner data:', error);
+        }
+      } else if (user.role === 'mentor') {
+        try {
+          const Mentor = require('../Model/Mentor');
+          roleSpecificData = await Mentor.findOne({ userId: user._id });
+          
+          // Create mentor profile if it doesn't exist
+          if (!roleSpecificData) {
+            roleSpecificData = new Mentor({
+              userId: user._id
+            });
+            await roleSpecificData.save();
+          }
+        } catch (error) {
+          console.error('Error fetching mentor data:', error);
+        }
+      }
+
+      const responseData = {
+        _id: user._id,
+        email: user.email,
+        name: user.name,
+        avatar: user.avatar,
+        role: user.role,
+        authProvider: user.authProvider,
+        isEmailVerified: user.isEmailVerified,
+        createdAt: user.createdAt
+      };
+
+      // Merge role-specific data if available
+      if (roleSpecificData) {
+        Object.assign(responseData, roleSpecificData.toObject());
+      }
+
       res.json({
         success: true,
-        user: {
-          _id: user._id,
-          email: user.email,
-          name: user.name,
-          avatar: user.avatar,
-          role: user.role,
-          authProvider: user.authProvider,
-          isEmailVerified: user.isEmailVerified,
-          createdAt: user.createdAt
-        }
+        user: responseData
       });
     } catch (error) {
       console.error('Get user error:', error);
@@ -132,14 +172,12 @@ const authController = {
       const { role } = req.body;
       const userId = req.user._id;
 
- 
       if (!role || !['user', 'mentor'].includes(role)) {
         return res.status(400).json({
           success: false,
           message: 'Invalid role. Must be either "user" or "mentor"'
         });
       }
-
 
       const user = await User.findByIdAndUpdate(
         userId,
@@ -152,6 +190,39 @@ const authController = {
           success: false,
           message: 'User not found'
         });
+      }
+
+      // Create role-specific profile
+      try {
+        if (role === 'user') {
+          const Learner = require('../Model/Learner');
+          
+          // Check if learner profile already exists
+          const existingLearner = await Learner.findOne({ userId: user._id });
+          if (!existingLearner) {
+            const learnerProfile = new Learner({
+              userId: user._id
+            });
+            await learnerProfile.save();
+            console.log('✅ Learner profile created for user:', user.email);
+          }
+        } else if (role === 'mentor') {
+          const Mentor = require('../Model/Mentor');
+          
+          // Check if mentor profile already exists
+          const existingMentor = await Mentor.findOne({ userId: user._id });
+          if (!existingMentor) {
+            const mentorProfile = new Mentor({
+              userId: user._id
+            });
+            await mentorProfile.save();
+            console.log('✅ Mentor profile created for user:', user.email);
+          }
+        }
+      } catch (profileError) {
+        console.error('Profile creation error:', profileError);
+        // Don't fail the role setting if profile creation fails
+        // The profile will be created when they first access role-specific routes
       }
 
       res.json({
@@ -176,6 +247,7 @@ const authController = {
       });
     }
   },
+
 
 
   signup: async (req, res) => {
