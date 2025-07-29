@@ -331,7 +331,7 @@ export default function Signup() {
   function handleOAuth(provider) {
     if (provider === "Google") {
       // Redirect to backend Google OAuth route
-      window.location.href = `${himport.meta.env.VITE_API_URL}/auth/google`;
+      window.location.href = `${import.meta.env.VITE_API_URL}/auth/google`;
     } else if (provider === "GitHub") {
     
       window.location.href = `${import.meta.env.VITE_API_URL}/auth/github`;
