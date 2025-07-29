@@ -15,7 +15,7 @@ router.get('/dashboard', (req, res) => {
     success: true,
     message: 'Welcome to User Dashboard!',
     user: {
-      id: req.user.id,
+      id: req.user._id,
       name: req.user.name,
       email: req.user.email,
       role: req.user.role
@@ -34,19 +34,34 @@ router.get('/profile', (req, res) => {
 // Update User Profile
 router.patch('/profile', async (req, res) => {
   try {
-    const { name } = req.body;
+    const { name, title, description, location, socialLinks } = req.body;
     const User = require('../Model/User');
-   
+    const Learner = require('../Model/Learner');
+    
+    // Update user basic info
     const updatedUser = await User.findByIdAndUpdate(
       req.user._id,
       { name },
       { new: true, select: '-password' }
     );
+
+    // Update learner-specific info
+    const updatedLearner = await Learner.findOneAndUpdate(
+      { userId: req.user._id },
+      { title, description, location, socialLinks },
+      { new: true, upsert: true } // upsert creates if doesn't exist
+    );
+    
+    // Combine data
+    const combinedData = {
+      ...updatedUser.toObject(),
+      ...updatedLearner.toObject()
+    };
     
     res.json({
       success: true,
       message: 'Profile updated successfully',
-      user: updatedUser
+      user: combinedData
     });
   } catch (error) {
     console.error('Profile update error:', error);

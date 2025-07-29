@@ -1,5 +1,7 @@
 const express = require('express');
 const { requireMentor } = require('../middleware/roleAuth');
+const User = require('../Model/User');
+const Mentor = require('../Model/Mentor');
 const router = express.Router();
 
 // All routes in this file require 'mentor' role
@@ -11,12 +13,55 @@ router.get('/dashboard', (req, res) => {
     success: true,
     message: 'Welcome to Mentor Dashboard!',
     user: {
-      _id: req.user._id,
+      id: req.user._id,
       name: req.user.name,
       email: req.user.email,
       role: req.user.role
     }
   });
+});
+
+// Get mentor-specific data
+router.get('/data', async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id).select('-password -otp -otpExpires');
+    
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+
+    // Fetch mentor-specific data
+    let mentorData = await Mentor.findOne({ userId: user._id });
+    
+    // If no mentor profile exists, create one with defaults
+    if (!mentorData) {
+      mentorData = new Mentor({
+        userId: user._id
+      });
+      await mentorData.save();
+    }
+
+    // Combine user and mentor data
+    const combinedData = {
+      ...user.toObject(),
+      ...mentorData.toObject()
+    };
+
+    res.json({
+      success: true,
+      message: 'Mentor data retrieved successfully',
+      user: combinedData
+    });
+  } catch (error) {
+    console.error('Get mentor data error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to retrieve mentor data'
+    });
+  }
 });
 
 // Mentor Profile
@@ -30,19 +75,38 @@ router.get('/profile', (req, res) => {
 // Update Mentor Profile
 router.patch('/profile', async (req, res) => {
   try {
-    const { name } = req.body;
-    const User = require('../Model/User');
+    const { name, title, description, bio, location, expertise, socialLinks, pricing } = req.body;
     
+    // Update user basic info
     const updatedUser = await User.findByIdAndUpdate(
       req.user._id,
       { name },
       { new: true, select: '-password' }
     );
 
+    // Update mentor-specific info
+    const updatedMentor = await Mentor.findOneAndUpdate(
+      { userId: req.user._id },
+      { title, description, bio, location, expertise, socialLinks, pricing },
+      { new: true, upsert: true } // upsert creates if doesn't exist
+    );
+    
+    // Recalculate profile completeness
+    if (updatedMentor.calculateProfileCompleteness) {
+      updatedMentor.calculateProfileCompleteness();
+      await updatedMentor.save();
+    }
+    
+    // Combine data
+    const combinedData = {
+      ...updatedUser.toObject(),
+      ...updatedMentor.toObject()
+    };
+    
     res.json({
       success: true,
       message: 'Profile updated successfully',
-      user: updatedUser
+      user: combinedData
     });
   } catch (error) {
     console.error('Profile update error:', error);
