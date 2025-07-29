@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useAuth } from "../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import {
   Mail,
@@ -86,6 +87,7 @@ const menuItems = [
 ];
 
 function Sidebar({ collapsed, onToggle, currentPage, onPageChange }) {
+  const { logout } = useAuth();
   const [openSubmenuId, setOpenSubmenuId] = useState(null);
 
   const toggleSubmenu = (id) => {
@@ -94,8 +96,8 @@ function Sidebar({ collapsed, onToggle, currentPage, onPageChange }) {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    navigate("/login");
-  }
+      logout(); 
+    };
 
   return (
     <div
