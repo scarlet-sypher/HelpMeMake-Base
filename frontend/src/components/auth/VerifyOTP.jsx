@@ -116,7 +116,7 @@ export default function VerifyOTP() {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch("http://localhost:8000/auth/verify-otp", {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/verify-otp`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -159,7 +159,7 @@ export default function VerifyOTP() {
     setIsResending(true);
 
     try {
-      const response = await fetch("http://localhost:8000/auth/resend-otp", {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/resend-otp`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

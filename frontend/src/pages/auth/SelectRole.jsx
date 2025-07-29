@@ -13,7 +13,7 @@ const SelectRole = () => {
     // Verify user is authenticated and get user info
     const fetchUserInfo = async () => {
       try {
-        const response = await fetch("http://localhost:8000/auth/user", {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/user`, {
           method: "GET",
           credentials: "include", // Include cookies
           headers: {
@@ -55,7 +55,7 @@ const SelectRole = () => {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch("http://localhost:8000/auth/set-role", {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/set-role`, {
         method: "POST",
         credentials: "include", // Include cookies
         headers: {

@@ -1,4 +1,4 @@
-import React, { useState , useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import StatCard from '../../components/user/StatCard';
 import SessionCard from '../../components/user/SessionCard';
@@ -8,7 +8,7 @@ import AchievementBadge from '../../components/user/AchievementBadge';
 import MilestonePoint from '../../components/user/MilestonePoint';
 import HeroProfile from '../../components/user/HeroProfile';
 import Sidebar from '../../components/user/Sidebar';
-
+// Using fetch API instead of axios
 
 import { importAllUserImages } from '../../utils/importAllUserImages';
 const userImg = importAllUserImages();
@@ -38,15 +38,61 @@ const UserDashboard = () => {
   const { user, loading, isAuthenticated } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeItem, setActiveItem] = useState('dashboard');
+  const [userData, setUserData] = useState(null);
+  const [userDataLoading, setUserDataLoading] = useState(true);
 
-   useEffect(() => {
+  useEffect(() => {
     if (!loading && !isAuthenticated) {
       window.location.href = '/login';
     }
   }, [loading, isAuthenticated]);
 
-  // Show loading spinner while checking auth
-  if (loading) {
+  // Fetch user data from API
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (isAuthenticated) {
+        try {
+          setUserDataLoading(true);
+          
+          // Use full API URL - adjust this to match your backend URL
+          const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+          const response = await fetch(`${apiUrl}/user/data`, {
+            method: 'GET',
+            credentials: 'include',
+            headers: {
+              'Content-Type': 'application/json',
+            }
+          });
+          
+          console.log('Response status:', response.status);
+          console.log('Response headers:', response.headers);
+          
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          
+          const data = await response.json();
+          console.log('API Response:', data);
+          
+          if (data.success) {
+            setUserData(data.user);
+          } else {
+            console.error('API returned error:', data.message);
+          }
+        } catch (error) {
+          console.error('Error fetching user data:', error);
+          console.error('Error details:', error.message);
+        } finally {
+          setUserDataLoading(false);
+        }
+      }
+    };
+
+    fetchUserData();
+  }, [isAuthenticated]);
+
+  // Show loading spinner while checking auth or fetching user data
+  if (loading || userDataLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 flex items-center justify-center">
         <div className="text-white text-lg">Loading...</div>
@@ -55,7 +101,7 @@ const UserDashboard = () => {
   }
 
   // Don't render dashboard if not authenticated
-  if (!isAuthenticated) {
+  if (!isAuthenticated || !userData) {
     return null;
   }
 
@@ -63,11 +109,44 @@ const UserDashboard = () => {
     setSidebarOpen(!sidebarOpen);
   };
 
+  // Format date helper
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { 
+      year: 'numeric', 
+      month: 'long'
+    });
+  };
+
   const userStats = [
-    { icon: Users, label: 'Active Projects', value: '8', change: '+2 this week', color: 'from-blue-500 to-cyan-500' },
-    { icon: Calendar, label: 'Sessions Scheduled', value: '12', change: '+3 this month', color: 'from-purple-500 to-pink-500' },
-    { icon: DollarSign, label: 'Total Earnings', value: '₹45,000', change: '+15% this month', color: 'from-emerald-500 to-teal-500' },
-    { icon: Target, label: 'Completion Rate', value: '92%', change: '+5% this week', color: 'from-orange-500 to-red-500' }
+    { 
+      icon: Users, 
+      label: 'Active Projects', 
+      value: userData.userActiveProjects.toString(), 
+      change: `${userData.userActiveProjectsChange >= 0 ? '+' : ''}${userData.userActiveProjectsChange} this week`, 
+      color: 'from-blue-500 to-cyan-500' 
+    },
+    { 
+      icon: Calendar, 
+      label: 'Sessions Scheduled', 
+      value: userData.userSessionsScheduled.toString(), 
+      change: `${userData.userSessionsScheduledChange >= 0 ? '+' : ''}${userData.userSessionsScheduledChange} this month`, 
+      color: 'from-purple-500 to-pink-500' 
+    },
+    { 
+      icon: DollarSign, 
+      label: 'Total Earnings', 
+      value: `₹${userData.userTotalEarnings.toLocaleString()}`, 
+      change: `${userData.userTotalEarningsChange >= 0 ? '+' : ''}${userData.userTotalEarningsChange}% this month`, 
+      color: 'from-emerald-500 to-teal-500' 
+    },
+    { 
+      icon: Target, 
+      label: 'Completion Rate', 
+      value: `${userData.userCompletionRate}%`, 
+      change: `${userData.userCompletionRateChange >= 0 ? '+' : ''}${userData.userCompletionRateChange}% this week`, 
+      color: 'from-orange-500 to-red-500' 
+    }
   ];
 
   const upcomingSessions = [
@@ -196,27 +275,24 @@ const UserDashboard = () => {
     { icon: BarChart3, label: 'View Analytics', color: 'from-orange-500 to-red-500' }
   ];
 
-  const userData = {
-    name: "Monkey D. Luffy",
-    title: "Future Pirate King",
-    description: "Ready to conquer the Grand Line with knowledge and determination!",
-    profileImage: userImg['luffy.jpg'],
-    isOnline: true,
-    level: 47,
-    xp: 8750,
-    nextLevelXp: 10000,
-    location: "East Blue",
-    joinDate: "May 2023",
-    rating: 4.9,
-    socialLinks: {
-      linkedin: "#",
-      github: "#",
-      twitter: "#"
-    },
+  // User profile data from API
+  const userProfileData = {
+    name: userData.name || userData.displayName || "User",
+    title: userData.title,
+    description: userData.description,
+    profileImage: userData.avatar || userImg['luffy.jpg'],
+    isOnline: userData.isOnline,
+    level: userData.level,
+    xp: userData.xp,
+    nextLevelXp: userData.nextLevelXp,
+    location: userData.location,
+    joinDate: formatDate(userData.joinDate || userData.createdAt),
+    rating: userData.rating,
+    socialLinks: userData.socialLinks,
     stats: {
-      completedSessions: 156,
-      totalEarnings: "₹45,000",
-      streakDays: 23
+      completedSessions: userData.completedSessions,
+      totalEarnings: `₹${userData.userTotalEarnings.toLocaleString()}`,
+      streakDays: userData.streakDays
     }
   };
 
@@ -269,7 +345,30 @@ const UserDashboard = () => {
         <div className="relative z-10 p-4 lg:p-6 space-y-6">
           
           {/* Hero Profile Section */}
-          <HeroProfile user={userData} />
+          <HeroProfile user={userProfileData} />
+
+          {/* User Info Display */}
+          <div className="bg-white/10 backdrop-blur-sm rounded-3xl shadow-2xl p-6 border border-white/20">
+            <h2 className="text-xl font-bold text-white mb-4">Profile Information</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <div className="text-sm text-blue-200">Name</div>
+                <div className="text-white font-medium">{userData.name || userData.displayName || "Not provided"}</div>
+              </div>
+              <div className="space-y-2">
+                <div className="text-sm text-blue-200">Email</div>
+                <div className="text-white font-medium">{userData.email}</div>
+              </div>
+              <div className="space-y-2">
+                <div className="text-sm text-blue-200">Role</div>
+                <div className="text-white font-medium capitalize">{userData.role}</div>
+              </div>
+              <div className="space-y-2">
+                <div className="text-sm text-blue-200">Joined</div>
+                <div className="text-white font-medium">{formatDate(userData.joinDate || userData.createdAt)}</div>
+              </div>
+            </div>
+          </div>
 
           {/* Stats Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 lg:gap-6">
@@ -424,8 +523,8 @@ const UserDashboard = () => {
                       <div className="text-sm text-orange-300">Goals Completed</div>
                     </div>
                     <div className="text-center bg-white/10 rounded-xl p-4">
-                      <div className="text-2xl font-bold text-orange-200">47</div>
-                      <div className="text-sm text-orange-300">Treasures Found</div>
+                      <div className="text-2xl font-bold text-orange-200">{userData.totalAchievement}</div>
+                      <div className="text-sm text-orange-300">Achievements Earned</div>
                     </div>
                   </div>
                 </div>

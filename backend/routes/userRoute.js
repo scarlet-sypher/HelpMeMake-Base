@@ -1,9 +1,13 @@
 const express = require('express');
 const { requireUser } = require('../middleware/roleAuth');
+const { getUserData } = require('../controller/userController');
 const router = express.Router();
 
 // All routes in this file require 'user' role
 router.use(requireUser);
+
+// Get current user's full profile data
+router.get('/data', getUserData);
 
 // User Dashboard
 router.get('/dashboard', (req, res) => {
@@ -11,7 +15,7 @@ router.get('/dashboard', (req, res) => {
     success: true,
     message: 'Welcome to User Dashboard!',
     user: {
-      _id: req.user._id,
+      id: req.user.id,
       name: req.user.name,
       email: req.user.email,
       role: req.user.role
@@ -32,13 +36,13 @@ router.patch('/profile', async (req, res) => {
   try {
     const { name } = req.body;
     const User = require('../Model/User');
-    
+   
     const updatedUser = await User.findByIdAndUpdate(
       req.user._id,
       { name },
       { new: true, select: '-password' }
     );
-
+    
     res.json({
       success: true,
       message: 'Profile updated successfully',

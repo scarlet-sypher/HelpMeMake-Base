@@ -287,7 +287,7 @@ export default function Signup() {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch("http://localhost:8000/auth/signup", {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/signup`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -331,10 +331,10 @@ export default function Signup() {
   function handleOAuth(provider) {
     if (provider === "Google") {
       // Redirect to backend Google OAuth route
-      window.location.href = "http://localhost:8000/auth/google";
+      window.location.href = `${himport.meta.env.VITE_API_URL}/auth/google`;
     } else if (provider === "GitHub") {
     
-      window.location.href = "http://localhost:8000/auth/github";
+      window.location.href = `${import.meta.env.VITE_API_URL}/auth/github`;
     }
   }
 

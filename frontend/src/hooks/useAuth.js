@@ -11,7 +11,7 @@ export const useAuth = () => {
 
   const checkAuth = async () => {
     try {
-      const response = await fetch('http://localhost:8000/auth/user', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/user`, {
         credentials: 'include'
       });
 
@@ -34,7 +34,7 @@ export const useAuth = () => {
 
   const logout = async () => {
     try {
-      await fetch('http://localhost:8000/auth/logout', {
+      await fetch(`${import.meta.env.VITE_API_URL}/auth/logout`, {
         method: 'POST',
         credentials: 'include'
       });
