@@ -10,9 +10,8 @@ function MentorDashboard() {
   const[sidebarcollapsed, setsidebarcollapsed] = useState(false);
   const[currentPage , setcurrentPage]= useState("dashboard");
 
-
     useEffect(() => {
-    if (!loading && !isAuthenticated) {
+    if (!loading && !isAutheniticated) {
       window.location.href = '/login';
     }
   }, [loading, isAuthenticated]);

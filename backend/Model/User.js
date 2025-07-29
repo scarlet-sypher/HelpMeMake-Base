@@ -10,6 +10,7 @@ const userSchema = new mongoose.Schema({
   },
   password: {
     type: String,
+    default: null,
     
   },
   googleId: {
@@ -26,12 +27,13 @@ const userSchema = new mongoose.Schema({
   },
   avatar: {
     type: String,
-    default: null
+    default: '/uploads/public/default.jpg',
+    required: true
   },
   role: {
     type: String,
     enum: ['user', 'mentor'],
-    default: null 
+    default: null ,
   },
   authProvider: {
     type: String,
@@ -53,7 +55,119 @@ const userSchema = new mongoose.Schema({
   isAccountActive: {
     type: Boolean,
     default: false  // Only true after OTP verification
+  } ,
+
+  // Additional fields from userData
+  title: {
+    type: String,
+    default: "Not mentioned", //job role like student , sde etc....
+    required: true
+  },
+  description: {
+    type: String,
+    default: "To Lazy to type",
+    required: true
+  },
+
+  isOnline: {
+    type: Boolean,
+    default: false,
+    required: true
+  },
+  level: {
+    type: Number,
+    default: 0,
+    required: true
+  },
+  xp: {
+    type: Number,
+    default: 0,
+    required: true
+  },
+  nextLevelXp: {
+    type: Number,
+    default: 10000,
+    immutable: true,
+    required: true
+  },
+  location: {
+    type: String,
+    default: "Home",
+    required: true
+  },
+  joinDate: {
+    type: Date,
+    default: Date.now,
+    required: true
+  },
+  rating: {
+    type: Number,
+    default: 0,
+    required: true
+  },
+  socialLinks: {
+    linkedin: { type: String, required: true, default: '#' },
+    github: { type: String, required: true, default: '#' },
+    twitter: { type: String, required: true, default: '#' }
+  },
+  completedSessions: {
+    type: Number,
+    default: 0 ,
+    required: true
+  },
+  streakDays: {
+    type: Number,
+    default: 0 ,
+    required: true
+  },
+  totalAchievement : {
+    type: Number ,
+    default: 0 ,
+    required: true
+  },
+
+  //userStats
+  userActiveProjects: {
+    type: Number,
+    default: 0,
+    required: true
+  },
+  userActiveProjectsChange: {
+    type: Number,
+    default: 0,
+    required: true
+  },
+  userSessionsScheduled: {
+    type: Number,
+    default: 0,
+    required: true
+  },
+  userSessionsScheduledChange: {
+    type: Number,
+    default: 0,
+    required: true
+  },
+  userTotalEarnings: {
+    type: Number,
+    default: 0,
+    required: true
+  },
+  userTotalEarningsChange: {
+    type: Number,
+    default: 0,
+    required: true
+  },
+  userCompletionRate: {
+    type: Number,
+    default: 0,
+    required: true
+  },
+  userCompletionRateChange: {
+    type: Number,
+    default: 0,
+    required: true
   }
+
 }, {
   timestamps: true
 });
