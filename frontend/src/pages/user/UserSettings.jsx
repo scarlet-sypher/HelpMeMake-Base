@@ -41,7 +41,8 @@ const UserSettings = () => {
     title: '',
     description: '',
     location: '',
-    email: ''
+    email: '',
+    updatePercentage : 0 
   });
   
   const [socialLinksData, setSocialLinksData] = useState({
@@ -75,6 +76,48 @@ const UserSettings = () => {
     avatar: null
   });
 
+  const [indianStates, setIndianStates] = useState([]);
+  const professionalTitles = [
+    'Student',
+    'Software Development Engineer (SDE)',
+    'Frontend Developer',
+    'Backend Developer',
+    'Full Stack Developer',
+    'Mobile App Developer',
+    'DevOps Engineer',
+    'Data Scientist',
+    'ML Engineer',
+    'UI/UX Designer',
+    'Product Manager',
+    'Business Analyst',
+    'QA Engineer',
+    'Freelancer',
+    'Researcher',
+    'Consultant',
+    'Entrepreneur',
+    'Other'
+  ];
+
+  // Fetch Indian states
+  useEffect(() => {
+    const fetchIndianStates = async () => {
+      try {
+        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+        const response = await axios.get(`${apiUrl}/meta/indian-states`);
+        
+        if (response.data.success) {
+          setIndianStates(response.data.states);
+        }
+      } catch (error) {
+        console.error('Error fetching Indian states:', error);
+        // Fallback to a basic list if API fails
+        setIndianStates(['Delhi', 'Mumbai', 'Bangalore', 'Chennai', 'Kolkata']);
+      }
+    };
+
+    fetchIndianStates();
+  }, []);
+
   useEffect(() => {
     if (!loading && !isAuthenticated) {
       window.location.href = '/login';
@@ -105,7 +148,9 @@ const UserSettings = () => {
               title: userData.title || '',
               description: userData.description || '',
               location: userData.location || '',
-              email: userData.email || ''
+              email: userData.email || '',
+              updatePercentage: userData.profileScore || 0 ,
+
             });
             
             setSocialLinksData({
@@ -115,7 +160,13 @@ const UserSettings = () => {
             });
             
             
-            setImagePreview(`${import.meta.env.VITE_API_URL}${userData.avatar}` || '');
+            setImagePreview(
+              userData.avatar
+                ? userData.avatar.startsWith('/uploads/')
+                  ? `${import.meta.env.VITE_API_URL}${userData.avatar}`
+                  : userData.avatar
+                : ''
+            );
           }
         } catch (error) {
           console.error('Error fetching user data:', error);
@@ -142,6 +193,8 @@ const UserSettings = () => {
       }));
     }, 5000);
   };
+
+  
 
   const setLoading = (type, isLoading) => {
     setLoadingStates(prev => ({
@@ -415,9 +468,34 @@ const UserSettings = () => {
                   </h1>
                   <p className="text-blue-200/80 text-lg">Customize your profile and manage your preferences</p>
                 </div>
+
+                  {/* Profile Completion Score (didnt workred)
+                  {userData && (
+                    <div className="absolute top-6 right-6 lg:top-8 lg:right-8">
+                      <div className="relative group/score">
+                        <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl blur opacity-20 group-hover/score:opacity-30 transition duration-300"></div>
+                        <div className="relative bg-white/10 backdrop-blur-xl rounded-2xl p-4 border border-white/20">
+                          <div className="text-center">
+                            <div className="text-2xl font-bold text-white mb-1">{userData.profileScore || 0}%</div>
+                            <div className="text-blue-300 text-sm font-medium">Profile Complete</div>
+                            <div className="w-16 h-1 bg-white/20 rounded-full mt-2 overflow-hidden">
+                              <div 
+                                className="h-full bg-gradient-to-r from-blue-500 to-purple-600 rounded-full transition-all duration-500"
+                                style={{ width: `${userData.profileScore || 0}%` }}
+                              ></div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )} */}
               </div>
             </div>
           </div>
+
+
+
+          
 
           {/* Enhanced Tabs Container */}
           <div className="relative group">
@@ -552,13 +630,18 @@ const UserSettings = () => {
                             Professional Title
                           </label>
                           <div className="relative group">
-                            <input
-                              type="text"
+                            <select
                               value={profileData.title}
                               onChange={(e) => setProfileData({...profileData, title: e.target.value})}
-                              className="w-full p-4 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-blue-400 focus:bg-white/15 transition-all duration-300 backdrop-blur-sm hover:bg-white/15"
-                              placeholder="e.g., Full Stack Developer"
-                            />
+                              className="w-full p-4 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:border-blue-400 focus:bg-white/15 transition-all duration-300 backdrop-blur-sm hover:bg-white/15 appearance-none"
+                            >
+                              <option value="Not mentioned" className="bg-slate-800 text-white">Select Title</option>
+                              {professionalTitles.map((title) => (
+                                <option key={title} value={title} className="bg-slate-800 text-white">
+                                  {title}
+                                </option>
+                              ))}
+                            </select>
                             <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-700/10 to-indigo-700/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
                           </div>
                         </div>
@@ -583,21 +666,26 @@ const UserSettings = () => {
                         </div>
                         
                         <div className="space-y-2">
-                          <label className="block text-sm font-semibold text-gray-300 mb-3 items-center">
-                            <MapPin className="mr-2 text-indigo-400" size={16} />
-                            Location
-                          </label>
-                          <div className="relative group">
-                            <input
-                              type="text"
-                              value={profileData.location}
-                              onChange={(e) => setProfileData({...profileData, location: e.target.value})}
-                              className="w-full p-4 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-indigo-400 focus:bg-white/15 transition-all duration-300 backdrop-blur-sm hover:bg-white/15"
-                              placeholder="City, Country"
-                            />
-                            <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-indigo-700/10 to-slate-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                            <label className="block text-sm font-semibold text-gray-300 mb-3 items-center">
+                              <MapPin className="mr-2 text-indigo-400" size={16} />
+                              Location
+                            </label>
+                            <div className="relative group">
+                              <select
+                                value={profileData.location}
+                                onChange={(e) => setProfileData({...profileData, location: e.target.value})}
+                                className="w-full p-4 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:border-indigo-400 focus:bg-white/15 transition-all duration-300 backdrop-blur-sm hover:bg-white/15 appearance-none"
+                              >
+                                <option value="Home" className="bg-slate-800 text-white">Select State</option>
+                                {indianStates.map((state) => (
+                                  <option key={state} value={state} className="bg-slate-800 text-white">
+                                    {state}
+                                  </option>
+                                ))}
+                              </select>
+                              <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-indigo-700/10 to-slate-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                            </div>
                           </div>
-                        </div>
                       </div>
 
                       <div className="space-y-2">
@@ -860,7 +948,20 @@ const UserSettings = () => {
         </div>
       </div>
 
-      <style jsx>{`
+      <style>{`
+
+        select {
+          background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+          background-position: right 0.5rem center;
+          background-repeat: no-repeat;
+          background-size: 1.5em 1.5em;
+          padding-right: 2.5rem;
+        }
+
+        option {
+          background-color: #1e293b;
+          color: white;
+        }
         @keyframes float {
           0%, 100% { transform: translateY(0px) rotate(0deg); }
           50% { transform: translateY(-20px) rotate(5deg); }

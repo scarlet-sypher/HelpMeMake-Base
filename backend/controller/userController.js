@@ -52,6 +52,32 @@ const getUserData = async (req, res) => {
 };
 
 
+// Helper function to calculate profile completion score
+const calculateProfileScore = (user, learner) => {
+  let score = 0;
+  const totalFields = 8; // Total number of profile fields
+  
+  // Check User fields (25 points each for name, email)
+  if (user.name && user.name.trim()) score += 12.5;
+  if (user.email && user.email.trim()) score += 12.5;
+  if (user.avatar && user.avatar !== '/uploads/public/default.jpg') score += 12.5;
+  
+  // Check Learner fields (25 points each for title, description, location)
+  if (learner.title && learner.title.trim() && learner.title !== "Not mentioned") score += 12.5;
+  if (learner.description && learner.description.trim() && learner.description !== "To Lazy to type") score += 12.5;
+  if (learner.location && learner.location.trim() && learner.location !== "Home") score += 12.5;
+  
+  // Check Social Links (25 points total, distributed)
+  const socialLinks = learner.socialLinks || {};
+  let socialScore = 0;
+  if (socialLinks.github && socialLinks.github !== '#') socialScore += 4.17;
+  if (socialLinks.linkedin && socialLinks.linkedin !== '#') socialScore += 4.17;
+  if (socialLinks.twitter && socialLinks.twitter !== '#') socialScore += 4.16;
+  score += socialScore;
+  
+  return Math.round(score);
+};
+
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -146,31 +172,7 @@ const updateProfile = async (req, res) => {
   }
 };
 
-// Helper function to calculate profile completion score
-const calculateProfileScore = (user, learner) => {
-  let score = 0;
-  const totalFields = 8; // Total number of profile fields
-  
-  // Check User fields (25 points each for name, email)
-  if (user.name && user.name.trim()) score += 12.5;
-  if (user.email && user.email.trim()) score += 12.5;
-  if (user.avatar && user.avatar !== '/uploads/public/default.jpg') score += 12.5;
-  
-  // Check Learner fields (25 points each for title, description, location)
-  if (learner.title && learner.title.trim() && learner.title !== "Not mentioned") score += 12.5;
-  if (learner.description && learner.description.trim() && learner.description !== "To Lazy to type") score += 12.5;
-  if (learner.location && learner.location.trim() && learner.location !== "Home") score += 12.5;
-  
-  // Check Social Links (25 points total, distributed)
-  const socialLinks = learner.socialLinks || {};
-  let socialScore = 0;
-  if (socialLinks.github && socialLinks.github !== '#') socialScore += 4.17;
-  if (socialLinks.linkedin && socialLinks.linkedin !== '#') socialScore += 4.17;
-  if (socialLinks.twitter && socialLinks.twitter !== '#') socialScore += 4.16;
-  score += socialScore;
-  
-  return Math.round(score);
-};
+
 
 // Update Social Links
 const updateSocialLinks = async (req, res) => {
@@ -267,6 +269,7 @@ const uploadAvatar = (req, res) => {
 
     try {
       const User = require('../Model/User');
+      const Learner = require('../Model/Learner');
       const avatarPath = `/uploads/userUploads/${req.file.filename}`;
 
       // Delete old avatar if it exists and isn't default
@@ -278,12 +281,27 @@ const uploadAvatar = (req, res) => {
         }
       }
 
-      await User.findByIdAndUpdate(req.user._id, { avatar: avatarPath });
+      // Update user avatar
+      const updatedUser = await User.findByIdAndUpdate(
+        req.user._id, 
+        { avatar: avatarPath },
+        { new: true, select: '-password' }
+      );
+
+      // Calculate updated profile score
+      let profileScore = 0;
+      if (req.user.role === 'user') {
+        const learnerData = await Learner.findOne({ userId: req.user._id });
+        if (learnerData) {
+          profileScore = calculateProfileScore(updatedUser, learnerData);
+        }
+      }
 
       res.json({
         success: true,
         message: 'Profile picture updated successfully',
-        avatar: avatarPath
+        avatar: avatarPath,
+        profileScore: profileScore
       });
     } catch (error) {
       console.error('Avatar upload error:', error);

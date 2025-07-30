@@ -108,12 +108,12 @@ const learnerSchema = new mongoose.Schema({
     default: 0,
     required: true
   },
-  userTotalEarnings: {
+  userTotalProjects: {
     type: Number,
     default: 0,
     required: true
   },
-  userTotalEarningsChange: {
+  userTotalProjectsChange: {
     type: Number,
     default: 0,
     required: true

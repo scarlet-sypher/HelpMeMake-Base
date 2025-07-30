@@ -25,11 +25,13 @@ import {
   Send,
   BarChart3,
   Clock,
-  DollarSign,
+  Folders ,
   Target,
   Users,
   Zap,
+  AlertCircle,
   Activity,
+  CheckCircle,
   Flame,
   Menu
 } from 'lucide-react';
@@ -121,11 +123,18 @@ const UserDashboard = () => {
 
   const userStats = [
     { 
-      icon: Users, 
+      icon: Folders , 
       label: 'Active Projects', 
       value: userData.userActiveProjects.toString(), 
       change: `${userData.userActiveProjectsChange >= 0 ? '+' : ''}${userData.userActiveProjectsChange} this week`, 
       color: 'from-blue-500 to-cyan-500' 
+    },
+    { 
+      icon: CheckCircle, 
+      label: 'Total Projects', 
+      value: userData.userTotalProjects.toString(), 
+      change: `${userData.userTotalProjectsChange >= 0 ? '+' : ''}${userData.userTotalProjectsChange}% in total`, 
+      color: 'from-emerald-500 to-teal-500' 
     },
     { 
       icon: Calendar, 
@@ -133,13 +142,6 @@ const UserDashboard = () => {
       value: userData.userSessionsScheduled.toString(), 
       change: `${userData.userSessionsScheduledChange >= 0 ? '+' : ''}${userData.userSessionsScheduledChange} this month`, 
       color: 'from-purple-500 to-pink-500' 
-    },
-    { 
-      icon: DollarSign, 
-      label: 'Total Earnings', 
-      value: `₹${userData.userTotalEarnings.toLocaleString()}`, 
-      change: `${userData.userTotalEarningsChange >= 0 ? '+' : ''}${userData.userTotalEarningsChange}% this month`, 
-      color: 'from-emerald-500 to-teal-500' 
     },
     { 
       icon: Target, 
@@ -281,7 +283,9 @@ const UserDashboard = () => {
     name: userData.name || userData.displayName || "User",
     title: userData.title,
     description: userData.description,
-    profileImage: userData.avatar ? `${import.meta.env.VITE_API_URL}${userData.avatar}`: userImg['luffy.jpg'],
+    profileImage: userData.avatar ? userData.avatar.startsWith('/uploads/') ? `${import.meta.env.VITE_API_URL}${userData.avatar}` 
+    : userData.avatar : userImg['luffy.jpg'] ,
+
     isOnline: userData.isOnline,
     level: userData.level,
     xp: userData.xp,
@@ -292,10 +296,12 @@ const UserDashboard = () => {
     socialLinks: userData.socialLinks,
     stats: {
       completedSessions: userData.completedSessions,
-      totalEarnings: `₹${userData.userTotalEarnings.toLocaleString()}`,
+      totalEarnings: userData.userTotalProjects,
       streakDays: userData.streakDays
     }
   };
+
+  console.log(userProfileData.profileImage);
 
 
   // Function to get the page title based on active item
@@ -348,6 +354,34 @@ const UserDashboard = () => {
           
           {/* Hero Profile Section */}
           <HeroProfile user={userProfileData} />
+
+          {/* Profile Completion Banner */}
+          {userData && !userData.isProfileUpdated && (
+            <div className="relative group mb-6">
+              <div className="absolute -inset-0.5 bg-gradient-to-r from-amber-500 to-orange-600 rounded-2xl blur opacity-20 group-hover:opacity-30 transition duration-500"></div>
+              <div className="relative bg-gradient-to-r from-amber-500/20 to-orange-600/20 backdrop-blur-sm rounded-2xl p-6 border border-amber-400/30">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-4">
+                    <div className="p-3 bg-gradient-to-r from-amber-500 to-orange-600 rounded-xl">
+                      <AlertCircle className="text-white" size={24} />
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-bold text-white mb-1">Complete Your Profile</h3>
+                      <p className="text-amber-200">Unlock more features by completing your profile information!</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-4">
+                    <button
+                      onClick={() => window.location.href = 'user/settings'}
+                      className="px-6 py-3 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white rounded-xl font-semibold transition-all transform hover:scale-105 shadow-lg"
+                    >
+                      Update Profile
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Stats Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 lg:gap-6">
