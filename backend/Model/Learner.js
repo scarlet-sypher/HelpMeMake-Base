@@ -24,6 +24,11 @@ const learnerSchema = new mongoose.Schema({
     default: "Home",
     required: true
   },
+  isProfileUpdated: {
+    type: Boolean,
+    default: false,
+    required: true
+  },
   
   // Status & Progress
   isOnline: {

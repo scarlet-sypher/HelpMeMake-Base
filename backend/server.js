@@ -9,6 +9,7 @@ const userRoutes = require('./routes/userRoute');
 const mentorRoutes = require('./routes/mentorRoute');
 const path = require('path');
 const authRoutes = require('./routes/authRoute');
+const metaRoutes = require('./routes/metaRoute');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -54,6 +55,7 @@ app.use(passport.initialize());
 app.use('/auth', authRoutes);
 app.use('/user', userRoutes);
 app.use('/mentor', mentorRoutes);
+app.use('/meta', metaRoutes);
 
 app.get('/health', (req, res) => {
   res.json({
