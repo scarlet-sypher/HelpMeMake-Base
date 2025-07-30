@@ -114,7 +114,8 @@ const UserSettings = () => {
               twitter: userData.socialLinks?.twitter || ''
             });
             
-            setImagePreview(userData.avatar || '');
+            
+            setImagePreview(`${import.meta.env.VITE_API_URL}${userData.avatar}` || '');
           }
         } catch (error) {
           console.error('Error fetching user data:', error);

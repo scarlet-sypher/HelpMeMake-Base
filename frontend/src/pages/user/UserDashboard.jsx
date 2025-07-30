@@ -75,6 +75,7 @@ const UserDashboard = () => {
           console.log('API Response:', data);
           
           if (data.success) {
+            console.log('Avatar from API:', data.user.avatar);
             setUserData(data.user);
           } else {
             console.error('API returned error:', data.message);
@@ -280,7 +281,7 @@ const UserDashboard = () => {
     name: userData.name || userData.displayName || "User",
     title: userData.title,
     description: userData.description,
-    profileImage: userData.avatar || userImg['luffy.jpg'],
+    profileImage: userData.avatar ? `${import.meta.env.VITE_API_URL}${userData.avatar}`: userImg['luffy.jpg'],
     isOnline: userData.isOnline,
     level: userData.level,
     xp: userData.xp,
@@ -295,6 +296,7 @@ const UserDashboard = () => {
       streakDays: userData.streakDays
     }
   };
+
 
   // Function to get the page title based on active item
   const getPageTitle = () => {

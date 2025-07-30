@@ -137,3 +137,9 @@ dist
 # Vite logs files
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+
+# User profile image uploaded files
+
+uploads/userUploads/avatar-*
+!uploads/userUploads/.gitkeep
