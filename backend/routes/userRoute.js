@@ -1,6 +1,6 @@
 const express = require('express');
 const { requireUser } = require('../middleware/roleAuth');
-const { getUserData } = require('../controller/userController');
+const { getUserData , updateProfile, updateSocialLinks, changePassword, uploadAvatar } = require('../controller/userController');
 const router = express.Router();
 
 // All routes in this file require 'user' role
@@ -8,6 +8,10 @@ router.use(requireUser);
 
 // Get current user's full profile data
 router.get('/data', getUserData);
+router.patch('/update-profile', updateProfile);
+router.patch('/social-links', updateSocialLinks);
+router.patch('/change-password', changePassword);
+router.patch('/upload-avatar', uploadAvatar);
 
 // User Dashboard
 router.get('/dashboard', (req, res) => {
