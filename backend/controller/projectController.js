@@ -1,5 +1,7 @@
 const Project = require('../Model/Project');
 const Learner = require('../Model/Learner');
+const Mentor = require('../Model/Mentor');
+const User = require('../Model/User');
 
 // Create New Project
 const createProject = async (req, res) => {
@@ -149,7 +151,14 @@ const getProjectById = async (req, res) => {
 
     const project = await Project.findById(id)
       .populate('learnerId', 'userId title description location')
-      .populate('mentorId', 'userId title description location');
+      .populate('mentorId', 'userId title description location')
+      .populate({
+        path: 'applications.mentorId',
+        populate: {
+          path: 'userId',
+          select: 'name email avatar'
+        }
+      });
 
     if (!project) {
       return res.status(404).json({
@@ -160,16 +169,19 @@ const getProjectById = async (req, res) => {
 
     // Check if user has permission to view this project
     const userLearner = await Learner.findOne({ userId: req.user._id });
+    const userMentor = await Mentor.findOne({ userId: req.user._id });
     
     // Allow access if:
     // 1. User is the project owner
     // 2. Project is visible and open
     // 3. User is the assigned mentor
+    // 4. User is a mentor (can view open projects)
     const isOwner = userLearner && project.learnerId._id.toString() === userLearner._id.toString();
     const isAssignedMentor = project.mentorId && project.mentorId._id.toString() === req.user._id.toString();
     const isPubliclyVisible = project.isVisible && project.status === 'Open';
+    const isMentor = userMentor !== null;
 
-    if (!isOwner && !isAssignedMentor && !isPubliclyVisible) {
+    if (!isOwner && !isAssignedMentor && !isPubliclyVisible && !isMentor) {
       return res.status(403).json({
         success: false,
         message: 'You do not have permission to view this project'
@@ -200,6 +212,221 @@ const getProjectById = async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Failed to retrieve project'
+    });
+  }
+};
+
+// Apply to Project (Mentor Application)
+const applyToProject = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { proposedPrice, coverLetter, estimatedDuration } = req.body;
+
+    // Validation
+    if (!proposedPrice || !coverLetter || !estimatedDuration) {
+      return res.status(400).json({
+        success: false,
+        message: 'All fields are required: proposedPrice, coverLetter, estimatedDuration'
+      });
+    }
+
+    // Validate price
+    const price = parseFloat(proposedPrice);
+    if (isNaN(price) || price <= 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'Proposed price must be a valid positive number'
+      });
+    }
+
+    // Find the project
+    const project = await Project.findById(id);
+    if (!project) {
+      return res.status(404).json({
+        success: false,
+        message: 'Project not found'
+      });
+    }
+
+    // Check if project is open for applications
+    if (project.status !== 'Open') {
+      return res.status(400).json({
+        success: false,
+        message: 'This project is not accepting applications'
+      });
+    }
+
+    // Check if project already has a mentor
+    if (project.mentorId) {
+      return res.status(400).json({
+        success: false,
+        message: 'This project already has an assigned mentor'
+      });
+    }
+
+    // Verify user is a mentor
+    const mentor = await Mentor.findOne({ userId: req.user._id });
+    if (!mentor) {
+      return res.status(403).json({
+        success: false,
+        message: 'Only mentors can apply to projects'
+      });
+    }
+
+    // Check if mentor already applied
+    const existingApplication = project.applications.find(
+      app => app.mentorId.toString() === mentor._id.toString()
+    );
+
+    if (existingApplication) {
+      return res.status(400).json({
+        success: false,
+        message: 'You have already applied to this project'
+      });
+    }
+
+    // Create application
+    const newApplication = {
+      mentorId: mentor._id,
+      proposedPrice: price,
+      coverLetter: coverLetter.trim(),
+      estimatedDuration: estimatedDuration.trim(),
+      applicationStatus: 'Pending',
+      appliedAt: new Date()
+    };
+
+    // Add application to project
+    project.applications.push(newApplication);
+    project.applicationsCount = project.applications.length;
+
+    await project.save();
+
+    // Populate the new application for response
+    const updatedProject = await Project.findById(id)
+      .populate({
+        path: 'applications.mentorId',
+        populate: {
+          path: 'userId',
+          select: 'name email avatar'
+        }
+      });
+
+    const addedApplication = updatedProject.applications[updatedProject.applications.length - 1];
+
+    res.status(201).json({
+      success: true,
+      message: 'Application submitted successfully!',
+      application: addedApplication
+    });
+
+  } catch (error) {
+    console.error('Apply to project error:', error);
+    
+    if (error.name === 'CastError') {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid project ID format'
+      });
+    }
+
+    res.status(500).json({
+      success: false,
+      message: 'Failed to submit application. Please try again.'
+    });
+  }
+};
+
+// Accept Mentor Application (for learners)
+const acceptMentorApplication = async (req, res) => {
+  try {
+    const { id, applicationId } = req.params;
+
+    // Find the project
+    const project = await Project.findById(id);
+    if (!project) {
+      return res.status(404).json({
+        success: false,
+        message: 'Project not found'
+      });
+    }
+
+    // Verify user is the project owner
+    const userLearner = await Learner.findOne({ userId: req.user._id });
+    if (!userLearner || project.learnerId.toString() !== userLearner._id.toString()) {
+      return res.status(403).json({
+        success: false,
+        message: 'Only the project owner can accept applications'
+      });
+    }
+
+    // Find the application
+    const application = project.applications.id(applicationId);
+    if (!application) {
+      return res.status(404).json({
+        success: false,
+        message: 'Application not found'
+      });
+    }
+
+    // Check if application is pending
+    if (application.applicationStatus !== 'Pending') {
+      return res.status(400).json({
+        success: false,
+        message: 'This application has already been processed'
+      });
+    }
+
+    // Accept the application
+    application.applicationStatus = 'Accepted';
+    project.mentorId = application.mentorId;
+    project.negotiatedPrice = application.proposedPrice;
+    project.status = 'In Progress';
+    project.startDate = new Date();
+
+    // Reject all other pending applications
+    project.applications.forEach(app => {
+      if (app._id.toString() !== applicationId && app.applicationStatus === 'Pending') {
+        app.applicationStatus = 'Rejected';
+      }
+    });
+
+    await project.save();
+
+    // Update learner stats
+    await Learner.findByIdAndUpdate(userLearner._id, {
+      $inc: { 
+        userActiveProjects: -1, // Move from open to in progress
+        userSessionsScheduled: 1
+      }
+    });
+
+    // Update mentor stats
+    await Mentor.findByIdAndUpdate(application.mentorId, {
+      $inc: { 
+        mentorActiveStudents: 1,
+        totalStudents: 1
+      }
+    });
+
+    res.json({
+      success: true,
+      message: 'Application accepted successfully!',
+      project
+    });
+
+  } catch (error) {
+    console.error('Accept application error:', error);
+    
+    if (error.name === 'CastError') {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid ID format'
+      });
+    }
+
+    res.status(500).json({
+      success: false,
+      message: 'Failed to accept application. Please try again.'
     });
   }
 };
@@ -419,7 +646,7 @@ const getProjectsForUser = async (req, res) => {
   }
 };
 
-//Delete project by ID (only if user owns it)
+// Delete project by ID (only if user owns it)
 const deleteProjectById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -508,5 +735,7 @@ module.exports = {
   getProjectById,
   updateProject,
   getProjectsForUser,    
-  deleteProjectById      
+  deleteProjectById,
+  applyToProject,
+  acceptMentorApplication
 };
