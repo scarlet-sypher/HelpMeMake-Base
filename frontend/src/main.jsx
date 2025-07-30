@@ -7,6 +7,7 @@ import Login from './pages/auth/Login';
 import Signup from './pages/auth/Signup';
 import MentorDashboard from './pages/mentordash/MentorDashboard';
 import UserDashboard from './pages/user/UserDashboard';
+import UserSettings from './pages/user/UserSettings'; // New import
 import AdminDashboard from './pages/admin/AdminDashboard';
 import SelectRole from './pages/auth/SelectRole';
 import VerifyOTP from './components/auth/VerifyOTP';
@@ -33,6 +34,13 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           </ProtectedRoute>
         } />
         
+        {/* New Settings Route */}
+        <Route path="/user/settings" element={
+          <ProtectedRoute requiredRole="user">
+            <UserSettings />
+          </ProtectedRoute>
+        } />
+        
         <Route path="/mentordashboard" element={
           <ProtectedRoute requiredRole="mentor">
             <MentorDashboard />
@@ -44,7 +52,6 @@ ReactDOM.createRoot(document.getElementById('root')).render(
             <AdminDashboard />
           </ProtectedRoute>
         } />
-        
         
       </Routes>
     </BrowserRouter>

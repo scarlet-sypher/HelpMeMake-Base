@@ -1,6 +1,6 @@
 import React from 'react';
 import { useAuth } from '../../hooks/useAuth';
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from 'react-router-dom';
 import {
   Home,
   Folder,
@@ -15,6 +15,10 @@ import {
 } from 'lucide-react';
 
 const Sidebar = ({ isOpen, toggleSidebar, activeItem, setActiveItem }) => {
+
+  
+  const navigate = useNavigate();
+  const location = useLocation();
   const menuItems = [
     { icon: Home, label: 'Dashboard', id: 'dashboard' },
     { icon: Folder, label: 'Projects', id: 'projects' },
@@ -27,6 +31,15 @@ const Sidebar = ({ isOpen, toggleSidebar, activeItem, setActiveItem }) => {
 
   const handleItemClick = (itemId) => {
     setActiveItem(itemId);
+    
+    // Handle navigation for specific items
+    if (itemId === 'settings') {
+      navigate('/user/settings');
+    } else if (itemId === 'dashboard') {
+      navigate('/userdashboard');
+    }
+    // Add more navigation cases as needed
+    
     // Close sidebar on mobile after selection
     if (window.innerWidth < 1024) {
       toggleSidebar();
@@ -35,7 +48,6 @@ const Sidebar = ({ isOpen, toggleSidebar, activeItem, setActiveItem }) => {
 
   const { logout } = useAuth(); 
 
-  const navigate = useNavigate();
 
   const handleLogout = () => {
     logout(); 
