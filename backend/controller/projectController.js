@@ -1,0 +1,381 @@
+const Project = require('../Model/Project');
+const Learner = require('../Model/Learner');
+
+// Create New Project
+const createProject = async (req, res) => {
+  try {
+    const {
+      name,
+      shortDescription,
+      fullDescription,
+      techStack,
+      category,
+      difficultyLevel,
+      duration,
+      status,
+      thumbnail,
+      tags,
+      openingPrice,
+      currency,
+      projectOutcome,
+      motivation,
+      prerequisites,
+      knowledgeLevel,
+      references
+    } = req.body;
+
+    // Validation
+    if (!name || !shortDescription || !fullDescription || !techStack || techStack.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'Required fields: name, shortDescription, fullDescription, and at least one technology'
+      });
+    }
+
+    if (!category || !difficultyLevel || !duration || !openingPrice) {
+      return res.status(400).json({
+        success: false,
+        message: 'Required fields: category, difficultyLevel, duration, and openingPrice'
+      });
+    }
+
+    if (!projectOutcome || !motivation || !knowledgeLevel) {
+      return res.status(400).json({
+        success: false,
+        message: 'Required fields: projectOutcome, motivation, and knowledgeLevel'
+      });
+    }
+
+    // Validate price
+    const price = parseFloat(openingPrice);
+    if (isNaN(price) || price <= 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'Opening price must be a valid positive number'
+      });
+    }
+
+    // Get learner ID from authenticated user
+    const learnerId = req.user._id;
+
+    // Verify user is a learner
+    const learner = await Learner.findOne({ userId: learnerId });
+    if (!learner) {
+      return res.status(403).json({
+        success: false,
+        message: 'Only learners can create projects'
+      });
+    }
+
+    // Create project
+    const projectData = {
+      name: name.trim(),
+      shortDescription: shortDescription.trim(),
+      fullDescription: fullDescription.trim(),
+      techStack: techStack.map(tech => tech.trim()).filter(tech => tech.length > 0),
+      category,
+      difficultyLevel,
+      duration: duration.trim(),
+      status: status || 'Open',
+      thumbnail: thumbnail || '/uploads/public/default-project.jpg',
+      tags: tags ? tags.map(tag => tag.trim().toLowerCase()).filter(tag => tag.length > 0) : [],
+      openingPrice: price,
+      currency: currency || 'INR',
+      projectOutcome: projectOutcome.trim(),
+      motivation: motivation.trim(),
+      prerequisites: prerequisites ? prerequisites.map(prereq => prereq.trim()).filter(prereq => prereq.length > 0) : [],
+      knowledgeLevel,
+      references: references || [],
+      learnerId: learner._id, // Use learner's ObjectId, not user's
+      isVisible: true
+    };
+
+    const newProject = new Project(projectData);
+    const savedProject = await newProject.save();
+
+    // Update learner's project count
+    await Learner.findByIdAndUpdate(learner._id, {
+      $inc: { 
+        userTotalProjects: 1,
+        userActiveProjects: savedProject.status === 'Open' ? 1 : 0
+      }
+    });
+
+    res.status(201).json({
+      success: true,
+      message: 'Project created successfully!',
+      project: savedProject
+    });
+
+  } catch (error) {
+    console.error('Create project error:', error);
+    
+    // Handle MongoDB validation errors
+    if (error.name === 'ValidationError') {
+      const validationErrors = Object.values(error.errors).map(err => err.message);
+      return res.status(400).json({
+        success: false,
+        message: 'Validation failed',
+        errors: validationErrors
+      });
+    }
+
+    // Handle duplicate key error
+    if (error.code === 11000) {
+      return res.status(400).json({
+        success: false,
+        message: 'A project with this information already exists'
+      });
+    }
+
+    res.status(500).json({
+      success: false,
+      message: 'Failed to create project. Please try again.'
+    });
+  }
+};
+
+// Get Project by ID
+const getProjectById = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!id) {
+      return res.status(400).json({
+        success: false,
+        message: 'Project ID is required'
+      });
+    }
+
+    const project = await Project.findById(id)
+      .populate('learnerId', 'userId title description location')
+      .populate('mentorId', 'userId title description location');
+
+    if (!project) {
+      return res.status(404).json({
+        success: false,
+        message: 'Project not found'
+      });
+    }
+
+    // Check if user has permission to view this project
+    const userLearner = await Learner.findOne({ userId: req.user._id });
+    
+    // Allow access if:
+    // 1. User is the project owner
+    // 2. Project is visible and open
+    // 3. User is the assigned mentor
+    const isOwner = userLearner && project.learnerId._id.toString() === userLearner._id.toString();
+    const isAssignedMentor = project.mentorId && project.mentorId._id.toString() === req.user._id.toString();
+    const isPubliclyVisible = project.isVisible && project.status === 'Open';
+
+    if (!isOwner && !isAssignedMentor && !isPubliclyVisible) {
+      return res.status(403).json({
+        success: false,
+        message: 'You do not have permission to view this project'
+      });
+    }
+
+    // Increment view count if not the owner
+    if (!isOwner) {
+      await Project.findByIdAndUpdate(id, { $inc: { viewCount: 1 } });
+    }
+
+    res.json({
+      success: true,
+      message: 'Project retrieved successfully',
+      project
+    });
+
+  } catch (error) {
+    console.error('Get project error:', error);
+    
+    if (error.name === 'CastError') {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid project ID format'
+      });
+    }
+
+    res.status(500).json({
+      success: false,
+      message: 'Failed to retrieve project'
+    });
+  }
+};
+
+// Update Existing Project
+const updateProject = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const {
+      name,
+      shortDescription,
+      fullDescription,
+      techStack,
+      category,
+      difficultyLevel,
+      duration,
+      status,
+      thumbnail,
+      tags,
+      openingPrice,
+      currency,
+      projectOutcome,
+      motivation,
+      prerequisites,
+      knowledgeLevel,
+      references
+    } = req.body;
+
+    if (!id) {
+      return res.status(400).json({
+        success: false,
+        message: 'Project ID is required'
+      });
+    }
+
+    // Find the project
+    const project = await Project.findById(id);
+    if (!project) {
+      return res.status(404).json({
+        success: false,
+        message: 'Project not found'
+      });
+    }
+
+    // Check if user owns this project
+    const userLearner = await Learner.findOne({ userId: req.user._id });
+    if (!userLearner || project.learnerId.toString() !== userLearner._id.toString()) {
+      return res.status(403).json({
+        success: false,
+        message: 'You can only edit your own projects'
+      });
+    }
+
+    // Validation for required fields
+    if (!name || !shortDescription || !fullDescription || !techStack || techStack.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'Required fields: name, shortDescription, fullDescription, and at least one technology'
+      });
+    }
+
+    if (!category || !difficultyLevel || !duration || !openingPrice) {
+      return res.status(400).json({
+        success: false,
+        message: 'Required fields: category, difficultyLevel, duration, and openingPrice'
+      });
+    }
+
+    if (!projectOutcome || !motivation || !knowledgeLevel) {
+      return res.status(400).json({
+        success: false,
+        message: 'Required fields: projectOutcome, motivation, and knowledgeLevel'
+      });
+    }
+
+    // Validate price
+    const price = parseFloat(openingPrice);
+    if (isNaN(price) || price <= 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'Opening price must be a valid positive number'
+      });
+    }
+
+    // Check if project can be edited (not in certain states)
+    if (project.status === 'Completed' || project.status === 'Cancelled') {
+      return res.status(400).json({
+        success: false,
+        message: 'Cannot edit completed or cancelled projects'
+      });
+    }
+
+    // Track status change for learner stats
+    const oldStatus = project.status;
+    const newStatus = status || project.status;
+
+    // Prepare update data
+    const updateData = {
+      name: name.trim(),
+      shortDescription: shortDescription.trim(),
+      fullDescription: fullDescription.trim(),
+      techStack: techStack.map(tech => tech.trim()).filter(tech => tech.length > 0),
+      category,
+      difficultyLevel,
+      duration: duration.trim(),
+      status: newStatus,
+      thumbnail: thumbnail || project.thumbnail,
+      tags: tags ? tags.map(tag => tag.trim().toLowerCase()).filter(tag => tag.length > 0) : [],
+      openingPrice: price,
+      currency: currency || 'INR',
+      projectOutcome: projectOutcome.trim(),
+      motivation: motivation.trim(),
+      prerequisites: prerequisites ? prerequisites.map(prereq => prereq.trim()).filter(prereq => prereq.length > 0) : [],
+      knowledgeLevel,
+      references: references || []
+    };
+
+    // Update project
+    const updatedProject = await Project.findByIdAndUpdate(
+      id,
+      updateData,
+      { new: true, runValidators: true }
+    ).populate('learnerId', 'userId title description location')
+     .populate('mentorId', 'userId title description location');
+
+    // Update learner stats if status changed
+    if (oldStatus !== newStatus) {
+      const statusChanges = {};
+      
+      // Handle active projects count
+      if (oldStatus === 'Open' && newStatus !== 'Open') {
+        statusChanges.userActiveProjects = -1;
+      } else if (oldStatus !== 'Open' && newStatus === 'Open') {
+        statusChanges.userActiveProjects = 1;
+      }
+
+      if (Object.keys(statusChanges).length > 0) {
+        await Learner.findByIdAndUpdate(userLearner._id, { $inc: statusChanges });
+      }
+    }
+
+    res.json({
+      success: true,
+      message: 'Project updated successfully!',
+      project: updatedProject
+    });
+
+  } catch (error) {
+    console.error('Update project error:', error);
+    
+    // Handle MongoDB validation errors
+    if (error.name === 'ValidationError') {
+      const validationErrors = Object.values(error.errors).map(err => err.message);
+      return res.status(400).json({
+        success: false,
+        message: 'Validation failed',
+        errors: validationErrors
+      });
+    }
+
+    if (error.name === 'CastError') {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid project ID format'
+      });
+    }
+
+    res.status(500).json({
+      success: false,
+      message: 'Failed to update project. Please try again.'
+    });
+  }
+};
+
+module.exports = {
+  createProject,
+  getProjectById,
+  updateProject
+};
