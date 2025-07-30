@@ -27,10 +27,14 @@ const getUserData = async (req, res) => {
       await learnerData.save();
     }
 
+    // Calculate profile completion score
+    const profileScore = calculateProfileScore(user, learnerData);
+
     const combinedData = {
       ...user.toObject(),
       ...learnerData.toObject(),
-      userId: learnerData.userId // Keep reference
+      userId: learnerData.userId, // Keep reference
+      profileScore: profileScore
     };
 
     res.json({
@@ -46,6 +50,7 @@ const getUserData = async (req, res) => {
     });
   }
 };
+
 
 
 const storage = multer.diskStorage({
@@ -91,14 +96,32 @@ const updateProfile = async (req, res) => {
       { new: true, select: '-password' }
     );
 
+    let profileScore = 0;
+    let updatedLearner = null;
+
     // Update role-specific data
     if (req.user.role === 'user') {
       const Learner = require('../Model/Learner');
-      await Learner.findOneAndUpdate(
+      
+      // Get current learner data to check if this is first update
+      const currentLearner = await Learner.findOne({ userId: req.user._id });
+      const isFirstUpdate = currentLearner && !currentLearner.isProfileUpdated;
+      
+      updatedLearner = await Learner.findOneAndUpdate(
         { userId: req.user._id },
-        { title, description, location },
+        { 
+          title, 
+          description, 
+          location,
+          // Set to true only on first update
+          ...(isFirstUpdate && { isProfileUpdated: true })
+        },
         { new: true, upsert: true }
       );
+
+      // Calculate profile completion score
+      profileScore = calculateProfileScore(updatedUser, updatedLearner);
+      
     } else if (req.user.role === 'mentor') {
       const Mentor = require('../Model/Mentor');
       await Mentor.findOneAndUpdate(
@@ -110,7 +133,9 @@ const updateProfile = async (req, res) => {
 
     res.json({
       success: true,
-      message: 'Profile updated successfully'
+      message: 'Profile updated successfully',
+      profileScore: profileScore,
+      isProfileUpdated: updatedLearner?.isProfileUpdated || false
     });
   } catch (error) {
     console.error('Update profile error:', error);
@@ -119,6 +144,32 @@ const updateProfile = async (req, res) => {
       message: 'Failed to update profile'
     });
   }
+};
+
+// Helper function to calculate profile completion score
+const calculateProfileScore = (user, learner) => {
+  let score = 0;
+  const totalFields = 8; // Total number of profile fields
+  
+  // Check User fields (25 points each for name, email)
+  if (user.name && user.name.trim()) score += 12.5;
+  if (user.email && user.email.trim()) score += 12.5;
+  if (user.avatar && user.avatar !== '/uploads/public/default.jpg') score += 12.5;
+  
+  // Check Learner fields (25 points each for title, description, location)
+  if (learner.title && learner.title.trim() && learner.title !== "Not mentioned") score += 12.5;
+  if (learner.description && learner.description.trim() && learner.description !== "To Lazy to type") score += 12.5;
+  if (learner.location && learner.location.trim() && learner.location !== "Home") score += 12.5;
+  
+  // Check Social Links (25 points total, distributed)
+  const socialLinks = learner.socialLinks || {};
+  let socialScore = 0;
+  if (socialLinks.github && socialLinks.github !== '#') socialScore += 4.17;
+  if (socialLinks.linkedin && socialLinks.linkedin !== '#') socialScore += 4.17;
+  if (socialLinks.twitter && socialLinks.twitter !== '#') socialScore += 4.16;
+  score += socialScore;
+  
+  return Math.round(score);
 };
 
 // Update Social Links
