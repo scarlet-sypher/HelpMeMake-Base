@@ -10,6 +10,7 @@ const mentorRoutes = require('./routes/mentorRoute');
 const path = require('path');
 const authRoutes = require('./routes/authRoute');
 const metaRoutes = require('./routes/metaRoute');
+const projectRoutes = require('./routes/projectRoute');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -56,6 +57,7 @@ app.use('/auth', authRoutes);
 app.use('/user', userRoutes);
 app.use('/mentor', mentorRoutes);
 app.use('/meta', metaRoutes);
+app.use('/projects', projectRoutes);
 
 app.get('/health', (req, res) => {
   res.json({

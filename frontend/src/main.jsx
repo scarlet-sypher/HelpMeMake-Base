@@ -15,6 +15,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 
 import './index.css';
 import ForgotPassword from './components/auth/ForgotPassword';
+import ProjectForm from './components/user/ProjectForm';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
@@ -46,6 +47,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
             <MentorDashboard />
           </ProtectedRoute>
         } />
+        <Route path="/project-form" element={<ProjectForm />} />
         
         <Route path="/admindashboard" element={
           <ProtectedRoute requiredRole="admin">
