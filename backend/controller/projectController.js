@@ -374,8 +374,139 @@ const updateProject = async (req, res) => {
   }
 };
 
+// Get all projects for authenticated user (Dashboard)
+const getProjectsForUser = async (req, res) => {
+  try {
+    // Get learner profile for the authenticated user
+    const userLearner = await Learner.findOne({ userId: req.user._id });
+    
+    if (!userLearner) {
+      return res.status(403).json({
+        success: false,
+        message: 'Only learners can access this endpoint'
+      });
+    }
+
+    // Find all projects belonging to this learner
+    const projects = await Project.find({ learnerId: userLearner._id })
+      .populate('learnerId', 'userId title description location')
+      .populate('mentorId', 'userId title description location')
+      .sort({ createdAt: -1 }); // Sort by newest first
+
+    // Calculate some basic stats
+    const stats = {
+      total: projects.length,
+      open: projects.filter(p => p.status === 'Open').length,
+      inProgress: projects.filter(p => p.status === 'In Progress').length,
+      completed: projects.filter(p => p.status === 'Completed').length,
+      cancelled: projects.filter(p => p.status === 'Cancelled').length
+    };
+
+    res.json({
+      success: true,
+      message: 'Projects retrieved successfully',
+      projects,
+      stats
+    });
+
+  } catch (error) {
+    console.error('Get user projects error:', error);
+    
+    res.status(500).json({
+      success: false,
+      message: 'Failed to retrieve projects'
+    });
+  }
+};
+
+//Delete project by ID (only if user owns it)
+const deleteProjectById = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!id) {
+      return res.status(400).json({
+        success: false,
+        message: 'Project ID is required'
+      });
+    }
+
+    // Find the project first
+    const project = await Project.findById(id);
+    
+    if (!project) {
+      return res.status(404).json({
+        success: false,
+        message: 'Project not found'
+      });
+    }
+
+    // Check if user owns this project
+    const userLearner = await Learner.findOne({ userId: req.user._id });
+    
+    if (!userLearner) {
+      return res.status(403).json({
+        success: false,
+        message: 'Only learners can delete projects'
+      });
+    }
+
+    if (project.learnerId.toString() !== userLearner._id.toString()) {
+      return res.status(403).json({
+        success: false,
+        message: 'You can only delete your own projects'
+      });
+    }
+
+    // Check if project can be deleted (business logic)
+    if (project.status === 'In Progress' && project.mentorId) {
+      return res.status(400).json({
+        success: false,
+        message: 'Cannot delete projects that are in progress with an assigned mentor'
+      });
+    }
+
+    // Store project status for stats update
+    const projectStatus = project.status;
+
+    // Delete the project
+    await Project.findByIdAndDelete(id);
+
+    // Update learner's project count
+    const statsUpdate = { userTotalProjects: -1 };
+    
+    if (projectStatus === 'Open') {
+      statsUpdate.userActiveProjects = -1;
+    }
+
+    await Learner.findByIdAndUpdate(userLearner._id, { $inc: statsUpdate });
+
+    res.json({
+      success: true,
+      message: 'Project deleted successfully'
+    });
+
+  } catch (error) {
+    console.error('Delete project error:', error);
+    
+    if (error.name === 'CastError') {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid project ID format'
+      });
+    }
+
+    res.status(500).json({
+      success: false,
+      message: 'Failed to delete project. Please try again.'
+    });
+  }
+};
+
 module.exports = {
   createProject,
   getProjectById,
-  updateProject
+  updateProject,
+  getProjectsForUser,    
+  deleteProjectById      
 };
