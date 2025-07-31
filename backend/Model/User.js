@@ -56,6 +56,10 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false  // Only true after OTP verification
   },
+  isPasswordUpdated: {
+    type: Boolean,
+    default: false  // New field for tracking password updates
+  },
 
 }, {
   timestamps: true

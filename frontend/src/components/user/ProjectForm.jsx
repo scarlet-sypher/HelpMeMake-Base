@@ -87,7 +87,7 @@ const ProjectForm = ({ mode = 'create', initialData = null, onSubmit, onCancel }
   const difficultyLevels = ['Beginner', 'Intermediate', 'Advanced'];
   const knowledgeLevels = ['Complete Beginner', 'Some Knowledge', 'Good Understanding', 'Advanced Knowledge'];
   const referenceTypes = ['Documentation', 'Tutorial', 'GitHub Repo', 'Article', 'Video', 'Book', 'Other'];
-  const statusOptions = ['Open', 'In Progress', 'Completed', 'Cancelled'];
+  const statusOptions = ['Open'];
 
   // Load project data for edit mode
   useEffect(() => {
