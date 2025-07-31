@@ -34,8 +34,13 @@ const getUserData = async (req, res) => {
       ...user.toObject(),
       ...learnerData.toObject(),
       userId: learnerData.userId, // Keep reference
-      profileScore: profileScore
+      profileScore: profileScore,
+      generatedPassword: user.tempPassword || null 
     };
+
+    if (user.tempPassword) {
+  await User.findByIdAndUpdate(req.user._id, { $unset: { tempPassword: 1 } });
+}
 
     res.json({
       success: true,
@@ -217,25 +222,35 @@ const changePassword = async (req, res) => {
 
     const user = await User.findById(req.user._id);
     
-    if (user.authProvider !== 'local') {
-      return res.status(400).json({
-        success: false,
-        message: `Cannot change password for ${user.authProvider} accounts`
-      });
-    }
+    if (user.authProvider !== 'local' && !user.tempPassword && user.isPasswordUpdated !== false) {
+  return res.status(400).json({
+    success: false,
+    message: `Cannot change password for ${user.authProvider} accounts that don't have a generated password`
+  });
+}
 
-    const isValidPassword = await bcrypt.compare(currentPassword, user.password);
-    if (!isValidPassword) {
-      return res.status(400).json({
-        success: false,
-        message: 'Current password is incorrect'
-      });
-    }
+// For social auth users with generated passwords, skip current password validation
+const skipCurrentPasswordCheck = user.authProvider !== 'local' && (user.tempPassword || user.isPasswordUpdated === false);
+
+if (!skipCurrentPasswordCheck) {
+  const isValidPassword = await bcrypt.compare(currentPassword, user.password);
+  if (!isValidPassword) {
+    return res.status(400).json({
+      success: false,
+      message: 'Current password is incorrect'
+    });
+  }
+}
+
+
 
     const saltRounds = 12;
     const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
 
-    await User.findByIdAndUpdate(req.user._id, { password: hashedPassword });
+    await User.findByIdAndUpdate(req.user._id, { 
+      password: hashedPassword,
+      isPasswordUpdated: true  
+    });
 
     res.json({
       success: true,

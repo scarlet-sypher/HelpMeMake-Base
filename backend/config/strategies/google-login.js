@@ -47,21 +47,35 @@ const googleStrategy = new GoogleStrategy({
     console.log('Creating new user with Google OAuth:', email);
     
     try {
+      // Generate random password for Google users
+      const crypto = require('crypto');
+      const bcrypt = require('bcryptjs');
+      const generatedPassword = crypto.randomBytes(8).toString('base64');
+      const hashedPassword = await bcrypt.hash(generatedPassword, 12);
+      
       user = new User({
         googleId,
         email,
         name: profile.displayName,
         avatar: profile.photos[0]?.value,
         authProvider: 'google',
+        password: hashedPassword,  // Store hashed generated password
         isEmailVerified: true,
         isAccountActive: true,
+        tempPassword: generatedPassword,
+        isPasswordUpdated: false,  // Flag for password update prompt
         role: null
       });
-     
+      
       await user.save();
+      
+      // Store generated password temporarily for response
+      user.tempGeneratedPassword = generatedPassword;
+      console.log('Set tempGeneratedPassword:', generatedPassword);
+      
       console.log('New user created successfully:', user.email);
       return done(null, user);
-     
+      
     } catch (error) {
       // Handle duplicate key error gracefully
       if (error.code === 11000 && error.keyPattern && error.keyPattern.email) {

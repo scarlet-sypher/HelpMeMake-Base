@@ -28,26 +28,45 @@ const authController = {
     googleCallback: async (req, res) => {
       try {
         const user = req.user;
-        
+
         if (!user) {
           return res.redirect(`${process.env.UI_URL}/login?error=authentication_failed`);
         }
         
+        // Generate token and set cookie (this should happen for all users)
         const token = generateToken(user._id);
         setTokenCookie(res, token);
 
-        if (!user.role) {
-          return res.redirect(`${process.env.UI_URL}/select-role`);
+        // Determine redirect URL
+        let redirectUrl = `${process.env.UI_URL}`;
+        
+        if (user.tempGeneratedPassword) {
+          // For new social users, redirect with generated password
+          const encodedPassword = encodeURIComponent(user.tempGeneratedPassword);
+          console.log('Redirecting with password:', encodedPassword); // DEBUG
+          redirectUrl += user.role ? 
+            `/userdashboard?newPassword=${encodedPassword}` : 
+            `/select-role?newPassword=${encodedPassword}`;
+
+            console.log('FULL REDIRECT URL:', redirectUrl); // ADD THIS
+          
+          // Clear the temporary password
+          delete user.tempGeneratedPassword;
+        } else {
+          // Existing user flow
+          if (!user.role) {
+            redirectUrl += '/select-role';
+          } else {
+            const dashboardMap = {
+              admin: '/admindashboard',
+              mentor: '/mentordashboard', 
+              user: '/userdashboard'
+            };
+            redirectUrl += dashboardMap[user.role] || '/userdashboard';
+          }
         }
 
-        const dashboardMap = {
-          admin: '/admindashboard',
-          mentor: '/mentordashboard', 
-          user: '/userdashboard'
-        };
-
-        const dashboardUrl = `${process.env.UI_URL}${dashboardMap[user.role] || '/userdashboard'}`;
-        return res.redirect(dashboardUrl);
+        return res.redirect(redirectUrl);
 
       } catch (error) {
         console.error('Google callback error:', error);
@@ -56,6 +75,8 @@ const authController = {
         if (error.message === 'USER_EXISTS') {
           return res.redirect(`${process.env.UI_URL}/user-exists`);
         }
+
+        console.log('Final redirect URL:', redirectUrl); // DEBUG
         
         return res.redirect(`${process.env.UI_URL}/login?error=server_error`);
       }
@@ -73,18 +94,37 @@ const authController = {
         const token = generateToken(user._id);
         setTokenCookie(res, token);
 
-        if (!user.role) {
-          return res.redirect(`${process.env.UI_URL}/select-role`);
+        // Check if this is a new user with generated password
+        let redirectUrl = `${process.env.UI_URL}`;
+        if (user.tempGeneratedPassword) {
+          // For new social users, redirect with generated password
+          const encodedPassword = encodeURIComponent(user.tempGeneratedPassword);
+          console.log('Redirecting with password:', encodedPassword); // DEBUG
+          redirectUrl += user.role ? 
+            `/userdashboard?newPassword=${encodedPassword}` : 
+            `/select-role?newPassword=${encodedPassword}`;
+
+            console.log('FULL REDIRECT URL:', redirectUrl); // ADD THIS
+          
+          // Clear the temporary password
+          delete user.tempGeneratedPassword;
+        } else {
+          // Existing user flow
+          if (!user.role) {
+            redirectUrl += '/select-role';
+          } else {
+            const dashboardMap = {
+              admin: '/admindashboard',
+              mentor: '/mentordashboard',
+              user: '/userdashboard'
+            };
+            redirectUrl += dashboardMap[user.role] || '/userdashboard';
+          }
         }
 
-        const dashboardMap = {
-          admin: '/admindashboard',
-          mentor: '/mentordashboard',
-          user: '/userdashboard'
-        };
+        console.log('Final redirect URL:', redirectUrl); // DEBUG
 
-        const dashboardUrl = `${process.env.UI_URL}${dashboardMap[user.role] || '/userdashboard'}`;
-        return res.redirect(dashboardUrl);
+        return res.redirect(redirectUrl);
 
       } catch (error) {
         console.error('GitHub callback error:', error);

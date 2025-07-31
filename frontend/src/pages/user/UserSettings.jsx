@@ -124,6 +124,17 @@ const UserSettings = () => {
     }
   }, [loading, isAuthenticated]);
 
+
+  useEffect(() => {
+    // Check if user came from password update prompt
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('updatePassword') === 'true') {
+      setActiveTab('security');
+      // Clear URL params
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }, []);
+
   // Fetch user data
   useEffect(() => {
     const fetchUserData = async () => {
@@ -285,6 +296,14 @@ const UserSettings = () => {
           newPassword: '',
           confirmPassword: ''
         });
+        
+        // Update user data to reflect password has been updated
+        if (userData) {
+          setUserData({
+            ...userData,
+            isPasswordUpdated: true
+          });
+        }
       }
     } catch (error) {
       console.error('Error changing password:', error);
@@ -376,6 +395,23 @@ const UserSettings = () => {
       </div>
     );
   };
+
+  const canChangePassword = () => {
+  return userData && (
+    userData.authProvider === 'local' || 
+    userData.tempPassword || 
+    userData.isPasswordUpdated === false ||
+    (userData.authProvider !== 'local' && userData.password)
+  );
+};
+
+// Add this notice for social auth users who haven't updated their password
+const showPasswordUpdateNotice = () => {
+  return userData && 
+         userData.authProvider !== 'local' && 
+         userData.isPasswordUpdated === false;
+};
+
 
   if (loading || userDataLoading) {
     return (
@@ -841,6 +877,7 @@ const UserSettings = () => {
                         </div>
 
                         <form onSubmit={handlePasswordChange} className="space-y-6">
+                          {(!userData || userData.authProvider === 'local' || userData.isPasswordUpdated !== false) && (
                           <div className="space-y-2">
                             <label className="block text-sm font-semibold text-gray-300 mb-3 items-center">
                               <Lock className="mr-2 text-red-400" size={16} />
@@ -865,6 +902,7 @@ const UserSettings = () => {
                               <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-red-500/20 to-orange-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
                             </div>
                           </div>
+                          )}
 
                           <div className="space-y-2">
                             <label className="block text-sm font-semibold text-gray-300 mb-3">

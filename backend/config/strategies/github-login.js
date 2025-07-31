@@ -42,19 +42,33 @@ const githubStrategy = new GitHubStrategy({
     }
 
     // Step 3: Create new user if none exists
-    try {
+     try {
+      // Generate random password for GitHub users
+      const crypto = require('crypto');
+      const bcrypt = require('bcryptjs');
+      const generatedPassword = crypto.randomBytes(8).toString('base64');
+      const hashedPassword = await bcrypt.hash(generatedPassword, 12);
+      
       user = new User({
         githubId,
         email,
         name,
         avatar,
         authProvider: 'github',
+        password: hashedPassword,  // Store hashed generated password
         isEmailVerified: true,
         isAccountActive: true,
+        tempPassword: generatedPassword,
+        isPasswordUpdated: false,  // Flag for password update prompt
         role: null
       });
       
       await user.save();
+      
+      // Store generated password temporarily for response
+      user.tempGeneratedPassword = generatedPassword;
+      console.log('Set tempGeneratedPassword:', generatedPassword);
+      
       return done(null, user);
       
     } catch (error) {

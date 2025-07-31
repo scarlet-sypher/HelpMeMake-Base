@@ -9,9 +9,7 @@ const userSchema = new mongoose.Schema({
     trim: true
   },
   password: {
-    type: String,
-    default: null,
-    
+    type: String,    
   },
   googleId: {
     type: String,
@@ -59,6 +57,10 @@ const userSchema = new mongoose.Schema({
   isPasswordUpdated: {
     type: Boolean,
     default: false  // New field for tracking password updates
+  },
+  tempPassword: {
+    type: String,
+    default: null
   },
 
 }, {

@@ -33,7 +33,9 @@ import {
   Activity,
   CheckCircle,
   Flame,
-  Menu
+  Menu,
+  X,
+  Lock
 } from 'lucide-react';
 
 const UserDashboard = () => {
@@ -42,6 +44,8 @@ const UserDashboard = () => {
   const [activeItem, setActiveItem] = useState('dashboard');
   const [userData, setUserData] = useState(null);
   const [userDataLoading, setUserDataLoading] = useState(true);
+  const [generatedPassword, setGeneratedPassword] = useState(null);
+  const [showPasswordBanner, setShowPasswordBanner] = useState(false);
 
   useEffect(() => {
     if (!loading && !isAuthenticated) {
@@ -94,6 +98,48 @@ const UserDashboard = () => {
     fetchUserData();
   }, [isAuthenticated]);
 
+  useEffect(() => {
+    // Check URL params for generated password
+    const urlParams = new URLSearchParams(window.location.search);
+    const newPassword = urlParams.get('newPassword');
+    
+    if (newPassword && userData && !userData.isPasswordUpdated) {
+      setGeneratedPassword(newPassword);
+      setShowPasswordBanner(true);
+      
+      // Clear URL params
+      window.history.replaceState({}, document.title, window.location.pathname);
+    } else if (userData && !userData.isPasswordUpdated && userData.authProvider !== 'local') {
+      // Show banner for social users who haven't updated password
+      setShowPasswordBanner(true);
+    }
+  }, [userData]);
+
+  useEffect(() => {
+  // Check URL params for generated password
+  const urlParams = new URLSearchParams(window.location.search);
+  const newPassword = urlParams.get('newPassword');
+  
+  // ADD THESE DEBUG LOGS
+  console.log('URL search params:', window.location.search);
+  console.log('newPassword from URL:', newPassword);
+  console.log('userData:', userData);
+  console.log('userData.isPasswordUpdated:', userData?.isPasswordUpdated);
+  
+  if (newPassword && userData && !userData.isPasswordUpdated) {
+    console.log('Setting generated password:', newPassword); // DEBUG
+    setGeneratedPassword(newPassword);
+    setShowPasswordBanner(true);
+    
+    // Clear URL params
+    window.history.replaceState({}, document.title, window.location.pathname);
+  } else if (userData && !userData.isPasswordUpdated && userData.authProvider !== 'local') {
+    console.log('Showing banner for social user without password'); // DEBUG
+    // Show banner for social users who haven't updated password
+    setShowPasswordBanner(true);
+  }
+}, [userData]);
+
   // Show loading spinner while checking auth or fetching user data
   if (loading || userDataLoading) {
     return (
@@ -102,6 +148,8 @@ const UserDashboard = () => {
       </div>
     );
   }
+
+  
 
   // Don't render dashboard if not authenticated
   if (!isAuthenticated || !userData) {
@@ -378,6 +426,79 @@ const UserDashboard = () => {
                       Update Profile
                     </button>
                   </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Password Update Banner */}
+          {showPasswordBanner && userData && !userData.isPasswordUpdated && (
+            <div className="relative group mb-6">
+              <div className="absolute -inset-0.5 bg-gradient-to-r from-red-500 to-pink-600 rounded-2xl blur opacity-20 group-hover:opacity-30 transition duration-500"></div>
+              <div className="relative bg-gradient-to-r from-red-500/20 to-pink-600/20 backdrop-blur-sm rounded-2xl p-6 border border-red-400/30">
+                <div className="flex items-start justify-between">
+                  <div className="flex items-start space-x-4 flex-1">
+                    <div className="p-3 bg-gradient-to-r from-red-500 to-pink-600 rounded-xl flex-shrink-0">
+                      <Lock className="text-white" size={24} />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="text-xl font-bold text-white mb-2 flex items-center">
+                        🔐 Security Update Required
+                        <button
+                          onClick={() => setShowPasswordBanner(false)}
+                          className="ml-auto text-red-200 hover:text-white transition-colors p-1 hover:bg-white/10 rounded-lg"
+                        >
+                          <X size={18} />
+                        </button>
+                      </h3>
+                      {generatedPassword ? (
+                        <div className="space-y-3">
+                          <p className="text-red-200">
+                            We've generated a temporary password for your {userData.authProvider} account:
+                          </p>
+                          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-red-300/30 flex items-center space-x-3">
+                            <code className="text-yellow-300 font-mono text-lg font-bold flex-1">
+                              {generatedPassword}
+                            </code>
+                            <button
+                              onClick={() => {
+                                navigator.clipboard.writeText(generatedPassword);
+                                // Add a small notification here if needed
+                              }}
+                              className="p-2 bg-white/10 hover:bg-white/20 rounded-lg transition-colors"
+                              title="Copy password"
+                            >
+                              📋
+                            </button>
+                          </div>
+                          <p className="text-red-200 text-sm">
+                            ⚠️ Please copy this password and update it immediately. This is the only time it will be shown.
+                          </p>
+                        </div>
+                      ) : (
+                        <p className="text-red-200">
+                          Please update your password to ensure full control of your account.
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-center justify-end mt-4 space-x-3">
+                  <button
+                    onClick={() => setShowPasswordBanner(false)}
+                    className="px-4 py-2 text-red-200 hover:text-white transition-colors font-medium"
+                  >
+                    Dismiss
+                  </button>
+                  <button
+                    onClick={() => {
+                      setActiveItem('settings');
+                      window.location.href = '/user/settings';
+                    }}
+                    className="px-6 py-3 bg-gradient-to-r from-red-500 to-pink-600 hover:from-red-600 hover:to-pink-700 text-white rounded-xl font-semibold transition-all transform hover:scale-105 shadow-lg"
+                  >
+                    Update Password Now
+                  </button>
                 </div>
               </div>
             </div>

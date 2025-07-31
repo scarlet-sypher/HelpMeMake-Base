@@ -49,38 +49,63 @@ const SelectRole = () => {
     fetchUserInfo();
   }, [navigate]);
 
+  useEffect(() => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const newPassword = urlParams.get('newPassword');
+  
+  if (newPassword) {
+    // Store in sessionStorage to persist across navigation
+    sessionStorage.setItem('newPassword', newPassword);
+    
+    // Clear URL params
+    window.history.replaceState({}, document.title, window.location.pathname);
+  }
+}, []);
+
+// When user selects role and navigates to dashboard
+const handleRoleSelection = (role) => {
+  const storedPassword = sessionStorage.getItem('newPassword');
+  let redirectUrl = role === 'user' ? '/userdashboard' : '/mentordashboard';
+  
+  if (storedPassword) {
+    redirectUrl += `?newPassword=${encodeURIComponent(storedPassword)}`;
+    sessionStorage.removeItem('newPassword'); // Clean up
+  }
+  
+  window.location.href = redirectUrl;
+};
+
   const handleRoleSubmit = async () => {
-    if (!selectedRole) return;
+  if (!selectedRole) return;
 
-    setIsSubmitting(true);
+  setIsSubmitting(true);
 
-    try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/set-role`, {
-        method: "POST",
-        credentials: "include", // Include cookies
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ role: selectedRole }),
-      });
+  try {
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/set-role`, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ role: selectedRole }),
+    });
 
-      const data = await response.json();
+    const data = await response.json();
 
-      if (response.ok) {
-        // Success! Redirect to appropriate dashboard
-        const dashboardUrl = selectedRole === 'mentor' ? '/mentordashboard' : '/userdashboard';
-        navigate(dashboardUrl, { replace: true });
-      } else {
-        console.error("Error setting role:", data.message);
-        alert(data.message || "Failed to set role. Please try again.");
-      }
-    } catch (error) {
-      console.error("Error setting role:", error);
-      alert("Something went wrong. Please try again.");
-    } finally {
-      setIsSubmitting(false);
+    if (response.ok) {
+      // SUCCESS! Use the custom function that preserves password
+      handleRoleSelection(selectedRole); // This will handle the redirect with password
+    } else {
+      console.error("Error setting role:", data.message);
+      alert(data.message || "Failed to set role. Please try again.");
     }
-  };
+  } catch (error) {
+    console.error("Error setting role:", error);
+    alert("Something went wrong. Please try again.");
+  } finally {
+    setIsSubmitting(false);
+  }
+};
 
   if (isLoading) {
     return (
