@@ -17,7 +17,8 @@ import ProjectForm from './components/user/ProjectForm';
 
 import './index.css';
 import ProjectsIndex from './pages/user/ProjectsIndex';
-import DetailedProjectView from './components/user/DetailedProjectView';
+import DetailedProjectView from './pages/user/DetailedProjectView';
+
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
