@@ -242,7 +242,7 @@ const DetailedProjectView = () => {
           <h2 className="text-2xl font-bold mb-2">Project Not Found</h2>
           <p className="text-gray-300 mb-6">The project you're looking for doesn't exist or has been removed.</p>
           <button
-            onClick={() => navigate('/user/dashboard')}
+            onClick={() => navigate('/user/projects')}
             className="px-6 py-3 bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-xl hover:from-blue-600 hover:to-cyan-600 transition-all"
           >
             Return to Dashboard
@@ -279,7 +279,7 @@ const DetailedProjectView = () => {
         {/* Header */}
         <div className="mb-6">
           <button
-            onClick={() => navigate('/user/dashboard')}
+            onClick={() => navigate('/user/projects')}
             className="group flex items-center space-x-2 text-white hover:text-blue-300 transition-colors mb-4"
           >
             <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
