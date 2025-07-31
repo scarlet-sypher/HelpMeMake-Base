@@ -5,7 +5,7 @@ import {
   Bot,
   Award,
   MessageCircle,
-  TrendingUp
+  TrendingUp,
 } from 'lucide-react';
 import { toast } from 'react-toastify';
 
@@ -13,16 +13,11 @@ const ProjectActions = ({
   project, 
   setProject, 
   setShowMentorSelection, 
+  handleAIMentorSelection, 
   API_URL, 
   formatPrice, 
   formatDate 
 }) => {
-  // Handle AI mentor selection
-  const handleAIMentorSelection = () => {
-    toast.info('AI mentor selection coming soon!', {
-      icon: <Bot className="text-blue-400" size={20} />
-    });
-  };
 
   return (
     <div className="space-y-6">
@@ -42,12 +37,21 @@ const ProjectActions = ({
               <span>Choose Mentor Manually</span>
             </button>
             <button
-              onClick={handleAIMentorSelection}
-              className="w-full px-6 py-4 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-2xl font-semibold transition-all transform hover:scale-105 shadow-lg flex items-center justify-center space-x-2"
+            onClick={handleAIMentorSelection}
+            className="group relative w-full px-6 py-4 bg-gradient-to-r from-purple-600 via-pink-500 to-red-500 
+                        bg-[length:200%_100%] bg-left hover:bg-right 
+                        text-white rounded-2xl font-semibold transition-all duration-500 ease-in-out 
+                        transform hover:scale-105 hover:brightness-110 shadow-xl hover:shadow-pink-500/30 overflow-hidden"
             >
-              <Bot size={20} />
-              <span>Let AI Pick Best Mentor</span>
+            <div className="relative z-10 flex items-center justify-center space-x-2">
+                <Bot size={20} className="text-white animate-pulse drop-shadow-[0_0_4px_rgba(255,255,255,0.5)]" />
+                <span className="tracking-wide">Let AI Pick Your Mentor</span>
+                <div className="ml-2 px-2 py-1 bg-orange-500/30 text-yellow-200 rounded-lg text-xs font-bold shadow-inner animate-bounce">
+                ✨ NEW
+                </div>
+            </div>
             </button>
+
           </div>
         </div>
       )}

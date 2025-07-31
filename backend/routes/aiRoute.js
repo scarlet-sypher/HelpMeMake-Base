@@ -32,7 +32,7 @@ router.post('/select-mentors', requireUserOrMentor, async (req, res) => {
       return {
         mentorData: matchedMentor,
         aiScore: aiMentor.score,
-        whyReason: `🎯 AI selected this mentor because: ${aiMentor.reason}`
+        whyReason: `🎯 We recommended you this Mentor because: ${aiMentor.reason}`
       };
     }).filter(Boolean); // Remove null entries
 
@@ -236,4 +236,81 @@ function performFallbackAnalysis(projectData, mentorsList) {
   return { mentors: topMentors };
 }
 
+
+router.get('/mentor-reason/:mentorId', requireUserOrMentor, async (req, res) => {
+  try {
+    const { mentorId } = req.params;
+    const { projectId } = req.query;
+
+    if (!mentorId || !projectId) {
+      return res.status(400).json({
+        success: false,
+        message: 'Mentor ID and Project ID are required'
+      });
+    }
+
+    const Mentor = require('../Model/Mentor');
+    const Project = require('../Model/Project');
+
+    // Fetch mentor and project
+    const [mentor, project] = await Promise.all([
+      Mentor.findById(mentorId).populate('userId', 'name email avatar'),
+      Project.findById(projectId)
+    ]);
+
+    if (!mentor || !project) {
+      return res.status(404).json({
+        success: false,
+        message: 'Mentor or project not found'
+      });
+    }
+
+    // Generate AI reasoning
+    const aiResponse = await getBestMentorsUsingGemini(
+      {
+        id: project._id,
+        name: project.name,
+        category: project.category,
+        techStack: project.techStack,
+        difficultyLevel: project.difficultyLevel,
+        shortDescription: project.shortDescription,
+        duration: project.duration,
+        openingPrice: project.openingPrice,
+        prerequisites: project.prerequisites || []
+      },
+      [{
+        _id: mentor._id,
+        name: mentor.userId?.name || 'Anonymous',
+        title: mentor.title,
+        expertise: mentor.expertise,
+        rating: mentor.rating,
+        totalStudents: mentor.totalStudents,
+        completedSessions: mentor.completedSessions,
+        experience: mentor.experience,
+        responseTime: mentor.responseTime,
+        pricing: mentor.pricing,
+        description: mentor.description
+      }]
+    );
+
+    const mentorReason = aiResponse.mentors.find(m => m.mentorId === mentorId);
+
+    res.json({
+      success: true,
+      mentor,
+      project,
+      aiReason: mentorReason?.reason || 'AI analysis not available',
+      aiScore: mentorReason?.score || 0,
+      analysisTime: new Date().toISOString()
+    });
+
+  } catch (error) {
+    console.error('AI mentor reasoning error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to generate AI reasoning',
+      error: error.message
+    });
+  }
+});
 module.exports = router;

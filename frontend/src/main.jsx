@@ -18,6 +18,7 @@ import ProjectForm from './components/user/ProjectForm';
 import './index.css';
 import ProjectsIndex from './pages/user/ProjectsIndex';
 import DetailedProjectView from './pages/user/DetailedProjectView';
+import ShowMentorDetails from './pages/user/ShowMentorDetails';
 
 
 ReactDOM.createRoot(document.getElementById('root')).render(
@@ -108,6 +109,14 @@ ReactDOM.createRoot(document.getElementById('root')).render(
             <DetailedProjectView />
           </ProtectedRoute>
         } />
+
+
+        <Route path="/user/mentors/:mentorId/ai-reason" element={
+          <ProtectedRoute requiredRole="user">
+            <ShowMentorDetails />
+          </ProtectedRoute>
+        } />
+
 
         {/* ⚠️ Remove these standalone component routes */}
         {/* <Route path="/project-form" element={<ProjectForm />} /> */}

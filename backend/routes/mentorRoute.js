@@ -8,6 +8,7 @@ const {
 } = require('../controller/mentorController');
 const User = require('../Model/User');
 const Mentor = require('../Model/Mentor');
+const { getMentorWithAIReason } = require('../controller/mentorController');
 const router = express.Router();
 
 // ========================================
@@ -22,6 +23,8 @@ router.get('/search', requireUserOrMentor, searchMentors);
 
 // Get mentor statistics - for admin/analytics
 router.get('/stats/overview', getMentorStats);
+
+
 
 // ========================================
 // MENTOR DASHBOARD/PROFILE ROUTES
@@ -140,8 +143,9 @@ router.patch('/profile', requireMentor, async (req, res) => {
 // ========================================
 // PUBLIC MENTOR VIEW (Keep at bottom to avoid route conflicts)
 // ========================================
-
+router.get('/ai-reason/:id', requireUserOrMentor, getMentorWithAIReason);
 // Get mentor by ID - accessible by both users and mentors
 router.get('/:id', requireUserOrMentor, getMentorById);
+
 
 module.exports = router;

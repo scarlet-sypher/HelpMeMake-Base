@@ -29,9 +29,9 @@ import {
 } from 'lucide-react';
 
 const ProjectForm = ({ mode = 'create', initialData = null, onSubmit, onCancel }) => {
+  const { user } = useAuth();
   const navigate = useNavigate();
   const { id: projectId } = useParams();
-  const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [loadingProject, setLoadingProject] = useState(false);
   const [showPreview, setShowPreview] = useState(false);

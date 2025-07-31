@@ -350,9 +350,166 @@ const getMentorStats = async (req, res) => {
   }
 };
 
+const getMentorWithAIReason = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { projectId } = req.query; // Optional project context
+
+    if (!id) {
+      return res.status(400).json({
+        success: false,
+        message: 'Mentor ID is required'
+      });
+    }
+
+    // Get mentor details (reuse existing logic)
+    const mentor = await Mentor.findById(id)
+      .populate('userId', 'name email avatar isEmailVerified createdAt')
+      .populate('reviews.learnerId', 'name avatar');
+
+    if (!mentor) {
+      return res.status(404).json({
+        success: false,
+        message: 'Mentor not found'
+      });
+    }
+
+    // Check if mentor's user account is active
+    if (!mentor.userId || !mentor.userId.isEmailVerified) {
+      return res.status(404).json({
+        success: false,
+        message: 'Mentor profile is not available'
+      });
+    }
+
+    let aiReason = null;
+    let aiScore = null;
+
+    // If projectId is provided, generate AI reasoning
+    if (projectId) {
+      try {
+        const Project = require('../Model/Project');
+        const project = await Project.findById(projectId);
+        
+        if (project) {
+          // Generate AI reasoning using existing Gemini integration
+          const aiResponse = await generateMentorReasoning(project, mentor);
+          aiReason = aiResponse.reason;
+          aiScore = aiResponse.score;
+        }
+      } catch (aiError) {
+        console.error('AI reasoning generation failed:', aiError);
+        // Continue without AI reasoning
+      }
+    }
+
+    res.json({
+      success: true,
+      message: 'Mentor details retrieved successfully',
+      mentor,
+      aiReason,
+      aiScore
+    });
+
+  } catch (error) {
+    console.error('Get mentor with AI reason error:', error);
+    
+    if (error.name === 'CastError') {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid mentor ID format'
+      });
+    }
+
+    res.status(500).json({
+      success: false,
+      message: 'Failed to retrieve mentor details'
+    });
+  }
+};
+
+// Helper function to generate AI reasoning for a single mentor
+const generateMentorReasoning = async (project, mentor) => {
+  const { GoogleGenerativeAI } = require('@google/generative-ai');
+  const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+  
+  try {
+    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    
+    const prompt = `You are an AI expert mentor selector. Analyze why this specific mentor is suitable for this project. Give the reason in very professional way
+
+PROJECT DETAILS:
+${JSON.stringify({
+  name: project.name,
+  category: project.category,
+  techStack: project.techStack,
+  difficultyLevel: project.difficultyLevel,
+  shortDescription: project.shortDescription,
+  duration: project.duration,
+  openingPrice: project.openingPrice,
+  prerequisites: project.prerequisites || []
+}, null, 2)}
+
+MENTOR DETAILS:
+${JSON.stringify({
+  name: mentor.userId?.name || 'Anonymous',
+  title: mentor.title,
+  expertise: mentor.expertise,
+  rating: mentor.rating,
+  totalStudents: mentor.totalStudents,
+  completedSessions: mentor.completedSessions,
+  experience: mentor.experience,
+  responseTime: mentor.responseTime,
+  pricing: mentor.pricing,
+  description: mentor.description
+}, null, 2)}
+
+TASK:
+1. Analyze why this mentor is suitable for this specific project
+2. Score the mentor out of 100 based on compatibility
+3. Provide detailed reasoning covering:
+   - Technical skill alignment
+   - Experience level match
+   - Communication and availability
+   - Value proposition
+
+RESPONSE FORMAT (JSON only):
+{
+  "score": 95,
+  "reason": "This mentor is an excellent match because [detailed explanation]. Key strengths include [specific points]. The mentor's expertise in [specific skills] directly aligns with your project's [specific requirements]."
+}`;
+
+    const result = await model.generateContent(prompt);
+    const response = await result.response.text();
+    
+    let cleanResponse = response.trim();
+    if (cleanResponse.startsWith('```json')) {
+      cleanResponse = cleanResponse.replace(/```json\n?/, '').replace(/\n?```$/, '');
+    }
+    if (cleanResponse.startsWith('```')) {
+      cleanResponse = cleanResponse.replace(/```\n?/, '').replace(/\n?```$/, '');
+    }
+    
+    const parsedResponse = JSON.parse(cleanResponse);
+    
+    return {
+      score: parsedResponse.score || 75,
+      reason: parsedResponse.reason || 'This mentor appears to be a good match based on their expertise and experience.'
+    };
+
+  } catch (error) {
+    console.error('AI reasoning generation error:', error);
+    return {
+      score: 75,
+      reason: 'This mentor was recommended based on their relevant skills and experience profile.'
+    };
+  }
+};
+
 module.exports = {
   getAllMentors,
   getMentorById,
   searchMentors,
-  getMentorStats
+  getMentorStats ,
+  getMentorWithAIReason
 };

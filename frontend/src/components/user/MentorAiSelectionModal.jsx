@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { 
   Users, 
@@ -31,6 +32,7 @@ const MentorAiSelectionModal = ({
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [loadingStep, setLoadingStep] = useState(0);
   const [analysisComplete, setAnalysisComplete] = useState(false);
+  const navigate = useNavigate();
 
   const loadingSteps = [
     "🤖 Analyzing your project requirements...",
@@ -121,19 +123,18 @@ const MentorAiSelectionModal = ({
   }, [showAIMentorSelection]);
 
   // Handle see why mentor is best
-  const handleSeeWhy = (mentorId, whyReason) => {
-    // You can navigate to a detailed reason page or show a modal
-    toast.info(
-      <div className="space-y-2">
-        <div className="font-bold text-blue-400">🤖 AI's Recommendation:</div>
-        <div className="text-sm">{whyReason}</div>
-      </div>,
-      {
-        autoClose: 8000,
-        className: "bg-slate-800 border border-blue-500/30"
-      }
-    );
-  };
+  const handleSeeWhy = (mentorId, whyReason, aiScore, mentorData) => {
+  // Navigate to the new mentor details page with all necessary data
+    navigate(`/user/mentors/${mentorId}/ai-reason`, {
+        state: {
+        mentor: mentorData,
+        whyReason: whyReason,
+        aiScore: aiScore,
+        project: project, // Pass the current project for context
+        fromAI: true
+        }
+    });
+};
 
   if (!showAIMentorSelection) return null;
 
@@ -334,11 +335,11 @@ const MentorAiSelectionModal = ({
                         </button>
                         
                         <button
-                          onClick={() => handleSeeWhy(mentor._id, aiMentor.whyReason)}
-                          className="w-full px-4 py-2 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 border border-cyan-500/30 text-cyan-300 rounded-xl font-medium hover:bg-gradient-to-r hover:from-cyan-500/30 hover:to-blue-500/30 transition-all flex items-center justify-center space-x-2"
-                        >
-                          <Sparkles size={14} />
-                          <span>See why AI picked this mentor</span>
+                            onClick={() => handleSeeWhy(mentor._id, aiMentor.whyReason, aiMentor.aiScore, mentor)}
+                            className="w-full px-4 py-2 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 border border-cyan-500/30 text-cyan-300 rounded-xl font-medium hover:bg-gradient-to-r hover:from-cyan-500/30 hover:to-blue-500/30 transition-all flex items-center justify-center space-x-2"
+                            >
+                            <Sparkles size={14} />
+                            <span>See why AI picked this mentor</span>
                         </button>
                       </div>
 

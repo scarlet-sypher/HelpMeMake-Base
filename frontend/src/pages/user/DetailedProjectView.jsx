@@ -9,6 +9,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import MentorRequestModal from '../../components/user/MentorRequestModal';
 import MentorSelectionModal from '../../components/user/MentorSelectionModal';
 import ProjectActions from '../../components/user/ProjectActions';
+import MentorAiSelectionModal from '../../components/user/MentorAiSelectionModal';
 
 const DetailedProjectView = () => {
   const { id } = useParams();
@@ -19,6 +20,7 @@ const DetailedProjectView = () => {
   const [mentorsLoading, setMentorsLoading] = useState(false);
   const [selectedMentor, setSelectedMentor] = useState(null);
   const [showMentorSelection, setShowMentorSelection] = useState(false);
+  const [showAIMentorSelection, setShowAIMentorSelection] = useState(false);
   // const [proposedPrice, setProposedPrice] = useState('');
   // const [coverLetter, setCoverLetter] = useState('');
   // const [estimatedDuration, setEstimatedDuration] = useState('');
@@ -97,26 +99,6 @@ const DetailedProjectView = () => {
   }, [id, API_URL]);
 
 /*
-  // Fetch available mentors
-  const fetchMentors = async () => {
-    try {
-      setMentorsLoading(true);
-      const response = await axios.get(`${API_URL}/mentors/all`, {
-        withCredentials: true
-      });
-      
-      if (response.data.success) {
-        setMentors(response.data.mentors);
-      } else {
-        toast.error('Failed to load mentors');
-      }
-    } catch (error) {
-      console.error('Error fetching mentors:', error);
-      toast.error('Error loading mentors');
-    } finally {
-      setMentorsLoading(false);
-    }
-  };
 
   // Handle mentor selection view
   const handleShowMentorSelection = () => {
@@ -168,14 +150,45 @@ const DetailedProjectView = () => {
     }
   };
 
-  // Handle AI mentor selection
-  const handleAIMentorSelection = () => {
-    toast.info('AI mentor selection coming soon!', {
-      icon: <Bot className="text-blue-400" size={20} />
-    });
-  };
+
 
 */
+
+  const handleAIMentorSelection = () => {
+    if (mentors.length === 0) {
+      // Fetch mentors first if not already loaded
+      fetchMentors().then(() => {
+        setShowAIMentorSelection(true);
+      });
+    } else {
+      setShowAIMentorSelection(true);
+    }
+  };
+
+  const fetchMentors = async () => {
+    try {
+      setMentorsLoading(true);
+      const response = await axios.get(`${API_URL}/mentors/all`, {
+        withCredentials: true
+      });
+      
+      if (response.data.success) {
+        setMentors(response.data.mentors);
+        return Promise.resolve();
+      } else {
+        toast.error('Failed to load mentors');
+        return Promise.reject();
+      }
+    } catch (error) {
+      console.error('Error fetching mentors:', error);
+      toast.error('Error loading mentors');
+      return Promise.reject();
+    } finally {
+      setMentorsLoading(false);
+    }
+  };
+
+
 
   // Format date
   const formatDate = (dateString) => {
@@ -475,6 +488,7 @@ const DetailedProjectView = () => {
             project={project}
             setProject={setProject}
             setShowMentorSelection={setShowMentorSelection}
+            handleAIMentorSelection={handleAIMentorSelection}
             API_URL={API_URL}
             formatPrice={formatPrice}
             formatDate={formatDate}
@@ -490,6 +504,18 @@ const DetailedProjectView = () => {
           setMentors={setMentors}
           mentorsLoading={mentorsLoading}
           setMentorsLoading={setMentorsLoading}
+          setSelectedMentor={setSelectedMentor}
+          API_URL={API_URL}
+          formatPrice={formatPrice}
+        />
+
+
+        {/* Mentor Selection Modal By Ai*/}
+        <MentorAiSelectionModal
+          showAIMentorSelection={showAIMentorSelection}
+          setShowAIMentorSelection={setShowAIMentorSelection}
+          project={project}
+          mentors={mentors}
           setSelectedMentor={setSelectedMentor}
           API_URL={API_URL}
           formatPrice={formatPrice}
