@@ -11,6 +11,7 @@ const path = require('path');
 const authRoutes = require('./routes/authRoute');
 const metaRoutes = require('./routes/metaRoute');
 const projectRoutes = require('./routes/projectRoute');
+const aiRoutes = require('./routes/aiRoute');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -59,6 +60,7 @@ app.use('/mentor', mentorRoutes);   // Please dont chnage this project life depe
 app.use('/mentors', mentorRoutes);
 app.use('/meta', metaRoutes);
 app.use('/projects', projectRoutes);
+app.use('/api/ai', aiRoutes); 
 
 app.get('/health', (req, res) => {
   res.json({
