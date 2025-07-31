@@ -102,8 +102,11 @@ const ProjectForm = ({ mode = 'create', initialData = null, onSubmit, onCancel }
     setLoadingProject(true);
     try {
       const response = await axios.get(`${import.meta.env.VITE_API_URL}/projects/${projectId}`, {
-        withCredentials: true
-      });
+  withCredentials: true,
+  headers: {
+    'Authorization': `Bearer ${localStorage.getItem('token')}` // Add this line
+  }
+});
       
       if (response.data.success) {
         const project = response.data.project;

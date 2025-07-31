@@ -730,6 +730,107 @@ const deleteProjectById = async (req, res) => {
   }
 };
 
+// Get Projects by User ID (for frontend dashboard)
+const getUserProjects = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    if (!userId) {
+      return res.status(400).json({
+        success: false,
+        message: 'User ID is required'
+      });
+    }
+
+    // Find the learner profile for this user ID
+    const learner = await Learner.findOne({ userId: userId });
+    
+    if (!learner) {
+      return res.status(404).json({
+        success: false,
+        message: 'Learner profile not found for this user'
+      });
+    }
+
+    // Find all projects belonging to this learner
+    const projects = await Project.find({ learnerId: learner._id })
+      .populate('learnerId', 'userId title description location')
+      .populate('mentorId', 'userId title description location')
+      .sort({ createdAt: -1 }); // Sort by newest first
+
+    // Map projects to match frontend expectations
+    const mappedProjects = projects.map(project => ({
+      _id: project._id,
+      projectId: project.projectId,
+      title: project.name, // Map 'name' to 'title' for frontend
+      description: project.shortDescription, // Use shortDescription for card preview
+      fullDescription: project.fullDescription,
+      status: project.status.toLowerCase().replace(' ', '-'), // Format status for frontend
+      skills: project.techStack, // Map 'techStack' to 'skills' for frontend
+      category: project.category,
+      difficultyLevel: project.difficultyLevel,
+      duration: project.duration,
+      thumbnail: project.thumbnail,
+      tags: project.tags,
+      openingPrice: project.openingPrice,
+      negotiatedPrice: project.negotiatedPrice,
+      closedPrice: project.closedPrice,
+      currency: project.currency,
+      startDate: project.startDate,
+      expectedEndDate: project.expectedEndDate,
+      actualEndDate: project.actualEndDate,
+      progressPercentage: project.progressPercentage,
+      viewCount: project.viewCount,
+      applicationsCount: project.applicationsCount,
+      projectOutcome: project.projectOutcome,
+      motivation: project.motivation,
+      prerequisites: project.prerequisites,
+      knowledgeLevel: project.knowledgeLevel,
+      references: project.references,
+      createdAt: project.createdAt,
+      updatedAt: project.updatedAt,
+      // Include learner and mentor info if populated
+      learner: project.learnerId,
+      mentor: project.mentorId,
+      // Virtual fields
+      projectAge: project.projectAge,
+      isOverdue: project.isOverdue,
+      activePrice: project.activePrice
+    }));
+
+    // Calculate some stats for the frontend
+    const stats = {
+      total: projects.length,
+      open: projects.filter(p => p.status === 'Open').length,
+      inProgress: projects.filter(p => p.status === 'In Progress').length,
+      completed: projects.filter(p => p.status === 'Completed').length,
+      cancelled: projects.filter(p => p.status === 'Cancelled').length
+    };
+
+    res.json({
+      success: true,
+      message: 'Projects retrieved successfully',
+      projects: mappedProjects,
+      stats
+    });
+
+  } catch (error) {
+    console.error('Get user projects error:', error);
+    
+    if (error.name === 'CastError') {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid user ID format'
+      });
+    }
+
+    res.status(500).json({
+      success: false,
+      message: 'Failed to retrieve projects'
+    });
+  }
+};
+
 module.exports = {
   createProject,
   getProjectById,
@@ -737,5 +838,6 @@ module.exports = {
   getProjectsForUser,    
   deleteProjectById,
   applyToProject,
-  acceptMentorApplication
+  acceptMentorApplication,
+  getUserProjects
 };

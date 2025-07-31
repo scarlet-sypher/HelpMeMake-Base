@@ -15,30 +15,27 @@ import {
 } from 'lucide-react';
 
 const Sidebar = ({ isOpen, toggleSidebar, activeItem, setActiveItem }) => {
-
-  
   const navigate = useNavigate();
   const location = useLocation();
+  const { logout } = useAuth();
+
   const menuItems = [
-    { icon: Home, label: 'Dashboard', id: 'dashboard' },
-    { icon: Folder, label: 'Projects', id: 'projects' },
-    { icon: BookOpen, label: 'Sessions', id: 'sessions' },
-    { icon: MessageCircle, label: 'Messages', id: 'messages' },
-    { icon: Star, label: 'Achievements', id: 'achievements' },
-    { icon: BarChart3, label: 'Analytics', id: 'analytics' },
-    { icon: Settings, label: 'Settings', id: 'settings' },
+    { icon: Home, label: 'Dashboard', id: 'dashboard', path: '/userdashboard' },
+    { icon: Folder, label: 'Projects', id: 'projects', path: '/user/projects' },
+    { icon: BookOpen, label: 'Sessions', id: 'sessions', path: '/user/sessions' },
+    { icon: MessageCircle, label: 'Messages', id: 'messages', path: '/user/messages' },
+    { icon: Star, label: 'Achievements', id: 'achievements', path: '/user/achievements' },
+    { icon: BarChart3, label: 'Analytics', id: 'analytics', path: '/user/analytics' },
+    { icon: Settings, label: 'Settings', id: 'settings', path: '/user/settings' },
   ];
 
-  const handleItemClick = (itemId) => {
+  const handleItemClick = (itemId, path) => {
     setActiveItem(itemId);
     
-    // Handle navigation for specific items
-    if (itemId === 'settings') {
-      navigate('/user/settings');
-    } else if (itemId === 'dashboard') {
-      navigate('/userdashboard');
+    // Navigate to the specified path
+    if (path) {
+      navigate(path);
     }
-    // Add more navigation cases as needed
     
     // Close sidebar on mobile after selection
     if (window.innerWidth < 1024) {
@@ -46,12 +43,18 @@ const Sidebar = ({ isOpen, toggleSidebar, activeItem, setActiveItem }) => {
     }
   };
 
-  const { logout } = useAuth(); 
-
-
   const handleLogout = () => {
     logout(); 
   };
+
+  // Auto-detect active item based on current path
+  React.useEffect(() => {
+    const currentPath = location.pathname;
+    const currentItem = menuItems.find(item => item.path === currentPath);
+    if (currentItem && activeItem !== currentItem.id) {
+      setActiveItem(currentItem.id);
+    }
+  }, [location.pathname, activeItem, setActiveItem]);
 
   return (
     <>
@@ -87,7 +90,7 @@ const Sidebar = ({ isOpen, toggleSidebar, activeItem, setActiveItem }) => {
             {menuItems.map((item) => (
               <button
                 key={item.id}
-                onClick={() => handleItemClick(item.id)}
+                onClick={() => handleItemClick(item.id, item.path)}
                 className={`flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-200 w-full text-left ${
                   activeItem === item.id
                     ? 'bg-blue-600/50 text-white border border-blue-400/30 shadow-lg'
@@ -108,7 +111,10 @@ const Sidebar = ({ isOpen, toggleSidebar, activeItem, setActiveItem }) => {
         </div>
 
         <div className="absolute bottom-0 left-0 right-0 p-6">
-          <button onClick = {handleLogout} className="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-red-500/20 hover:text-red-300 transition-all duration-200 w-full">
+          <button 
+            onClick={handleLogout} 
+            className="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-red-500/20 hover:text-red-300 transition-all duration-200 w-full"
+          >
             <LogOut size={20} />
             <span className="font-medium">Logout</span>
           </button>

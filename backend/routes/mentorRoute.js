@@ -1,14 +1,34 @@
 const express = require('express');
-const { requireMentor } = require('../middleware/roleAuth');
+const { requireMentor, requireUserOrMentor } = require('../middleware/roleAuth');
+const {
+    getAllMentors,
+    getMentorById,
+    searchMentors,
+    getMentorStats
+} = require('../controller/mentorController');
 const User = require('../Model/User');
 const Mentor = require('../Model/Mentor');
 const router = express.Router();
 
-// All routes in this file require 'mentor' role
-router.use(requireMentor);
+// ========================================
+// PUBLIC MENTOR ROUTES (Browse/Search)
+// ========================================
 
-// Mentor Dashboard
-router.get('/dashboard', (req, res) => {
+// Get all available mentors - accessible by both users and mentors
+router.get('/all', requireUserOrMentor, getAllMentors);
+
+// Search mentors by skills/categories - accessible by both users and mentors
+router.get('/search', requireUserOrMentor, searchMentors);
+
+// Get mentor statistics - for admin/analytics
+router.get('/stats/overview', getMentorStats);
+
+// ========================================
+// MENTOR DASHBOARD/PROFILE ROUTES
+// ========================================
+
+// Mentor Dashboard - only for mentors
+router.get('/dashboard', requireMentor, (req, res) => {
   res.json({
     success: true,
     message: 'Welcome to Mentor Dashboard!',
@@ -21,8 +41,8 @@ router.get('/dashboard', (req, res) => {
   });
 });
 
-// Get mentor-specific data
-router.get('/data', async (req, res) => {
+// Get mentor-specific data - only for mentors
+router.get('/data', requireMentor, async (req, res) => {
   try {
     const user = await User.findById(req.user._id).select('-password -otp -otpExpires');
     
@@ -64,16 +84,16 @@ router.get('/data', async (req, res) => {
   }
 });
 
-// Mentor Profile
-router.get('/profile', (req, res) => {
+// Mentor Profile - only for mentors
+router.get('/profile', requireMentor, (req, res) => {
   res.json({
     success: true,
     user: req.user
   });
 });
 
-// Update Mentor Profile
-router.patch('/profile', async (req, res) => {
+// Update Mentor Profile - only for mentors
+router.patch('/profile', requireMentor, async (req, res) => {
   try {
     const { name, title, description, bio, location, expertise, socialLinks, pricing } = req.body;
     
@@ -116,5 +136,12 @@ router.patch('/profile', async (req, res) => {
     });
   }
 });
+
+// ========================================
+// PUBLIC MENTOR VIEW (Keep at bottom to avoid route conflicts)
+// ========================================
+
+// Get mentor by ID - accessible by both users and mentors
+router.get('/:id', requireUserOrMentor, getMentorById);
 
 module.exports = router;

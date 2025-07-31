@@ -55,7 +55,8 @@ app.use(passport.initialize());
 // Routes
 app.use('/auth', authRoutes);
 app.use('/user', userRoutes);
-app.use('/mentor', mentorRoutes);
+app.use('/mentor', mentorRoutes);   // Please dont chnage this project life depends on this
+app.use('/mentors', mentorRoutes);
 app.use('/meta', metaRoutes);
 app.use('/projects', projectRoutes);
 

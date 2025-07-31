@@ -7,15 +7,17 @@ import Login from './pages/auth/Login';
 import Signup from './pages/auth/Signup';
 import MentorDashboard from './pages/mentordash/MentorDashboard';
 import UserDashboard from './pages/user/UserDashboard';
-import UserSettings from './pages/user/UserSettings'; // New import
+import UserSettings from './pages/user/UserSettings';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import SelectRole from './pages/auth/SelectRole';
 import VerifyOTP from './components/auth/VerifyOTP';
 import ProtectedRoute from './components/ProtectedRoute'; 
-
-import './index.css';
 import ForgotPassword from './components/auth/ForgotPassword';
 import ProjectForm from './components/user/ProjectForm';
+
+import './index.css';
+import ProjectsIndex from './pages/user/ProjectsIndex';
+import DetailedProjectView from './components/user/DetailedProjectView';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
@@ -28,32 +30,87 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/select-role" element={<SelectRole />} />
         
-        {/* Protected Routes */}
+        {/* Protected User Routes */}
         <Route path="/userdashboard" element={
           <ProtectedRoute requiredRole="user">
             <UserDashboard />
           </ProtectedRoute>
         } />
         
-        {/* New Settings Route */}
         <Route path="/user/settings" element={
           <ProtectedRoute requiredRole="user">
             <UserSettings />
           </ProtectedRoute>
         } />
+
+        {/* ✅ Projects Routes */}
+        <Route path="/user/projects" element={
+          <ProtectedRoute requiredRole="user">
+            <ProjectsIndex />
+          </ProtectedRoute>
+        } />
+
+        <Route path="/user/projects/create" element={
+          <ProtectedRoute requiredRole="user">
+            <ProjectForm />
+          </ProtectedRoute>
+        } />
+
+        {/* ✅ Add other user routes as you build them */}
+        <Route path="/user/sessions" element={
+          <ProtectedRoute requiredRole="user">
+            <div>Sessions Page - Coming Soon</div>
+          </ProtectedRoute>
+        } />
+
+        <Route path="/user/messages" element={
+          <ProtectedRoute requiredRole="user">
+            <div>Messages Page - Coming Soon</div>
+          </ProtectedRoute>
+        } />
+
+        <Route path="/user/achievements" element={
+          <ProtectedRoute requiredRole="user">
+            <div>Achievements Page - Coming Soon</div>
+          </ProtectedRoute>
+        } />
+
+        <Route path="/user/analytics" element={
+          <ProtectedRoute requiredRole="user">
+            <div>Analytics Page - Coming Soon</div>
+          </ProtectedRoute>
+        } />
         
+        {/* Mentor Routes */}
         <Route path="/mentordashboard" element={
           <ProtectedRoute requiredRole="mentor">
             <MentorDashboard />
           </ProtectedRoute>
         } />
-        <Route path="/project-form" element={<ProjectForm />} />
         
+        {/* Admin Routes */}
         <Route path="/admindashboard" element={
           <ProtectedRoute requiredRole="admin">
             <AdminDashboard />
           </ProtectedRoute>
         } />
+
+
+        <Route path="/projects/edit/:id" element={
+          <ProtectedRoute requiredRole="user">
+            <ProjectForm mode="edit" />
+          </ProtectedRoute>
+        } />
+
+        <Route path="/projects/:id" element={
+          <ProtectedRoute requiredRole="user">
+            <DetailedProjectView />
+          </ProtectedRoute>
+        } />
+
+        {/* ⚠️ Remove these standalone component routes */}
+        {/* <Route path="/project-form" element={<ProjectForm />} /> */}
+        {/* <Route path="/project-shortCard" element={<ShortProjectCard />} /> */}
         
       </Routes>
     </BrowserRouter>
