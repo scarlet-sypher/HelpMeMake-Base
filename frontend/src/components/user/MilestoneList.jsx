@@ -148,29 +148,29 @@ const MilestoneList = ({
                     </button>
                   )}
                   {milestone.learnerVerification?.isVerified && !milestone.mentorVerification?.isVerified && (
-                    <button
-                      onClick={() => undoMilestone(milestone._id)}
-                      disabled={saving}
-                      className="px-3 sm:px-4 py-2 bg-gradient-to-r from-orange-500 to-yellow-600 hover:from-orange-600 hover:to-yellow-700 disabled:from-gray-500 disabled:to-gray-600 disabled:cursor-not-allowed text-white rounded-lg font-medium transition-all transform hover:scale-105 shadow-lg flex items-center space-x-2"
-                    >
-                      {saving ? (
-                        <Loader size={14} className="animate-spin" />
-                      ) : (
-                        <Undo2 size={14} />
-                      )}
-                      <span className="text-xs sm:text-sm">Undo</span>
-                    </button>
-                  )}
-                  {!milestone.learnerVerification?.isVerified && !milestone.mentorVerification?.isVerified && (
-                    <button
-                      onClick={() => removeMilestone(milestone._id)}
-                      disabled={saving}
-                      className="p-2 bg-red-500/20 hover:bg-red-500/30 border border-red-400/30 text-red-400 rounded-lg transition-all hover:scale-105 flex items-center justify-center min-w-[36px] min-h-[36px] sm:min-w-[40px] sm:min-h-[40px]"
-                      title="Remove milestone"
-                    >
-                      <X size={16} />
-                    </button>
-                  )}
+                      <button
+                        onClick={() => undoMilestone(milestone._id)}
+                        disabled={saving}
+                        className="px-3 sm:px-4 py-2 bg-gradient-to-r from-orange-500 to-yellow-600 hover:from-orange-600 hover:to-yellow-700 disabled:from-gray-500 disabled:to-gray-600 disabled:cursor-not-allowed text-white rounded-lg font-medium transition-all transform hover:scale-105 shadow-lg flex items-center space-x-2"
+                      >
+                        {saving ? (
+                          <Loader size={14} className="animate-spin" />
+                        ) : (
+                          <Undo2 size={14} />
+                        )}
+                        <span className="text-xs sm:text-sm">Undo</span>
+                      </button>
+                    )}
+                    {!milestone.learnerVerification?.isVerified && !milestone.mentorVerification?.isVerified && (
+                      <button
+                        onClick={() => removeMilestone(milestone._id)}
+                        disabled={saving}
+                        className="p-2 bg-red-500/20 hover:bg-red-500/30 border border-red-400/30 text-red-400 rounded-lg transition-all hover:scale-105 flex items-center justify-center min-w-[36px] min-h-[36px] sm:min-w-[40px] sm:min-h-[40px]"
+                        title="Remove milestone"
+                      >
+                        <X size={16} />
+                      </button>
+                    )}
                 </div>
               </div>
             </div>
