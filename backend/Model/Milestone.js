@@ -290,6 +290,30 @@ const milestoneSchema = new mongoose.Schema({
     default: 1,
     min: 0.1,
     max: 5
+  },
+
+  aiResponse: {
+    suggestions: [{
+      text: {
+        type: String,
+        trim: true
+      },
+      isCompleted: {
+        type: Boolean,
+        default: false
+      }
+    }],
+    previousSuggestions: [{
+      text: String,
+      generatedAt: {
+        type: Date,
+        default: Date.now
+      }
+    }],
+    lastGenerated: {
+      type: Date,
+      default: null
+    }
   }
 }, {
   timestamps: true

@@ -60,7 +60,7 @@ app.use('/mentor', mentorRoutes);
 app.use('/mentors', mentorRoutes);
 app.use('/meta', metaRoutes);
 app.use('/projects', projectRoutes); // Keep this for backward compatibility
-app.use('/api/project', projectRoutes); // ADD THIS LINE - This is what was missing!
+app.use('/api/project', projectRoutes); 
 app.use('/api/ai', aiRoutes);
 app.use('/api/milestone', milestoneRoutes);
 
@@ -96,14 +96,4 @@ app.listen(PORT, () => {
   console.log(`📱 UI URL: ${process.env.UI_URL}`);
   console.log(`🌐 Server URL: ${process.env.SERVER_URL}`);
   console.log(`🔑 Environment: ${process.env.NODE_ENV || 'development'}`);
-  
-  // Log all registered routes for debugging
-  console.log('\n📋 Registered Routes:');
-  console.log('  /auth/* - Authentication routes');
-  console.log('  /user/* - User routes');
-  console.log('  /mentor/* - Mentor routes');
-  console.log('  /api/project/* - Project routes (FIXED)');
-  console.log('  /api/milestone/* - Milestone routes');
-  console.log('  /api/ai/* - AI routes');
-  console.log('  /health - Health check');
 });
