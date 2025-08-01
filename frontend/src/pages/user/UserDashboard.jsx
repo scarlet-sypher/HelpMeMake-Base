@@ -47,6 +47,8 @@ const UserDashboard = () => {
   const [generatedPassword, setGeneratedPassword] = useState(null);
   const [showPasswordBanner, setShowPasswordBanner] = useState(false);
   const [projectData, setProjectData] = useState(null);
+  const [achievements, setAchievements] = useState([]);
+  const [achievementsLoading, setAchievementsLoading] = useState(true);
 
   useEffect(() => {
     if (!loading && !isAuthenticated) {
@@ -172,6 +174,40 @@ useEffect(() => {
   if (userData) {
     fetchProjectData();
   }
+}, [isAuthenticated, userData]);
+
+
+useEffect(() => {
+  const fetchAchievements = async () => {
+    if (isAuthenticated && userData) {
+      try {
+        setAchievementsLoading(true);
+        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+        const response = await fetch(`${apiUrl}/api/achievements`, {
+          method: 'GET',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          if (data.success) {
+            setAchievements(data.data);
+          }
+        } else {
+          console.error('Failed to fetch achievements:', response.status);
+        }
+      } catch (error) {
+        console.error('Error fetching achievements:', error);
+      } finally {
+        setAchievementsLoading(false);
+      }
+    }
+  };
+
+  fetchAchievements();
 }, [isAuthenticated, userData]);
 
   // Show loading spinner while checking auth or fetching user data
@@ -312,40 +348,7 @@ useEffect(() => {
     { id: 4, icon: Users, title: 'Session completed with Trafalgar Law', subtitle: '2 days ago', color: 'text-purple-400' }
   ];
 
-  const achievements = [
-    { 
-      id: 1, 
-      title: 'Pirate King', 
-      description: 'Complete 100 sessions successfully', 
-      achieved: true, 
-      icon: '👑',
-      rarity: 'legendary' 
-    },
-    { 
-      id: 2, 
-      title: 'Treasure Hunter', 
-      description: 'Discover 50 hidden knowledge gems', 
-      achieved: true, 
-      icon: '💎',
-      rarity: 'epic' 
-    },
-    { 
-      id: 3, 
-      title: 'Fleet Admiral', 
-      description: 'Mentor 10 other crew members', 
-      achieved: false, 
-      icon: '⚓',
-      rarity: 'rare' 
-    },
-    { 
-      id: 4, 
-      title: 'Devil Fruit Master', 
-      description: 'Master 5 different skill areas', 
-      achieved: true, 
-      icon: '🌟',
-      rarity: 'epic' 
-    }
-  ];
+
 
   const milestones = [
     { id: 1, title: "Initial Meeting", userVerified: true, mentorVerified: true },
@@ -770,12 +773,44 @@ useEffect(() => {
                 <h2 className="text-xl font-bold text-white mb-6 flex items-center">
                   <Award className="mr-2 text-purple-400" size={20} />
                   Achievements
+                  {achievementsLoading && (
+                    <div className="ml-2 w-4 h-4 border-2 border-purple-400 border-t-transparent rounded-full animate-spin"></div>
+                  )}
                 </h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {achievements.map((achievement) => (
-                    <AchievementBadge key={achievement.id} {...achievement} />
-                  ))}
-                </div>
+                
+                {achievementsLoading ? (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {[...Array(4)].map((_, i) => (
+                      <div key={i} className="bg-white/5 border border-white/10 rounded-2xl p-4 animate-pulse">
+                        <div className="flex justify-between items-center mb-3">
+                          <div className="w-12 h-12 bg-white/10 rounded"></div>
+                          <div className="w-8 h-8 bg-white/10 rounded-full"></div>
+                        </div>
+                        <div className="h-4 bg-white/10 rounded mb-2"></div>
+                        <div className="h-3 bg-white/10 rounded"></div>
+                      </div>
+                    ))}
+                  </div>
+                ) : achievements.length > 0 ? (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {achievements.map((achievement) => (
+                      <AchievementBadge 
+                        key={achievement.id} 
+                        title={achievement.title}
+                        description={achievement.description}
+                        achieved={achievement.achieved}
+                        icon={achievement.icon}
+                        rarity={achievement.rarity}
+                        progressPercentage={achievement.progressPercentage}
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-8 text-gray-400">
+                    <Award className="mx-auto mb-4 opacity-50" size={48} />
+                    <p>No achievements yet. Start your journey!</p>
+                  </div>
+                )}
               </div>
             </div>
           </div>

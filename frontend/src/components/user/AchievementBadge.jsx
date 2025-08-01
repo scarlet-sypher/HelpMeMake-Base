@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Check, Lock, Star, Sparkles } from 'lucide-react';
 
-const AchievementBadge = ({ title, description, achieved, icon, rarity = 'common' }) => {
+const AchievementBadge = ({ title, description, achieved, icon, rarity = 'common', progressPercentage = 0 }) => {
   // Define rarity-based styling
   const rarityStyles = {
     common: {
@@ -95,11 +95,11 @@ const AchievementBadge = ({ title, description, achieved, icon, rarity = 'common
         </p>
 
         {/* Progress bar for partially achieved items */}
-        {!achieved && (
+        {!achieved && progressPercentage > 0 && (
           <div className="mt-3 w-full bg-white/10 rounded-full h-1.5">
             <div 
               className="bg-gradient-to-r from-blue-400 to-purple-400 h-1.5 rounded-full transition-all duration-700"
-              style={{ width: '60%' }}
+              style={{ width: `${Math.min(progressPercentage, 100)}%` }}
             ></div>
           </div>
         )}
@@ -128,9 +128,97 @@ const AchievementBadge = ({ title, description, achieved, icon, rarity = 'common
         <div className="absolute inset-0 rounded-2xl overflow-hidden opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
             <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-x-12 translate-x-full group-hover:translate-x-0 transition-transform duration-700"></div>
         </div>
-    )}
+      )}
+    </div>
+  );
+};
+
+// Container component to fetch and display achievements
+const AchievementsList = () => {
+  const [achievements, setAchievements] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    fetchAchievements();
+  }, []);
+
+  const fetchAchievements = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch('/api/achievements', {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch achievements');
+      }
+
+      const data = await response.json();
+      if (data.success) {
+        setAchievements(data.data);
+      } else {
+        throw new Error(data.message);
+      }
+    } catch (err) {
+      console.error('Error fetching achievements:', err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        {[...Array(4)].map((_, i) => (
+          <div key={i} className="bg-white/5 border border-white/10 rounded-2xl p-4 animate-pulse">
+            <div className="flex justify-between items-center mb-3">
+              <div className="w-12 h-12 bg-white/10 rounded"></div>
+              <div className="w-8 h-8 bg-white/10 rounded-full"></div>
+            </div>
+            <div className="h-4 bg-white/10 rounded mb-2"></div>
+            <div className="h-3 bg-white/10 rounded"></div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center py-8">
+        <div className="text-red-400 mb-4">Failed to load achievements</div>
+        <button 
+          onClick={fetchAchievements}
+          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+        >
+          Retry
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      {achievements.map((achievement) => (
+        <AchievementBadge
+          key={achievement.id}
+          title={achievement.title}
+          description={achievement.description}
+          achieved={achievement.achieved}
+          icon={achievement.icon}
+          rarity={achievement.rarity}
+          progressPercentage={achievement.progressPercentage}
+        />
+      ))}
     </div>
   );
 };
 
 export default AchievementBadge;
+export { AchievementsList };

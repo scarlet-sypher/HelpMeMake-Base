@@ -13,6 +13,7 @@ const metaRoutes = require('./routes/metaRoute');
 const projectRoutes = require('./routes/projectRoute');
 const aiRoutes = require('./routes/aiRoute');
 const milestoneRoutes = require('./routes/milestoneRoute');
+const achievementRoutes = require('./routes/achievementRoute');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -63,6 +64,7 @@ app.use('/projects', projectRoutes); // Keep this for backward compatibility
 app.use('/api/project', projectRoutes); 
 app.use('/api/ai', aiRoutes);
 app.use('/api/milestone', milestoneRoutes);
+app.use('/api/achievements', achievementRoutes);
 
 app.get('/health', (req, res) => {
   res.json({
