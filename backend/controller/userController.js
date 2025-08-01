@@ -240,6 +240,7 @@ if (!skipCurrentPasswordCheck) {
       message: 'Current password is incorrect'
     });
   }
+  
 }
 
 
