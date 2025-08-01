@@ -14,6 +14,7 @@ import VerifyOTP from './components/auth/VerifyOTP';
 import ProtectedRoute from './components/ProtectedRoute'; 
 import ForgotPassword from './components/auth/ForgotPassword';
 import ProjectForm from './components/user/ProjectForm';
+import AchievementsPage from './pages/user/AchievementsPage';
 
 import './index.css';
 import ProjectsIndex from './pages/user/ProjectsIndex';
@@ -32,7 +33,6 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <Route path="/verify-otp" element={<VerifyOTP />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/select-role" element={<SelectRole />} />
-        {/* <Route path="/milestone-page" element={<MilestonePage />} /> */}
         
         {/* Protected User Routes */}
         <Route path="/userdashboard" element={
@@ -79,9 +79,10 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           </ProtectedRoute>
         } />
 
+        {/* ✅ NEW: Achievements Page Route */}
         <Route path="/user/achievements" element={
           <ProtectedRoute requiredRole="user">
-            <div>Achievements Page - Coming Soon</div>
+            <AchievementsPage />
           </ProtectedRoute>
         } />
 
@@ -105,7 +106,6 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           </ProtectedRoute>
         } />
 
-
         <Route path="/projects/edit/:id" element={
           <ProtectedRoute requiredRole="user">
             <ProjectForm mode="edit" />
@@ -118,17 +118,11 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           </ProtectedRoute>
         } />
 
-
         <Route path="/user/mentors/:mentorId/ai-reason" element={
           <ProtectedRoute requiredRole="user">
             <ShowMentorDetails />
           </ProtectedRoute>
         } />
-
-
-        {/* ⚠️ Remove these standalone component routes */}
-        {/* <Route path="/project-form" element={<ProjectForm />} /> */}
-        {/* <Route path="/project-shortCard" element={<ShortProjectCard />} /> */}
         
       </Routes>
     </BrowserRouter>
