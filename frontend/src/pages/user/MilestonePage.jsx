@@ -12,6 +12,7 @@ import {
   Rocket,
   Menu
 } from 'lucide-react';
+import AIMilestones from '../../components/user/AIMilestones';
 
 const MilestonePage = () => {
   const { user, isAuthenticated } = useAuth();
@@ -308,6 +309,8 @@ const MilestonePage = () => {
                 removeMilestone={removeMilestone}
                 saving={saving}
               />
+
+              <AIMilestones projectData={projectData} />
             </div>
           )}
         </div>

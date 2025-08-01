@@ -2,6 +2,7 @@ const express = require('express');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const { requireUserOrMentor } = require('../middleware/roleAuth');
 const router = express.Router();
+const aiMilestoneController = require('../controller/aiMilestoneController');
 
 // Initialize Gemini AI
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
@@ -313,4 +314,11 @@ router.get('/mentor-reason/:mentorId', requireUserOrMentor, async (req, res) => 
     });
   }
 });
+
+
+router.post('/milestones/generate', requireUserOrMentor, aiMilestoneController.generateMilestones);
+router.get('/milestones/:projectId', requireUserOrMentor, aiMilestoneController.getMilestones);
+router.patch('/milestones/toggle', requireUserOrMentor, aiMilestoneController.toggleMilestone);
+
+
 module.exports = router;
