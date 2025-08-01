@@ -46,6 +46,7 @@ const UserDashboard = () => {
   const [userDataLoading, setUserDataLoading] = useState(true);
   const [generatedPassword, setGeneratedPassword] = useState(null);
   const [showPasswordBanner, setShowPasswordBanner] = useState(false);
+  const [projectData, setProjectData] = useState(null);
 
   useEffect(() => {
     if (!loading && !isAuthenticated) {
@@ -140,6 +141,39 @@ const UserDashboard = () => {
   }
 }, [userData]);
 
+useEffect(() => {
+  const fetchProjectData = async () => {
+    if (isAuthenticated) {
+      try {
+        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+        const response = await fetch(`${apiUrl}/api/project/active-with-mentor`, {
+          method: 'GET',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        });
+        
+        const data = await response.json();
+        
+        if (data.success && data.project) {
+          setProjectData(data.project);
+        } else {
+          setProjectData(null);
+        }
+      } catch (error) {
+        console.error('Error fetching project data:', error);
+        setProjectData(null);
+      }
+    }
+  };
+
+  // Only fetch project data after user data is loaded
+  if (userData) {
+    fetchProjectData();
+  }
+}, [isAuthenticated, userData]);
+
   // Show loading spinner while checking auth or fetching user data
   if (loading || userDataLoading) {
     return (
@@ -148,6 +182,8 @@ const UserDashboard = () => {
       </div>
     );
   }
+
+  
 
   
 
@@ -596,20 +632,48 @@ const UserDashboard = () => {
                   <div className="flex flex-col sm:flex-row sm:items-center space-y-1 sm:space-y-0 sm:space-x-4">
                     <span className="text-sm text-blue-200 font-medium">Current Project:</span>
                     <span className="text-sm sm:text-base text-white font-semibold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text ">
-                      Grand Line Navigation System
+                      {projectData ? projectData.name : 'No active project'}
                     </span>
                   </div>
                   <div className="flex items-center space-x-2">
                     <div className="w-16 sm:w-20 h-2 bg-white/20 rounded-full overflow-hidden">
-                      <div className="h-full bg-gradient-to-r from-purple-400 to-pink-500 rounded-full transition-all duration-500" style={{ width: '40%' }}></div>
+                      <div
+                        className="h-full bg-gradient-to-r from-purple-400 to-pink-500 rounded-full transition-all duration-500"
+                        style={{
+                          width: `${(() => {
+                            const realMilestones = milestones.filter(m => !m.isPlaceholder);
+                            const completedMilestones = realMilestones.filter(
+                              m => m.userVerified && m.mentorVerified
+                            );
+                            return realMilestones.length > 0
+                              ? Math.round(
+                                  (completedMilestones.length / realMilestones.length) * 100
+                                )
+                              : 0;
+                          })()}%`
+                        }}
+                      ></div>
                     </div>
-                    <span className="text-sm font-bold text-purple-400">40%</span>
+                    <span className="text-sm font-bold text-purple-400">
+                      {(() => {
+                        const realMilestones = milestones.filter(m => !m.isPlaceholder);
+                        const completedMilestones = realMilestones.filter(
+                          m => m.userVerified && m.mentorVerified
+                        );
+                        return realMilestones.length > 0
+                          ? Math.round(
+                              (completedMilestones.length / realMilestones.length) * 100
+                            )
+                          : 0;
+                      })()}%
+                    </span>
                   </div>
+
                 </div>
                 
                 {/* Enhanced Milestone Container */}
                 <div className="bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-2xl p-2 sm:p-4 border border-white/10">
-                  <MilestonePoint milestones={milestones} />
+                  <MilestonePoint projectData={projectData} />
                 </div>
                 
                 {/* Additional Project Info */}
