@@ -1,5 +1,5 @@
 const express = require('express');
-const { requireUser, requireUserOrMentor, requireMentor } = require('../middleware/roleAuth');
+const { requireUser, requireUserOrMentor, requireMentor, authenticateJWT } = require('../middleware/roleAuth');
 const {
     createProject,
     getProjectById,
@@ -8,33 +8,53 @@ const {
     deleteProjectById,
     applyToProject,
     acceptMentorApplication,
-    getUserProjects
+    getUserProjects,
+    getActiveProjectWithMentor
 } = require('../controller/projectController');
 
 const router = express.Router();
 
-// Create new project - only learners (users) can create projects
+// Debug middleware
+router.use((req, res, next) => {
+  console.log(`PROJECT ROUTE: ${req.method} ${req.originalUrl}`);
+  next();
+});
+
+// Test route - MUST be first
+router.get('/test', (req, res) => {
+  console.log('Test route hit successfully!');
+  res.json({
+    success: true,
+    message: 'Project routes are working!',
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Get active project with mentor - MUST be before /:id route
+router.get('/active-with-mentor', authenticateJWT, getActiveProjectWithMentor);
+
+// Create new project
 router.post('/create', requireUser, createProject);
 
-// Get all projects for authenticated user (Dashboard) - only learners
+// Get all projects for authenticated user
 router.get('/user', requireUser, getProjectsForUser);
 
-// NEW: Get projects by user ID - for frontend dashboard
+// Get projects by user ID
 router.get('/user/:userId', requireUserOrMentor, getUserProjects);
 
-// Apply to project - only mentors can apply
+// Apply to project
 router.post('/:id/apply', requireMentor, applyToProject);
 
-// Accept mentor application - only project owner (learner) can accept
+// Accept mentor application
 router.patch('/:id/applications/:applicationId/accept', requireUser, acceptMentorApplication);
 
-// Get project by ID - both learners and mentors can view projects
-router.get('/:id', requireUserOrMentor, getProjectById);
-
-// Update project - only project owner (learner) can update
+// Update project
 router.patch('/:id', requireUser, updateProject);
 
-// Delete project - only project owner (learner) can delete
+// Delete project
 router.delete('/:id', requireUser, deleteProjectById);
+
+// Get project by ID - MUST be last
+router.get('/:id', requireUserOrMentor, getProjectById);
 
 module.exports = router;

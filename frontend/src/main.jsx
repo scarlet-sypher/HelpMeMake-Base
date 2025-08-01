@@ -19,6 +19,7 @@ import './index.css';
 import ProjectsIndex from './pages/user/ProjectsIndex';
 import DetailedProjectView from './pages/user/DetailedProjectView';
 import ShowMentorDetails from './pages/user/ShowMentorDetails';
+import MilestonePage from './pages/user/MilestonePage';
 
 
 ReactDOM.createRoot(document.getElementById('root')).render(
@@ -31,11 +32,18 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <Route path="/verify-otp" element={<VerifyOTP />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/select-role" element={<SelectRole />} />
+        {/* <Route path="/milestone-page" element={<MilestonePage />} /> */}
         
         {/* Protected User Routes */}
         <Route path="/userdashboard" element={
           <ProtectedRoute requiredRole="user">
             <UserDashboard />
+          </ProtectedRoute>
+        } />
+
+        <Route path="/milestone-page" element={
+          <ProtectedRoute requiredRole="user">
+            <MilestonePage/>
           </ProtectedRoute>
         } />
         

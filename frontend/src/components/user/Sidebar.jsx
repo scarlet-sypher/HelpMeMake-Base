@@ -11,7 +11,8 @@ import {
   MessageCircle,
   BarChart3,
   X,
-  Code
+  Code,
+  Target
 } from 'lucide-react';
 
 const Sidebar = ({ isOpen, toggleSidebar, activeItem, setActiveItem }) => {
@@ -23,6 +24,7 @@ const Sidebar = ({ isOpen, toggleSidebar, activeItem, setActiveItem }) => {
     { icon: Home, label: 'Dashboard', id: 'dashboard', path: '/userdashboard' },
     { icon: Folder, label: 'Projects', id: 'projects', path: '/user/projects' },
     { icon: BookOpen, label: 'Sessions', id: 'sessions', path: '/user/sessions' },
+    { icon: Target, label: 'Milestones', id: 'milestones', path: '/milestone-page' },
     { icon: MessageCircle, label: 'Messages', id: 'messages', path: '/user/messages' },
     { icon: Star, label: 'Achievements', id: 'achievements', path: '/user/achievements' },
     { icon: BarChart3, label: 'Analytics', id: 'analytics', path: '/user/analytics' },

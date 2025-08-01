@@ -326,11 +326,10 @@ mentorSchema.index({ 'pricing.hourlyRate': 1 });
 
 // Virtual for average rating calculation
 mentorSchema.virtual('averageRating').get(function() {
-  if (this.reviews.length === 0) return this.rating;
+  if (!Array.isArray(this.reviews) || this.reviews.length === 0) return this.rating;
   const sum = this.reviews.reduce((acc, review) => acc + review.rating, 0);
   return (sum / this.reviews.length).toFixed(1);
 });
-
 // Virtual for success rate
 mentorSchema.virtual('successRate').get(function() {
   if (this.completedSessions === 0) return 0;
@@ -339,7 +338,7 @@ mentorSchema.virtual('successRate').get(function() {
 
 // Virtual for expertise summary
 mentorSchema.virtual('primaryExpertise').get(function() {
-  if (this.expertise.length === 0) return [];
+  if (!Array.isArray(this.expertise) || this.expertise.length === 0) return [];
   return this.expertise
     .filter(exp => exp.level === 'expert' || exp.level === 'advanced')
     .map(exp => exp.skill)

@@ -831,6 +831,134 @@ const getUserProjects = async (req, res) => {
   }
 };
 
+const getActiveProjectWithMentor = async (req, res) => {
+  try {
+    console.log('=== GET ACTIVE PROJECT DEBUG ===');
+    console.log('req.user:', req.user);
+    
+    // Fix: Use _id from req.user, not userId
+    const userId = req.user._id || req.user.userId;
+    
+    if (!userId) {
+      console.log('ERROR: No userId in req.user');
+      return res.status(401).json({
+        success: false,
+        message: 'User ID not found in token',
+        debug: {
+          reqUser: req.user,
+          availableFields: Object.keys(req.user || {})
+        }
+      });
+    }
+    
+    console.log('Looking for learner with userId:', userId);
+    
+    // Search using the actual user _id from the token
+    const learner = await Learner.findOne({ userId: userId });
+    console.log('Learner found:', learner ? 'YES' : 'NO');
+    
+    if (learner) {
+      console.log('Learner _id:', learner._id);
+      console.log('Learner userId:', learner.userId);
+    }
+    
+    if (!learner) {
+      return res.status(404).json({
+        success: false,
+        message: 'Learner profile not found',
+        debug: {
+          searchedUserId: userId,
+          userFromToken: req.user,
+          userIdField: req.user._id,
+          userIdFieldAlt: req.user.userId
+        }
+      });
+    }
+
+    console.log('Searching for projects with learnerId:', learner._id);
+    
+    // Find most recent project (with or without mentor for testing)
+    const project = await Project.findOne({
+      learnerId: learner._id,
+      status: { $in: ['In Progress', 'Open', 'Active'] } // Include multiple statuses
+    }).populate('mentorId', 'userId')
+      .populate({
+        path: 'mentorId',
+        populate: {
+          path: 'userId',
+          select: 'name email'
+        }
+      })
+      .sort({ createdAt: -1 }); // Get most recent project
+
+    console.log('Project found:', project ? 'YES' : 'NO');
+    
+    if (project) {
+      console.log('Project ID:', project._id);
+      console.log('Project name:', project.name);
+      console.log('Project status:', project.status);
+      console.log('Project learnerId:', project.learnerId);
+      console.log('Project mentorId:', project.mentorId);
+    }
+
+    if (!project) {
+      // Let's also check if there are ANY projects for this learner
+      const anyProjects = await Project.find({ learnerId: learner._id });
+      console.log('Total projects for learner:', anyProjects.length);
+      
+      if (anyProjects.length > 0) {
+        console.log('Available projects:');
+        anyProjects.forEach((p, index) => {
+          console.log(`  ${index + 1}. ${p.name} - Status: ${p.status} - Mentor: ${p.mentorId || 'None'}`);
+        });
+      }
+      
+      return res.json({
+        success: true,
+        project: null,
+        message: 'No active project found',
+        debug: {
+          learnerId: learner._id,
+          totalProjects: anyProjects.length,
+          searchCriteria: {
+            learnerId: learner._id,
+            status: { $in: ['In Progress', 'Open', 'Active'] }
+          }
+        }
+      });
+    }
+
+    // Format project for frontend
+    const formattedProject = {
+      ...project.toObject(),
+      mentorId: project.mentorId ? {
+        _id: project.mentorId._id,
+        name: project.mentorId.userId?.name || 'Unknown Mentor',
+        email: project.mentorId.userId?.email,
+        title: project.mentorId.title || 'Mentor'
+      } : {
+        name: 'No Mentor Assigned',
+        title: 'Pending Assignment'
+      }
+    };
+
+    console.log('Returning formatted project');
+    console.log('=== END DEBUG ===');
+
+    res.json({
+      success: true,
+      project: formattedProject
+    });
+  } catch (error) {
+    console.error('Error in getActiveProjectWithMentor:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error',
+      error: error.message
+    });
+  }
+};
+
 module.exports = {
   createProject,
   getProjectById,
@@ -839,5 +967,6 @@ module.exports = {
   deleteProjectById,
   applyToProject,
   acceptMentorApplication,
-  getUserProjects
+  getUserProjects,
+  getActiveProjectWithMentor
 };

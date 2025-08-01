@@ -12,12 +12,13 @@ const authRoutes = require('./routes/authRoute');
 const metaRoutes = require('./routes/metaRoute');
 const projectRoutes = require('./routes/projectRoute');
 const aiRoutes = require('./routes/aiRoute');
+const milestoneRoutes = require('./routes/milestoneRoute');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
 const corsOptions = {
-  origin: process.env.UI_URL || 'http://localhost:5173', // Fixed port
+  origin: process.env.UI_URL || 'http://localhost:5173',
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
@@ -26,7 +27,6 @@ const corsOptions = {
 
 // CORS middleware (should be first)
 app.use(cors(corsOptions));
-// app.options('*', cors(corsOptions)); // Fixed syntax
 
 // Additional CORS headers middleware
 app.use((req, res, next) => {
@@ -34,7 +34,7 @@ app.use((req, res, next) => {
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
   res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Cookie');
   res.header('Access-Control-Allow-Credentials', 'true');
-  
+ 
   if (req.method === 'OPTIONS') {
     res.sendStatus(200);
   } else {
@@ -53,14 +53,16 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // Passport
 app.use(passport.initialize());
 
-// Routes
+// Routes - FIXED THE PROJECT ROUTE MOUNTING
 app.use('/auth', authRoutes);
 app.use('/user', userRoutes);
-app.use('/mentor', mentorRoutes);   // Please dont chnage this project life depends on this
+app.use('/mentor', mentorRoutes);
 app.use('/mentors', mentorRoutes);
 app.use('/meta', metaRoutes);
-app.use('/projects', projectRoutes);
-app.use('/api/ai', aiRoutes); 
+app.use('/projects', projectRoutes); // Keep this for backward compatibility
+app.use('/api/project', projectRoutes); // ADD THIS LINE - This is what was missing!
+app.use('/api/ai', aiRoutes);
+app.use('/api/milestone', milestoneRoutes);
 
 app.get('/health', (req, res) => {
   res.json({
@@ -72,6 +74,7 @@ app.get('/health', (req, res) => {
 
 // 404 handler
 app.use((req, res) => {
+  console.log(`404 - Route not found: ${req.method} ${req.originalUrl}`);
   res.status(404).json({
     success: false,
     message: 'Route not found'
@@ -93,4 +96,14 @@ app.listen(PORT, () => {
   console.log(`📱 UI URL: ${process.env.UI_URL}`);
   console.log(`🌐 Server URL: ${process.env.SERVER_URL}`);
   console.log(`🔑 Environment: ${process.env.NODE_ENV || 'development'}`);
+  
+  // Log all registered routes for debugging
+  console.log('\n📋 Registered Routes:');
+  console.log('  /auth/* - Authentication routes');
+  console.log('  /user/* - User routes');
+  console.log('  /mentor/* - Mentor routes');
+  console.log('  /api/project/* - Project routes (FIXED)');
+  console.log('  /api/milestone/* - Milestone routes');
+  console.log('  /api/ai/* - AI routes');
+  console.log('  /health - Health check');
 });

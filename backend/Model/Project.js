@@ -193,6 +193,25 @@ const projectSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Milestone'
   }],
+  
+  totalMilestones: {
+    type: Number,
+    default: 0,
+    max: 5 // Maximum 5 milestones per project
+  },
+  
+  completedMilestones: {
+    type: Number,
+    default: 0
+  },
+  
+  progressPercentage: {
+    type: Number,
+    default: 0,
+    min: 0,
+    max: 100
+  },
+  
   progressPercentage: {
     type: Number,
     default: 0,
