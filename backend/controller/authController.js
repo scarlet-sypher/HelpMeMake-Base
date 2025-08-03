@@ -30,61 +30,55 @@ const setTokenCookie = (res, token) => {
 const authController = {
  
     googleCallback: async (req, res) => {
-      try {
-        const user = req.user;
+  try {
+    const user = req.user;
 
-        if (!user) {
-          return res.redirect(`${process.env.UI_URL}/login?error=authentication_failed`);
-        }
-        
-        // Generate token and set cookie (this should happen for all users)
-        const token = generateToken(user._id);
-        setTokenCookie(res, token);
+    if (!user) {
+      return res.redirect(`${process.env.UI_URL}/login?error=authentication_failed`);
+    }
+    
+    // Generate token and set cookie
+    const token = generateToken(user._id);
+    setTokenCookie(res, token);
 
-        // Determine redirect URL
-        let redirectUrl = `${process.env.UI_URL}`;
-        
-        if (user.tempGeneratedPassword) {
-          // For new social users, redirect with generated password
-          const encodedPassword = encodeURIComponent(user.tempGeneratedPassword);
-          console.log('Redirecting with password:', encodedPassword); // DEBUG
-          redirectUrl += user.role ? 
-            `/userdashboard?newPassword=${encodedPassword}` : 
-            `/select-role?newPassword=${encodedPassword}`;
-
-            console.log('FULL REDIRECT URL:', redirectUrl); // ADD THIS
-          
-          // Clear the temporary password
-          delete user.tempGeneratedPassword;
-        } else {
-          // Existing user flow
-          if (!user.role) {
-            redirectUrl += '/select-role';
-          } else {
-            const dashboardMap = {
-              admin: '/admindashboard',
-              mentor: '/mentordashboard', 
-              user: '/userdashboard'
-            };
-            redirectUrl += dashboardMap[user.role] || '/userdashboard';
-          }
-        }
-
-        return res.redirect(redirectUrl);
-
-      } catch (error) {
-        console.error('Google callback error:', error);
-        
-        // Check if it's a USER_EXISTS error
-        if (error.message === 'USER_EXISTS') {
-          return res.redirect(`${process.env.UI_URL}/user-exists`);
-        }
-
-        console.log('Final redirect URL:', redirectUrl); // DEBUG
-        
-        return res.redirect(`${process.env.UI_URL}/login?error=server_error`);
+    // Determine redirect URL
+    let redirectUrl = `${process.env.UI_URL}`;
+    
+    if (user.tempGeneratedPassword) {
+      // For new social users, redirect with generated password
+      const encodedPassword = encodeURIComponent(user.tempGeneratedPassword);
+      redirectUrl += user.role ? 
+        `/userdashboard?newPassword=${encodedPassword}&authToken=${token}` : 
+        `/select-role?newPassword=${encodedPassword}&authToken=${token}`;
+      
+      // Clear the temporary password
+      delete user.tempGeneratedPassword;
+    } else {
+      // Existing user flow - add token to URL for immediate auth
+      if (!user.role) {
+        redirectUrl += `/select-role?authToken=${token}`;
+      } else {
+        const dashboardMap = {
+          admin: '/admindashboard',
+          mentor: '/mentordashboard', 
+          user: '/userdashboard'
+        };
+        redirectUrl += `${dashboardMap[user.role] || '/userdashboard'}?authToken=${token}`;
       }
-    },
+    }
+
+    return res.redirect(redirectUrl);
+
+  } catch (error) {
+    console.error('Google callback error:', error);
+    
+    if (error.message === 'USER_EXISTS') {
+      return res.redirect(`${process.env.UI_URL}/user-exists`);
+    }
+    
+    return res.redirect(`${process.env.UI_URL}/login?error=server_error`);
+  }
+},
 
     // Update githubCallback method
     githubCallback: async (req, res) => {

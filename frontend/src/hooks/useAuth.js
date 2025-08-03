@@ -11,12 +11,26 @@ export const useAuth = () => {
 
   const checkAuth = async () => {
     try {
+      // Check for URL token first (from OAuth redirect)
+      const urlParams = new URLSearchParams(window.location.search);
+      const urlToken = urlParams.get('authToken');
+      
+      if (urlToken) {
+        // Clear the URL token
+        urlParams.delete('authToken');
+        window.history.replaceState({}, document.title, 
+          window.location.pathname + (urlParams.toString() ? '?' + urlParams.toString() : ''));
+        
+        // Add a small delay to ensure cookie is set
+        await new Promise(resolve => setTimeout(resolve, 300));
+      }
+      
       // Check if this is an OAuth redirect and add delay
       const isFromOAuth = document.referrer.includes('accounts.google.com') || 
                          document.referrer.includes('github.com') ||
                          window.location.search.includes('newPassword');
       
-      if (isFromOAuth) {
+      if (isFromOAuth && !urlToken) {
         // Give OAuth cookies time to be set properly
         await new Promise(resolve => setTimeout(resolve, 800));
       }
