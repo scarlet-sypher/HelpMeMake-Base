@@ -29,7 +29,7 @@ const setTokenCookie = (res, token) => {
 
 const authController = {
  
-    googleCallback: async (req, res) => {
+googleCallback: async (req, res) => {
   try {
     const user = req.user;
 
@@ -37,33 +37,28 @@ const authController = {
       return res.redirect(`${process.env.UI_URL}/login?error=authentication_failed`);
     }
     
-    // Generate token and set cookie
+    // Generate token
     const token = generateToken(user._id);
-    setTokenCookie(res, token);
-
-    // Determine redirect URL
+    
+    // Instead of setting cookie, pass token in URL
     let redirectUrl = `${process.env.UI_URL}`;
     
     if (user.tempGeneratedPassword) {
-      // For new social users, redirect with generated password
       const encodedPassword = encodeURIComponent(user.tempGeneratedPassword);
       redirectUrl += user.role ? 
-        `/userdashboard?newPassword=${encodedPassword}&authToken=${token}` : 
-        `/select-role?newPassword=${encodedPassword}&authToken=${token}`;
-      
-      // Clear the temporary password
+        `/userdashboard?token=${token}&newPassword=${encodedPassword}` : 
+        `/select-role?token=${token}&newPassword=${encodedPassword}`;
       delete user.tempGeneratedPassword;
     } else {
-      // Existing user flow - add token to URL for immediate auth
       if (!user.role) {
-        redirectUrl += `/select-role?authToken=${token}`;
+        redirectUrl += `/select-role?token=${token}`;
       } else {
         const dashboardMap = {
           admin: '/admindashboard',
           mentor: '/mentordashboard', 
           user: '/userdashboard'
         };
-        redirectUrl += `${dashboardMap[user.role] || '/userdashboard'}?authToken=${token}`;
+        redirectUrl += `${dashboardMap[user.role] || '/userdashboard'}?token=${token}`;
       }
     }
 
@@ -71,11 +66,6 @@ const authController = {
 
   } catch (error) {
     console.error('Google callback error:', error);
-    
-    if (error.message === 'USER_EXISTS') {
-      return res.redirect(`${process.env.UI_URL}/user-exists`);
-    }
-    
     return res.redirect(`${process.env.UI_URL}/login?error=server_error`);
   }
 },

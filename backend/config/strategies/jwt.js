@@ -4,17 +4,20 @@ const User = require('../../Model/User');
 
 const cookieExtractor = (req) => {
   let token = null;
-  if (req && req.cookies && req.cookies.access_token) {
-    token = req.cookies.access_token;
-  }
   
-
-  if (!token && req.headers.authorization) {
+  // First try Authorization header
+  if (req.headers.authorization) {
     const authHeader = req.headers.authorization;
     if (authHeader.startsWith('Bearer ')) {
       token = authHeader.substring(7);
     }
   }
+  
+  // Fallback to cookies
+  if (!token && req && req.cookies && req.cookies.access_token) {
+    token = req.cookies.access_token;
+  }
+  
   return token;
 };
 
