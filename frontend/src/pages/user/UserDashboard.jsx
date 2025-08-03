@@ -51,55 +51,80 @@ const UserDashboard = () => {
   const [achievementsLoading, setAchievementsLoading] = useState(true);
 
   useEffect(() => {
-    if (!loading && !isAuthenticated) {
-      window.location.href = '/login';
-    }
+    const handleOAuthRedirect = async () => {
+      // Check if this is an OAuth redirect by looking for specific patterns
+      const isFromOAuth = document.referrer.includes('accounts.google.com') || 
+                        document.referrer.includes('github.com') ||
+                        window.location.search.includes('newPassword');
+      
+      if (isFromOAuth) {
+        // Give extra time for OAuth cookies to be set
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      }
+      
+      if (!loading && !isAuthenticated) {
+        window.location.href = '/login';
+      }
+    };
+    
+    handleOAuthRedirect();
   }, [loading, isAuthenticated]);
 
   // Fetch user data from API
   useEffect(() => {
-    const fetchUserData = async () => {
-      if (isAuthenticated) {
-        try {
-          setUserDataLoading(true);
-          
-          // Use full API URL - adjust this to match your backend URL
-          const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-          const response = await fetch(`${apiUrl}/user/data`, {
-            method: 'GET',
-            credentials: 'include',
-            headers: {
-              'Content-Type': 'application/json',
-            }
-          });
-          
-          console.log('Response status:', response.status);
-          console.log('Response headers:', response.headers);
-          
-          if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+  const fetchUserData = async () => {
+    if (isAuthenticated) {
+      try {
+        setUserDataLoading(true);
+        
+        // Add a small delay to ensure cookie is properly set after OAuth redirect
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+        const response = await fetch(`${apiUrl}/user/data`, {
+          method: 'GET',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
           }
-          
-          const data = await response.json();
-          console.log('API Response:', data);
-          
-          if (data.success) {
-            console.log('Avatar from API:', data.user.avatar);
-            setUserData(data.user);
-          } else {
-            console.error('API returned error:', data.message);
-          }
-        } catch (error) {
-          console.error('Error fetching user data:', error);
-          console.error('Error details:', error.message);
-        } finally {
-          setUserDataLoading(false);
+        });
+        
+        console.log('Response status:', response.status);
+        console.log('Response headers:', response.headers);
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
         }
+        
+        const data = await response.json();
+        console.log('API Response:', data);
+        
+        if (data.success) {
+          console.log('Avatar from API:', data.user.avatar);
+          setUserData(data.user);
+        } else {
+          console.error('API returned error:', data.message);
+        }
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+        console.error('Error details:', error.message);
+        
+        // If auth fails, redirect to login
+        if (error.message.includes('401') || error.message.includes('Unauthorized')) {
+          window.location.href = '/login';
+        }
+      } finally {
+        setUserDataLoading(false);
       }
-    };
+    }
+  };
 
+  // Only fetch if authenticated and not already loading
+  if (isAuthenticated && !userDataLoading) {
     fetchUserData();
-  }, [isAuthenticated]);
+  }
+}, [isAuthenticated]);
+
 
   useEffect(() => {
     // Check URL params for generated password
