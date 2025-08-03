@@ -19,17 +19,27 @@ const setTokenCookie = (res, token) => {
   
   res.cookie('access_token', token, {
     httpOnly: true,
-    secure: isProduction, // true in production (HTTPS required)
-    sameSite: isProduction ? 'none' : 'lax', // 'none' for cross-origin in production
+    secure: true, // Always true in production (HTTPS required)
+    sameSite: 'none', // Required for cross-origin cookies
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-    domain: isProduction ? undefined : undefined, // Don't set domain, let browser handle it
     path: '/'
   });
+  
+  // Also set a debug cookie to test if cookies work at all
+  if (isProduction) {
+    res.cookie('debug_cookie', 'test', {
+      httpOnly: false, // Make this readable from frontend for debugging
+      secure: true,
+      sameSite: 'none',
+      maxAge: 60 * 1000, // 1 minute
+      path: '/'
+    });
+  }
 };
 
 const authController = {
  
-googleCallback: async (req, res) => {
+    googleCallback: async (req, res) => {
   try {
     const user = req.user;
 
@@ -37,28 +47,33 @@ googleCallback: async (req, res) => {
       return res.redirect(`${process.env.UI_URL}/login?error=authentication_failed`);
     }
     
-    // Generate token
+    // Generate token and set cookie
     const token = generateToken(user._id);
-    
-    // Instead of setting cookie, pass token in URL
+    setTokenCookie(res, token);
+
+    // Determine redirect URL
     let redirectUrl = `${process.env.UI_URL}`;
     
     if (user.tempGeneratedPassword) {
+      // For new social users, redirect with generated password
       const encodedPassword = encodeURIComponent(user.tempGeneratedPassword);
       redirectUrl += user.role ? 
-        `/userdashboard?token=${token}&newPassword=${encodedPassword}` : 
-        `/select-role?token=${token}&newPassword=${encodedPassword}`;
+        `/userdashboard?newPassword=${encodedPassword}&authToken=${token}` : 
+        `/select-role?newPassword=${encodedPassword}&authToken=${token}`;
+      
+      // Clear the temporary password
       delete user.tempGeneratedPassword;
     } else {
+      // Existing user flow - add token to URL for immediate auth
       if (!user.role) {
-        redirectUrl += `/select-role?token=${token}`;
+        redirectUrl += `/select-role?authToken=${token}`;
       } else {
         const dashboardMap = {
           admin: '/admindashboard',
           mentor: '/mentordashboard', 
           user: '/userdashboard'
         };
-        redirectUrl += `${dashboardMap[user.role] || '/userdashboard'}?token=${token}`;
+        redirectUrl += `${dashboardMap[user.role] || '/userdashboard'}?authToken=${token}`;
       }
     }
 
@@ -66,6 +81,11 @@ googleCallback: async (req, res) => {
 
   } catch (error) {
     console.error('Google callback error:', error);
+    
+    if (error.message === 'USER_EXISTS') {
+      return res.redirect(`${process.env.UI_URL}/user-exists`);
+    }
+    
     return res.redirect(`${process.env.UI_URL}/login?error=server_error`);
   }
 },
