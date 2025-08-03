@@ -14,7 +14,7 @@ export const useAuth = () => {
     // Debug: Log all cookies
     console.log('All cookies:', document.cookie);
     
-    // Debug: Check referrer
+    // Debug: Check referrer and URL
     console.log('Document referrer:', document.referrer);
     console.log('Current URL:', window.location.href);
     
@@ -28,11 +28,39 @@ export const useAuth = () => {
       await new Promise(resolve => setTimeout(resolve, 800));
     }
 
+    // Check for token in URL first (from OAuth)
+    const urlParams = new URLSearchParams(window.location.search);
+    const urlToken = urlParams.get('authToken') || urlParams.get('token'); // Check both parameters
+    
+    console.log('URL search params:', window.location.search);
+    console.log('URL token found:', urlToken ? 'Yes' : 'No');
+    
+    let token = urlToken || localStorage.getItem('access_token');
+    
+    if (urlToken) {
+      // Store token and clean URL
+      console.log('Storing token from URL to localStorage');
+      localStorage.setItem('access_token', urlToken);
+      urlParams.delete('authToken');
+      urlParams.delete('token');
+      window.history.replaceState({}, document.title, 
+        window.location.pathname + (urlParams.toString() ? '?' + urlParams.toString() : ''));
+      token = urlToken;
+    }
+
+    if (!token) {
+      console.log('No token found');
+      setUser(null);
+      setIsAuthenticated(false);
+      setLoading(false);
+      return;
+    }
+
     console.log('Making auth request to:', `${import.meta.env.VITE_API_URL}/auth/user`);
     
     const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/user`, {
-      credentials: 'include',
       headers: {
+        'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
       }
     });
@@ -43,17 +71,20 @@ export const useAuth = () => {
     if (response.ok) {
       const data = await response.json();
       console.log('Auth success:', data);
+      console.log('Full auth response data:', data); // Added for debugging
       setUser(data.user);
       setIsAuthenticated(true);
     } else {
       console.log('Auth check failed with status:', response.status);
       const errorText = await response.text();
       console.log('Error response:', errorText);
+      localStorage.removeItem('access_token');
       setUser(null);
       setIsAuthenticated(false);
     }
   } catch (error) {
     console.error('Auth check failed:', error);
+    localStorage.removeItem('access_token');
     setUser(null);
     setIsAuthenticated(false);
   } finally {
@@ -62,18 +93,29 @@ export const useAuth = () => {
 };
 
   const logout = async () => {
-    try {
+  try {
+    const token = localStorage.getItem('access_token');
+    if (token) {
       await fetch(`${import.meta.env.VITE_API_URL}/auth/logout`, {
         method: 'POST',
-        credentials: 'include'
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        }
       });
-      setUser(null);
-      setIsAuthenticated(false);
-      window.location.href = '/login';
-    } catch (error) {
-      console.error('Logout failed:', error);
     }
-  };
+    localStorage.removeItem('access_token');
+    setUser(null);
+    setIsAuthenticated(false);
+    window.location.href = '/login';
+  } catch (error) {
+    console.error('Logout failed:', error);
+    localStorage.removeItem('access_token');
+    setUser(null);
+    setIsAuthenticated(false);
+    window.location.href = '/login';
+  }
+};
 
   return { user, loading, isAuthenticated, logout, refetch: checkAuth };
 };
