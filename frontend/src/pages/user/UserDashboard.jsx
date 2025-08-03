@@ -73,19 +73,18 @@ const UserDashboard = () => {
   // Fetch user data from API
   useEffect(() => {
   const fetchUserData = async () => {
-    if (isAuthenticated) {
+    if (isAuthenticated && userDataLoading) { // Changed: was !userDataLoading
       try {
         setUserDataLoading(true);
         
-        // Add a small delay to ensure cookie is properly set after OAuth redirect
-        await new Promise(resolve => setTimeout(resolve, 500));
-        
         const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+        const token = localStorage.getItem('access_token'); // Get token from localStorage
+        
         const response = await fetch(`${apiUrl}/user/data`, {
           method: 'GET',
-          credentials: 'include',
           headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}` // Use Bearer token instead of cookies
           }
         });
         
@@ -119,11 +118,8 @@ const UserDashboard = () => {
     }
   };
 
-  // Only fetch if authenticated and not already loading
-  if (isAuthenticated && !userDataLoading) {
-    fetchUserData();
-  }
-}, [isAuthenticated]);
+  fetchUserData();
+}, [isAuthenticated, userDataLoading]);
 
 
   useEffect(() => {
@@ -170,14 +166,16 @@ const UserDashboard = () => {
 
 useEffect(() => {
   const fetchProjectData = async () => {
-    if (isAuthenticated) {
+    if (isAuthenticated && userData) {
       try {
         const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+        const token = localStorage.getItem('access_token');
+        
         const response = await fetch(`${apiUrl}/api/project/active-with-mentor`, {
           method: 'GET',
-          credentials: 'include',
           headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}` // Use Bearer token
           }
         });
         
@@ -195,10 +193,7 @@ useEffect(() => {
     }
   };
 
-  // Only fetch project data after user data is loaded
-  if (userData) {
-    fetchProjectData();
-  }
+  fetchProjectData();
 }, [isAuthenticated, userData]);
 
 
@@ -208,11 +203,13 @@ useEffect(() => {
       try {
         setAchievementsLoading(true);
         const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+        const token = localStorage.getItem('access_token');
+        
         const response = await fetch(`${apiUrl}/api/achievements`, {
           method: 'GET',
-          credentials: 'include',
           headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}` // Use Bearer token
           }
         });
         
