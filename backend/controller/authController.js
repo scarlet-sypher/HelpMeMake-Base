@@ -15,11 +15,15 @@ const generateToken = (userId) => {
 
 
 const setTokenCookie = (res, token) => {
+  const isProduction = process.env.NODE_ENV === 'production';
+  
   res.cookie('access_token', token, {
-    httpOnly: true, 
-    secure: process.env.NODE_ENV === 'production', 
-    sameSite: 'lax', 
-    maxAge: 7 * 24 * 60 * 60 * 1000 
+    httpOnly: true,
+    secure: isProduction, // true in production (HTTPS required)
+    sameSite: isProduction ? 'none' : 'lax', // 'none' for cross-origin in production
+    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    domain: isProduction ? undefined : undefined, // Don't set domain, let browser handle it
+    path: '/'
   });
 };
 
@@ -552,12 +556,13 @@ const authController = {
 
   logout: (req, res) => {
     try {
-      // Clear the cookie with the same options used when setting it
+      const isProduction = process.env.NODE_ENV === 'production';
+      
       res.clearCookie('access_token', {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-        path: '/' // Add this to ensure proper clearing
+        secure: isProduction,
+        sameSite: isProduction ? 'none' : 'lax',
+        path: '/'
       });
 
       res.json({
