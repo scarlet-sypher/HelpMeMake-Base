@@ -84,27 +84,31 @@ useEffect(() => {
         console.log('Fetching projects for authenticated user');
         
         // Use the correct API URL
-        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000'; // Fixed port
         console.log('API URL:', apiUrl);
         
-        // Change this line - remove the user ID from URL
-        const response = await axios.get(`${apiUrl}/projects/user`, {
-          withCredentials: true,
+        const token = localStorage.getItem('access_token'); // Get token from localStorage
+        
+        // Use fetch instead of axios for consistency
+        const response = await fetch(`${apiUrl}/projects/user`, {
+          method: 'GET',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
+            'Authorization': `Bearer ${token}` // Use Bearer token instead of cookies
           }
         });
+        
+        const data = await response.json();
               
-        if (response.data.success) {
-          setProjects(response.data.projects);
-          setFilteredProjects(response.data.projects);
+        if (data.success) {
+          setProjects(data.projects);
+          setFilteredProjects(data.projects);
         } else {
-          setError(response.data.message || 'Failed to fetch projects');
+          setError(data.message || 'Failed to fetch projects');
         }
       } catch (error) {
         console.error('Error fetching projects:', error);
-        setError(error.response?.data?.message || 'Failed to fetch projects');
+        setError(error.message || 'Failed to fetch projects');
       } finally {
         setProjectsLoading(false);
       }

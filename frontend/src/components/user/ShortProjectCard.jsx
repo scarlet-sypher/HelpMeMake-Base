@@ -95,35 +95,44 @@ const ShortProjectCard = ({ project, onDelete }) => {
   const activePrice = getActivePrice();
 
   // Handle delete
-  const handleDelete = async () => {
-    if (deleteConfirmText !== project.name) {
-      alert('Project name does not match. Please type the exact project name.');
-      return;
-    }
+const handleDelete = async () => {
+  if (deleteConfirmText !== project.name) {
+    alert('Project name does not match. Please type the exact project name.');
+    return;
+  }
 
-    setIsDeleting(true);
-    try {
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-      await axios.delete(`${apiUrl}/projects/${project._id}`, {
-        withCredentials: true
-      });
-      
-      // Show success toast (you can replace this with your toast library)
+  setIsDeleting(true);
+  try {
+    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+    const token = localStorage.getItem('access_token'); // Get token from localStorage
+    
+    // Use fetch instead of axios for consistency
+    const response = await fetch(`${apiUrl}/projects/${project._id}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}` // Use Bearer token
+      }
+    });
+    
+    const data = await response.json();
+    
+    if (response.ok && data.success) {
       alert('Project deleted successfully!');
-      
-      // Call onDelete callback to refresh the projects list
       if (onDelete) {
         onDelete(project._id);
       }
-      
       setShowDeleteModal(false);
-    } catch (error) {
-      console.error('Error deleting project:', error);
-      alert('Failed to delete project. Please try again.');
-    } finally {
-      setIsDeleting(false);
+    } else {
+      alert(data.message || 'Failed to delete project. Please try again.');
     }
-  };
+  } catch (error) {
+    console.error('Error deleting project:', error);
+    alert('Failed to delete project. Please try again.');
+  } finally {
+    setIsDeleting(false);
+  }
+};
 
   return (
     <>

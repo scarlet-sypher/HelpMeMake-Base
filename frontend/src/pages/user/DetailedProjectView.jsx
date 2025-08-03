@@ -73,30 +73,37 @@ const DetailedProjectView = () => {
 
   // Fetch project details
   useEffect(() => {
-    const fetchProject = async () => {
-      try {
-        setLoading(true);
-        const response = await axios.get(`${API_URL}/projects/${id}`, {
-          withCredentials: true
-        });
-        
-        if (response.data.success) {
-          setProject(response.data.project);
-        } else {
-          toast.error('Failed to load project details');
+  const fetchProject = async () => {
+    try {
+      setLoading(true);
+      const token = localStorage.getItem('access_token');
+      
+      const response = await fetch(`${API_URL}/projects/${id}`, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
         }
-      } catch (error) {
-        console.error('Error fetching project:', error);
-        toast.error('Error loading project details');
-      } finally {
-        setLoading(false);
+      });
+      
+      const data = await response.json();
+      
+      if (response.ok && data.success) {
+        setProject(data.project);
+      } else {
+        toast.error('Failed to load project details');
       }
-    };
-
-    if (id) {
-      fetchProject();
+    } catch (error) {
+      console.error('Error fetching project:', error);
+      toast.error('Error loading project details');
+    } finally {
+      setLoading(false);
     }
-  }, [id, API_URL]);
+  };
+
+  if (id) {
+    fetchProject();
+  }
+}, [id, API_URL]);
 
 /*
 
@@ -166,27 +173,34 @@ const DetailedProjectView = () => {
   };
 
   const fetchMentors = async () => {
-    try {
-      setMentorsLoading(true);
-      const response = await axios.get(`${API_URL}/mentors/all`, {
-        withCredentials: true
-      });
-      
-      if (response.data.success) {
-        setMentors(response.data.mentors);
-        return Promise.resolve();
-      } else {
-        toast.error('Failed to load mentors');
-        return Promise.reject();
+  try {
+    setMentorsLoading(true);
+    const token = localStorage.getItem('access_token');
+    
+    const response = await fetch(`${API_URL}/mentors/all`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
       }
-    } catch (error) {
-      console.error('Error fetching mentors:', error);
-      toast.error('Error loading mentors');
+    });
+    
+    const data = await response.json();
+    
+    if (response.ok && data.success) {
+      setMentors(data.mentors);
+      return Promise.resolve();
+    } else {
+      toast.error('Failed to load mentors');
       return Promise.reject();
-    } finally {
-      setMentorsLoading(false);
     }
-  };
+  } catch (error) {
+    console.error('Error fetching mentors:', error);
+    toast.error('Error loading mentors');
+    return Promise.reject();
+  } finally {
+    setMentorsLoading(false);
+  }
+};
 
 
 
