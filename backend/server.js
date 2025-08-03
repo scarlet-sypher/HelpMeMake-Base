@@ -175,6 +175,10 @@ process.on('SIGTERM', async () => {
   }
 });
 
+app.get("/", (req, res) => {
+  res.send("API is running...");
+});
+
 // Start server after database connection
 const startServer = async () => {
   // Connect to database first
