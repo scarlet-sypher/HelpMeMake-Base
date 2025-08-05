@@ -983,17 +983,7 @@ const thumbnailUpload = multer({
 const uploadProjectThumbnail = async (req, res) => {
   console.log('Upload thumbnail endpoint hit');
   console.log('User from req:', req.user);
-  console.log('Headers:', req.headers);
   
-  // Add authentication check
-  if (!req.user || !req.user._id) {
-    console.log('Authentication failed - no user in request');
-    return res.status(401).json({
-      success: false,
-      message: 'Authentication required'
-    });
-  }
-
   thumbnailUpload(req, res, async (err) => {
     if (err) {
       console.error('Multer error:', err);
@@ -1017,28 +1007,6 @@ const uploadProjectThumbnail = async (req, res) => {
     });
 
     try {
-      // Check if Cloudinary is configured
-      const config = cloudinary.config();
-console.log('Checking Cloudinary config:', {
-  cloud_name: !!config.cloud_name,
-  api_key: !!config.api_key,
-  api_secret: !!config.api_secret
-});
-
-if (!config.cloud_name || !config.api_key || !config.api_secret) {
-  console.error('Cloudinary configuration missing:', {
-    cloud_name: !!config.cloud_name,
-    api_key: !!config.api_key,
-    api_secret: !!config.api_secret
-  });
-  return res.status(500).json({
-    success: false,
-    message: 'File upload service not configured properly'
-  });
-}
-
-console.log('Cloudinary config check passed');
-
       // Upload to Cloudinary from buffer
       const streamUpload = (req) => {
         return new Promise((resolve, reject) => {
@@ -1078,8 +1046,7 @@ console.log('Cloudinary config check passed');
       console.error('Thumbnail upload error:', error);
       res.status(500).json({
         success: false,
-        message: 'Failed to upload thumbnail',
-        error: process.env.NODE_ENV === 'development' ? error.message : 'Upload failed'
+        message: 'Failed to upload thumbnail'
       });
     }
   });
