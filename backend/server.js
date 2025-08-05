@@ -5,6 +5,7 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const passport = require('./config/passport');
 const path = require('path');
+const db = require("./connection/conn")
 
 // Import routes
 const userRoutes = require('./routes/userRoute');
@@ -18,42 +19,6 @@ const achievementRoutes = require('./routes/achievementRoute');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-
-// MongoDB Connection Function
-const connectDB = async () => {
-  try {
-    console.log('🔄 Connecting to MongoDB...');
-    
-    const conn = await mongoose.connect(process.env.MONGO_URL, {
-      serverSelectionTimeoutMS: 5000, // Timeout after 5s instead of 30s
-      heartbeatFrequencyMS: 2000, // Send heartbeat every 2s
-    });
-
-    console.log('✅ MongoDB Connected Successfully');
-    console.log(`📊 Database: ${conn.connection.name}`);
-    console.log(`🌐 Host: ${conn.connection.host}`);
-
-    // Connection event handlers
-    mongoose.connection.on('error', (err) => {
-      console.error('❌ MongoDB connection error:', err);
-    });
-
-    mongoose.connection.on('disconnected', () => {
-      console.log('⚠️ MongoDB disconnected');
-    });
-
-    mongoose.connection.on('reconnected', () => {
-      console.log('✅ MongoDB reconnected');
-    });
-
-  } catch (error) {
-    console.error('❌ MongoDB connection failed:', error.message);
-    console.error('🔄 Retrying connection in 5 seconds...');
-    
-    // Retry connection after 5 seconds
-    setTimeout(connectDB, 5000);
-  }
-};
 
 // CORS Configuration
 
@@ -181,8 +146,7 @@ app.get("/", (req, res) => {
 
 // Start server after database connection
 const startServer = async () => {
-  // Connect to database first
-  await connectDB();
+
   
   // Then start the server
   app.listen(PORT, () => {

@@ -4,6 +4,9 @@ const bcrypt = require('bcryptjs');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const cloudinary = require('../utils/cloudinary');
+const streamifier = require('streamifier');
+
 // Get current user's full profile data
 const getUserData = async (req, res) => {
   try {
@@ -98,14 +101,15 @@ const storage = multer.diskStorage({
   }
 });
 
+
 const upload = multer({
-  storage: storage,
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+  storage: multer.memoryStorage(), 
+  limits: { fileSize: 5 * 1024 * 1024 }, 
   fileFilter: (req, file, cb) => {
     const allowedTypes = /jpeg|jpg|png|webp/;
     const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
     const mimetype = allowedTypes.test(file.mimetype);
-    
+
     if (mimetype && extname) {
       return cb(null, true);
     } else {
@@ -267,7 +271,7 @@ if (!skipCurrentPasswordCheck) {
 };
 
 // Upload Avatar
-const uploadAvatar = (req, res) => {
+const uploadAvatar = async (req, res) => {
   upload(req, res, async (err) => {
     if (err) {
       return res.status(400).json({
@@ -284,27 +288,41 @@ const uploadAvatar = (req, res) => {
     }
 
     try {
-      const User = require('../Model/User');
-      const Learner = require('../Model/Learner');
-      const avatarPath = `/uploads/userUploads/${req.file.filename}`;
+      // Upload to Cloudinary from buffer
+      const streamUpload = (req) => {
+        return new Promise((resolve, reject) => {
+          const stream = cloudinary.uploader.upload_stream(
+            {
+              folder: 'avatars',
+              public_id: `avatar-${req.user._id}`,
+              overwrite: true,
+            },
+            (error, result) => {
+              if (result) resolve(result);
+              else reject(error);
+            }
+          );
+          streamifier.createReadStream(req.file.buffer).pipe(stream);
+        });
+      };
 
-      // Delete old avatar if it exists and isn't default
+      const result = await streamUpload(req);
+
+      const avatarUrl = result.secure_url;
+
+      // Delete old avatar if it existed (optional: check if it was Cloudinary or local)
       const user = await User.findById(req.user._id);
-      if (user.avatar && user.avatar !== '/uploads/public/default.jpg') {
-        const oldAvatarPath = path.join(__dirname, '..', user.avatar);
-        if (fs.existsSync(oldAvatarPath)) {
-          fs.unlinkSync(oldAvatarPath);
-        }
+      if (user.avatar && !user.avatar.includes('default.jpg')) {
+        // optionally handle deletion of old Cloudinary image
+        // e.g., await cloudinary.uploader.destroy(public_id_from_url);
       }
 
-      // Update user avatar
       const updatedUser = await User.findByIdAndUpdate(
-        req.user._id, 
-        { avatar: avatarPath },
+        req.user._id,
+        { avatar: avatarUrl },
         { new: true, select: '-password' }
       );
 
-      // Calculate updated profile score
       let profileScore = 0;
       if (req.user.role === 'user') {
         const learnerData = await Learner.findOne({ userId: req.user._id });
@@ -316,9 +334,10 @@ const uploadAvatar = (req, res) => {
       res.json({
         success: true,
         message: 'Profile picture updated successfully',
-        avatar: avatarPath,
-        profileScore: profileScore
+        avatar: avatarUrl,
+        profileScore
       });
+
     } catch (error) {
       console.error('Avatar upload error:', error);
       res.status(500).json({
