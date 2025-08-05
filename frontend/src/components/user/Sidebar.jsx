@@ -25,9 +25,9 @@ const Sidebar = ({ isOpen, toggleSidebar, activeItem, setActiveItem }) => {
     { icon: Folder, label: 'Projects', id: 'projects', path: '/user/projects' },
     { icon: BookOpen, label: 'Sessions', id: 'sessions', path: '/user/sessions' },
     { icon: Target, label: 'Milestones', id: 'milestones', path: '/milestone-page' },
-    // { icon: MessageCircle, label: 'Messages', id: 'messages', path: '/user/messages' },
+    { icon: MessageCircle, label: 'Messages', id: 'messages', path: '/user/messages' },
     { icon: Star, label: 'Achievements', id: 'achievements', path: '/user/achievements' },
-    // { icon: BarChart3, label: 'Analytics', id: 'analytics', path: '/user/analytics' },
+    { icon: BarChart3, label: 'Analytics', id: 'analytics', path: '/user/analytics' },
     { icon: Settings, label: 'Settings', id: 'settings', path: '/user/settings' },
   ];
 
