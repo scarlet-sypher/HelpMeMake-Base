@@ -35,7 +35,7 @@ router.get('/test', (req, res) => {
 router.get('/active-with-mentor', authenticateJWT, getActiveProjectWithMentor);
 
 // ADD THIS LINE - Upload thumbnail route
-router.post('/upload-thumbnail', authenticateJWT, uploadProjectThumbnail);
+router.post('/upload-thumbnail', requireUser, uploadProjectThumbnail);
 
 // Create new project
 router.post('/create', requireUser, createProject);

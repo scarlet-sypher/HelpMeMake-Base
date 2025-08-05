@@ -54,12 +54,17 @@ const TechnicalDetails = ({ formData, setFormData, errors }) => {
       formDataUpload.append('thumbnail', file);
 
       // Get token from multiple possible sources
-      const token = localStorage.getItem('token') || 
-                   localStorage.getItem('access_token') || 
-                   sessionStorage.getItem('token') ||
-                   sessionStorage.getItem('access_token');
+      const token = localStorage.getItem('access_token') || 
+             localStorage.getItem('token') || 
+             sessionStorage.getItem('access_token') ||
+             sessionStorage.getItem('token');
 
-      console.log('Token being used:', token ? 'Token found' : 'No token found');
+        console.log('Token being used:', token ? 'Token found' : 'No token found');
+
+        if (!token) {
+        alert('Authentication required. Please log in again.');
+        return;
+        }
 
       const response = await axios.post(
         `${import.meta.env.VITE_API_URL}/projects/upload-thumbnail`,

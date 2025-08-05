@@ -983,7 +983,17 @@ const thumbnailUpload = multer({
 const uploadProjectThumbnail = async (req, res) => {
   console.log('Upload thumbnail endpoint hit');
   console.log('User from req:', req.user);
+  console.log('Headers:', req.headers);
   
+  // Add authentication check
+  if (!req.user || !req.user._id) {
+    console.log('Authentication failed - no user in request');
+    return res.status(401).json({
+      success: false,
+      message: 'Authentication required'
+    });
+  }
+
   thumbnailUpload(req, res, async (err) => {
     if (err) {
       console.error('Multer error:', err);
@@ -1007,6 +1017,15 @@ const uploadProjectThumbnail = async (req, res) => {
     });
 
     try {
+      // Check if Cloudinary is configured
+      if (!cloudinary.config().cloud_name) {
+        console.error('Cloudinary not configured properly');
+        return res.status(500).json({
+          success: false,
+          message: 'File upload service not configured'
+        });
+      }
+
       // Upload to Cloudinary from buffer
       const streamUpload = (req) => {
         return new Promise((resolve, reject) => {
@@ -1046,7 +1065,8 @@ const uploadProjectThumbnail = async (req, res) => {
       console.error('Thumbnail upload error:', error);
       res.status(500).json({
         success: false,
-        message: 'Failed to upload thumbnail'
+        message: 'Failed to upload thumbnail',
+        error: process.env.NODE_ENV === 'development' ? error.message : 'Upload failed'
       });
     }
   });
