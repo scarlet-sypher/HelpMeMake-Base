@@ -9,7 +9,8 @@ const {
     applyToProject,
     acceptMentorApplication,
     getUserProjects,
-    getActiveProjectWithMentor
+    getActiveProjectWithMentor,
+    uploadProjectThumbnail  // ADD THIS LINE
 } = require('../controller/projectController');
 
 const router = express.Router();
@@ -32,6 +33,9 @@ router.get('/test', (req, res) => {
 
 // Get active project with mentor - MUST be before /:id route
 router.get('/active-with-mentor', authenticateJWT, getActiveProjectWithMentor);
+
+// ADD THIS LINE - Upload thumbnail route
+router.post('/upload-thumbnail', authenticateJWT, uploadProjectThumbnail);
 
 // Create new project
 router.post('/create', requireUser, createProject);

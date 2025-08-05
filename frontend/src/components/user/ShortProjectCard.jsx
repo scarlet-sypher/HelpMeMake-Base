@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState , useEffect } from 'react';
 import { 
   Edit, 
   Eye, 
@@ -13,7 +13,8 @@ import {
   XCircle,
   Code,
   Star,
-  Calendar
+  Calendar,
+  Image
 } from 'lucide-react';
 import axios from 'axios';
 
@@ -21,6 +22,33 @@ const ShortProjectCard = ({ project, onDelete }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteConfirmText, setDeleteConfirmText] = useState('');
   const [isDeleting, setIsDeleting] = useState(false);
+
+  useEffect(() => {
+    const images = document.querySelectorAll(`[alt="${project.name}"]`);
+
+    const handleError = (e) => {
+      const fallback = document.getElementById(`fallback-${project._id}`);
+      if (fallback) fallback.style.opacity = '1';
+    };
+
+    const handleLoad = (e) => {
+      const fallback = document.getElementById(`fallback-${project._id}`);
+      if (fallback) fallback.style.opacity = '0';
+    };
+
+    images.forEach((img) => {
+      img.addEventListener('error', handleError);
+      img.addEventListener('load', handleLoad);
+    });
+
+    return () => {
+      images.forEach((img) => {
+        img.removeEventListener('error', handleError);
+        img.removeEventListener('load', handleLoad);
+      });
+    };
+  }, [project._id, project.name]);
+
 
   // Get status color and icon
   const getStatusInfo = (status) => {
@@ -148,6 +176,10 @@ const handleDelete = async () => {
             src={project.thumbnail || '/uploads/public/default-project.jpg'} 
             alt={project.name}
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+            onError={(e) => {
+              // Fallback to default image if thumbnail fails to load
+              e.target.src = '/uploads/public/default-project.jpg';
+            }}
           />
           
           {/* Status Badge */}
@@ -162,6 +194,15 @@ const handleDelete = async () => {
               <Star size={14} className="text-white" />
             </div>
           )}
+          
+          {/* Image Loading Fallback */}
+          <div className="absolute inset-0 bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center opacity-0 transition-opacity duration-300" 
+              id={`fallback-${project._id}`}>
+            <div className="text-center">
+              <Image className="text-white/50 mx-auto mb-2" size={32} />
+              <p className="text-white/70 text-sm">No Image</p>
+            </div>
+          </div>
         </div>
 
         {/* Card Content */}

@@ -2,6 +2,10 @@ const Project = require('../Model/Project');
 const Learner = require('../Model/Learner');
 const Mentor = require('../Model/Mentor');
 const User = require('../Model/User');
+const multer = require('multer');
+const path = require('path');
+const cloudinary = require('../utils/cloudinary');
+const streamifier = require('streamifier');
 
 // Create New Project
 const createProject = async (req, res) => {
@@ -959,6 +963,95 @@ const getActiveProjectWithMentor = async (req, res) => {
   }
 };
 
+const thumbnailUpload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+  fileFilter: (req, file, cb) => {
+    const allowedTypes = /jpeg|jpg|png|webp/;
+    const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
+    const mimetype = allowedTypes.test(file.mimetype);
+
+    if (mimetype && extname) {
+      return cb(null, true);
+    } else {
+      cb(new Error('Only JPEG, PNG, and WebP images are allowed'));
+    }
+  }
+}).single('thumbnail');
+
+// Upload Project Thumbnail
+const uploadProjectThumbnail = async (req, res) => {
+  console.log('Upload thumbnail endpoint hit');
+  console.log('User from req:', req.user);
+  
+  thumbnailUpload(req, res, async (err) => {
+    if (err) {
+      console.error('Multer error:', err);
+      return res.status(400).json({
+        success: false,
+        message: err.message || 'File upload failed'
+      });
+    }
+
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
+        message: 'No file uploaded'
+      });
+    }
+
+    console.log('File received:', {
+      originalname: req.file.originalname,
+      mimetype: req.file.mimetype,
+      size: req.file.size
+    });
+
+    try {
+      // Upload to Cloudinary from buffer
+      const streamUpload = (req) => {
+        return new Promise((resolve, reject) => {
+          const stream = cloudinary.uploader.upload_stream(
+            {
+              folder: 'project-thumbnails',
+              public_id: `thumbnail-${req.user._id}-${Date.now()}`,
+              overwrite: true,
+              transformation: [
+                { width: 800, height: 600, crop: 'fill' },
+                { quality: 'auto', fetch_format: 'auto' }
+              ]
+            },
+            (error, result) => {
+              if (result) {
+                console.log('Cloudinary upload successful:', result.secure_url);
+                resolve(result);
+              } else {
+                console.error('Cloudinary upload error:', error);
+                reject(error);
+              }
+            }
+          );
+          streamifier.createReadStream(req.file.buffer).pipe(stream);
+        });
+      };
+
+      const result = await streamUpload(req);
+
+      res.json({
+        success: true,
+        message: 'Thumbnail uploaded successfully',
+        thumbnailUrl: result.secure_url
+      });
+
+    } catch (error) {
+      console.error('Thumbnail upload error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to upload thumbnail'
+      });
+    }
+  });
+};
+
 module.exports = {
   createProject,
   getProjectById,
@@ -968,5 +1061,6 @@ module.exports = {
   applyToProject,
   acceptMentorApplication,
   getUserProjects,
-  getActiveProjectWithMentor
+  getActiveProjectWithMentor,
+  uploadProjectThumbnail
 };

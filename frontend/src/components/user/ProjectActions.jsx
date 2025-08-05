@@ -6,6 +6,7 @@ import {
   Award,
   MessageCircle,
   TrendingUp,
+  Image
 } from 'lucide-react';
 import { toast } from 'react-toastify';
 

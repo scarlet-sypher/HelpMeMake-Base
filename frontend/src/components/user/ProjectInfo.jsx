@@ -1,5 +1,5 @@
 import React from 'react';
-import { Trophy, Users, Calendar, Zap } from 'lucide-react';
+import { Trophy, Users, Calendar, Zap,Image } from 'lucide-react';
 
 const ProjectInfo = ({ projectData }) => {
   const formatDate = (dateString) => {
