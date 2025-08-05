@@ -1018,13 +1018,26 @@ const uploadProjectThumbnail = async (req, res) => {
 
     try {
       // Check if Cloudinary is configured
-      if (!cloudinary.config().cloud_name) {
-        console.error('Cloudinary not configured properly');
-        return res.status(500).json({
-          success: false,
-          message: 'File upload service not configured'
-        });
-      }
+      const config = cloudinary.config();
+console.log('Checking Cloudinary config:', {
+  cloud_name: !!config.cloud_name,
+  api_key: !!config.api_key,
+  api_secret: !!config.api_secret
+});
+
+if (!config.cloud_name || !config.api_key || !config.api_secret) {
+  console.error('Cloudinary configuration missing:', {
+    cloud_name: !!config.cloud_name,
+    api_key: !!config.api_key,
+    api_secret: !!config.api_secret
+  });
+  return res.status(500).json({
+    success: false,
+    message: 'File upload service not configured properly'
+  });
+}
+
+console.log('Cloudinary config check passed');
 
       // Upload to Cloudinary from buffer
       const streamUpload = (req) => {
