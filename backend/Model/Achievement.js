@@ -175,7 +175,7 @@ achievementSchema.index({ userType: 1 });
 achievementSchema.index({ category: 1 });
 achievementSchema.index({ isAchieved: 1 });
 achievementSchema.index({ rarity: 1 });
-achievementSchema.index({ achievementId: 1 });
+// achievementSchema.index({ achievementId: 1 });
 
 // Compound indexes
 achievementSchema.index({ userId: 1, isAchieved: 1 });

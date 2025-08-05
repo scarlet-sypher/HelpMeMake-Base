@@ -68,9 +68,9 @@ const userSchema = new mongoose.Schema({
 });
 
 
-userSchema.index({ email: 1 });
-userSchema.index({ googleId: 1 });
-userSchema.index({ githubId: 1 });
+// userSchema.index({ email: 1 });
+// userSchema.index({ googleId: 1 });
+// userSchema.index({ githubId: 1 });
 
 
 

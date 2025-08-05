@@ -177,7 +177,7 @@ const learnerSchema = new mongoose.Schema({
 });
 
 // Indexes for better performance
-learnerSchema.index({ userId: 1 });
+// learnerSchema.index({ userId: 1 });
 learnerSchema.index({ level: 1 });
 learnerSchema.index({ rating: -1 });
 learnerSchema.index({ joinDate: -1 });

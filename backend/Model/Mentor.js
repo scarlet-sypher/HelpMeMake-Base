@@ -317,7 +317,7 @@ const mentorSchema = new mongoose.Schema({
 });
 
 // Indexes for better performance
-mentorSchema.index({ userId: 1 });
+// mentorSchema.index({ userId: 1 });
 mentorSchema.index({ rating: -1 });
 mentorSchema.index({ 'expertise.skill': 1 });
 mentorSchema.index({ isAvailable: 1 });

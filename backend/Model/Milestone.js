@@ -328,7 +328,7 @@ milestoneSchema.index({ dueDate: 1 });
 milestoneSchema.index({ order: 1 });
 milestoneSchema.index({ 'learnerVerification.isVerified': 1 });
 milestoneSchema.index({ 'mentorVerification.isVerified': 1 });
-milestoneSchema.index({ milestoneId: 1 });
+// milestoneSchema.index({ milestoneId: 1 });
 milestoneSchema.index({ createdAt: -1 });
 
 // Compound indexes for common queries

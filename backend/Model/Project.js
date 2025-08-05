@@ -360,7 +360,7 @@ projectSchema.index({ difficultyLevel: 1 });
 projectSchema.index({ createdAt: -1 });
 projectSchema.index({ tags: 1 });
 projectSchema.index({ 'applications.mentorId': 1 });
-projectSchema.index({ projectId: 1 });
+// projectSchema.index({ projectId: 1 });
 
 // Compound indexes for common queries
 projectSchema.index({ status: 1, category: 1 });
