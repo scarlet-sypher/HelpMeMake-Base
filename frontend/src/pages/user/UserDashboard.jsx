@@ -435,6 +435,7 @@ useEffect(() => {
         toggleSidebar={toggleSidebar} 
         activeItem={activeItem}
         setActiveItem={setActiveItem}
+        userRole="user" // Add this prop
       />
       
       {/* Main Content */}

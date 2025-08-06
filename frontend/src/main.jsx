@@ -5,7 +5,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import App from './App';
 import Login from './pages/auth/Login';
 import Signup from './pages/auth/Signup';
-import MentorDashboard from './pages/mentordash/MentorDashboard';
+import MentorDashboard from './pages/mentor/MentorDashboard';
 import UserDashboard from './pages/user/UserDashboard';
 import UserSettings from './pages/user/UserSettings';
 import AdminDashboard from './pages/admin/AdminDashboard';
