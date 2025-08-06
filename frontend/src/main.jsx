@@ -98,6 +98,8 @@ ReactDOM.createRoot(document.getElementById('root')).render(
             <MentorDashboard />
           </ProtectedRoute>
         } />
+
+        {/* <Route path="/mentordashboard" element={<MentorDashboard />} /> */}
         
         {/* Admin Routes */}
         <Route path="/admindashboard" element={
