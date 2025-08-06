@@ -83,6 +83,24 @@ const AIHelper = ({ formData, setFormData }) => {
     }
     };
 
+    const handleImageDownload = async (imageUrl) => {
+      try {
+        const response = await fetch(imageUrl);
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `ai-project-image-${Date.now()}.png`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+        showToast('Image downloaded successfully!');
+      } catch (error) {
+        showToast('Failed to download image', error);
+      }
+    };
+
 const handleDescriptionGenerate = async () => {
   if (!descriptionPrompt.trim()) {
     showToast('Please enter a description prompt', 'error');
@@ -187,14 +205,13 @@ const handleDescriptionGenerate = async () => {
                     >
                       <Eye size={16} />
                     </button>
-                    <a
-                      href={generatedImage || formData.thumbnail}
-                      download="ai-generated-project-image.png"
-                      className="p-1 text-green-300 hover:text-white transition-colors"
-                      title="Download image"
-                    >
+                    <button
+                        onClick={() => handleImageDownload(generatedImage || formData.thumbnail)}
+                        className="p-1 text-green-300 hover:text-white transition-colors"
+                        title="Download image"
+                      >
                       <Download size={16} />
-                    </a>
+                    </button>
                     <button
                       onClick={clearGeneratedImage}
                       className="p-1 text-red-300 hover:text-white transition-colors"

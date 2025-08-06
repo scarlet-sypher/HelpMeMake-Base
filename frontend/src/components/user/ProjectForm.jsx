@@ -271,11 +271,12 @@ const ProjectForm = ({ mode = 'create', initialData = null, onSubmit, onCancel }
                 setShowAIHelper(!showAIHelper);
                 setShowPreview(false);
               }}
-              className="flex items-center px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white rounded-xl transition-all backdrop-blur-sm border border-purple-400/30"
+              className="flex items-center px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white rounded-xl transition-all duration-300 ease-out backdrop-blur-sm border border-purple-400/30 shadow-sm hover:shadow-md hover:scale-[1.02] active:scale-[0.98]"
             >
-              <Sparkles size={20} className="mr-2" />
+              <Sparkles size={20} className="mr-2 drop-shadow-sm" />
               {showAIHelper ? 'Hide AI Helper' : 'AI Helper'}
             </button>
+
           </div>
 
           <div className={`grid ${showAIHelper && !showPreview ? 'lg:grid-cols-3' : 'lg:grid-cols-1'} gap-8`}>
@@ -435,6 +436,8 @@ const ProjectForm = ({ mode = 'create', initialData = null, onSubmit, onCancel }
         </div>
       </div>
     </div>
+
+    
   );
 };
 
