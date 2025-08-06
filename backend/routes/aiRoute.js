@@ -237,7 +237,6 @@ function performFallbackAnalysis(projectData, mentorsList) {
   return { mentors: topMentors };
 }
 
-
 router.get('/mentor-reason/:mentorId', requireUserOrMentor, async (req, res) => {
   try {
     const { mentorId } = req.params;
@@ -315,10 +314,15 @@ router.get('/mentor-reason/:mentorId', requireUserOrMentor, async (req, res) => 
   }
 });
 
-
+// Milestone routes
 router.post('/milestones/generate', requireUserOrMentor, aiMilestoneController.generateMilestones);
 router.get('/milestones/:projectId', requireUserOrMentor, aiMilestoneController.getMilestones);
 router.patch('/milestones/toggle', requireUserOrMentor, aiMilestoneController.toggleMilestone);
 
+// NEW: Image generation route
+router.post('/generate-image', requireUserOrMentor, aiMilestoneController.generateRealImage);
+
+// NEW: Description generation route
+router.post('/generate-description', requireUserOrMentor, aiMilestoneController.generateDescriptionFromPrompt);
 
 module.exports = router;
