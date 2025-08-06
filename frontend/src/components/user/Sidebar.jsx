@@ -24,9 +24,12 @@ const Sidebar = ({ isOpen, toggleSidebar, activeItem, setActiveItem, userRole })
 
   const menuItems = userRole === 'mentor' ? [
     { icon: Home, label: 'Dashboard', id: 'dashboard', path: '/mentordashboard' },
+    { icon: Folder, label: 'Projects', id: 'projects', path: '/mentor/projects' },
     { icon: Users, label: 'My Apprentice', id: 'students', path: '/mentor/students' },
     { icon: Calendar, label: 'Sessions', id: 'sessions', path: '/mentor/sessions' },
+    { icon: Target, label: 'Milestones', id: 'milestones', path: 'mentor/milestone-page' },
     { icon: MessageCircle, label: 'Messages', id: 'messages', path: '/mentor/messages' },
+    { icon: Star, label: 'Achievements', id: 'achievements', path: '/mentor/achievements' },
     { icon: BarChart3, label: 'Analytics', id: 'analytics', path: '/mentor/analytics' },
     { icon: Settings, label: 'Settings', id: 'settings', path: '/mentor/settings' },
   ] : [
