@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import axios from 'axios';
 import { useAuth } from '../../hooks/useAuth';
+import { useNavigate, useParams } from 'react-router-dom';
 import {
   Save,
   X,
@@ -12,7 +11,8 @@ import {
   Loader,
   ArrowLeft,
   Target,
-  Image
+  Image,
+  Sparkles
 } from 'lucide-react';
 
 // Import modular components
@@ -22,6 +22,7 @@ import ProjectDetails from './projectForm/ProjectDetails';
 import Prerequisites from './projectForm/Prerequisites';
 import References from './projectForm/References';
 import Pricing from './projectForm/Pricing';
+import AIHelper from './projectForm/AIHelper';
 
 const ProjectForm = ({ mode = 'create', initialData = null, onSubmit, onCancel }) => {
   const { user } = useAuth();
@@ -30,6 +31,7 @@ const ProjectForm = ({ mode = 'create', initialData = null, onSubmit, onCancel }
   const [loading, setLoading] = useState(false);
   const [loadingProject, setLoadingProject] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
+  const [showAIHelper, setShowAIHelper] = useState(false);
   const [errors, setErrors] = useState({});
   const [toast, setToast] = useState(null);
 
@@ -229,7 +231,7 @@ const ProjectForm = ({ mode = 'create', initialData = null, onSubmit, onCancel }
       </div>
 
       <div className="relative z-10 p-4 lg:p-6">
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-7xl mx-auto">
           {/* Header */}
           <div className="mb-8 text-center relative">
             <button 
@@ -251,148 +253,185 @@ const ProjectForm = ({ mode = 'create', initialData = null, onSubmit, onCancel }
             </p>
           </div>
 
-          {/* Toggle Preview */}
-          <div className="mb-6 flex justify-center">
+          {/* Toggle Buttons */}
+          <div className="mb-6 flex flex-wrap justify-center gap-4">
             <button
-              onClick={() => setShowPreview(!showPreview)}
+              onClick={() => {
+                setShowPreview(!showPreview);
+                setShowAIHelper(false);
+              }}
               className="flex items-center px-6 py-3 bg-white/10 hover:bg-white/20 text-white rounded-xl transition-all backdrop-blur-sm border border-white/20"
             >
               {showPreview ? <EyeOff size={20} className="mr-2" /> : <Eye size={20} className="mr-2" />}
               {showPreview ? 'Hide Preview' : 'Show Preview'}
             </button>
+            
+            <button
+              onClick={() => {
+                setShowAIHelper(!showAIHelper);
+                setShowPreview(false);
+              }}
+              className="flex items-center px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white rounded-xl transition-all backdrop-blur-sm border border-purple-400/30"
+            >
+              <Sparkles size={20} className="mr-2" />
+              {showAIHelper ? 'Hide AI Helper' : 'AI Helper'}
+            </button>
           </div>
 
-          {showPreview ? (
-            /* Preview Mode */
-            <div className="bg-white/10 backdrop-blur-sm rounded-3xl shadow-2xl p-4 sm:p-6 border border-white/20">
-              <div className="mb-6">
-                <h2 className="text-2xl font-bold text-white mb-4">Project Preview</h2>
-                <div className="bg-white/5 rounded-2xl p-4 sm:p-6">
-                  <div className="flex flex-col sm:flex-row sm:items-start justify-between mb-4 gap-4">
-                    <div className="flex-1">
-                      <h3 className="text-xl font-bold text-white mb-2">{formData.name || 'Project Name'}</h3>
-                      <p className="text-blue-200 mb-4">{formData.shortDescription || 'Short description will appear here...'}</p>
-                      <div className="flex flex-wrap gap-2 mb-4">
-                        {formData.techStack.map((tech, index) => (
-                          <span key={index} className="px-3 py-1 bg-blue-500/20 text-blue-200 rounded-full text-sm border border-blue-400/30">
-                            {tech}
-                          </span>
-                        ))}
+          <div className={`grid ${showAIHelper && !showPreview ? 'lg:grid-cols-3' : 'lg:grid-cols-1'} gap-8`}>
+            {/* Main Content */}
+            <div className={showAIHelper && !showPreview ? 'lg:col-span-2' : 'lg:col-span-1'}>
+              {showPreview ? (
+                /* Preview Mode */
+                <div className="bg-white/10 backdrop-blur-sm rounded-3xl shadow-2xl p-4 sm:p-6 border border-white/20">
+                  <div className="mb-6">
+                    <h2 className="text-2xl font-bold text-white mb-4">Project Preview</h2>
+                    <div className="bg-white/5 rounded-2xl p-4 sm:p-6">
+                      <div className="flex flex-col sm:flex-row sm:items-start justify-between mb-4 gap-4">
+                        <div className="flex-1">
+                          <h3 className="text-xl font-bold text-white mb-2">{formData.name || 'Project Name'}</h3>
+                          <p className="text-blue-200 mb-4">{formData.shortDescription || 'Short description will appear here...'}</p>
+                          <div className="flex flex-wrap gap-2 mb-4">
+                            {formData.techStack.map((tech, index) => (
+                              <span key={index} className="px-3 py-1 bg-blue-500/20 text-blue-200 rounded-full text-sm border border-blue-400/30">
+                                {tech}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-2xl font-bold text-emerald-400">₹{formData.openingPrice || '0'}</div>
+                          <div className="text-sm text-white/70">{formData.duration || 'Duration'}</div>
+                        </div>
+                      </div>
+                      
+                      {/* Thumbnail Preview */}
+                      {formData.thumbnail && (
+                        <div className="mb-4">
+                          <img
+                            src={formData.thumbnail}
+                            alt="Project thumbnail"
+                            className="w-full h-48 object-cover rounded-xl"
+                            onError={(e) => {
+                              e.target.src = '/uploads/public/default-project.jpg';
+                            }}
+                          />
+                        </div>
+                      )}
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                        <div className="bg-white/5 rounded-xl p-3">
+                          <div className="text-sm text-white/70">Category</div>
+                          <div className="text-white font-medium">{formData.category || 'Not selected'}</div>
+                        </div>
+                        <div className="bg-white/5 rounded-xl p-3">
+                          <div className="text-sm text-white/70">Difficulty</div>
+                          <div className="text-white font-medium">{formData.difficultyLevel || 'Not selected'}</div>
+                        </div>
+                        <div className="bg-white/5 rounded-xl p-3">
+                          <div className="text-sm text-white/70">Status</div>
+                          <div className="text-emerald-400 font-medium">● Open</div>
+                        </div>
+                      </div>
+                      <div className="mb-4">
+                        <h4 className="text-white font-semibold mb-2">Full Description</h4>
+                        <p className="text-blue-200 text-sm">{formData.fullDescription || 'Full description will appear here...'}</p>
                       </div>
                     </div>
-                    <div className="text-right">
-                      <div className="text-2xl font-bold text-emerald-400">₹{formData.openingPrice || '0'}</div>
-                      <div className="text-sm text-white/70">{formData.duration || 'Duration'}</div>
-                    </div>
-                  </div>
-                  
-                  {/* Thumbnail Preview */}
-                  {formData.thumbnail && (
-                    <div className="mb-4">
-                      <img
-                        src={formData.thumbnail}
-                        alt="Project thumbnail"
-                        className="w-full h-48 object-cover rounded-xl"
-                        onError={(e) => {
-                          e.target.src = '/uploads/public/default-project.jpg';
-                        }}
-                      />
-                    </div>
-                  )}
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                    <div className="bg-white/5 rounded-xl p-3">
-                      <div className="text-sm text-white/70">Category</div>
-                      <div className="text-white font-medium">{formData.category || 'Not selected'}</div>
-                    </div>
-                    <div className="bg-white/5 rounded-xl p-3">
-                      <div className="text-sm text-white/70">Difficulty</div>
-                      <div className="text-white font-medium">{formData.difficultyLevel || 'Not selected'}</div>
-                    </div>
-                    <div className="bg-white/5 rounded-xl p-3">
-                      <div className="text-sm text-white/70">Status</div>
-                      <div className="text-emerald-400 font-medium">● Open</div>
-                    </div>
-                  </div>
-                  <div className="mb-4">
-                    <h4 className="text-white font-semibold mb-2">Full Description</h4>
-                    <p className="text-blue-200 text-sm">{formData.fullDescription || 'Full description will appear here...'}</p>
                   </div>
                 </div>
-              </div>
+              ) : (
+                /* Form Mode */
+                <form onSubmit={handleSubmit} className="space-y-6 sm:space-y-8">
+                  {/* Basic Information */}
+                  <BasicInformation 
+                    formData={formData} 
+                    setFormData={setFormData} 
+                    errors={errors} 
+                  />
+
+                  {/* Technical Details */}
+                  <TechnicalDetails 
+                    formData={formData} 
+                    setFormData={setFormData} 
+                    errors={errors} 
+                  />
+
+                  {/* Project Details */}
+                  <ProjectDetails 
+                    formData={formData} 
+                    setFormData={setFormData} 
+                    errors={errors} 
+                  />
+
+                  {/* Prerequisites */}
+                  <Prerequisites 
+                    formData={formData} 
+                    setFormData={setFormData} 
+                  />
+
+                  {/* References */}
+                  <References 
+                    formData={formData} 
+                    setFormData={setFormData} 
+                  />
+
+                  {/* Pricing */}
+                  <Pricing 
+                    formData={formData} 
+                    setFormData={setFormData} 
+                    errors={errors} 
+                  />
+
+                  {/* Form Actions */}
+                  <div className="flex flex-col sm:flex-row gap-4 justify-end">
+                    <button
+                      type="button"
+                      onClick={handleCancel}
+                      className="px-8 py-3 bg-white/10 hover:bg-white/20 text-white rounded-xl border border-white/20 transition-all backdrop-blur-sm"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={loading}
+                      className="px-8 py-3 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white rounded-xl font-semibold transition-all transform hover:scale-105 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                    >
+                      {loading ? (
+                        <div className="flex items-center">
+                          <Loader className="animate-spin mr-2" size={20} />
+                          {mode === 'edit' ? 'Updating...' : 'Creating...'}
+                        </div>
+                      ) : (
+                        <div className="flex items-center">
+                          <Save className="mr-2" size={20} />
+                          {mode === 'edit' ? 'Update Project' : 'Create Project'}
+                        </div>
+                      )}
+                    </button>
+                  </div>
+                </form>
+              )}
             </div>
-          ) : (
-            /* Form Mode */
-            <form onSubmit={handleSubmit} className="space-y-6 sm:space-y-8">
-              {/* Basic Information */}
-              <BasicInformation 
-                formData={formData} 
-                setFormData={setFormData} 
-                errors={errors} 
-              />
 
-              {/* Technical Details */}
-              <TechnicalDetails 
-                formData={formData} 
-                setFormData={setFormData} 
-                errors={errors} 
-              />
-
-              {/* Project Details */}
-              <ProjectDetails 
-                formData={formData} 
-                setFormData={setFormData} 
-                errors={errors} 
-              />
-
-              {/* Prerequisites */}
-              <Prerequisites 
-                formData={formData} 
-                setFormData={setFormData} 
-              />
-
-              {/* References */}
-              <References 
-                formData={formData} 
-                setFormData={setFormData} 
-              />
-
-              {/* Pricing */}
-              <Pricing 
-                formData={formData} 
-                setFormData={setFormData} 
-                errors={errors} 
-              />
-
-              {/* Form Actions */}
-              <div className="flex flex-col sm:flex-row gap-4 justify-end">
-                <button
-                  type="button"
-                  onClick={handleCancel}
-                  className="px-8 py-3 bg-white/10 hover:bg-white/20 text-white rounded-xl border border-white/20 transition-all backdrop-blur-sm"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="px-8 py-3 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white rounded-xl font-semibold transition-all transform hover:scale-105 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
-                >
-                  {loading ? (
-                    <div className="flex items-center">
-                      <Loader className="animate-spin mr-2" size={20} />
-                      {mode === 'edit' ? 'Updating...' : 'Creating...'}
+            {/* AI Helper Sidebar */}
+            {showAIHelper && !showPreview && (
+              <div className="lg:col-span-1">
+                <div className="sticky top-6">
+                  <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-4 border border-white/10 mb-4">
+                    <div className="flex items-center mb-3">
+                      <Sparkles className="text-purple-400 mr-2" size={20} />
+                      <h3 className="text-white font-semibold">AI Helper</h3>
                     </div>
-                  ) : (
-                    <div className="flex items-center">
-                      <Save className="mr-2" size={20} />
-                      {mode === 'edit' ? 'Update Project' : 'Create Project'}
-                    </div>
-                  )}
-                </button>
+                    <p className="text-blue-200 text-sm">
+                      Generate images and descriptions using AI to enhance your project
+                    </p>
+                  </div>
+                  <AIHelper formData={formData} setFormData={setFormData} />
+                </div>
               </div>
-            </form>
-          )}
+            )}
+          </div>
         </div>
       </div>
     </div>
