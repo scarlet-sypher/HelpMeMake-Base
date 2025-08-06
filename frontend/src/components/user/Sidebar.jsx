@@ -44,7 +44,7 @@ const Sidebar = ({ isOpen, toggleSidebar, activeItem, setActiveItem, userRole })
     { icon: Settings, label: 'Settings', id: 'settings', path: '/user/settings' },
   ];
 
-  const themeColor = userRole === 'mentor' ? 'from-fuchsia-500 to-purple-500' : 'from-blue-500 to-purple-500';
+  const themeColor = userRole === 'mentor' ? 'from-cyan-500 to-teal-500' : 'from-blue-500 to-purple-500';
 
   const handleItemClick = (itemId, path) => {
     setActiveItem(itemId);
@@ -74,11 +74,11 @@ const Sidebar = ({ isOpen, toggleSidebar, activeItem, setActiveItem, userRole })
   }, [location.pathname, activeItem, setActiveItem]);
 
   const activeColorClass = userRole === 'mentor' 
-    ? 'bg-fuchsia-600/50 text-white border border-fuchsia-400/30 shadow-lg'
+    ? 'bg-cyan-600/50 text-white border border-cyan-400/30 shadow-lg'
     : 'bg-blue-600/50 text-white border border-blue-400/30 shadow-lg';
 
-  const activeIconColor = userRole === 'mentor' ? 'text-fuchsia-300' : 'text-blue-300';
-  const activeDotColor = userRole === 'mentor' ? 'bg-fuchsia-400' : 'bg-blue-400';
+  const activeIconColor = userRole === 'mentor' ? 'text-cyan-300' : 'text-blue-300';
+  const activeDotColor = userRole === 'mentor' ? 'bg-cyan-400' : 'bg-blue-400';
 
   return (
     <>
@@ -91,9 +91,9 @@ const Sidebar = ({ isOpen, toggleSidebar, activeItem, setActiveItem, userRole })
       )}
 
       {/* Sidebar */}
-      <div className={`fixed left-0 top-0 h-full w-64 bg-gradient-to-b ${
+      <div className={`fixed left-0 top-0 h-full w-64 bg-gradient-to-b backdrop-blur-sm ${
         userRole === 'mentor' 
-          ? 'from-slate-900 via-fuchsia-900 to-purple-900' 
+          ? 'from-slate-900 via-cyan-900 to-teal-900' 
           : 'from-slate-900 via-blue-900 to-indigo-900'
       } border-r border-white/10 z-50 transform transition-transform duration-300 ${
         isOpen ? 'translate-x-0' : '-translate-x-full'
