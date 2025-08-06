@@ -173,12 +173,13 @@ const handleDelete = async () => {
         {/* Project Thumbnail */}
         <div className="relative h-48 overflow-hidden">
           <img 
-            src={project.thumbnail || '/uploads/public/default-project.jpg'} 
+            src={project.thumbnail || `${import.meta.env.VITE_API_URL}/uploads/public/default-project.jpg`} 
             alt={project.name}
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
             onError={(e) => {
               // Fallback to default image if thumbnail fails to load
-              e.target.src = '/uploads/public/default-project.jpg';
+              e.target.src = `${import.meta.env.VITE_API_URL}/uploads/public/default-project.jpg`;
+
             }}
           />
           

@@ -315,7 +315,7 @@ const ProjectForm = ({ mode = 'create', initialData = null, onSubmit, onCancel }
                             alt="Project thumbnail"
                             className="w-full h-48 object-cover rounded-xl"
                             onError={(e) => {
-                              e.target.src = '/uploads/public/default-project.jpg';
+                              e.target.src = `${import.meta.env.VITE_API_URL}/uploads/public/default-project.jpg`;
                             }}
                           />
                         </div>
