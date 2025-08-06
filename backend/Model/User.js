@@ -68,17 +68,9 @@ const userSchema = new mongoose.Schema({
 });
 
 
-// userSchema.index({ email: 1 });
-// userSchema.index({ googleId: 1 });
-// userSchema.index({ githubId: 1 });
-
-
-
 userSchema.virtual('displayName').get(function() {
   return this.name || this.email.split('@')[0];
 });
-
-
 
 userSchema.set('toJSON', {
   virtuals: true,

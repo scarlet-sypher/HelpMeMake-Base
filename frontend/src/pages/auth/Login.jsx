@@ -176,7 +176,7 @@ export default function Login() {
     return Object.keys(newErrors).length === 0;
   };
 
-  async function handleSubmit(e) {
+async function handleSubmit(e) {
     e.preventDefault();
 
     if (!validateForm()) {
@@ -206,17 +206,23 @@ export default function Login() {
         setFeedbackMessage("🎉 Login successful! Redirecting...");
         setMessageType("success");
 
+        // Store token if provided (similar to OAuth flow)
+        if (data.token) {
+          localStorage.setItem('access_token', data.token);
+        }
+
         setTimeout(() => {
           if (data.requiresRoleSelection) {
             navigate("/select-role");
           } else {
-            // Navigate based on user role
+            // Navigate based on user role (same logic as OAuth)
             const dashboardMap = {
               admin: "/admindashboard",
-              mentor: "/mentordashboard",
+              mentor: "/mentordashboard", 
               user: "/userdashboard"
             };
-            navigate(dashboardMap[data.user.role] || "/userdashboard");
+            const targetRoute = dashboardMap[data.user.role] || "/userdashboard";
+            navigate(targetRoute);
           }
         }, 2000);
 
@@ -400,7 +406,7 @@ export default function Login() {
         </div>
       </div>
 
-      <style jsx>{`
+      <style>{`
         @keyframes float {
           0%,
           100% {

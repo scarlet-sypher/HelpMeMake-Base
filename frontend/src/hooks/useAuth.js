@@ -92,6 +92,11 @@ export const useAuth = () => {
   }
 };
 
+const setAuthToken = (token) => {
+  localStorage.setItem('access_token', token);
+  checkAuth(); // Recheck auth status
+};
+
   const logout = async () => {
   try {
     const token = localStorage.getItem('access_token');
@@ -117,5 +122,5 @@ export const useAuth = () => {
   }
 };
 
-  return { user, loading, isAuthenticated, logout, refetch: checkAuth };
+  return { user, loading, isAuthenticated, logout, refetch: checkAuth, setAuthToken };
 };

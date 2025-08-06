@@ -94,50 +94,44 @@ const authController = {
     githubCallback: async (req, res) => {
       try {
         const user = req.user;
-        
+
         if (!user) {
           return res.redirect(`${process.env.UI_URL}/login?error=authentication_failed`);
         }
-
+        
+        // Generate token and set cookie
         const token = generateToken(user._id);
         setTokenCookie(res, token);
 
-        // Check if this is a new user with generated password
+        // Determine redirect URL
         let redirectUrl = `${process.env.UI_URL}`;
+        
         if (user.tempGeneratedPassword) {
-          // For new social users, redirect with generated password
+          // NEW USER FLOW - Redirect to confirmation page first
           const encodedPassword = encodeURIComponent(user.tempGeneratedPassword);
-          console.log('Redirecting with password:', encodedPassword); // DEBUG
-          redirectUrl += user.role ? 
-            `/userdashboard?newPassword=${encodedPassword}` : 
-            `/select-role?newPassword=${encodedPassword}`;
-
-            console.log('FULL REDIRECT URL:', redirectUrl); // ADD THIS
+          redirectUrl += `/github-welcome?newPassword=${encodedPassword}&authToken=${token}&isNewUser=true`;
           
-          // Clear the temporary password
+          // Clear the temporary password from user object (but keep in URL)
           delete user.tempGeneratedPassword;
         } else {
-          // Existing user flow
+          // EXISTING USER FLOW - Direct redirect as before
           if (!user.role) {
-            redirectUrl += '/select-role';
+            redirectUrl += `/select-role?authToken=${token}`;
           } else {
             const dashboardMap = {
               admin: '/admindashboard',
-              mentor: '/mentordashboard',
+              mentor: '/mentordashboard', 
               user: '/userdashboard'
             };
-            redirectUrl += dashboardMap[user.role] || '/userdashboard';
+            redirectUrl += `${dashboardMap[user.role] || '/userdashboard'}?authToken=${token}`;
           }
         }
-
-        console.log('Final redirect URL:', redirectUrl); // DEBUG
 
         return res.redirect(redirectUrl);
 
       } catch (error) {
         console.error('GitHub callback error:', error);
         
-        // Check if it's a USER_EXISTS error
         if (error.message === 'USER_EXISTS') {
           return res.redirect(`${process.env.UI_URL}/user-exists`);
         }
@@ -535,9 +529,11 @@ const authController = {
       const token = generateToken(user._id);
       setTokenCookie(res, token);
 
+      // Return response with token (similar to OAuth flow)
       res.json({
         success: true,
         message: 'Login successful',
+        token: token, // Include token in response for frontend
         user: {
           _id: user._id,
           email: user.email,
