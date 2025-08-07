@@ -107,14 +107,16 @@ const authController = {
         let redirectUrl = `${process.env.UI_URL}`;
         
         if (user.tempGeneratedPassword) {
-          // NEW USER FLOW - Redirect to confirmation page first
+          // For new GitHub users, redirect with generated password (same as Google flow)
           const encodedPassword = encodeURIComponent(user.tempGeneratedPassword);
-          redirectUrl += `/github-welcome?newPassword=${encodedPassword}&authToken=${token}&isNewUser=true`;
+          redirectUrl += user.role ? 
+            `/userdashboard?newPassword=${encodedPassword}&authToken=${token}` : 
+            `/select-role?newPassword=${encodedPassword}&authToken=${token}`;
           
-          // Clear the temporary password from user object (but keep in URL)
+          // Clear the temporary password
           delete user.tempGeneratedPassword;
         } else {
-          // EXISTING USER FLOW - Direct redirect as before
+          // Existing user flow - add token to URL for immediate auth
           if (!user.role) {
             redirectUrl += `/select-role?authToken=${token}`;
           } else {

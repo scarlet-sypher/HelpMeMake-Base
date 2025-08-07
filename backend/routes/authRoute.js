@@ -52,6 +52,7 @@ router.get('/github', (req, res, next) => {
   // Clear any existing cookies before starting OAuth
   res.clearCookie('access_token');
   res.clearCookie('refresh_token');
+  res.clearCookie('debug_cookie');
   
   passport.authenticate('github', {
     scope: ['user:email'],

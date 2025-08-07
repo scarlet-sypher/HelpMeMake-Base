@@ -48,7 +48,7 @@ const githubStrategy = new GitHubStrategy({
       const bcrypt = require('bcryptjs');
       const generatedPassword = crypto.randomBytes(8).toString('base64');
       const hashedPassword = await bcrypt.hash(generatedPassword, 12);
-      
+    
       user = new User({
         githubId,
         email,
@@ -58,19 +58,21 @@ const githubStrategy = new GitHubStrategy({
         password: hashedPassword,  // Store hashed generated password
         isEmailVerified: true,
         isAccountActive: true,
-        tempPassword: generatedPassword,
+        tempPassword: generatedPassword,  // Store in DB for later retrieval
         isPasswordUpdated: false,  // Flag for password update prompt
         role: null
       });
-      
+    
       await user.save();
+    
+      // IMPORTANT: Set tempGeneratedPassword on the user object for the callback
+      // This ensures it persists through the authentication flow
+      const userWithTempPassword = user.toObject();
+      userWithTempPassword.tempGeneratedPassword = generatedPassword;
       
-      // Store generated password temporarily for response
-      user.tempGeneratedPassword = generatedPassword;
-      console.log('Set tempGeneratedPassword:', generatedPassword);
-      
-      return done(null, user);
-      
+      console.log('New GitHub user created with temp password for:', email);
+      return done(null, userWithTempPassword);
+    
     } catch (error) {
       // Handle duplicate key error gracefully
       if (error.code === 11000 && error.keyPattern && error.keyPattern.email) {
