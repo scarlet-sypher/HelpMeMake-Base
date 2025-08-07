@@ -24,6 +24,7 @@ import {
   Eye,
   MessageSquare
 } from 'lucide-react';
+import ShortProjectView from '../../components/mentor/mentorProject/ShortProjectView';
 
 const MentorProjectPage = () => {
   const { user, loading, isAuthenticated } = useAuth();
@@ -502,114 +503,21 @@ const MentorProjectPage = () => {
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                 {filteredProjects.map((project) => (
-                  <div key={project._id} className="group">
-                    <div className="relative bg-white/10 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/20 overflow-hidden transition-all duration-300 hover:shadow-cyan-500/25 hover:border-cyan-400/50 hover:scale-105">
-                      
-                      {/* Project Thumbnail */}
-                      <div className="relative h-48 overflow-hidden">
-                        <img 
-                          src={project.thumbnail || '/uploads/public/default-project.jpg'} 
-                          alt={project.name}
-                          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-                          onError={(e) => {
-                            e.target.src = '/uploads/public/default-project.jpg';
-                          }}
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
-                        
-                        {/* Price Badge */}
-                        <div className="absolute top-4 right-4">
-                          <div className="bg-gradient-to-r from-cyan-500 to-teal-500 text-white px-3 py-1 rounded-full text-sm font-bold">
-                            ₹{project.openingPrice?.toLocaleString() || 0}
-                          </div>
-                        </div>
-                        
-                        {/* Difficulty Badge */}
-                        <div className="absolute top-4 left-4">
-                          <div className={`px-3 py-1 rounded-full text-xs font-medium ${
-                            project.difficultyLevel === 'Beginner' ? 'bg-green-500/80 text-green-100' :
-                            project.difficultyLevel === 'Intermediate' ? 'bg-yellow-500/80 text-yellow-100' :
-                            'bg-red-500/80 text-red-100'
-                          }`}>
-                            {project.difficultyLevel}
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Project Content */}
-                      <div className="p-6">
-                        <div className="flex items-start justify-between mb-3">
-                          <h3 className="text-xl font-bold text-white group-hover:text-cyan-300 transition-colors line-clamp-1">
-                            {project.name}
-                          </h3>
-                          <div className="flex items-center text-gray-400 text-sm ml-2">
-                            <Eye size={14} className="mr-1" />
-                            {project.viewCount || 0}
-                          </div>
-                        </div>
-
-                        <p className="text-gray-300 text-sm mb-4 line-clamp-2">
-                          {project.shortDescription}
-                        </p>
-
-                        {/* Category & Duration */}
-                        <div className="flex items-center justify-between mb-4 text-sm">
-                          <span className="bg-cyan-500/20 text-cyan-300 px-2 py-1 rounded-lg">
-                            {project.category}
-                          </span>
-                          <span className="text-gray-400 flex items-center">
-                            <Clock size={14} className="mr-1" />
-                            {project.duration}
-                          </span>
-                        </div>
-
-                        {/* Tech Stack */}
-                        <div className="flex flex-wrap gap-2 mb-4">
-                          {(project.techStack || []).slice(0, 3).map((tech, index) => (
-                            <span key={index} className="bg-white/10 text-white px-2 py-1 rounded text-xs">
-                              {tech}
-                            </span>
-                          ))}
-                          {project.techStack?.length > 3 && (
-                            <span className="text-gray-400 text-xs px-2 py-1">
-                              +{project.techStack.length - 3} more
-                            </span>
-                          )}
-                        </div>
-
-                        {/* Project Meta */}
-                        <div className="flex items-center justify-between text-sm text-gray-400 mb-4">
-                          <div className="flex items-center">
-                            <Users size={14} className="mr-1" />
-                            {project.applicationsCount || 0} applications
-                          </div>
-                          <div className="flex items-center">
-                            <Calendar size={14} className="mr-1" />
-                            {new Date(project.createdAt).toLocaleDateString()}
-                          </div>
-                        </div>
-
-                        {/* Action Buttons */}
-                        <div className="flex space-x-2">
-                          <button
-                            onClick={() => window.location.href = `/mentor/project/${project._id}`}
-                            className="flex-1 bg-gradient-to-r from-cyan-500 to-teal-500 hover:from-cyan-600 hover:to-teal-600 text-white py-2 px-4 rounded-xl font-medium transition-all duration-200 transform hover:scale-105"
-                          >
-                            View Details
-                          </button>
-                          <button
-                            onClick={() => {
-                              // Handle quick apply
-                              showToast('Apply functionality coming soon!', 'info');
-                            }}
-                            className="bg-white/10 hover:bg-white/20 text-white py-2 px-4 rounded-xl font-medium transition-all duration-200 border border-white/20 hover:border-cyan-400/50"
-                          >
-                            Apply
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                  <ShortProjectView 
+                    key={project._id} 
+                    project={project} 
+                    onApply={(projectId) => {
+                      // Refresh the projects list or update the specific project
+                      setFilteredProjects(prev => 
+                        prev.map(p => 
+                          p._id === projectId 
+                            ? { ...p, hasApplied: true, applicationsCount: (p.applicationsCount || 0) + 1 }
+                            : p
+                        )
+                      );
+                      showToast('Application submitted successfully!', 'success');
+                    }}
+                  />
                 ))}
               </div>
             )}
