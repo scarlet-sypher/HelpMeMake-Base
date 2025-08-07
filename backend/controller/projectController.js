@@ -1052,6 +1052,165 @@ const uploadProjectThumbnail = async (req, res) => {
   });
 };
 
+const getAvailableProjectsForMentors = async (req, res) => {
+ try {
+   // Verify user is a mentor
+   const Mentor = require('../Model/Mentor');
+   const mentor = await Mentor.findOne({ userId: req.user._id });
+   
+   if (!mentor) {
+     return res.status(403).json({
+       success: false,
+       message: 'Only mentors can access this endpoint'
+     });
+   }
+
+   // Find all learners who have projects in progress
+   const learnersWithInProgressProjects = await Project.find({
+     status: 'In Progress'
+   }).distinct('learnerId');
+
+   // Find all open projects excluding those from learners with in-progress projects
+   const availableProjects = await Project.find({
+     status: 'Open',
+     isVisible: true,
+     learnerId: { $nin: learnersWithInProgressProjects }, // Exclude learners with in-progress projects
+     mentorId: null // Only projects without assigned mentors
+   })
+   .populate('learnerId', 'userId title description location')
+   .populate({
+     path: 'learnerId',
+     populate: {
+       path: 'userId',
+       select: 'name email avatar'
+     }
+   })
+   .sort({ createdAt: -1 }); // Sort by newest first
+
+   // Format projects for frontend
+   const formattedProjects = availableProjects.map(project => ({
+     _id: project._id,
+     projectId: project.projectId,
+     name: project.name,
+     shortDescription: project.shortDescription,
+     fullDescription: project.fullDescription,
+     category: project.category,
+     difficultyLevel: project.difficultyLevel,
+     duration: project.duration,
+     techStack: project.techStack,
+     thumbnail: project.thumbnail,
+     tags: project.tags,
+     openingPrice: project.openingPrice,
+     currency: project.currency,
+     status: project.status,
+     viewCount: project.viewCount,
+     applicationsCount: project.applicationsCount,
+     createdAt: project.createdAt,
+     updatedAt: project.updatedAt,
+     // Include learner info
+     learner: project.learnerId ? {
+       _id: project.learnerId._id,
+       name: project.learnerId.userId?.name || 'Unknown User',
+       email: project.learnerId.userId?.email,
+       avatar: project.learnerId.userId?.avatar,
+       title: project.learnerId.title,
+       location: project.learnerId.location
+     } : null,
+     // Check if current mentor has already applied
+     hasApplied: project.applications?.some(app => 
+       app.mentorId.toString() === mentor._id.toString()
+     ) || false
+   }));
+
+   res.json({
+     success: true,
+     message: 'Available projects retrieved successfully',
+     projects: formattedProjects,
+     count: formattedProjects.length
+   });
+
+ } catch (error) {
+   console.error('Get available projects error:', error);
+   
+   res.status(500).json({
+     success: false,
+     message: 'Failed to retrieve available projects'
+   });
+ }
+};
+
+// Get mentor application statistics
+const getMentorApplicationStats = async (req, res) => {
+ try {
+   const Mentor = require('../Model/Mentor');
+   const mentor = await Mentor.findOne({ userId: req.user._id });
+   
+   if (!mentor) {
+     return res.status(403).json({
+       success: false,
+       message: 'Only mentors can access this endpoint'
+     });
+   }
+
+   // Get all projects where this mentor has applied
+   const projectsWithApplications = await Project.find({
+     'applications.mentorId': mentor._id
+   });
+
+   // Calculate stats
+   const totalApplications = projectsWithApplications.length;
+   const acceptedApplications = projectsWithApplications.filter(project => 
+     project.applications.some(app => 
+       app.mentorId.toString() === mentor._id.toString() && 
+       app.applicationStatus === 'Accepted'
+     )
+   ).length;
+
+   // Get active projects (where mentor is assigned)
+   const activeProjects = await Project.countDocuments({
+     mentorId: mentor._id,
+     status: 'In Progress'
+   });
+
+   // Get completed projects
+   const completedProjects = await Project.countDocuments({
+     mentorId: mentor._id,
+     status: 'Completed'
+   });
+
+   // Calculate success rate
+   const successRate = totalApplications > 0 
+     ? Math.round((acceptedApplications / totalApplications) * 100) 
+     : 0;
+
+   // Calculate total earnings (this would need to be implemented based on your payment system)
+   const totalEarnings = 0; // Placeholder - implement based on your payment model
+
+   const stats = {
+     totalApplications,
+     acceptedApplications,
+     activeProjects,
+     completedProjects,
+     totalEarnings,
+     successRate
+   };
+
+   res.json({
+     success: true,
+     message: 'Mentor statistics retrieved successfully',
+     stats
+   });
+
+ } catch (error) {
+   console.error('Get mentor stats error:', error);
+   
+   res.status(500).json({
+     success: false,
+     message: 'Failed to retrieve mentor statistics'
+   });
+ }
+};
+
 module.exports = {
   createProject,
   getProjectById,
@@ -1062,5 +1221,7 @@ module.exports = {
   acceptMentorApplication,
   getUserProjects,
   getActiveProjectWithMentor,
-  uploadProjectThumbnail
+  uploadProjectThumbnail,
+  getAvailableProjectsForMentors,
+  getMentorApplicationStats
 };

@@ -10,7 +10,9 @@ const {
     acceptMentorApplication,
     getUserProjects,
     getActiveProjectWithMentor,
-    uploadProjectThumbnail  // ADD THIS LINE
+    uploadProjectThumbnail,
+    getAvailableProjectsForMentors,
+    getMentorApplicationStats
 } = require('../controller/projectController');
 
 const router = express.Router();
@@ -42,6 +44,8 @@ router.post('/create', requireUser, createProject);
 
 // Get all projects for authenticated user
 router.get('/user', requireUser, getProjectsForUser);
+
+router.get('/mentor/available', requireMentor, getAvailableProjectsForMentors);
 
 // Get projects by user ID
 router.get('/user/:userId', requireUserOrMentor, getUserProjects);

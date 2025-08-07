@@ -13,6 +13,9 @@ const {
     verifyProfileUpdate, 
     uploadAvatar          
 } = require('../controller/mentorController');
+const {
+  getMentorApplicationStats
+} = require('../controller/projectController');
 const User = require('../Model/User');
 const Mentor = require('../Model/Mentor');
 const { getMentorWithAIReason } = require('../controller/mentorController');
@@ -150,6 +153,9 @@ router.patch('/profile', requireMentor, async (req, res) => {
 // ========================================
 // PUBLIC MENTOR VIEW (Keep at bottom to avoid route conflicts)
 // ========================================
+
+router.get('/application-stats', requireMentor, getMentorApplicationStats);
+
 router.get('/ai-reason/:id', requireUserOrMentor, getMentorWithAIReason);
 // Get mentor by ID - accessible by both users and mentors
 router.get('/:id', requireUserOrMentor, getMentorById);

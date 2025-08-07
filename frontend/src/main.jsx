@@ -22,6 +22,7 @@ import DetailedProjectView from './pages/user/DetailedProjectView';
 import ShowMentorDetails from './pages/user/ShowMentorDetails';
 import MilestonePage from './pages/user/MilestonePage';
 import MentorSetting from './pages/mentor/MentorSetting';
+import MentorProjectPage from './pages/mentor/MentorProjectPage';
 
 
 ReactDOM.createRoot(document.getElementById('root')).render(
@@ -131,6 +132,13 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <Route path="/mentor/settings" element={
           <ProtectedRoute requiredRole="mentor">
             <MentorSetting />
+          </ProtectedRoute>
+        } />
+
+
+        <Route path="/mentor/projects" element={
+          <ProtectedRoute requiredRole="mentor">
+            <MentorProjectPage />
           </ProtectedRoute>
         } />
 
