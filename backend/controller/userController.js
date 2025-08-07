@@ -6,6 +6,7 @@ const path = require('path');
 const fs = require('fs');
 const cloudinary = require('../utils/cloudinary');
 const streamifier = require('streamifier');
+const { generateOTP, sendOTPEmail } = require('../config/emailService');
 
 // Get current user's full profile data
 const getUserData = async (req, res) => {
@@ -348,10 +349,172 @@ const uploadAvatar = async (req, res) => {
   });
 };
 
+const sendProfileOTP = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+
+    // Generate OTP
+    const otp = generateOTP();
+    const otpExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+
+    // Store OTP in user document
+    await User.findByIdAndUpdate(req.user._id, {
+      profileOTP: otp,
+      profileOTPExpires: otpExpires
+    });
+
+    // Send OTP email
+    await sendOTPEmail(user.email, otp, user.name || 'User', 'profile_verification');
+
+    res.json({
+      success: true,
+      message: 'Verification code sent to your email'
+    });
+  } catch (error) {
+    console.error('Send profile OTP error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to send verification code'
+    });
+  }
+};
+
+// Verify OTP and update profile
+const verifyProfileUpdate = async (req, res) => {
+  try {
+    const { otp, profileData } = req.body;
+    const { name, title, description, location, email } = profileData;
+
+    console.log('Received OTP verification request:', { otp, profileData }); // Debug log
+
+    if (!otp || otp.length !== 6) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide a valid 6-digit OTP'
+      });
+    }
+
+    // FIXED: Include the OTP fields in the query with +select
+    const user = await User.findById(req.user._id).select('+profileOTP +profileOTPExpires');
+    
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+
+    console.log('User OTP data:', { 
+      stored: user.profileOTP, 
+      received: otp, 
+      expires: user.profileOTPExpires 
+    }); // Debug log
+
+    // Check if OTP exists and hasn't expired
+    if (!user.profileOTP || !user.profileOTPExpires) {
+      return res.status(400).json({
+        success: false,
+        message: 'No verification code found. Please request a new one.'
+      });
+    }
+
+    if (new Date() > user.profileOTPExpires) {
+      return res.status(400).json({
+        success: false,
+        message: 'Verification code has expired. Please request a new one.'
+      });
+    }
+
+    // FIXED: Ensure both are strings for comparison
+    if (user.profileOTP.toString() !== otp.toString()) {
+      console.log('OTP mismatch:', { stored: user.profileOTP, received: otp });
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid verification code'
+      });
+    }
+
+    // OTP is valid, proceed with profile update
+    // Update base user info and clear OTP fields
+    const updatedUser = await User.findByIdAndUpdate(
+      req.user._id,
+      { 
+        name, 
+        email,
+        // Clear the OTP fields
+        $unset: { 
+          profileOTP: 1, 
+          profileOTPExpires: 1 
+        }
+      },
+      { new: true, select: '-password' }
+    );
+
+    let profileScore = 0;
+    let updatedLearner = null;
+
+    // Update role-specific data
+    if (req.user.role === 'user') {
+      const Learner = require('../Model/Learner');
+      
+      // Get current learner data to check if this is first update
+      const currentLearner = await Learner.findOne({ userId: req.user._id });
+      const isFirstUpdate = currentLearner && !currentLearner.isProfileUpdated;
+      
+      updatedLearner = await Learner.findOneAndUpdate(
+        { userId: req.user._id },
+        { 
+          title, 
+          description, 
+          location,
+          // Set to true only on first update
+          ...(isFirstUpdate && { isProfileUpdated: true })
+        },
+        { new: true, upsert: true }
+      );
+
+      // Calculate profile completion score
+      profileScore = calculateProfileScore(updatedUser, updatedLearner);
+      
+    } else if (req.user.role === 'mentor') {
+      const Mentor = require('../Model/Mentor');
+      await Mentor.findOneAndUpdate(
+        { userId: req.user._id },
+        { title, description, location },
+        { new: true, upsert: true }
+      );
+    }
+
+    console.log('Profile update successful'); // Debug log
+
+    res.json({
+      success: true,
+      message: 'Profile updated successfully',
+      profileScore: profileScore,
+      isProfileUpdated: updatedLearner?.isProfileUpdated || false
+    });
+  } catch (error) {
+    console.error('Verify profile update error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to verify and update profile'
+    });
+  }
+};
+
 module.exports = {
   getUserData ,
   updateProfile,
   updateSocialLinks,
   changePassword,
-  uploadAvatar
+  uploadAvatar,
+  sendProfileOTP,        
+  verifyProfileUpdate
 };

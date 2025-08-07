@@ -62,6 +62,14 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: null
   },
+  profileOTP: {
+    type: String,
+    select: false  // This ensures the OTP is not returned in queries by default
+  },
+  profileOTPExpires: {
+    type: Date,
+    select: false  // This ensures the OTP expiry is not returned in queries by default
+  }
 
 }, {
   timestamps: true

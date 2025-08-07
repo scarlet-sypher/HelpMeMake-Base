@@ -1,6 +1,14 @@
 const express = require('express');
 const { requireUser } = require('../middleware/roleAuth');
-const { getUserData , updateProfile, updateSocialLinks, changePassword, uploadAvatar } = require('../controller/userController');
+const { 
+  getUserData, 
+  updateProfile, 
+  updateSocialLinks, 
+  changePassword, 
+  uploadAvatar,
+  sendProfileOTP,      // Add this new function
+  verifyProfileUpdate  // Add this new function
+} = require('../controller/userController');
 const router = express.Router();
 
 // All routes in this file require 'user' role
@@ -8,10 +16,16 @@ router.use(requireUser);
 
 // Get current user's full profile data
 router.get('/data', getUserData);
+
+// EXISTING routes - keep as they are for backward compatibility
 router.patch('/update-profile', updateProfile);
 router.patch('/social-links', updateSocialLinks);
 router.patch('/change-password', changePassword);
 router.patch('/upload-avatar', uploadAvatar);
+
+// NEW OTP-related routes for profile verification
+router.post('/send-profile-otp', sendProfileOTP);
+router.patch('/verify-profile-update', verifyProfileUpdate);
 
 // User Dashboard
 router.get('/dashboard', (req, res) => {
@@ -35,7 +49,7 @@ router.get('/profile', (req, res) => {
   });
 });
 
-// Update User Profile
+// Update User Profile (alternative endpoint - keep for compatibility)
 router.patch('/profile', async (req, res) => {
   try {
     const { name, title, description, location, socialLinks } = req.body;
