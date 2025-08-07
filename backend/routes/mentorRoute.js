@@ -4,7 +4,14 @@ const {
     getAllMentors,
     getMentorById,
     searchMentors,
-    getMentorStats
+    getMentorStats,
+    updateSocialLinks,      
+    changePassword,         
+    updatePersonalDetails,  
+    updateProfile,
+    sendProfileOTP,
+    verifyProfileUpdate, 
+    uploadAvatar          
 } = require('../controller/mentorController');
 const User = require('../Model/User');
 const Mentor = require('../Model/Mentor');
@@ -146,6 +153,24 @@ router.patch('/profile', requireMentor, async (req, res) => {
 router.get('/ai-reason/:id', requireUserOrMentor, getMentorWithAIReason);
 // Get mentor by ID - accessible by both users and mentors
 router.get('/:id', requireUserOrMentor, getMentorById);
+
+router.patch('/social-links', requireMentor, updateSocialLinks);
+
+
+router.patch('/change-password', requireMentor, changePassword);
+
+router.patch('/update-personal', requireMentor, updatePersonalDetails);
+
+router.patch('/update-profile', requireMentor, updateProfile);
+
+// Send OTP for profile verification - only for mentors
+router.post('/send-profile-otp', requireMentor, sendProfileOTP);
+
+// Verify OTP and update profile - only for mentors  
+router.patch('/verify-profile-update', requireMentor, verifyProfileUpdate);
+
+// Upload avatar - only for mentors
+router.patch('/upload-avatar', requireMentor, uploadAvatar);
 
 
 module.exports = router;

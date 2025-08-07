@@ -1,5 +1,11 @@
 const Mentor = require('../Model/Mentor');
 const User = require('../Model/User');
+const bcrypt = require('bcrypt');
+const multer = require('multer');
+const cloudinary = require('../utils/cloudinary'); 
+const streamifier = require('streamifier');
+const { generateOTP, sendOTPEmail } = require('../config/emailService');
+const path = require('path');
 
 // Get All Available Mentors
 const getAllMentors = async (req, res) => {
@@ -506,10 +512,665 @@ RESPONSE FORMAT (JSON only):
   }
 };
 
+
+const updateSocialLinks = async (req, res) => {
+  try {
+    const mentorId = req.user._id;
+    const { github, linkedin, twitter, portfolio, blog } = req.body;
+
+    // Validate URLs if provided
+    const urlPattern = /^https?:\/\/.+/;
+    const socialLinks = { github, linkedin, twitter, portfolio, blog };
+    
+    for (const [platform, url] of Object.entries(socialLinks)) {
+      if (url && url !== '#' && url.trim() !== '') {
+        if (!urlPattern.test(url)) {
+          return res.status(400).json({
+            success: false,
+            message: `Invalid URL format for ${platform}. Please include http:// or https://`
+          });
+        }
+      }
+    }
+
+    // Clean up empty or '#' values
+    Object.keys(socialLinks).forEach(key => {
+      if (socialLinks[key] === '' || socialLinks[key] === '#') {
+        socialLinks[key] = '#';
+      }
+    });
+
+    // Find and update mentor social links
+    const updatedMentor = await Mentor.findOneAndUpdate(
+      { userId: mentorId },
+      { 
+        socialLinks,
+        // Update profile completeness if social links are added
+        $inc: { 
+          profileCompleteness: github && github !== '#' && linkedin && linkedin !== '#' ? 5 : 0 
+        }
+      },
+      { new: true, upsert: true }
+    );
+
+    res.json({
+      success: true,
+      message: 'Social links updated successfully!',
+      socialLinks: updatedMentor.socialLinks
+    });
+
+  } catch (error) {
+    console.error('Update social links error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to update social links. Please try again.',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+};
+
+// Change Password
+const changePassword = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const { currentPassword, newPassword } = req.body;
+
+    // Validation
+    if (!newPassword || newPassword.length < 6) {
+      return res.status(400).json({
+        success: false,
+        message: 'New password must be at least 6 characters long'
+      });
+    }
+
+    // Get user with password
+    const user = await User.findById(userId).select('+password');
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+
+    // Check if user is OAuth user
+    if (user.authProvider !== 'local') {
+      return res.status(400).json({
+        success: false,
+        message: 'Password cannot be changed for OAuth accounts'
+      });
+    }
+
+    // For users with existing password, verify current password
+    if (user.password && !user.tempPassword) {
+      if (!currentPassword) {
+        return res.status(400).json({
+          success: false,
+          message: 'Current password is required'
+        });
+      }
+
+      const isCurrentPasswordValid = await bcrypt.compare(currentPassword, user.password);
+      if (!isCurrentPasswordValid) {
+        return res.status(400).json({
+          success: false,
+          message: 'Current password is incorrect'
+        });
+      }
+    }
+
+    // Hash new password
+    const saltRounds = 12;
+    const hashedNewPassword = await bcrypt.hash(newPassword, saltRounds);
+
+    // Update password
+    await User.findByIdAndUpdate(userId, {
+      password: hashedNewPassword,
+      isPasswordUpdated: true,
+      tempPassword: null // Clear temp password if it exists
+    });
+
+    // Update mentor record if it exists
+    await Mentor.findOneAndUpdate(
+      { userId: userId },
+      { 
+        isPasswordUpdated: true,
+        // Increment profile completeness for first-time password setup
+        $inc: { profileCompleteness: user.tempPassword ? 10 : 0 }
+      },
+      { upsert: true }
+    );
+
+    res.json({
+      success: true,
+      message: 'Password changed successfully!'
+    });
+
+  } catch (error) {
+    console.error('Change password error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to change password. Please try again.',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+};
+
+// Update Personal/Professional Details
+const updatePersonalDetails = async (req, res) => {
+  try {
+    const mentorId = req.user._id;
+    const { 
+      experience, 
+      expertise, 
+      specializations, 
+      availability, 
+      teachingPreferences 
+    } = req.body;
+
+    // Validate expertise array
+    if (expertise && Array.isArray(expertise)) {
+      for (const skill of expertise) {
+        if (!skill.skill || !skill.level) {
+          return res.status(400).json({
+            success: false,
+            message: 'Each expertise must have skill name and level'
+          });
+        }
+        
+        if (!['beginner', 'intermediate', 'advanced', 'expert'].includes(skill.level)) {
+          return res.status(400).json({
+            success: false,
+            message: 'Invalid skill level. Must be: beginner, intermediate, advanced, or expert'
+          });
+        }
+      }
+    }
+
+    // Validate teaching preferences
+    if (teachingPreferences) {
+      if (teachingPreferences.maxStudentsPerSession && 
+          (teachingPreferences.maxStudentsPerSession < 1 || teachingPreferences.maxStudentsPerSession > 10)) {
+        return res.status(400).json({
+          success: false,
+          message: 'Max students per session must be between 1 and 10'
+        });
+      }
+
+      if (teachingPreferences.sessionTypes && Array.isArray(teachingPreferences.sessionTypes)) {
+        const validTypes = ['one-on-one', 'group', 'workshop', 'code-review'];
+        const invalidTypes = teachingPreferences.sessionTypes.filter(type => !validTypes.includes(type));
+        
+        if (invalidTypes.length > 0) {
+          return res.status(400).json({
+            success: false,
+            message: `Invalid session types: ${invalidTypes.join(', ')}`
+          });
+        }
+      }
+    }
+
+    // Validate availability timezone
+    if (availability && availability.timezone) {
+      const validTimezones = ['UTC', 'EST', 'CST', 'MST', 'PST', 'GMT', 'CET', 'IST', 'JST', 'AEST'];
+      if (!validTimezones.includes(availability.timezone)) {
+        return res.status(400).json({
+          success: false,
+          message: 'Invalid timezone'
+        });
+      }
+    }
+
+    // Find existing mentor or create update object
+    let updateData = {};
+    
+    if (experience) updateData.experience = experience;
+    if (expertise) updateData.expertise = expertise;
+    if (specializations) updateData.specializations = specializations;
+    if (availability) updateData.availability = availability;
+    if (teachingPreferences) updateData.teachingPreferences = teachingPreferences;
+
+    // Update mentor record
+    const updatedMentor = await Mentor.findOneAndUpdate(
+      { userId: mentorId },
+      updateData,
+      { new: true, upsert: true }
+    );
+
+    // Recalculate profile completeness
+    if (updatedMentor.calculateProfileCompleteness) {
+      updatedMentor.calculateProfileCompleteness();
+      await updatedMentor.save();
+    }
+
+    res.json({
+      success: true,
+      message: 'Personal details updated successfully!',
+      mentor: updatedMentor
+    });
+
+  } catch (error) {
+    console.error('Update personal details error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to update personal details. Please try again.',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+};
+
+// Update Profile (Basic Info Only)
+const updateProfile = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const { name, title, bio, description, location, pricing } = req.body;
+
+    // Update user basic info
+    const userUpdateData = {};
+    if (name) userUpdateData.name = name;
+
+    let updatedUser = null;
+    if (Object.keys(userUpdateData).length > 0) {
+      updatedUser = await User.findByIdAndUpdate(
+        userId,
+        userUpdateData,
+        { new: true, select: '-password -otp -otpExpires' }
+      );
+    }
+
+    // Update mentor-specific info
+    const mentorUpdateData = {};
+    if (title) mentorUpdateData.title = title;
+    if (bio !== undefined) mentorUpdateData.bio = bio;
+    if (description) mentorUpdateData.description = description;
+    if (location) mentorUpdateData.location = location;
+    if (pricing) mentorUpdateData.pricing = pricing;
+
+    const updatedMentor = await Mentor.findOneAndUpdate(
+      { userId: userId },
+      mentorUpdateData,
+      { new: true, upsert: true }
+    );
+
+    // Recalculate profile completeness
+    if (updatedMentor.calculateProfileCompleteness) {
+      updatedMentor.calculateProfileCompleteness();
+      await updatedMentor.save();
+    }
+
+    // Combine user and mentor data
+    const combinedData = {
+      ...(updatedUser ? updatedUser.toObject() : req.user.toObject()),
+      ...updatedMentor.toObject()
+    };
+
+    res.json({
+      success: true,
+      message: 'Profile updated successfully!',
+      user: combinedData
+    });
+
+  } catch (error) {
+    console.error('Update profile error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to update profile. Please try again.',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+};
+
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+  fileFilter: (req, file, cb) => {
+    const allowedTypes = /jpeg|jpg|png|webp/;
+    const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
+    const mimetype = allowedTypes.test(file.mimetype);
+
+    if (mimetype && extname) {
+      return cb(null, true);
+    } else {
+      cb(new Error('Only JPEG, PNG, and WebP images are allowed'));
+    }
+  }
+}).single('avatar');
+
+// Send OTP for Profile Verification
+const sendProfileOTP = async (req, res) => {
+  try {
+    console.log('🔄 Sending profile OTP for user:', req.user._id);
+    
+    const user = await User.findById(req.user._id);
+    
+    if (!user) {
+      console.log('❌ User not found:', req.user._id);
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+
+    // Generate OTP
+    const otp = generateOTP();
+    const otpExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes from now
+    
+    console.log('🔑 Generated OTP:', otp);
+    console.log('⏰ OTP expires at:', otpExpires);
+    console.log('⏱️ Current time:', new Date());
+
+    // Store OTP in user document with explicit field updates
+    const updateResult = await User.findByIdAndUpdate(
+      req.user._id, 
+      {
+        profileOTP: otp,
+        profileOTPExpires: otpExpires
+      },
+      { new: true }
+    );
+    
+    console.log('✅ OTP stored in database:', {
+      userId: req.user._id,
+      otp: updateResult.profileOTP,
+      expires: updateResult.profileOTPExpires
+    });
+
+    // Send OTP email
+    await sendOTPEmail(user.email, otp, user.name || 'Mentor', 'profile_verification');
+    
+    console.log('📧 OTP email sent successfully to:', user.email);
+
+    res.json({
+      success: true,
+      message: 'Verification code sent to your email'
+    });
+
+  } catch (error) {
+    console.error('❌ Send profile OTP error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to send verification code',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+};
+
+// Verify OTP and Update Profile
+const verifyProfileUpdate = async (req, res) => {
+  try {
+    const { otp, profileData } = req.body;
+    const { name, title, bio, description, location, pricing } = profileData;
+
+    console.log('🔄 Starting OTP verification for user:', req.user._id);
+    console.log('📝 Received OTP:', otp);
+    console.log('📋 Profile data:', profileData);
+
+    // Validation
+    if (!otp || otp.length !== 6) {
+      console.log('❌ Invalid OTP format:', otp);
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide a valid 6-digit OTP'
+      });
+    }
+
+    // Get user with OTP fields - IMPORTANT: Use +select to include hidden fields
+    const user = await User.findById(req.user._id).select('+profileOTP +profileOTPExpires');
+    
+    if (!user) {
+      console.log('❌ User not found during verification:', req.user._id);
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+
+    console.log('🔍 User OTP data retrieved:', {
+      userId: user._id,
+      storedOTP: user.profileOTP,
+      expiresAt: user.profileOTPExpires,
+      currentTime: new Date()
+    });
+
+    // Check if OTP exists
+    if (!user.profileOTP || !user.profileOTPExpires) {
+      console.log('❌ No OTP found in database');
+      return res.status(400).json({
+        success: false,
+        message: 'No verification code found. Please request a new one.'
+      });
+    }
+
+    // Check if OTP has expired
+    const currentTime = new Date();
+    const expiryTime = new Date(user.profileOTPExpires);
+    
+    if (currentTime > expiryTime) {
+      console.log('⏰ OTP expired:', {
+        currentTime: currentTime.toISOString(),
+        expiryTime: expiryTime.toISOString(),
+        timeDiff: currentTime - expiryTime
+      });
+      
+      // Clear expired OTP
+      await User.findByIdAndUpdate(req.user._id, {
+        $unset: { 
+          profileOTP: 1, 
+          profileOTPExpires: 1 
+        }
+      });
+      
+      return res.status(400).json({
+        success: false,
+        message: 'Verification code has expired. Please request a new one.'
+      });
+    }
+
+    // Verify OTP - Convert both to strings for comparison
+    const storedOTP = user.profileOTP.toString().trim();
+    const receivedOTP = otp.toString().trim();
+    
+    console.log('🔐 OTP comparison:', {
+      stored: storedOTP,
+      received: receivedOTP,
+      match: storedOTP === receivedOTP
+    });
+
+    if (storedOTP !== receivedOTP) {
+      console.log('❌ OTP mismatch');
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid verification code'
+      });
+    }
+
+    console.log('✅ OTP verified successfully, proceeding with profile update');
+
+    // Clear OTP fields first
+    await User.findByIdAndUpdate(req.user._id, {
+      $unset: { 
+        profileOTP: 1, 
+        profileOTPExpires: 1 
+      }
+    });
+
+    // Update base user info
+    const userUpdateData = {};
+    if (name && name.trim()) userUpdateData.name = name.trim();
+    
+    let updatedUser = null;
+    if (Object.keys(userUpdateData).length > 0) {
+      updatedUser = await User.findByIdAndUpdate(
+        req.user._id,
+        userUpdateData,
+        { new: true, select: '-password' }
+      );
+      console.log('✅ User data updated:', userUpdateData);
+    }
+
+    // Update mentor-specific info - FIXED: Avoid triggering schema validation issues
+    const mentorUpdateData = {};
+    if (title && title.trim()) mentorUpdateData.title = title.trim();
+    if (bio !== undefined) mentorUpdateData.bio = bio || '';
+    if (description && description.trim()) mentorUpdateData.description = description.trim();
+    if (location && location.trim()) mentorUpdateData.location = location.trim();
+    if (pricing && typeof pricing === 'object') {
+      mentorUpdateData.pricing = {
+        hourlyRate: pricing.hourlyRate || 0,
+        currency: pricing.currency || 'USD',
+        freeSessionsOffered: pricing.freeSessionsOffered || 1
+      };
+    }
+
+    console.log('🔄 Updating mentor data:', mentorUpdateData);
+
+    // FIXED: Use findOneAndUpdate without triggering validation issues
+    const updatedMentor = await Mentor.findOneAndUpdate(
+      { userId: req.user._id },
+      { $set: mentorUpdateData },
+      { 
+        new: true, 
+        upsert: true,
+        runValidators: false // Skip validation to avoid schema conflicts
+      }
+    );
+
+    console.log('✅ Mentor data updated successfully');
+
+    // Recalculate profile completeness
+    try {
+      if (updatedMentor && typeof updatedMentor.calculateProfileCompleteness === 'function') {
+        updatedMentor.calculateProfileCompleteness();
+        await updatedMentor.save({ validateBeforeSave: false });
+        console.log('📊 Profile completeness recalculated');
+      }
+    } catch (completenessError) {
+      console.log('⚠️ Profile completeness calculation failed:', completenessError.message);
+      // Don't fail the entire request for this
+    }
+
+    // Prepare response data
+    const responseUser = updatedUser || await User.findById(req.user._id).select('-password');
+    const combinedData = {
+      ...responseUser.toObject(),
+      ...(updatedMentor ? updatedMentor.toObject() : {})
+    };
+
+    console.log('🎉 Profile update completed successfully');
+
+    res.json({
+      success: true,
+      message: 'Profile updated successfully!',
+      user: combinedData
+    });
+
+  } catch (error) {
+    console.error('❌ Verify profile update error:', error);
+    
+    // Clear any stored OTP on error
+    try {
+      await User.findByIdAndUpdate(req.user._id, {
+        $unset: { 
+          profileOTP: 1, 
+          profileOTPExpires: 1 
+        }
+      });
+    } catch (clearError) {
+      console.error('Failed to clear OTP on error:', clearError);
+    }
+    
+    res.status(500).json({
+      success: false,
+      message: 'Failed to verify and update profile',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+};
+
+// Upload Avatar
+const uploadAvatar = async (req, res) => {
+  upload(req, res, async (err) => {
+    if (err) {
+      console.error('❌ File upload error:', err);
+      return res.status(400).json({
+        success: false,
+        message: err.message || 'File upload failed'
+      });
+    }
+
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
+        message: 'No file uploaded'
+      });
+    }
+
+    try {
+      console.log('🖼️ Uploading avatar for user:', req.user._id);
+
+      // Upload to Cloudinary from buffer
+      const streamUpload = (req) => {
+        return new Promise((resolve, reject) => {
+          const stream = cloudinary.uploader.upload_stream(
+            {
+              folder: 'mentor-avatars',
+              public_id: `mentor-avatar-${req.user._id}`,
+              overwrite: true,
+              resource_type: 'auto'
+            },
+            (error, result) => {
+              if (result) {
+                console.log('✅ Cloudinary upload successful:', result.public_id);
+                resolve(result);
+              } else {
+                console.error('❌ Cloudinary upload failed:', error);
+                reject(error);
+              }
+            }
+          );
+          streamifier.createReadStream(req.file.buffer).pipe(stream);
+        });
+      };
+
+      const result = await streamUpload(req);
+      const avatarUrl = result.secure_url;
+
+      // Update user avatar
+      const updatedUser = await User.findByIdAndUpdate(
+        req.user._id,
+        { avatar: avatarUrl },
+        { new: true, select: '-password' }
+      );
+
+      console.log('✅ Avatar updated successfully:', avatarUrl);
+
+      res.json({
+        success: true,
+        message: 'Profile picture updated successfully!',
+        avatar: avatarUrl
+      });
+
+    } catch (error) {
+      console.error('❌ Avatar upload error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to update profile picture',
+        error: process.env.NODE_ENV === 'development' ? error.message : undefined
+      });
+    }
+  });
+};
+
 module.exports = {
   getAllMentors,
   getMentorById,
   searchMentors,
   getMentorStats ,
-  getMentorWithAIReason
+  getMentorWithAIReason ,
+  updateSocialLinks,      
+  changePassword,         
+  updatePersonalDetails,  
+  updateProfile ,
+  sendProfileOTP,
+  verifyProfileUpdate, 
+  uploadAvatar          
 };

@@ -254,8 +254,14 @@ const mentorSchema = new mongoose.Schema({
       default: 'none'
     },
     documents: [{
-      type: String,
-      url: String,
+      type: {
+        type: String,
+        required: true
+      },
+      url: {
+        type: String,
+        required: true
+      },
       status: {
         type: String,
         enum: ['pending', 'approved', 'rejected'],
@@ -303,14 +309,21 @@ const mentorSchema = new mongoose.Schema({
     min: 0,
     max: 100
   },
-  
+  isPasswordUpdated: {
+    type: Boolean,
+    default: false  
+  },
+    
   // Notifications & Preferences
   notificationPreferences: {
     email: { type: Boolean, default: true },
     push: { type: Boolean, default: true },
     sessionRequests: { type: Boolean, default: true },
     weeklyReports: { type: Boolean, default: true },
-    marketingUpdates: { type: Boolean, default: false }
+    marketingUpdates: { type: Boolean, default: false } ,
+    profileUpdates: { type: Boolean, default: true },
+    socialLinkUpdates: { type: Boolean, default: false }
+
   }
 }, {
   timestamps: true

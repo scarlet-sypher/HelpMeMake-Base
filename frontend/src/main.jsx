@@ -21,6 +21,7 @@ import ProjectsIndex from './pages/user/ProjectsIndex';
 import DetailedProjectView from './pages/user/DetailedProjectView';
 import ShowMentorDetails from './pages/user/ShowMentorDetails';
 import MilestonePage from './pages/user/MilestonePage';
+import MentorSetting from './pages/mentor/MentorSetting';
 
 
 ReactDOM.createRoot(document.getElementById('root')).render(
@@ -92,12 +93,6 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           </ProtectedRoute>
         } />
         
-        {/* Mentor Routes */}
-        <Route path="/mentordashboard" element={
-          <ProtectedRoute requiredRole="mentor">
-            <MentorDashboard />
-          </ProtectedRoute>
-        } />
 
         {/* <Route path="/mentordashboard" element={<MentorDashboard />} /> */}
         
@@ -126,6 +121,20 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           </ProtectedRoute>
         } />
         
+        {/* Mentor Routes */}
+        <Route path="/mentordashboard" element={
+          <ProtectedRoute requiredRole="mentor">
+            <MentorDashboard />
+          </ProtectedRoute>
+        } />
+
+        <Route path="/mentor/settings" element={
+          <ProtectedRoute requiredRole="mentor">
+            <MentorSetting />
+          </ProtectedRoute>
+        } />
+
+
       </Routes>
     </BrowserRouter>
   </React.StrictMode>

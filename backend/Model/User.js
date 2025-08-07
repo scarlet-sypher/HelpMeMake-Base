@@ -75,6 +75,11 @@ const userSchema = new mongoose.Schema({
   timestamps: true
 });
 
+userSchema.index({ 
+  profileOTPExpires: 1 
+}, { 
+  expireAfterSeconds: 0 // MongoDB will delete when profileOTPExpires date is reached
+});
 
 userSchema.virtual('displayName').get(function() {
   return this.name || this.email.split('@')[0];
