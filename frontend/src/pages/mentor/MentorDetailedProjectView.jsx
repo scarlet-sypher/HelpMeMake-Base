@@ -45,6 +45,16 @@ const MentorDetailedProjectView = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showPitchModal, setShowPitchModal] = useState(false);
+  const [mentorStatus, setMentorStatus] = useState({
+    hasActiveProject: false,
+    isRestricted: false,
+    activeProjectId: null,
+  });
+
+  const [showAcceptConfirm, setShowAcceptConfirm] = useState(false);
+  const [confirmationText, setConfirmationText] = useState("");
+
+  const [hasAppliedForProject, setHasAppliedForProject] = useState(false);
 
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
@@ -80,6 +90,50 @@ const MentorDetailedProjectView = () => {
     return colors[level] || "from-gray-500 to-slate-500";
   };
 
+  const checkMentorActiveProject = async () => {
+    try {
+      const token = localStorage.getItem("access_token");
+      const response = await axios.get(
+        `${API_URL}/mentor/active-project-status`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.data.success) {
+        setMentorStatus({
+          hasActiveProject: response.data.hasActiveProject,
+          isRestricted: response.data.hasActiveProject,
+          activeProjectId: response.data.activeProjectId,
+        });
+      }
+    } catch (error) {
+      console.error("Error checking mentor status:", error);
+    }
+  };
+
+  const checkPitchStatus = async () => {
+    try {
+      const token = localStorage.getItem("access_token");
+      const response = await axios.get(
+        `${API_URL}/projects/${id}/pitches/mine`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.data.success) {
+        setHasAppliedForProject(response.data.hasApplied);
+      }
+    } catch (error) {
+      console.error("Error checking pitch status:", error);
+    }
+  };
+
   // Status colors
   const getStatusColor = (status) => {
     const colors = {
@@ -98,6 +152,7 @@ const MentorDetailedProjectView = () => {
         setLoading(true);
         const token = localStorage.getItem("access_token");
 
+        // Fetch project details
         const response = await axios.get(`${API_URL}/projects/${id}`, {
           headers: {
             "Content-Type": "application/json",
@@ -107,6 +162,8 @@ const MentorDetailedProjectView = () => {
 
         if (response.data.success) {
           setProject(response.data.project);
+          // Check mentor status after project is loaded
+          await checkMentorActiveProject();
         } else {
           setError("Failed to load project details");
         }
@@ -153,10 +210,35 @@ const MentorDetailedProjectView = () => {
   };
 
   const handleOpenPitchModal = () => {
+    if (mentorStatus.isRestricted) {
+      alert(
+        "You already have a project in progress. Complete it before taking on new projects."
+      );
+      return;
+    }
     setShowPitchModal(true);
   };
 
+  const calculateNegotiatedPrice = (project) => {
+    if (!project.pitches || project.pitches.length === 0) {
+      return 0;
+    }
+
+    const totalPrice = project.pitches.reduce(
+      (sum, pitch) => sum + pitch.price,
+      0
+    );
+    return Math.round(totalPrice / project.pitches.length);
+  };
+
   const handleTakeProject = async () => {
+    if (mentorStatus.isRestricted) {
+      alert(
+        "You already have a project in progress. Complete it before taking on new projects."
+      );
+      return;
+    }
+
     try {
       const token = localStorage.getItem("access_token");
       const response = await axios.patch(
@@ -171,6 +253,12 @@ const MentorDetailedProjectView = () => {
 
       if (response.data.success) {
         alert("Project taken successfully!");
+        // Update mentor status
+        setMentorStatus({
+          hasActiveProject: true,
+          isRestricted: true,
+          activeProjectId: id,
+        });
         navigate("/mentor/projects");
       }
     } catch (error) {
@@ -481,11 +569,21 @@ const MentorDetailedProjectView = () => {
                 <div className="text-center mb-4">
                   <div className="relative inline-block mb-4">
                     <img
-                      src={`${import.meta.env.VITE_API_URL}${
-                        learner.userId?.avatar ||
-                        learner.avatar ||
-                        "/uploads/public/default.jpg"
-                      }`}
+                      src={
+                        learner.userId?.avatar
+                          ? learner.userId.avatar.startsWith("/uploads/")
+                            ? `${import.meta.env.VITE_API_URL}${
+                                learner.userId.avatar
+                              }`
+                            : learner.userId.avatar
+                          : learner.avatar
+                          ? learner.avatar.startsWith("/uploads/")
+                            ? `${import.meta.env.VITE_API_URL}${learner.avatar}`
+                            : learner.avatar
+                          : `${
+                              import.meta.env.VITE_API_URL
+                            }/uploads/public/default.jpg`
+                      }
                       alt={learner.userId?.name || "User"}
                       className="w-20 h-20 rounded-full object-cover border-4 border-cyan-500/50"
                       onError={(e) => {
@@ -564,26 +662,57 @@ const MentorDetailedProjectView = () => {
                 </button>
 
                 {/* Interest / Pitch / Negotiate */}
-                <button
-                  onClick={handleOpenPitchModal}
-                  className="w-full flex items-center justify-center space-x-2 bg-gradient-to-r from-cyan-500 to-teal-500 hover:from-cyan-600 hover:to-teal-600 text-white px-4 py-3 rounded-xl font-medium transition-all duration-200 transform hover:scale-105"
-                >
-                  <Send size={18} />
-                  <span>Express Interest & Negotiate</span>
-                </button>
-
-                {/* Take Project */}
                 <div className="relative">
                   <button
-                    onClick={handleTakeProject}
-                    disabled={!project.closingPrice}
+                    onClick={handleOpenPitchModal}
+                    disabled={hasAppliedForProject || mentorStatus.isRestricted}
                     title={
-                      !project.closingPrice
+                      hasAppliedForProject
+                        ? "You already applied to this project"
+                        : mentorStatus.isRestricted
+                        ? "One project is in progress"
+                        : "Express Interest & Negotiate"
+                    }
+                    className={`w-full flex items-center justify-center space-x-2 px-4 py-3 rounded-xl font-medium transition-all duration-200 ${
+                      hasAppliedForProject
+                        ? "bg-blue-500/20 text-blue-300 border border-blue-400/30 cursor-not-allowed"
+                        : mentorStatus.isRestricted
+                        ? "bg-gray-600 text-gray-400 cursor-not-allowed"
+                        : "bg-gradient-to-r from-cyan-500 to-teal-500 hover:from-cyan-600 hover:to-teal-600 text-white transform hover:scale-105"
+                    }`}
+                  >
+                    <Send size={18} />
+                    <span>
+                      {hasAppliedForProject
+                        ? "Already Applied"
+                        : "Express Interest & Negotiate"}
+                    </span>
+                  </button>
+                  {(mentorStatus.isRestricted || hasAppliedForProject) && (
+                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 bg-gray-800 text-white text-xs px-2 py-1 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                      {hasAppliedForProject
+                        ? "You already applied to this project"
+                        : "One project is in progress"}
+                    </div>
+                  )}
+                </div>
+
+                {/* Take Project */}
+                <div className="relative group">
+                  <button
+                    onClick={handleTakeProject}
+                    disabled={
+                      !project.closingPrice || mentorStatus.isRestricted
+                    }
+                    title={
+                      mentorStatus.isRestricted
+                        ? "One project is in progress"
+                        : !project.closingPrice
                         ? "No closing price yet"
                         : "Accept this project"
                     }
                     className={`w-full flex items-center justify-center space-x-2 px-4 py-3 rounded-xl font-medium transition-all duration-200 ${
-                      project.closingPrice
+                      project.closingPrice && !mentorStatus.isRestricted
                         ? "bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white transform hover:scale-105"
                         : "bg-gray-600 text-gray-400 cursor-not-allowed"
                     }`}
@@ -591,11 +720,6 @@ const MentorDetailedProjectView = () => {
                     <Award size={18} />
                     <span>Accept Project</span>
                   </button>
-                  {!project.closingPrice && (
-                    <div className="absolute -top-2 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-                      No closing price yet
-                    </div>
-                  )}
                 </div>
               </div>
 
@@ -614,9 +738,11 @@ const MentorDetailedProjectView = () => {
                   <div className="flex justify-between">
                     <span className="text-gray-300">Negotiated Price:</span>
                     <span className="text-yellow-400 font-medium">
-                      {project.negotiatedPrice
-                        ? formatPrice(project.negotiatedPrice)
-                        : "Not set"}
+                      {calculateNegotiatedPrice(project) > 0
+                        ? `₹${calculateNegotiatedPrice(
+                            project
+                          ).toLocaleString()}`
+                        : "No pitches yet"}
                     </span>
                   </div>
                   <div className="flex justify-between">
@@ -640,6 +766,47 @@ const MentorDetailedProjectView = () => {
             onClose={() => setShowPitchModal(false)}
             API_URL={API_URL}
           />
+        )}
+
+        {/* Accept Confirmation Modal */}
+        {showAcceptConfirm && (
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div className="relative bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 rounded-3xl shadow-2xl border border-white/20 p-8 max-w-md w-full">
+              <div className="relative z-10">
+                <h3 className="text-xl font-bold text-white mb-4">
+                  Confirm Acceptance
+                </h3>
+                <p className="text-gray-300 mb-4">
+                  Type "i m ready" to confirm acceptance of this project:
+                </p>
+                <input
+                  type="text"
+                  value={confirmationText}
+                  onChange={(e) => setConfirmationText(e.target.value)}
+                  placeholder="Type here..."
+                  className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all mb-4"
+                />
+                <div className="flex space-x-4">
+                  <button
+                    onClick={() => {
+                      setShowAcceptConfirm(false);
+                      setConfirmationText("");
+                    }}
+                    className="flex-1 px-4 py-3 bg-white/10 hover:bg-white/20 text-white rounded-xl font-medium transition-all border border-white/20"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={confirmTakeProject}
+                    disabled={confirmationText !== "i m ready"}
+                    className="flex-1 px-4 py-3 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 disabled:from-gray-500 disabled:to-gray-600 disabled:cursor-not-allowed text-white rounded-xl font-medium transition-all"
+                  >
+                    Accept Project
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
         )}
       </div>
     </div>

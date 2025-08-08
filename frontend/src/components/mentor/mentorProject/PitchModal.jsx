@@ -15,6 +15,18 @@ const PitchModal = ({ project, onClose, API_URL, onPitchSubmitted }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  const calculateNegotiatedPrice = (project) => {
+    if (!project.pitches || project.pitches.length === 0) {
+      return 0;
+    }
+
+    const totalPrice = project.pitches.reduce(
+      (sum, pitch) => sum + pitch.price,
+      0
+    );
+    return Math.round(totalPrice / project.pitches.length);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -44,9 +56,12 @@ const PitchModal = ({ project, onClose, API_URL, onPitchSubmitted }) => {
 
       if (response.ok && data.success) {
         alert("Pitch submitted successfully!");
+
+        // Update the project with new pitch data if callback provided
         if (onPitchSubmitted) {
           onPitchSubmitted(data.pitch);
         }
+
         onClose();
       } else {
         setError(data.message || "Failed to submit pitch");
@@ -81,14 +96,30 @@ const PitchModal = ({ project, onClose, API_URL, onPitchSubmitted }) => {
           <h3 className="text-lg font-semibold text-white mb-2">
             {project.name}
           </h3>
-          <p className="text-gray-300 text-sm mb-2">
+          <p className="text-gray-300 text-sm mb-4">
             {project.shortDescription}
           </p>
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-gray-400">Opening Price:</span>
-            <span className="text-green-400 font-semibold">
-              ₹{project.openingPrice?.toLocaleString()}
-            </span>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-gray-400">Opening Price:</span>
+              <span className="text-green-400 font-semibold">
+                ₹{project.openingPrice?.toLocaleString()}
+              </span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-gray-400">Current Avg. Price:</span>
+              <span className="text-purple-400 font-semibold">
+                {calculateNegotiatedPrice(project) > 0
+                  ? `₹${calculateNegotiatedPrice(project).toLocaleString()}`
+                  : "No pitches yet"}
+              </span>
+            </div>
+            <div className="flex items-center justify-between sm:col-span-2">
+              <span className="text-sm text-gray-400">Total Pitches:</span>
+              <span className="text-cyan-400 font-semibold">
+                {project.pitches?.length || 0}
+              </span>
+            </div>
           </div>
         </div>
 

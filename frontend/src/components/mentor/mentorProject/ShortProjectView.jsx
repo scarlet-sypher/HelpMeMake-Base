@@ -26,6 +26,17 @@ const ShortProjectView = ({ project, onApply = null }) => {
     coverLetter: "",
     estimatedDuration: "",
   });
+  const [hasAppliedForProject, setHasAppliedForProject] = useState(false);
+
+  const [mentorStatus, setMentorStatus] = useState({
+    hasActiveProject: false,
+    isRestricted: false,
+    activeProjectId: null,
+  });
+
+  useEffect(() => {
+    checkMentorActiveProject();
+  }, []);
 
   useEffect(() => {
     const images = document.querySelectorAll(`[alt="${project.name}"]`);
@@ -52,6 +63,33 @@ const ShortProjectView = ({ project, onApply = null }) => {
       });
     };
   }, [project._id, project.name]);
+
+  useEffect(() => {
+    const checkMentorPitchStatus = async () => {
+      try {
+        const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+        const token = localStorage.getItem("access_token");
+
+        const response = await fetch(
+          `${apiUrl}/projects/${project._id}/pitches/mine`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        const data = await response.json();
+        if (response.ok && data.success) {
+          setHasAppliedForProject(data.hasApplied);
+        }
+      } catch (error) {
+        console.error("Error checking pitch status:", error);
+      }
+    };
+
+    checkMentorPitchStatus();
+  }, [project._id]);
 
   // Get difficulty color
   const getDifficultyColor = (level) => {
@@ -87,6 +125,14 @@ const ShortProjectView = ({ project, onApply = null }) => {
 
   const handleApplyClick = () => {
     if (hasApplied) return;
+
+    if (mentorStatus.isRestricted) {
+      alert(
+        "You already have a project in progress. Complete it before applying to new projects."
+      );
+      return;
+    }
+
     setShowApplicationModal(true);
   };
 
@@ -140,6 +186,31 @@ const ShortProjectView = ({ project, onApply = null }) => {
     }
   };
 
+  const checkMentorActiveProject = async () => {
+    try {
+      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+      const token = localStorage.getItem("access_token");
+
+      const response = await fetch(`${apiUrl}/mentor/active-project-status`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        setMentorStatus({
+          hasActiveProject: data.hasActiveProject,
+          isRestricted: data.hasActiveProject,
+          activeProjectId: data.activeProjectId,
+        });
+      }
+    } catch (error) {
+      console.error("Error checking mentor status:", error);
+    }
+  };
+
   return (
     <>
       {/* Project Card */}
@@ -152,10 +223,13 @@ const ShortProjectView = ({ project, onApply = null }) => {
         <div className="relative h-48 overflow-hidden">
           <img
             src={
-              project.thumbnail ||
-              `${
-                import.meta.env.VITE_API_URL
-              }/uploads/public/default-project.jpg`
+              project.thumbnail
+                ? project.thumbnail.startsWith("/uploads/")
+                  ? `${import.meta.env.VITE_API_URL}${project.thumbnail}`
+                  : project.thumbnail
+                : `${
+                    import.meta.env.VITE_API_URL
+                  }/uploads/public/default-project.jpg`
             }
             alt={project.name}
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
@@ -172,6 +246,15 @@ const ShortProjectView = ({ project, onApply = null }) => {
               {formatPrice(project.openingPrice)}
             </div>
           </div>
+
+          {/* Closing Price Badge */}
+          {project.closingPrice && (
+            <div className="absolute top-16 right-4">
+              <div className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-2 py-1 rounded-full text-xs font-bold">
+                Price Set
+              </div>
+            </div>
+          )}
 
           {/* Difficulty Badge */}
           <div className="absolute top-4 left-4">
@@ -223,9 +306,17 @@ const ShortProjectView = ({ project, onApply = null }) => {
                 <div className="w-10 h-10 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center text-white font-semibold text-sm overflow-hidden">
                   {project.learner.avatar ? (
                     <img
-                      src={`${import.meta.env.VITE_API_URL}${
+                      src={
                         project?.learner?.avatar
-                      }`}
+                          ? project.learner.avatar.startsWith("/uploads/")
+                            ? `${import.meta.env.VITE_API_URL}${
+                                project.learner.avatar
+                              }`
+                            : project.learner.avatar
+                          : `${
+                              import.meta.env.VITE_API_URL
+                            }/uploads/public/default.jpg`
+                      }
                       alt={project.learner.name}
                       className="w-full h-full object-cover"
                     />
@@ -320,7 +411,7 @@ const ShortProjectView = ({ project, onApply = null }) => {
                 </span>
               </div>
               <p className="text-sm text-white font-semibold">
-                {project.applicationsCount || 0}
+                {project.pitches?.length || 0}
               </p>
             </div>
 
@@ -377,19 +468,41 @@ const ShortProjectView = ({ project, onApply = null }) => {
             </div>
 
             {/* Apply Button */}
-            <button
-              onClick={handleApplyClick}
-              disabled={hasApplied}
-              className={`px-3 sm:px-4 py-2 rounded-xl font-medium transition-all transform hover:scale-105 shadow-lg w-full sm:w-auto ${
-                hasApplied
-                  ? "bg-green-500/20 text-green-300 border border-green-400/30 cursor-not-allowed"
-                  : "bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white hover:shadow-emerald-500/25"
-              }`}
-            >
-              <span className="text-xs sm:text-sm">
-                {hasApplied ? "Applied" : "Apply"}
-              </span>
-            </button>
+            <div className="relative group">
+              <button
+                onClick={handleApplyClick}
+                disabled={hasAppliedForProject || mentorStatus.isRestricted}
+                title={
+                  hasAppliedForProject
+                    ? "You already applied to this project"
+                    : mentorStatus.isRestricted
+                    ? "One project is in progress"
+                    : "Apply to this project"
+                }
+                className={`px-3 sm:px-4 py-2 rounded-xl font-medium transition-all transform hover:scale-105 shadow-lg w-full sm:w-auto ${
+                  hasAppliedForProject
+                    ? "bg-blue-500/20 text-blue-300 border border-blue-400/30 cursor-not-allowed"
+                    : mentorStatus.isRestricted
+                    ? "bg-gray-600 text-gray-400 cursor-not-allowed"
+                    : "bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white hover:shadow-emerald-500/25"
+                }`}
+              >
+                <span className="text-xs sm:text-sm">
+                  {hasAppliedForProject
+                    ? "Already Applied"
+                    : mentorStatus.isRestricted
+                    ? "Restricted"
+                    : "Apply"}
+                </span>
+              </button>
+              {(mentorStatus.isRestricted || hasAppliedForProject) && (
+                <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 bg-gray-800 text-white text-xs px-2 py-1 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                  {hasAppliedForProject
+                    ? "You already applied to this project"
+                    : "One project is in progress"}
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
