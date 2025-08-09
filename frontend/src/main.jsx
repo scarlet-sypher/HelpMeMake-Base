@@ -25,6 +25,7 @@ import MentorSetting from "./pages/mentor/MentorSetting";
 import MentorProjectPage from "./pages/mentor/MentorProjectPage";
 import MentorDetailedProjectView from "./pages/mentor/MentorDetailedProjectView";
 import UserProfileView from "./components/mentor/mentorProject/UserProfileView";
+import MyMentor from "./pages/user/MyMentor";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
@@ -195,7 +196,15 @@ ReactDOM.createRoot(document.getElementById("root")).render(
             </ProtectedRoute>
           }
         />{" "}
-        {/* Optional: for users viewing other users Future use if needed */}
+        {/* for users viewing other users Future use if needed */}
+        <Route
+          path="/user/mentor"
+          element={
+            <ProtectedRoute requiredRole="user">
+              <MyMentor />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>
