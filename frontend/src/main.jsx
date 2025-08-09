@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
 
 import App from "./App";
 import Login from "./pages/auth/Login";
@@ -26,6 +27,7 @@ import MentorProjectPage from "./pages/mentor/MentorProjectPage";
 import MentorDetailedProjectView from "./pages/mentor/MentorDetailedProjectView";
 import UserProfileView from "./components/mentor/mentorProject/UserProfileView";
 import MyMentor from "./pages/user/MyMentor";
+import MyApprentice from "./pages/mentor/MyApprentice";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
@@ -188,6 +190,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
             </ProtectedRoute>
           }
         />
+        {/* for users viewing other users Future use if needed */}
         <Route
           path="/user/profile/:userId"
           element={
@@ -196,7 +199,6 @@ ReactDOM.createRoot(document.getElementById("root")).render(
             </ProtectedRoute>
           }
         />{" "}
-        {/* for users viewing other users Future use if needed */}
         <Route
           path="/user/mentor"
           element={
@@ -207,5 +209,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         />
       </Routes>
     </BrowserRouter>
+
+    <Toaster position="top-right" reverseOrder={false} />
   </React.StrictMode>
 );
