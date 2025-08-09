@@ -24,6 +24,7 @@ import MilestonePage from "./pages/user/MilestonePage";
 import MentorSetting from "./pages/mentor/MentorSetting";
 import MentorProjectPage from "./pages/mentor/MentorProjectPage";
 import MentorDetailedProjectView from "./pages/mentor/MentorDetailedProjectView";
+import UserProfileView from "./components/mentor/mentorProject/UserProfileView";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
@@ -35,7 +36,6 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         <Route path="/verify-otp" element={<VerifyOTP />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/select-role" element={<SelectRole />} />
-
         {/* Protected User Routes */}
         <Route
           path="/userdashboard"
@@ -45,7 +45,6 @@ ReactDOM.createRoot(document.getElementById("root")).render(
             </ProtectedRoute>
           }
         />
-
         <Route
           path="/milestone-page"
           element={
@@ -54,7 +53,6 @@ ReactDOM.createRoot(document.getElementById("root")).render(
             </ProtectedRoute>
           }
         />
-
         <Route
           path="/user/settings"
           element={
@@ -63,7 +61,6 @@ ReactDOM.createRoot(document.getElementById("root")).render(
             </ProtectedRoute>
           }
         />
-
         {/* ✅ Projects Routes */}
         <Route
           path="/user/projects"
@@ -73,7 +70,6 @@ ReactDOM.createRoot(document.getElementById("root")).render(
             </ProtectedRoute>
           }
         />
-
         <Route
           path="/user/projects/create"
           element={
@@ -82,7 +78,6 @@ ReactDOM.createRoot(document.getElementById("root")).render(
             </ProtectedRoute>
           }
         />
-
         {/* ✅ Add other user routes as you build them */}
         <Route
           path="/user/sessions"
@@ -92,7 +87,6 @@ ReactDOM.createRoot(document.getElementById("root")).render(
             </ProtectedRoute>
           }
         />
-
         <Route
           path="/user/messages"
           element={
@@ -101,7 +95,6 @@ ReactDOM.createRoot(document.getElementById("root")).render(
             </ProtectedRoute>
           }
         />
-
         {/* ✅ NEW: Achievements Page Route */}
         <Route
           path="/user/achievements"
@@ -111,7 +104,6 @@ ReactDOM.createRoot(document.getElementById("root")).render(
             </ProtectedRoute>
           }
         />
-
         <Route
           path="/user/analytics"
           element={
@@ -120,9 +112,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
             </ProtectedRoute>
           }
         />
-
         {/* <Route path="/mentordashboard" element={<MentorDashboard />} /> */}
-
         {/* Admin Routes */}
         <Route
           path="/admindashboard"
@@ -132,7 +122,6 @@ ReactDOM.createRoot(document.getElementById("root")).render(
             </ProtectedRoute>
           }
         />
-
         <Route
           path="/projects/edit/:id"
           element={
@@ -141,7 +130,6 @@ ReactDOM.createRoot(document.getElementById("root")).render(
             </ProtectedRoute>
           }
         />
-
         <Route
           path="/projects/:id"
           element={
@@ -150,7 +138,6 @@ ReactDOM.createRoot(document.getElementById("root")).render(
             </ProtectedRoute>
           }
         />
-
         <Route
           path="/user/mentors/:mentorId/ai-reason"
           element={
@@ -159,7 +146,6 @@ ReactDOM.createRoot(document.getElementById("root")).render(
             </ProtectedRoute>
           }
         />
-
         {/* Mentor Routes */}
         <Route
           path="/mentordashboard"
@@ -169,7 +155,6 @@ ReactDOM.createRoot(document.getElementById("root")).render(
             </ProtectedRoute>
           }
         />
-
         <Route
           path="/mentor/settings"
           element={
@@ -178,7 +163,6 @@ ReactDOM.createRoot(document.getElementById("root")).render(
             </ProtectedRoute>
           }
         />
-
         <Route
           path="/mentor/projects"
           element={
@@ -187,7 +171,6 @@ ReactDOM.createRoot(document.getElementById("root")).render(
             </ProtectedRoute>
           }
         />
-
         <Route
           path="/mentor/project/:id"
           element={
@@ -196,6 +179,23 @@ ReactDOM.createRoot(document.getElementById("root")).render(
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/mentor/user/:userId"
+          element={
+            <ProtectedRoute requiredRole="mentor">
+              <UserProfileView />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/user/profile/:userId"
+          element={
+            <ProtectedRoute requiredRole="mentor">
+              <UserProfileView />
+            </ProtectedRoute>
+          }
+        />{" "}
+        {/* Optional: for users viewing other users Future use if needed */}
       </Routes>
     </BrowserRouter>
   </React.StrictMode>

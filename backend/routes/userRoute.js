@@ -1,66 +1,70 @@
-const express = require('express');
-const { requireUser } = require('../middleware/roleAuth');
-const { 
-  getUserData, 
-  updateProfile, 
-  updateSocialLinks, 
-  changePassword, 
+const express = require("express");
+const { requireUser, requireUserOrMentor } = require("../middleware/roleAuth");
+const mongoose = require("mongoose");
+const {
+  getUserData,
+  updateProfile,
+  updateSocialLinks,
+  changePassword,
   uploadAvatar,
-  sendProfileOTP,      // Add this new function
-  verifyProfileUpdate  // Add this new function
-} = require('../controller/userController');
+  sendProfileOTP,
+  verifyProfileUpdate,
+  getUserById,
+} = require("../controller/userController");
 const router = express.Router();
 
-// All routes in this file require 'user' role
-router.use(requireUser);
+// ------------------------
+// STATIC ROUTES FIRST (BEFORE DYNAMIC ROUTES)
+// ------------------------
 
-// Get current user's full profile data
-router.get('/data', getUserData);
+// USER-ONLY ROUTES - Apply requireUser middleware to specific routes
+// Get current user's full profile data (USER ONLY)
+router.get("/data", requireUser, getUserData);
 
-// EXISTING routes - keep as they are for backward compatibility
-router.patch('/update-profile', updateProfile);
-router.patch('/social-links', updateSocialLinks);
-router.patch('/change-password', changePassword);
-router.patch('/upload-avatar', uploadAvatar);
-
-// NEW OTP-related routes for profile verification
-router.post('/send-profile-otp', sendProfileOTP);
-router.patch('/verify-profile-update', verifyProfileUpdate);
-
-// User Dashboard
-router.get('/dashboard', (req, res) => {
+// User Dashboard (USER ONLY)
+router.get("/dashboard", requireUser, (req, res) => {
   res.json({
     success: true,
-    message: 'Welcome to User Dashboard!',
+    message: "Welcome to User Dashboard!",
     user: {
       id: req.user._id,
       name: req.user.name,
       email: req.user.email,
-      role: req.user.role
-    }
+      role: req.user.role,
+    },
   });
 });
 
-// User Profile
-router.get('/profile', (req, res) => {
+// User Profile (USER ONLY)
+router.get("/profile", requireUser, (req, res) => {
   res.json({
     success: true,
-    user: req.user
+    user: req.user,
   });
 });
 
-// Update User Profile (alternative endpoint - keep for compatibility)
-router.patch('/profile', async (req, res) => {
+// PROFILE MANAGEMENT ROUTES (USER ONLY)
+router.patch("/update-profile", requireUser, updateProfile);
+router.patch("/social-links", requireUser, updateSocialLinks);
+router.patch("/change-password", requireUser, changePassword);
+router.patch("/upload-avatar", requireUser, uploadAvatar);
+
+// OTP-related routes for profile verification (USER ONLY)
+router.post("/send-profile-otp", requireUser, sendProfileOTP);
+router.patch("/verify-profile-update", requireUser, verifyProfileUpdate);
+
+// Update User Profile - alternative endpoint (USER ONLY)
+router.patch("/profile", requireUser, async (req, res) => {
   try {
     const { name, title, description, location, socialLinks } = req.body;
-    const User = require('../Model/User');
-    const Learner = require('../Model/Learner');
-    
+    const User = require("../Model/User");
+    const Learner = require("../Model/Learner");
+
     // Update user basic info
     const updatedUser = await User.findByIdAndUpdate(
       req.user._id,
       { name },
-      { new: true, select: '-password' }
+      { new: true, select: "-password" }
     );
 
     // Update learner-specific info
@@ -69,25 +73,39 @@ router.patch('/profile', async (req, res) => {
       { title, description, location, socialLinks },
       { new: true, upsert: true } // upsert creates if doesn't exist
     );
-    
+
     // Combine data
     const combinedData = {
       ...updatedUser.toObject(),
-      ...updatedLearner.toObject()
+      ...updatedLearner.toObject(),
     };
-    
+
     res.json({
       success: true,
-      message: 'Profile updated successfully',
-      user: combinedData
+      message: "Profile updated successfully",
+      user: combinedData,
     });
   } catch (error) {
-    console.error('Profile update error:', error);
+    console.error("Profile update error:", error);
     res.status(500).json({
       success: false,
-      message: 'Failed to update profile'
+      message: "Failed to update profile",
     });
   }
+});
+
+// ------------------------
+// DYNAMIC ROUTES LAST - CROSS-ROLE ACCESS
+// ------------------------
+
+// Get user by ID - Allow both users and mentors to view other users
+router.get("/:userId", requireUserOrMentor, async (req, res, next) => {
+  const { userId } = req.params;
+  // Validate ObjectId to avoid CastError
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
+    return res.status(400).json({ success: false, message: "Invalid user ID" });
+  }
+  return getUserById(req, res, next);
 });
 
 module.exports = router;

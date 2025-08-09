@@ -201,6 +201,12 @@ const MentorDetailedProjectView = () => {
   const handleShowUserProfile = () => {
     if (project?.learner?.userId?._id) {
       navigate(`/mentor/user/${project.learner.userId._id}`);
+    } else if (project?.learner?.userId) {
+      // Handle case where userId is a string directly
+      navigate(`/mentor/user/${project.learner.userId}`);
+    } else {
+      // Show user-friendly error instead of console.error
+      alert("Unable to view profile - user information not available");
     }
   };
 

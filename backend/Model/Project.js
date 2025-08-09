@@ -610,6 +610,31 @@ projectSchema.methods.acceptApplication = function (applicationId) {
   return this.save();
 };
 
+projectSchema.virtual("learner", {
+  ref: "User",
+  localField: "learnerId",
+  foreignField: "_id",
+  justOne: true,
+});
+
+// Make sure virtual fields are included in JSON
+projectSchema.set("toJSON", {
+  virtuals: true,
+  transform: function (doc, ret) {
+    delete ret.__v;
+    return ret;
+  },
+});
+
+async function getProjects(req, res) {
+  try {
+    const projects = await Project.find().populate("learner").exec();
+    res.json(projects);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+}
+
 projectSchema.methods.addOrUpdatePitch = function (mentorUserId, price, note) {
   // Check if mentor already pitched (use mentor's User ID, not Mentor profile ID)
   const existingPitchIndex = this.pitches.findIndex(

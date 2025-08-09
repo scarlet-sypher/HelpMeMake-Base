@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Eye,
   User,
@@ -18,15 +19,21 @@ import {
 
 const ShortProjectView = ({ project, onApply = null }) => {
   //   console.log("Learner avatar:", project?.learner?.avatar);
+
+  console.log("Full project data in ShortProjectView:", project);
+
+  const navigate = useNavigate();
   const [isApplying, setIsApplying] = useState(false);
   const [hasApplied, setHasApplied] = useState(project.hasApplied || false);
+  const [hasAppliedForProject, setHasAppliedForProject] = useState(false);
   const [showApplicationModal, setShowApplicationModal] = useState(false);
   const [applicationData, setApplicationData] = useState({
     proposedPrice: "",
     coverLetter: "",
     estimatedDuration: "",
   });
-  const [hasAppliedForProject, setHasAppliedForProject] = useState(false);
+
+  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
   const [mentorStatus, setMentorStatus] = useState({
     hasActiveProject: false,
@@ -113,14 +120,6 @@ const ShortProjectView = ({ project, onApply = null }) => {
 
   const handleViewProject = () => {
     window.location.href = `/mentor/project/${project._id}`;
-  };
-
-  const handleViewProfile = () => {
-    if (project.learner?.userId) {
-      window.location.href = `/mentor/user/${project.learner.userId}`;
-    } else {
-      console.error("User ID not found for this project learner");
-    }
   };
 
   const handleApplyClick = () => {
@@ -454,54 +453,42 @@ const ShortProjectView = ({ project, onApply = null }) => {
                 <span className="text-xs sm:text-sm">View Project</span>
               </button>
 
-              {/* View Profile Button */}
-              <button
-                onClick={handleViewProfile}
-                className="group/btn flex items-center justify-center space-x-2 px-3 sm:px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-xl font-medium transition-all transform hover:scale-105 shadow-lg hover:shadow-purple-500/25"
-              >
-                <User
-                  size={16}
-                  className="group-hover/btn:rotate-12 transition-transform"
-                />
-                <span className="text-xs sm:text-sm">View Profile</span>
-              </button>
-            </div>
-
-            {/* Apply Button */}
-            <div className="relative group">
-              <button
-                onClick={handleApplyClick}
-                disabled={hasAppliedForProject || mentorStatus.isRestricted}
-                title={
-                  hasAppliedForProject
-                    ? "You already applied to this project"
-                    : mentorStatus.isRestricted
-                    ? "One project is in progress"
-                    : "Apply to this project"
-                }
-                className={`px-3 sm:px-4 py-2 rounded-xl font-medium transition-all transform hover:scale-105 shadow-lg w-full sm:w-auto ${
-                  hasAppliedForProject
-                    ? "bg-blue-500/20 text-blue-300 border border-blue-400/30 cursor-not-allowed"
-                    : mentorStatus.isRestricted
-                    ? "bg-gray-600 text-gray-400 cursor-not-allowed"
-                    : "bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white hover:shadow-emerald-500/25"
-                }`}
-              >
-                <span className="text-xs sm:text-sm">
-                  {hasAppliedForProject
-                    ? "Already Applied"
-                    : mentorStatus.isRestricted
-                    ? "Restricted"
-                    : "Apply"}
-                </span>
-              </button>
-              {(mentorStatus.isRestricted || hasAppliedForProject) && (
-                <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 bg-gray-800 text-white text-xs px-2 py-1 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-                  {hasAppliedForProject
-                    ? "You already applied to this project"
-                    : "One project is in progress"}
-                </div>
-              )}
+              {/* Apply Button */}
+              <div className="relative group">
+                <button
+                  onClick={handleApplyClick}
+                  disabled={hasAppliedForProject || mentorStatus.isRestricted}
+                  title={
+                    hasAppliedForProject
+                      ? "You already applied to this project"
+                      : mentorStatus.isRestricted
+                      ? "One project is in progress"
+                      : "Apply to this project"
+                  }
+                  className={`px-3 sm:px-4 py-2 rounded-xl font-medium transition-all transform hover:scale-105 shadow-lg w-full sm:w-auto ${
+                    hasAppliedForProject
+                      ? "bg-blue-500/20 text-blue-300 border border-blue-400/30 cursor-not-allowed"
+                      : mentorStatus.isRestricted
+                      ? "bg-gray-600 text-gray-400 cursor-not-allowed"
+                      : "bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white hover:shadow-emerald-500/25"
+                  }`}
+                >
+                  <span className="text-xs sm:text-sm">
+                    {hasAppliedForProject
+                      ? "Already Applied"
+                      : mentorStatus.isRestricted
+                      ? "Restricted"
+                      : "Apply"}
+                  </span>
+                </button>
+                {(mentorStatus.isRestricted || hasAppliedForProject) && (
+                  <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 bg-gray-800 text-white text-xs px-2 py-1 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                    {hasAppliedForProject
+                      ? "You already applied to this project"
+                      : "One project is in progress"}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
