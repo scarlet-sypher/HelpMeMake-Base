@@ -16,6 +16,7 @@ const projectRoutes = require("./routes/projectRoute");
 const aiRoutes = require("./routes/aiRoute");
 const milestoneRoutes = require("./routes/milestoneRoute");
 const achievementRoutes = require("./routes/achievementRoute");
+const syncRoutes = require("./routes/syncRoute");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -99,6 +100,7 @@ app.use("/api/project", projectRoutes);
 app.use("/api/ai", aiRoutes);
 app.use("/api/milestone", milestoneRoutes);
 app.use("/api/achievements", achievementRoutes);
+app.use("/api/sync", syncRoutes);
 
 // Health check endpoint
 app.get("/health", (req, res) => {

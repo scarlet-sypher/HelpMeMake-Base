@@ -82,7 +82,7 @@ const createProject = async (req, res) => {
       });
     }
 
-    // Create project
+    // Create project with new fields initialized
     const projectData = {
       name: name.trim(),
       shortDescription: shortDescription.trim(),
@@ -113,6 +113,30 @@ const createProject = async (req, res) => {
       references: references || [],
       learnerId: learner._id, // Use learner's ObjectId, not user's
       isVisible: true,
+
+      // ✅ NEW FIELDS - Initialize with default values
+      // Expected End Date Management
+      tempExpectedEndDate: null,
+      isTempEndDateConfirmed: false,
+
+      // Progress History (empty array initially)
+      progressHistory: [],
+
+      // Completion Request (undefined initially - will be set when needed)
+      // completionRequest: undefined,
+
+      // Reviews (undefined initially - will be set after completion)
+      learnerReview: undefined,
+      mentorReview: undefined,
+
+      // Additional Project Tracking
+      lastProgressUpdate: null,
+      nextMilestoneDate: null,
+      isOverdue: false,
+      overduedays: 0,
+
+      // Initialize progress percentage to 0
+      progressPercentage: 0,
     };
 
     const newProject = new Project(projectData);

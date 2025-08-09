@@ -379,6 +379,183 @@ const projectSchema = new mongoose.Schema(
       default: false,
     },
 
+    // Expected End Date Management
+    tempExpectedEndDate: {
+      type: Date,
+      default: null,
+    },
+    isTempEndDateConfirmed: {
+      type: Boolean,
+      default: false,
+    },
+
+    // Progress History Tracking
+    progressHistory: [
+      {
+        percentage: {
+          type: Number,
+          required: true,
+          min: 0,
+          max: 100,
+        },
+        note: {
+          type: String,
+          trim: true,
+          maxlength: 1000,
+        },
+        date: {
+          type: Date,
+          default: Date.now,
+        },
+        updatedBy: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+          required: true,
+        },
+      },
+    ],
+
+    // Completion Request Management
+    completionRequest: {
+      from: {
+        type: String,
+        enum: ["learner", "mentor"],
+        required: false,
+      },
+      type: {
+        type: String,
+        enum: ["complete", "cancel"],
+        required: false,
+      },
+      status: {
+        type: String,
+        enum: ["pending", "approved", "rejected"],
+        default: "pending",
+      },
+      requestedAt: {
+        type: Date,
+        default: Date.now,
+      },
+      requestedBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        required: false,
+      },
+      approvedAt: Date,
+      rejectedAt: Date,
+      mentorNotes: {
+        type: String,
+        trim: true,
+        maxlength: 500,
+      },
+      learnerNotes: {
+        type: String,
+        trim: true,
+        maxlength: 500,
+      },
+    },
+
+    // Enhanced Review System
+    learnerReview: {
+      rating: {
+        type: Number,
+        min: 1,
+        max: 5,
+      },
+      comment: {
+        type: String,
+        trim: true,
+        maxlength: 1000,
+      },
+      reviewDate: Date,
+      breakdown: {
+        technicalSkills: {
+          type: Number,
+          min: 1,
+          max: 5,
+        },
+        communication: {
+          type: Number,
+          min: 1,
+          max: 5,
+        },
+        helpfulness: {
+          type: Number,
+          min: 1,
+          max: 5,
+        },
+        professionalism: {
+          type: Number,
+          min: 1,
+          max: 5,
+        },
+        overallExperience: {
+          type: Number,
+          min: 1,
+          max: 5,
+        },
+      },
+    },
+
+    mentorReview: {
+      rating: {
+        type: Number,
+        min: 1,
+        max: 5,
+      },
+      comment: {
+        type: String,
+        trim: true,
+        maxlength: 1000,
+      },
+      reviewDate: Date,
+      breakdown: {
+        communication: {
+          type: Number,
+          min: 1,
+          max: 5,
+        },
+        commitment: {
+          type: Number,
+          min: 1,
+          max: 5,
+        },
+        learningAttitude: {
+          type: Number,
+          min: 1,
+          max: 5,
+        },
+        responsiveness: {
+          type: Number,
+          min: 1,
+          max: 5,
+        },
+        overallExperience: {
+          type: Number,
+          min: 1,
+          max: 5,
+        },
+      },
+    },
+
+    // Additional Project Tracking
+    lastProgressUpdate: {
+      type: Date,
+      default: null,
+    },
+    nextMilestoneDate: {
+      type: Date,
+      default: null,
+    },
+    // isOverdue: {
+    //   type: Boolean,
+    //   default: false,
+    // },
+    overduedays: {
+      type: Number,
+      default: 0,
+    },
+
     // Applications from mentors
     applications: [
       {
@@ -436,6 +613,13 @@ projectSchema.index({ hasUnreadPitch: 1 });
 projectSchema.index({ status: 1, category: 1 });
 projectSchema.index({ learnerId: 1, status: 1 });
 projectSchema.index({ mentorId: 1, status: 1 });
+
+// Indexes for better performance
+projectSchema.index({ "completionRequest.status": 1 });
+projectSchema.index({ tempExpectedEndDate: 1 });
+projectSchema.index({ lastProgressUpdate: -1 });
+projectSchema.index({ isOverdue: 1 });
+projectSchema.index({ "progressHistory.date": -1 });
 
 // Virtual for calculating project age
 projectSchema.virtual("projectAge").get(function () {
@@ -682,6 +866,70 @@ projectSchema.set("toJSON", {
     delete ret.__v;
     return ret;
   },
+});
+
+// Method to add progress update
+projectSchema.methods.addProgressUpdate = function (
+  percentage,
+  note,
+  updatedBy
+) {
+  this.progressHistory.push({
+    percentage,
+    note,
+    date: new Date(),
+    updatedBy,
+  });
+
+  this.progressPercentage = percentage;
+  this.lastProgressUpdate = new Date();
+
+  return this.save();
+};
+
+// Method to check if project is overdue
+projectSchema.methods.checkOverdue = function () {
+  if (this.expectedEndDate && this.status === "In Progress") {
+    const now = new Date();
+    if (now > this.expectedEndDate) {
+      this.isOverdue = true;
+      this.overduedays = Math.ceil(
+        (now - this.expectedEndDate) / (1000 * 60 * 60 * 24)
+      );
+    } else {
+      this.isOverdue = false;
+      this.overduedays = 0;
+    }
+  }
+  return this.isOverdue;
+};
+
+// Static method to get overdue projects
+projectSchema.statics.getOverdueProjects = function () {
+  return this.find({
+    status: "In Progress",
+    expectedEndDate: { $lt: new Date() },
+  }).populate("learnerId mentorId");
+};
+
+// Virtual for days until deadline
+projectSchema.virtual("daysUntilDeadline").get(function () {
+  if (!this.expectedEndDate || this.status !== "In Progress") return null;
+
+  const now = new Date();
+  const deadline = new Date(this.expectedEndDate);
+  const diffTime = deadline - now;
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+  return diffDays;
+});
+
+// Pre-save middleware to check overdue status
+projectSchema.pre("save", function (next) {
+  if (this.isModified("expectedEndDate") || this.isNew) {
+    this.checkOverdue();
+  }
+  next();
 });
 
 module.exports = mongoose.model("Project", projectSchema);
