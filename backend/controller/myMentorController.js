@@ -6,6 +6,7 @@ const Project = require("../Model/Project");
 const User = require("../Model/User");
 const Learner = require("../Model/Learner");
 const Mentor = require("../Model/Mentor");
+const { finalizeProjectCompletion } = require("./completionController");
 
 // Get mentor project data for user
 const getMentorProjectData = async (req, res) => {
@@ -25,7 +26,7 @@ const getMentorProjectData = async (req, res) => {
     const project = await Project.findOne({
       learnerId: learner._id,
       mentorId: { $exists: true, $ne: null },
-      status: { $in: ["In Progress", "Completed", "Cancelled"] },
+      status: "In Progress",
     })
       .populate("learnerId", "name email avatar")
       .populate({
@@ -406,6 +407,8 @@ const submitMentorReview = async (req, res) => {
         await mentorProfile.save();
       }
     }
+
+    await finalizeProjectCompletion(projectId);
 
     res.json({
       success: true,

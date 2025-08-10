@@ -208,12 +208,21 @@ const CompleteCancelBox = ({ projectData, onUpdate }) => {
             <p className="text-green-200 mb-6">
               Please rate your mentor to help future learners
             </p>
-            <button
-              onClick={() => setShowReviewModal(true)}
-              className="px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white rounded-xl font-semibold transition-all transform hover:scale-105 shadow-lg"
-            >
-              Rate Mentor
-            </button>
+            {projectData?.learnerReview?.rating ? (
+              <div className="bg-green-900/20 rounded-lg p-4 border border-green-600/30 text-center">
+                <p className="text-green-300 font-medium">✓ Review Submitted</p>
+                <p className="text-green-200 text-sm mt-1">
+                  Thank you for your feedback!
+                </p>
+              </div>
+            ) : (
+              <button
+                onClick={() => setShowReviewModal(true)}
+                className="px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white rounded-xl font-semibold transition-all transform hover:scale-105 shadow-lg"
+              >
+                Rate Mentor
+              </button>
+            )}
           </div>
         </div>
 

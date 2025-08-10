@@ -26,7 +26,7 @@ const getApprenticeProjectData = async (req, res) => {
     // ✅ Find project where this mentor is assigned (using mentor profile ID)
     const project = await Project.findOne({
       mentorId: mentor._id, // ✅ CORRECT - using mentor profile ID
-      status: { $in: ["In Progress", "Completed", "Cancelled"] },
+      status: "In Progress",
     })
       .populate({
         path: "learnerId",
