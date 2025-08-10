@@ -122,8 +122,18 @@ const createProject = async (req, res) => {
       // Progress History (empty array initially)
       progressHistory: [],
 
-      // Completion Request (undefined initially - will be set when needed)
-      // completionRequest: undefined,
+      // Completion Request (null initially - will be set when needed)
+      completionRequest: {
+        from: null,
+        type: null,
+        status: null,
+        requestedAt: null,
+        requestedBy: null,
+        approvedAt: null,
+        rejectedAt: null,
+        mentorNotes: null,
+        learnerNotes: null,
+      },
 
       // Reviews (undefined initially - will be set after completion)
       learnerReview: undefined,

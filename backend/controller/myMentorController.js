@@ -1,3 +1,7 @@
+//===================================================================
+//=====================This is learner (myMentorController)============
+//===================================================================
+
 const Project = require("../Model/Project");
 const User = require("../Model/User");
 const Learner = require("../Model/Learner");
@@ -17,16 +21,22 @@ const getMentorProjectData = async (req, res) => {
       });
     }
 
-    // ✅ Updated query with lean() for better performance
+    // ✅ Updated query with proper population
     const project = await Project.findOne({
       learnerId: learner._id,
       mentorId: { $exists: true, $ne: null },
       status: { $in: ["In Progress", "Completed", "Cancelled"] },
     })
       .populate("learnerId", "name email avatar")
-      .populate("mentorId", "name email avatar role")
+      .populate({
+        path: "mentorId",
+        populate: {
+          path: "userId",
+          select: "name email avatar role",
+        },
+      })
       .sort({ updatedAt: -1 })
-      .lean(); // ✅ This returns plain JS objects, no .toObject() needed
+      .lean();
 
     if (!project) {
       return res.status(404).json({
@@ -35,15 +45,10 @@ const getMentorProjectData = async (req, res) => {
       });
     }
 
-    // Get mentor profile data
-    const mentorProfile = await Mentor.findOne({
-      userId: project.mentorId._id,
-    }).lean(); // ✅ Also use lean here
-
-    // ✅ Simple object spreading since everything is plain JS objects now
+    // ✅ Combine mentor data (user info + profile info)
     const mentorData = {
+      ...project.mentorId.userId,
       ...project.mentorId,
-      ...mentorProfile,
     };
 
     res.json({
@@ -76,7 +81,7 @@ const confirmExpectedEndDate = async (req, res) => {
 
     const project = await Project.findOne({
       _id: projectId,
-      learnerId: learner._id, // ✅ Correct
+      learnerId: learner._id,
     });
 
     if (!project) {
@@ -130,7 +135,7 @@ const getProgressHistory = async (req, res) => {
 
     const project = await Project.findOne({
       _id: projectId,
-      learnerId: learner._id, // ✅ Correct
+      learnerId: learner._id,
     });
 
     if (!project) {
@@ -159,16 +164,102 @@ const getProgressHistory = async (req, res) => {
 
 // Send completion/cancellation request
 const sendCompletionRequest = async (req, res) => {
+  console.log("=== this is sendCompletionRequest debugging line ====");
+
   try {
-    const { projectId, type } = req.body; // type: 'complete' or 'cancel'
-    const userId = req.user._id;
+    console.log("Request body:", req.body);
+    console.log("req.user object:", req.user);
+
+    const { projectId, type } = req.body;
+    const userId = req.user?._id;
+    console.log("Extracted projectId:", projectId);
+    console.log("Extracted type:", type);
+    console.log("Extracted userId from req.user:", userId);
 
     if (!["complete", "cancel"].includes(type)) {
+      console.log("Invalid request type detected:", type);
       return res.status(400).json({
         success: false,
         message: "Invalid request type",
       });
     }
+
+    const learner = await Learner.findOne({ userId: userId });
+    console.log("Learner found:", learner);
+
+    if (!learner) {
+      console.log("No learner profile found for userId:", userId);
+      return res.status(404).json({
+        success: false,
+        message: "Learner profile not found",
+      });
+    }
+
+    const project = await Project.findOne({
+      _id: projectId,
+      learnerId: learner._id,
+      status: "In Progress",
+    });
+    console.log("Project found:", project);
+
+    if (!project) {
+      console.log(
+        `No active project found for projectId: ${projectId}, learnerId: ${learner._id}`
+      );
+      return res.status(404).json({
+        success: false,
+        message: "Active project not found",
+      });
+    }
+
+    if (project.completionRequest?.status === "pending") {
+      console.log(
+        "Pending completion request already exists:",
+        project.completionRequest
+      );
+      return res.status(400).json({
+        success: false,
+        message: "There is already a pending request for this project",
+      });
+    }
+
+    project.completionRequest = {
+      from: "learner",
+      type: type,
+      status: "pending",
+      requestedAt: new Date(),
+      requestedBy: userId,
+    };
+    console.log(
+      "Updated project.completionRequest:",
+      project.completionRequest
+    );
+
+    await project.save();
+    console.log("Project saved successfully with completion request");
+
+    res.json({
+      success: true,
+      message: `${
+        type === "complete" ? "Completion" : "Cancellation"
+      } request sent to mentor`,
+      project: project,
+    });
+  } catch (error) {
+    console.error("Error in sendCompletionRequest:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to send completion request",
+      error: error.message,
+    });
+  }
+};
+
+// ✅ NEW: Handle mentor response to learner's request
+const handleMentorResponse = async (req, res) => {
+  try {
+    const { requestId, response, mentorNotes } = req.body; // response: 'approve' or 'reject'
+    const userId = req.user._id;
 
     const learner = await Learner.findOne({ userId: userId });
     if (!learner) {
@@ -179,52 +270,49 @@ const sendCompletionRequest = async (req, res) => {
     }
 
     const project = await Project.findOne({
-      _id: projectId,
-      learnerId: learner._id, // ✅ Correct
-      status: "In Progress",
+      _id: requestId,
+      learnerId: learner._id,
+      "completionRequest.status": "pending",
     });
 
     if (!project) {
       return res.status(404).json({
         success: false,
-        message: "Active project not found",
+        message: "Pending request not found",
       });
     }
 
-    // Check if there's already a pending request
-    if (
-      project.completionRequest &&
-      project.completionRequest.status === "pending"
-    ) {
-      return res.status(400).json({
-        success: false,
-        message: "There is already a pending request for this project",
-      });
-    }
+    if (response === "approve") {
+      // Update project status based on request type
+      if (project.completionRequest.type === "complete") {
+        project.status = "Completed";
+        project.actualEndDate = new Date();
+      } else if (project.completionRequest.type === "cancel") {
+        project.status = "Cancelled";
+        project.actualEndDate = new Date();
+      }
 
-    // Set completion request
-    project.completionRequest = {
-      from: "learner",
-      type: type,
-      status: "pending",
-      requestedAt: new Date(),
-      requestedBy: userId,
-    };
+      project.completionRequest.status = "approved";
+      project.completionRequest.approvedAt = new Date();
+      project.completionRequest.mentorNotes = mentorNotes;
+    } else {
+      project.completionRequest.status = "rejected";
+      project.completionRequest.rejectedAt = new Date();
+      project.completionRequest.mentorNotes = mentorNotes;
+    }
 
     await project.save();
 
     res.json({
       success: true,
-      message: `${
-        type === "complete" ? "Completion" : "Cancellation"
-      } request sent to mentor`,
+      message: `Request ${response}d successfully`,
       project: project,
     });
   } catch (error) {
-    console.error("Error sending completion request:", error);
+    console.error("Error handling mentor response:", error);
     res.status(500).json({
       success: false,
-      message: "Failed to send completion request",
+      message: "Failed to handle mentor response",
     });
   }
 };
@@ -245,8 +333,8 @@ const submitMentorReview = async (req, res) => {
 
     const project = await Project.findOne({
       _id: projectId,
-      learnerId: learner._id, // ✅ Correct
-      status: "Completed",
+      learnerId: learner._id,
+      // status: "Completed",
     }).populate("mentorId");
 
     if (!project) {
@@ -297,12 +385,12 @@ const submitMentorReview = async (req, res) => {
 
     // Update mentor's overall rating
     const mentorProfile = await Mentor.findOne({
-      userId: project.mentorId._id,
+      _id: project.mentorId,
     });
     if (mentorProfile) {
       // Calculate new rating (simple average for now)
       const allProjects = await Project.find({
-        mentorId: project.mentorId._id,
+        mentorId: project.mentorId,
         "learnerReview.rating": { $exists: true },
       });
 
@@ -347,7 +435,7 @@ const getCompletionRequests = async (req, res) => {
     }
 
     const projects = await Project.find({
-      learnerId: learner._id, // ✅ Correct
+      learnerId: learner._id,
       "completionRequest.status": { $in: ["pending", "approved", "rejected"] },
     })
       .populate("mentorId", "name email avatar")
@@ -370,68 +458,6 @@ const getCompletionRequests = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Failed to fetch completion requests",
-    });
-  }
-};
-
-// Handle mentor's response to completion request (for notifications)
-const handleMentorResponse = async (req, res) => {
-  try {
-    const { requestId, response, mentorNotes } = req.body; // response: 'approve' or 'reject'
-    const userId = req.user._id;
-
-    const learner = await Learner.findOne({ userId: userId });
-    if (!learner) {
-      return res.status(404).json({
-        success: false,
-        message: "Learner profile not found",
-      });
-    }
-
-    const project = await Project.findOne({
-      _id: requestId,
-      learnerId: learner._id, // ✅ Correct
-      "completionRequest.status": "pending",
-    });
-
-    if (!project) {
-      return res.status(404).json({
-        success: false,
-        message: "Pending request not found",
-      });
-    }
-
-    if (response === "approve") {
-      // Update project status based on request type
-      if (project.completionRequest.type === "complete") {
-        project.status = "Completed";
-        project.actualEndDate = new Date();
-      } else if (project.completionRequest.type === "cancel") {
-        project.status = "Cancelled";
-        project.actualEndDate = new Date();
-      }
-
-      project.completionRequest.status = "approved";
-      project.completionRequest.approvedAt = new Date();
-      project.completionRequest.mentorNotes = mentorNotes;
-    } else {
-      project.completionRequest.status = "rejected";
-      project.completionRequest.rejectedAt = new Date();
-      project.completionRequest.mentorNotes = mentorNotes;
-    }
-
-    await project.save();
-
-    res.json({
-      success: true,
-      message: `Request ${response}d successfully`,
-      project: project,
-    });
-  } catch (error) {
-    console.error("Error handling mentor response:", error);
-    res.status(500).json({
-      success: false,
-      message: "Failed to handle mentor response",
     });
   }
 };

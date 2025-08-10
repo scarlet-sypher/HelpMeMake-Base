@@ -1,3 +1,7 @@
+//===================================================================
+//=====================This is learner complete cancel box (for my mentor page)============
+//===================================================================
+
 import React, { useState } from "react";
 import axios from "axios";
 import {
@@ -11,7 +15,7 @@ import {
 
 const CompleteCancelBox = ({ projectData, onUpdate }) => {
   const [showModal, setShowModal] = useState(false);
-  const [modalType, setModalType] = useState(null); // 'complete' or 'cancel'
+  const [modalType, setModalType] = useState(null);
   const [confirmText, setConfirmText] = useState("");
   const [loading, setLoading] = useState(false);
   const [showReviewModal, setShowReviewModal] = useState(false);
@@ -24,10 +28,18 @@ const CompleteCancelBox = ({ projectData, onUpdate }) => {
     comment: "",
   });
 
-  const isCompleteDisabled = projectData?.completionRequest?.type === "cancel";
-  const isCancelDisabled = projectData?.completionRequest?.type === "complete";
-  const completeRequested = projectData?.completionRequest?.type === "complete";
-  const cancelRequested = projectData?.completionRequest?.type === "cancel";
+  const isCompleteDisabled =
+    projectData?.completionRequest?.type === "cancel" &&
+    projectData?.completionRequest?.status === "pending";
+  const isCancelDisabled =
+    projectData?.completionRequest?.type === "complete" &&
+    projectData?.completionRequest?.status === "pending";
+  const completeRequested =
+    projectData?.completionRequest?.type === "complete" &&
+    projectData?.completionRequest?.status === "pending";
+  const cancelRequested =
+    projectData?.completionRequest?.type === "cancel" &&
+    projectData?.completionRequest?.status === "pending";
 
   const handleActionClick = (type) => {
     setModalType(type);
@@ -147,9 +159,44 @@ const CompleteCancelBox = ({ projectData, onUpdate }) => {
     ).toFixed(1);
   };
 
+  const handleMentorRequestResponse = async (response) => {
+    try {
+      setLoading(true);
+      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+      const token = localStorage.getItem("access_token");
+
+      const apiResponse = await axios.post(
+        `${apiUrl}/api/sync/handle-completion-request`,
+        {
+          requestId: projectData._id,
+          response: response,
+          notes: "",
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (apiResponse.data.success) {
+        alert(`Request ${response}d successfully`);
+        onUpdate();
+      } else {
+        alert(apiResponse.data.message || `Failed to ${response} request`);
+      }
+    } catch (error) {
+      console.error(`Error ${response}ing request:`, error);
+      alert(`Failed to ${response} request`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Show review modal if project was completed
   if (
-    projectData?.status === "Completed" &&
+    (projectData?.status === "Completed" ||
+      projectData?.completionRequest?.status === "approved") &&
     !projectData?.learnerReview?.rating
   ) {
     return (
@@ -361,11 +408,51 @@ const CompleteCancelBox = ({ projectData, onUpdate }) => {
           </div>
         </div>
 
+        {/* Handle Mentor Request */}
+        {projectData?.completionRequest?.status === "pending" &&
+          projectData?.completionRequest?.from === "mentor" && (
+            <div className="mb-6 bg-yellow-500/20 backdrop-blur-sm rounded-3xl p-6 border border-yellow-400/30">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-xl font-bold text-white mb-2">
+                    Mentor Request Received
+                  </h3>
+                  <p className="text-yellow-200">
+                    Your mentor wants to {projectData.completionRequest.type}{" "}
+                    the project.
+                  </p>
+                </div>
+                <div className="flex space-x-3">
+                  <button
+                    onClick={() => handleMentorRequestResponse("approve")}
+                    disabled={loading}
+                    className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-xl transition-colors flex items-center space-x-2"
+                  >
+                    <CheckCircle size={16} />
+                    <span>Approve</span>
+                  </button>
+                  <button
+                    onClick={() => handleMentorRequestResponse("reject")}
+                    disabled={loading}
+                    className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl transition-colors flex items-center space-x-2"
+                  >
+                    <XCircle size={16} />
+                    <span>Reject</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Complete Button */}
           <button
             onClick={() => handleActionClick("complete")}
-            disabled={isCompleteDisabled}
+            disabled={
+              isCompleteDisabled ||
+              (projectData?.completionRequest?.status === "pending" &&
+                projectData?.completionRequest?.from === "mentor")
+            }
             className={`group relative p-6 rounded-2xl border transition-all duration-300 overflow-hidden ${
               completeRequested
                 ? "bg-gradient-to-r from-green-500/30 to-emerald-600/30 border-green-400/50 cursor-default"
@@ -410,7 +497,11 @@ const CompleteCancelBox = ({ projectData, onUpdate }) => {
           {/* Cancel Button */}
           <button
             onClick={() => handleActionClick("cancel")}
-            disabled={isCancelDisabled}
+            disabled={
+              isCancelDisabled ||
+              (projectData?.completionRequest?.status === "pending" &&
+                projectData?.completionRequest?.from === "mentor")
+            }
             className={`group relative p-6 rounded-2xl border transition-all duration-300 overflow-hidden ${
               cancelRequested
                 ? "bg-gradient-to-r from-red-500/30 to-pink-600/30 border-red-400/50 cursor-default"

@@ -207,6 +207,14 @@ ReactDOM.createRoot(document.getElementById("root")).render(
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/mentor/my-apprentice"
+          element={
+            <ProtectedRoute requiredRole="mentor">
+              <MyApprentice />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </BrowserRouter>
 

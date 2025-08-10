@@ -420,38 +420,46 @@ const projectSchema = new mongoose.Schema(
       from: {
         type: String,
         enum: ["learner", "mentor"],
-        required: false,
+        default: null,
       },
       type: {
         type: String,
         enum: ["complete", "cancel"],
-        required: false,
+        default: null,
       },
       status: {
         type: String,
         enum: ["pending", "approved", "rejected"],
-        default: "pending",
+        default: null,
       },
       requestedAt: {
         type: Date,
-        default: Date.now,
+        default: null,
       },
       requestedBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
-        required: false,
+        default: null,
       },
-      approvedAt: Date,
-      rejectedAt: Date,
+      approvedAt: {
+        type: Date,
+        default: null,
+      },
+      rejectedAt: {
+        type: Date,
+        default: null,
+      },
       mentorNotes: {
         type: String,
         trim: true,
         maxlength: 500,
+        default: null,
       },
       learnerNotes: {
         type: String,
         trim: true,
         maxlength: 500,
+        default: null,
       },
     },
 

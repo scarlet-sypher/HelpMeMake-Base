@@ -46,8 +46,8 @@ const Sidebar = ({
           {
             icon: Users,
             label: "My Apprentice",
-            id: "students",
-            path: "/mentor/students",
+            id: "myApprentice",
+            path: "/mentor/my-apprentice",
           },
           {
             icon: Calendar,
