@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   UserCheck,
   User,
@@ -11,41 +11,111 @@ import {
   Zap,
   Award,
 } from "lucide-react";
+import axios from "axios";
 
 const ProgressTracker = ({ userImg }) => {
-  // Show single student for detailed milestone tracking
-  const studentData = {
-    name: "Monkey D. Luffy",
-    project: "React E-commerce App",
-    progress: 75,
-    image:
-      userImg?.["luffy.jpg"] ||
-      "https://via.placeholder.com/64x64?text=Student",
+  const [projectData, setProjectData] = useState(null);
+  const [learnerData, setLearnerData] = useState(null);
+  const [milestones, setMilestones] = useState([]);
+  const [statistics, setStatistics] = useState({
+    total: 0,
+    completed: 0,
+    inProgress: 0,
+    pending: 0,
+    progressPercentage: 0,
+  });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+
+  // Fetch mentor's active project progress data
+  const fetchMentorProgress = async () => {
+    try {
+      setLoading(true);
+      setError("");
+
+      const response = await axios.get(
+        `${API_URL}/api/milestone/mentor/active-project-progress`,
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (response.data.success) {
+        setProjectData(response.data.project);
+        setLearnerData(response.data.learner);
+        setMilestones(response.data.milestones);
+        setStatistics(response.data.statistics);
+      } else {
+        setError(response.data.message || "Failed to fetch progress data");
+      }
+    } catch (error) {
+      console.error("Error fetching mentor progress:", error);
+      setError("Failed to fetch mentor progress data");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // Mock milestone data similar to UserDashboard MilestonePoint
-  const milestones = [
-    {
-      id: 1,
-      title: "Initial Meeting",
-      userVerified: true,
-      mentorVerified: true,
-    },
-    { id: 2, title: "Requirements", userVerified: true, mentorVerified: true },
-    { id: 3, title: "Mid Review", userVerified: true, mentorVerified: false },
-    {
-      id: 4,
-      title: "Final Submission",
-      userVerified: false,
-      mentorVerified: false,
-    },
-    {
-      id: 5,
-      title: "Project Delivery",
-      userVerified: false,
-      mentorVerified: false,
-    },
-  ];
+  useEffect(() => {
+    fetchMentorProgress();
+  }, []);
+
+  // Fallback data structure for when no active project exists
+  const getDisplayData = () => {
+    if (!projectData || !learnerData) {
+      return {
+        studentData: {
+          name: "No Active Student",
+          project: "No Active Project",
+          progress: 0,
+          image:
+            userImg?.["default.jpg"] ||
+            "https://via.placeholder.com/64x64?text=No+Student",
+        },
+        milestones: Array(5)
+          .fill(null)
+          .map((_, index) => ({
+            id: `placeholder-${index}`,
+            title: "Not Set",
+            userVerified: false,
+            mentorVerified: false,
+            isPlaceholder: true,
+          })),
+      };
+    }
+
+    // Fill up to 5 milestones with placeholders if needed
+    const displayMilestones = [...milestones];
+    while (displayMilestones.length < 5) {
+      displayMilestones.push({
+        id: `placeholder-${displayMilestones.length}`,
+        title: "Not Set",
+        userVerified: false,
+        mentorVerified: false,
+        isPlaceholder: true,
+      });
+    }
+
+    return {
+      studentData: {
+        name: learnerData.name,
+        project: projectData.name,
+        progress: statistics.progressPercentage,
+        image:
+          learnerData.avatar ||
+          userImg?.["default.jpg"] ||
+          "https://via.placeholder.com/64x64?text=Student",
+      },
+      milestones: displayMilestones.slice(0, 5),
+    };
+  };
+
+  const { studentData, milestones: displayMilestones } = getDisplayData();
 
   const SingleMilestone = ({
     title,
@@ -264,6 +334,39 @@ const ProgressTracker = ({ userImg }) => {
     );
   };
 
+  // Show loading state
+  if (loading) {
+    return (
+      <div className="bg-white/10 backdrop-blur-sm rounded-3xl shadow-2xl p-4 sm:p-6 border border-white/20 relative overflow-hidden">
+        <div className="flex justify-center items-center py-20">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cyan-400"></div>
+          <span className="ml-3 text-white/70">Loading mentor progress...</span>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error state
+  if (error) {
+    return (
+      <div className="bg-white/10 backdrop-blur-sm rounded-3xl shadow-2xl p-4 sm:p-6 border border-white/20 relative overflow-hidden">
+        <div className="text-center py-10">
+          <div className="text-red-400 mb-4">
+            <UserCheck className="mx-auto mb-2" size={48} />
+            <p className="text-lg font-semibold">Failed to Load Progress</p>
+          </div>
+          <p className="text-white/70 mb-4">{error}</p>
+          <button
+            onClick={fetchMentorProgress}
+            className="px-4 py-2 bg-gradient-to-r from-cyan-500 to-teal-600 hover:from-cyan-600 hover:to-teal-700 text-white rounded-xl font-medium transition-all transform hover:scale-105 shadow-lg"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="bg-white/10 backdrop-blur-sm rounded-3xl shadow-2xl p-4 sm:p-6 border border-white/20 relative overflow-hidden">
       {/* Animated background elements */}
@@ -295,7 +398,11 @@ const ProgressTracker = ({ userImg }) => {
                   alt={studentData.name}
                   className="w-16 h-16 rounded-full object-cover border-2 border-white/20"
                 />
-                <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-emerald-400 rounded-full border-2 border-white shadow-lg"></div>
+                <div
+                  className={`absolute -bottom-1 -right-1 w-5 h-5 ${
+                    projectData ? "bg-emerald-400" : "bg-gray-400"
+                  } rounded-full border-2 border-white shadow-lg`}
+                ></div>
               </div>
               <div>
                 <h3 className="text-xl font-bold text-white">
@@ -305,9 +412,17 @@ const ProgressTracker = ({ userImg }) => {
                   {studentData.project}
                 </p>
                 <div className="flex items-center space-x-2 mt-1">
-                  <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
-                  <span className="text-sm text-emerald-300">
-                    Active Project
+                  <div
+                    className={`w-2 h-2 ${
+                      projectData ? "bg-emerald-400" : "bg-gray-400"
+                    } rounded-full animate-pulse`}
+                  ></div>
+                  <span
+                    className={`text-sm ${
+                      projectData ? "text-emerald-300" : "text-gray-300"
+                    }`}
+                  >
+                    {projectData ? "Active Project" : "No Active Project"}
                   </span>
                 </div>
               </div>
@@ -335,14 +450,14 @@ const ProgressTracker = ({ userImg }) => {
               </div>
             </div>
 
-            {/* Milestones - Same as UserDashboard */}
+            {/* Milestones */}
             <div className="flex flex-col sm:flex-row justify-between items-center relative z-10 space-y-8 sm:space-y-0 px-2 sm:px-4 lg:px-6 py-6 sm:py-8">
-              {milestones.map((milestone, index) => (
+              {displayMilestones.map((milestone, index) => (
                 <div key={milestone.id} className="flex-1 flex justify-center">
                   <SingleMilestone
                     {...milestone}
                     index={index}
-                    isLast={index === milestones.length - 1}
+                    isLast={index === displayMilestones.length - 1}
                   />
                 </div>
               ))}
@@ -355,58 +470,21 @@ const ProgressTracker = ({ userImg }) => {
                   {studentData.project} - Progress
                 </span>
                 <span className="text-xs sm:text-sm font-bold text-teal-300">
-                  {(() => {
-                    const completedMilestones = milestones.filter(
-                      (m) => m.userVerified && m.mentorVerified
-                    );
-                    return Math.round(
-                      (completedMilestones.length / milestones.length) * 100
-                    );
-                  })()}
-                  %
+                  {statistics.progressPercentage}%
                 </span>
               </div>
               <div className="w-full bg-white/20 rounded-full h-2 sm:h-3 overflow-hidden">
                 <div
                   className="bg-gradient-to-r from-emerald-400 to-teal-500 h-full rounded-full transition-all duration-1000 ease-out shadow-lg"
                   style={{
-                    width: `${(() => {
-                      const completedMilestones = milestones.filter(
-                        (m) => m.userVerified && m.mentorVerified
-                      );
-                      return Math.round(
-                        (completedMilestones.length / milestones.length) * 100
-                      );
-                    })()}%`,
+                    width: `${statistics.progressPercentage}%`,
                   }}
                 ></div>
               </div>
               <div className="flex justify-between mt-2 text-xs text-blue-200">
-                <span>
-                  {
-                    milestones.filter((m) => m.userVerified && m.mentorVerified)
-                      .length
-                  }{" "}
-                  Completed
-                </span>
-                <span>
-                  {
-                    milestones.filter(
-                      (m) =>
-                        (m.userVerified || m.mentorVerified) &&
-                        !(m.userVerified && m.mentorVerified)
-                    ).length
-                  }{" "}
-                  In Progress
-                </span>
-                <span>
-                  {
-                    milestones.filter(
-                      (m) => !m.userVerified && !m.mentorVerified
-                    ).length
-                  }{" "}
-                  Pending
-                </span>
+                <span>{statistics.completed} Completed</span>
+                <span>{statistics.inProgress} In Progress</span>
+                <span>{statistics.pending} Pending</span>
               </div>
             </div>
           </div>
@@ -415,70 +493,53 @@ const ProgressTracker = ({ userImg }) => {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="text-center bg-white/10 rounded-xl p-4 border border-white/20">
               <div className="text-2xl font-bold text-emerald-400">
-                {
-                  milestones.filter((m) => m.userVerified && m.mentorVerified)
-                    .length
-                }
+                {statistics.completed}
               </div>
               <div className="text-sm text-emerald-300">Completed</div>
             </div>
             <div className="text-center bg-white/10 rounded-xl p-4 border border-white/20">
               <div className="text-2xl font-bold text-yellow-400">
-                {
-                  milestones.filter(
-                    (m) =>
-                      (m.userVerified || m.mentorVerified) &&
-                      !(m.userVerified && m.mentorVerified)
-                  ).length
-                }
+                {statistics.inProgress}
               </div>
               <div className="text-sm text-yellow-300">In Progress</div>
             </div>
             <div className="text-center bg-white/10 rounded-xl p-4 border border-white/20">
               <div className="text-2xl font-bold text-slate-400">
-                {
-                  milestones.filter((m) => !m.userVerified && !m.mentorVerified)
-                    .length
-                }
+                {statistics.pending}
               </div>
               <div className="text-sm text-slate-300">Pending</div>
             </div>
           </div>
         </div>
 
-        {/* Overall Summary - Updated for single student */}
+        {/* Overall Summary */}
         <div className="mt-6 bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm font-medium text-white">
               Mentorship Session Progress
             </span>
             <span className="text-sm font-bold text-cyan-300">
-              {Math.round(
-                (milestones.filter((m) => m.userVerified && m.mentorVerified)
-                  .length /
-                  milestones.length) *
-                  100
-              )}
-              %
+              {statistics.progressPercentage}%
             </span>
           </div>
           <div className="w-full bg-white/20 rounded-full h-2 overflow-hidden">
             <div
               className="bg-gradient-to-r from-cyan-400 to-teal-500 h-full rounded-full transition-all duration-1000 ease-out shadow-lg"
               style={{
-                width: `${Math.round(
-                  (milestones.filter((m) => m.userVerified && m.mentorVerified)
-                    .length /
-                    milestones.length) *
-                    100
-                )}%`,
+                width: `${statistics.progressPercentage}%`,
               }}
             ></div>
           </div>
           <div className="flex justify-between mt-2 text-xs text-blue-200">
             <span>Student: {studentData.name}</span>
-            <span>Next Session: Dec 24, 2:00 PM</span>
-            <span>Estimated Completion: Jan 15</span>
+            <span>Project: {projectData ? projectData.status : "None"}</span>
+            <span>
+              {projectData && projectData.expectedEndDate
+                ? `Est. Completion: ${new Date(
+                    projectData.expectedEndDate
+                  ).toLocaleDateString()}`
+                : "No timeline set"}
+            </span>
           </div>
         </div>
       </div>

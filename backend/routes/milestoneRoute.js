@@ -60,6 +60,11 @@ router.get(
   milestoneController.getMentorMilestones
 );
 
+router.get(
+  "/mentor/active-project-progress",
+  requireMentor,
+  milestoneController.getMentorActiveProjectProgress
+);
 // Milestone CRUD operations
 router.get(
   "/project/:projectId",

@@ -1000,10 +1000,162 @@ const mentorUnverifyMilestone = async (req, res) => {
   }
 };
 
+const getMentorActiveProjectProgress = async (req, res) => {
+  try {
+    console.log("=== GET MENTOR ACTIVE PROJECT PROGRESS DEBUG ===");
+    console.log("User from req.user:", req.user);
+
+    const userId = req.user._id || req.user.id;
+    const userRole = req.user.role;
+
+    console.log("Extracted userId:", userId);
+    console.log("User role:", userRole);
+
+    if (userRole !== "mentor") {
+      return res.status(403).json({
+        success: false,
+        message: "Access denied. Mentor role required.",
+      });
+    }
+
+    // Find mentor profile
+    const mentorProfile = await Mentor.findOne({ userId });
+    console.log("Mentor profile found:", mentorProfile ? "YES" : "NO");
+
+    if (!mentorProfile) {
+      return res.status(404).json({
+        success: false,
+        message: "Mentor profile not found",
+      });
+    }
+
+    // Get active project for this mentor
+    const activeProject = await Project.findOne({
+      mentorId: mentorProfile._id,
+      status: "In Progress",
+    })
+      .populate("learnerId", "name email avatar")
+      .populate("mentorId", "name email avatar")
+      .lean();
+
+    console.log("Active project found:", activeProject ? "YES" : "NO");
+
+    if (!activeProject) {
+      return res.json({
+        success: true,
+        project: null,
+        learner: null,
+        milestones: [],
+        message: "No active project found",
+        debug: {
+          userId,
+          userRole,
+        },
+      });
+    }
+
+    // Get milestones for the active project
+    const milestones = await Milestone.find({ projectId: activeProject._id })
+      .sort({ order: 1, createdAt: 1 })
+      .populate("learnerId", "name email avatar")
+      .populate("mentorId", "name email avatar")
+      .lean();
+
+    console.log("Milestones found:", milestones.length);
+
+    // Transform milestone data to match frontend expectations
+    const transformedMilestones = milestones.slice(0, 5).map((milestone) => ({
+      id: milestone._id,
+      title: milestone.title,
+      description: milestone.description,
+      dueDate: milestone.dueDate,
+      status: milestone.status,
+      order: milestone.order,
+      userVerified: milestone.learnerVerification?.isVerified || false,
+      mentorVerified: milestone.mentorVerification?.isVerified || false,
+      learnerVerification: milestone.learnerVerification,
+      mentorVerification: milestone.mentorVerification,
+      createdAt: milestone.createdAt,
+      updatedAt: milestone.updatedAt,
+    }));
+
+    // Calculate progress statistics
+    const completedMilestones = transformedMilestones.filter(
+      (m) => m.userVerified && m.mentorVerified
+    );
+    const inProgressMilestones = transformedMilestones.filter(
+      (m) =>
+        (m.userVerified || m.mentorVerified) &&
+        !(m.userVerified && m.mentorVerified)
+    );
+    const pendingMilestones = transformedMilestones.filter(
+      (m) => !m.userVerified && !m.mentorVerified
+    );
+
+    const progressPercentage =
+      transformedMilestones.length > 0
+        ? Math.round(
+            (completedMilestones.length / transformedMilestones.length) * 100
+          )
+        : 0;
+
+    // Extract learner details from the populated project
+    const learnerDetails = {
+      id: activeProject.learnerId._id,
+      name: activeProject.learnerId.name,
+      email: activeProject.learnerId.email,
+      avatar: activeProject.learnerId.avatar,
+    };
+
+    // Project details for frontend
+    const projectDetails = {
+      id: activeProject._id,
+      name: activeProject.name,
+      shortDescription: activeProject.shortDescription,
+      status: activeProject.status,
+      startDate: activeProject.startDate,
+      expectedEndDate: activeProject.expectedEndDate,
+      progressPercentage:
+        activeProject.progressPercentage || progressPercentage,
+      totalMilestones: transformedMilestones.length,
+      completedMilestones: completedMilestones.length,
+    };
+
+    res.json({
+      success: true,
+      project: projectDetails,
+      learner: learnerDetails,
+      milestones: transformedMilestones,
+      statistics: {
+        total: transformedMilestones.length,
+        completed: completedMilestones.length,
+        inProgress: inProgressMilestones.length,
+        pending: pendingMilestones.length,
+        progressPercentage: progressPercentage,
+      },
+      message: "Mentor active project progress fetched successfully",
+      debug: {
+        userId,
+        projectId: activeProject._id,
+        milestonesCount: milestones.length,
+        mentorProfileId: mentorProfile._id,
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching mentor active project progress:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch mentor active project progress",
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   getActiveProjectWithMentor,
   getMilestonesByProject,
   getMentorMilestones,
+  getMentorActiveProjectProgress,
   createMilestone,
   learnerVerifyMilestone,
   learnerUnverifyMilestone,
