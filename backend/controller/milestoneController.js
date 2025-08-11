@@ -1,462 +1,744 @@
-const Milestone = require('../Model/Milestone');
-const Project = require('../Model/Project');
-const Learner = require('../Model/Learner');
-const Mentor = require('../Model/Mentor');
+const Milestone = require("../Model/Milestone");
+const Project = require("../Model/Project");
+const User = require("../Model/User");
+const Learner = require("../Model/Learner");
+const Mentor = require("../Model/Mentor");
 
-const milestoneController = {
-  async getMilestonesByProject(req, res) {
-    try {
-      const { projectId } = req.params;
-      // FIX: Handle both _id and userId fields from token
-      const userId = req.user._id || req.user.userId;
+// Get milestones for a specific project
+const getMilestonesByProject = async (req, res) => {
+  try {
+    console.log("=== GET MILESTONES DEBUG ===");
+    console.log("User from req.user:", req.user);
+    console.log("Project ID from params:", req.params.projectId);
 
-      // DEBUG: Log all incoming data
-      console.log('=== MILESTONE FETCH DEBUG ===');
-      console.log('Project ID from params:', projectId);
-      console.log('User ID from token:', userId);
-      console.log('Full req.user object:', req.user);
+    const { projectId } = req.params;
+    const userId = req.user._id || req.user.id;
+    const userRole = req.user.role;
 
-      if (!userId) {
-        return res.status(401).json({
-          success: false,
-          message: 'User ID not found in token'
+    console.log("Extracted userId:", userId);
+    console.log("User role:", userRole);
+
+    // First, let's just find the project without access check to debug
+    const project = await Project.findById(projectId);
+    console.log("Project found:", project ? "YES" : "NO");
+    if (project) {
+      console.log("Project learner ID:", project.learnerId);
+      console.log("Project mentor ID:", project.mentorId);
+      console.log("Project status:", project.status);
+    }
+
+    // Verify user has access to this project based on role
+    let accessProject = null;
+
+    if (userRole === "user") {
+      // For learners, find their learner profile first
+      const learnerProfile = await Learner.findOne({ userId });
+      console.log("Learner profile found:", learnerProfile ? "YES" : "NO");
+      if (learnerProfile) {
+        console.log("Learner profile ID:", learnerProfile._id);
+        accessProject = await Project.findOne({
+          _id: projectId,
+          learnerId: learnerProfile._id,
         });
       }
-
-      // Verify user has access to this project
-      const project = await Project.findById(projectId);
-      console.log('Project found:', project ? 'YES' : 'NO');
-      if (project) {
-        console.log('Project learner ID:', project.learnerId);
-        console.log('Project mentor ID:', project.mentorId);
-      }
-
-      if (!project) {
-        return res.status(404).json({
-          success: false,
-          message: 'Project not found'
+    } else if (userRole === "mentor") {
+      // For mentors, find their mentor profile first
+      const mentorProfile = await Mentor.findOne({ userId });
+      console.log("Mentor profile found:", mentorProfile ? "YES" : "NO");
+      if (mentorProfile) {
+        console.log("Mentor profile ID:", mentorProfile._id);
+        accessProject = await Project.findOne({
+          _id: projectId,
+          mentorId: mentorProfile._id,
         });
       }
+    }
 
-      // Check if user is learner or mentor of this project
-      const learner = await Learner.findOne({ userId });
-      const mentor = await Mentor.findOne({ userId });
+    console.log("Access project found:", accessProject ? "YES" : "NO");
 
-      console.log('Learner found:', learner ? 'YES' : 'NO');
-      console.log('Mentor found:', mentor ? 'YES' : 'NO');
-      
-      if (learner) {
-        console.log('Learner _id:', learner._id);
-        console.log('Learner _id toString:', learner._id.toString());
-        console.log('Project learnerId toString:', project.learnerId.toString());
-        console.log('IDs match:', learner._id.toString() === project.learnerId.toString());
-      }
-
-      if (mentor) {
-        console.log('Mentor _id:', mentor._id);
-        console.log('Mentor _id toString:', mentor._id.toString());
-        console.log('Project mentorId toString:', project.mentorId ? project.mentorId.toString() : 'null');
-        console.log('IDs match:', mentor && project.mentorId && project.mentorId.toString() === mentor._id.toString());
-      }
-
-      const hasAccess = (learner && project.learnerId.toString() === learner._id.toString()) ||
-                       (mentor && project.mentorId && project.mentorId.toString() === mentor._id.toString());
-
-      console.log('Has access:', hasAccess);
-
-      if (!hasAccess) {
-        return res.status(403).json({
-          success: false,
-          message: 'Access denied to this project',
-          debug: {
-            userId,
-            projectId,
-            learnerFound: !!learner,
-            mentorFound: !!mentor,
-            learnerId: learner ? learner._id : null,
-            mentorId: mentor ? mentor._id : null,
-            projectLearnerId: project.learnerId,
-            projectMentorId: project.mentorId
-          }
-        });
-      }
-
-      const milestones = await Milestone.find({ projectId })
-        .sort({ order: 1 })
-        .populate('learnerId mentorId', 'name email');
-
-      console.log('Milestones found:', milestones.length);
-      console.log('=== END DEBUG ===');
-
-      res.json({
-        success: true,
-        milestones
-      });
-    } catch (error) {
-      console.error('Error fetching milestones:', error);
-      res.status(500).json({
+    if (!accessProject) {
+      return res.status(403).json({
         success: false,
-        message: 'Server error',
-        error: error.message
+        message: "Access denied to this project",
+        debug: {
+          userId,
+          projectId,
+          userRole,
+          projectExists: !!project,
+        },
       });
     }
-  },
 
-  // Create new milestone
-  async createMilestone(req, res) {
-    try {
-      const { projectId, title, description, dueDate, order } = req.body;
-      // FIX: Handle both _id and userId fields from token
-      const userId = req.user._id || req.user.userId;
+    const milestones = await Milestone.find({ projectId })
+      .sort({ order: 1, createdAt: 1 })
+      .populate("learnerId", "name email avatar")
+      .populate("mentorId", "name email avatar")
+      .lean();
 
-      if (!userId) {
-        return res.status(401).json({
-          success: false,
-          message: 'User ID not found in token'
-        });
-      }
+    console.log("Milestones found:", milestones.length);
 
-      // Verify project exists and user is the learner
-      const project = await Project.findById(projectId);
-      if (!project) {
-        return res.status(404).json({
-          success: false,
-          message: 'Project not found'
-        });
-      }
-
-      const learner = await Learner.findOne({ userId });
-      if (!learner || project.learnerId.toString() !== learner._id.toString()) {
-        return res.status(403).json({
-          success: false,
-          message: 'Only project owner can create milestones'
-        });
-      }
-
-      // Check if project has mentor assigned
-      if (!project.mentorId) {
-        return res.status(400).json({
-          success: false,
-          message: 'Cannot create milestone without assigned mentor'
-        });
-      }
-
-      if (!project.learnerId || !project.mentorId) {
-        return res.status(400).json({
-            success: false,
-            message: 'Cannot create milestones. Project must have both learner and mentor assigned.'
-        });
-    }
-
-      // Check milestone limit (5 max)
-      const existingMilestones = await Milestone.countDocuments({ projectId });
-      if (existingMilestones >= 5) {
-        return res.status(400).json({
-          success: false,
-          message: 'Maximum 5 milestones allowed per project'
-        });
-      }
-
-      const milestone = new Milestone({
-        title,
-        description,
+    res.json({
+      success: true,
+      milestones,
+      debug: {
+        userId,
         projectId,
-        learnerId: learner._id,
-        mentorId: project.mentorId,
-        dueDate,
-        order: order || existingMilestones + 1
-      });
-
-      await milestone.save();
-
-      res.status(201).json({
-        success: true,
-        milestone,
-        message: 'Milestone created successfully'
-      });
-    } catch (error) {
-      console.error('Error creating milestone:', error);
-      res.status(500).json({
-        success: false,
-        message: 'Server error'
-      });
-    }
-  },
-
-  async learnerUnverifyMilestone(req, res) {
-    try {
-        const { milestoneId } = req.params;
-        // FIX: Handle both _id and userId fields from token
-        const userId = req.user._id || req.user.userId;
-
-        if (!userId) {
-        return res.status(401).json({
-            success: false,
-            message: 'User ID not found in token'
-        });
-        }
-
-        const milestone = await Milestone.findById(milestoneId);
-        if (!milestone) {
-        return res.status(404).json({
-            success: false,
-            message: 'Milestone not found'
-        });
-        }
-
-        const learner = await Learner.findOne({ userId });
-        if (!learner || milestone.learnerId.toString() !== learner._id.toString()) {
-        return res.status(403).json({
-            success: false,
-            message: 'Access denied'
-        });
-        }
-
-        // Check if learner has verified this milestone
-        if (!milestone.learnerVerification.isVerified) {
-        return res.status(400).json({
-            success: false,
-            message: 'Milestone is not verified by learner'
-        });
-        }
-
-        // Don't allow undo if mentor has already verified
-        if (milestone.mentorVerification.isVerified) {
-        return res.status(400).json({
-            success: false,
-            message: 'Cannot undo milestone that has been verified by mentor'
-        });
-        }
-
-        // Reset learner verification
-        milestone.learnerVerification.isVerified = false;
-        milestone.learnerVerification.verifiedAt = null;
-        milestone.learnerVerification.verificationNotes = '';
-        milestone.learnerVerification.submissionUrl = '';
-
-        await milestone.save();
-
-        res.json({
-        success: true,
-        milestone,
-        message: 'Milestone verification undone successfully'
-        });
-    } catch (error) {
-        console.error('Error undoing milestone verification:', error);
-        res.status(500).json({
-        success: false,
-        message: 'Server error'
-        });
-    }
-    },
-
-  // Learner verify milestone
-  async learnerVerifyMilestone(req, res) {
-    try {
-      const { milestoneId } = req.params;
-      const { verificationNotes, submissionUrl } = req.body;
-      // FIX: Handle both _id and userId fields from token
-      const userId = req.user._id || req.user.userId;
-
-      if (!userId) {
-        return res.status(401).json({
-          success: false,
-          message: 'User ID not found in token'
-        });
-      }
-
-      const milestone = await Milestone.findById(milestoneId);
-      if (!milestone) {
-        return res.status(404).json({
-          success: false,
-          message: 'Milestone not found'
-        });
-      }
-
-      const learner = await Learner.findOne({ userId });
-      if (!learner || milestone.learnerId.toString() !== learner._id.toString()) {
-        return res.status(403).json({
-          success: false,
-          message: 'Access denied'
-        });
-      }
-
-      // Check if previous milestones are completed (sequential completion)
-      const previousMilestones = await Milestone.find({
-        projectId: milestone.projectId,
-        order: { $lt: milestone.order }
-      });
-
-      const incompletePrevious = previousMilestones.some(m => !m.learnerVerification.isVerified);
-      if (incompletePrevious) {
-        return res.status(400).json({
-          success: false,
-          message: 'Complete previous milestones first'
-        });
-      }
-
-      milestone.learnerVerification.isVerified = true;
-      milestone.learnerVerification.verifiedAt = new Date();
-      milestone.learnerVerification.verificationNotes = verificationNotes;
-      milestone.learnerVerification.submissionUrl = submissionUrl;
-
-      await milestone.save();
-
-      res.json({
-        success: true,
-        milestone,
-        message: 'Milestone marked as done'
-      });
-    } catch (error) {
-      console.error('Error verifying milestone:', error);
-      res.status(500).json({
-        success: false,
-        message: 'Server error'
-      });
-    }
-  },
-
-  // Mentor verify milestone
-  async mentorVerifyMilestone(req, res) {
-    try {
-      const { milestoneId } = req.params;
-      const { verificationNotes, rating, feedback } = req.body;
-      // FIX: Handle both _id and userId fields from token
-      const userId = req.user._id || req.user.userId;
-
-      if (!userId) {
-        return res.status(401).json({
-          success: false,
-          message: 'User ID not found in token'
-        });
-      }
-
-      const milestone = await Milestone.findById(milestoneId);
-      if (!milestone) {
-        return res.status(404).json({
-          success: false,
-          message: 'Milestone not found'
-        });
-      }
-
-      const mentor = await Mentor.findOne({ userId });
-      if (!mentor || milestone.mentorId.toString() !== mentor._id.toString()) {
-        return res.status(403).json({
-          success: false,
-          message: 'Access denied'
-        });
-      }
-
-      // Check if learner has verified first
-      if (!milestone.learnerVerification.isVerified) {
-        return res.status(400).json({
-          success: false,
-          message: 'Learner must verify milestone first'
-        });
-      }
-
-      milestone.mentorVerification.isVerified = true;
-      milestone.mentorVerification.verifiedAt = new Date();
-      milestone.mentorVerification.verificationNotes = verificationNotes;
-      milestone.mentorVerification.rating = rating;
-      milestone.mentorVerification.feedback = feedback;
-
-      await milestone.save();
-
-      res.json({
-        success: true,
-        milestone,
-        message: 'Milestone verified by mentor'
-      });
-    } catch (error) {
-      console.error('Error verifying milestone:', error);
-      res.status(500).json({
-        success: false,
-        message: 'Server error'
-      });
-    }
-  },
-
-  // Delete milestone
-  async deleteMilestone(req, res) {
-    try {
-      const { milestoneId } = req.params;
-      // FIX: Handle both _id and userId fields from token
-      const userId = req.user._id || req.user.userId;
-
-      if (!userId) {
-        return res.status(401).json({
-          success: false,
-          message: 'User ID not found in token'
-        });
-      }
-
-      const milestone = await Milestone.findById(milestoneId);
-      if (!milestone) {
-        return res.status(404).json({
-          success: false,
-          message: 'Milestone not found'
-        });
-      }
-
-      const learner = await Learner.findOne({ userId });
-      if (!learner || milestone.learnerId.toString() !== learner._id.toString()) {
-        return res.status(403).json({
-          success: false,
-          message: 'Only milestone creator can delete it'
-        });
-      }
-
-      // Don't allow deletion if already verified
-      if (milestone.learnerVerification.isVerified || milestone.mentorVerification.isVerified) {
-        return res.status(400).json({
-          success: false,
-          message: 'Cannot delete verified milestone'
-        });
-      }
-
-      await Milestone.findByIdAndDelete(milestoneId);
-
-      res.json({
-        success: true,
-        message: 'Milestone deleted successfully'
-      });
-    } catch (error) {
-      console.error('Error deleting milestone:', error);
-      res.status(500).json({
-        success: false,
-        message: 'Server error'
-      });
-    }
-  },
-
-  // Get milestone by ID
-  async getMilestoneById(req, res) {
-    try {
-      const { milestoneId } = req.params;
-      
-      const milestone = await Milestone.findById(milestoneId)
-        .populate('learnerId mentorId projectId');
-
-      if (!milestone) {
-        return res.status(404).json({
-          success: false,
-          message: 'Milestone not found'
-        });
-      }
-
-      res.json({
-        success: true,
-        milestone
-      });
-    } catch (error) {
-      console.error('Error fetching milestone:', error);
-      res.status(500).json({
-        success: false,
-        message: 'Server error'
-      });
-    }
+        milestonesCount: milestones.length,
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching milestones:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch milestones",
+      error: error.message,
+    });
   }
 };
 
-module.exports = milestoneController;
+// Create a new milestone
+const createMilestone = async (req, res) => {
+  try {
+    console.log("=== CREATE MILESTONE DEBUG ===");
+    console.log("User from req.user:", req.user);
+    console.log("Request body:", req.body);
+
+    const { projectId, title, description, dueDate, order } = req.body;
+    const userId = req.user._id || req.user.id;
+    const userRole = req.user.role;
+
+    console.log("Extracted userId:", userId);
+    console.log("Project ID from body:", projectId);
+    console.log("User role:", userRole);
+
+    // Verify user has access to this project based on role
+    let project = null;
+
+    if (userRole === "user") {
+      // For learners, find their learner profile first
+      const learnerProfile = await Learner.findOne({ userId });
+      console.log("Learner profile found:", learnerProfile ? "YES" : "NO");
+      if (learnerProfile) {
+        console.log("Learner profile ID:", learnerProfile._id);
+        project = await Project.findOne({
+          _id: projectId,
+          learnerId: learnerProfile._id,
+          status: "In Progress",
+        });
+      }
+    } else if (userRole === "mentor") {
+      // For mentors, find their mentor profile first
+      const mentorProfile = await Mentor.findOne({ userId });
+      console.log("Mentor profile found:", mentorProfile ? "YES" : "NO");
+      if (mentorProfile) {
+        console.log("Mentor profile ID:", mentorProfile._id);
+        project = await Project.findOne({
+          _id: projectId,
+          mentorId: mentorProfile._id,
+          status: "In Progress",
+        });
+      }
+    }
+
+    console.log("Project found for creation:", project ? "YES" : "NO");
+    if (project) {
+      console.log("Project details:", {
+        name: project.name,
+        status: project.status,
+        learnerId: project.learnerId,
+        mentorId: project.mentorId,
+      });
+    }
+
+    if (!project) {
+      // Let's check if project exists but with different status
+      const anyProject = await Project.findById(projectId);
+      return res.status(403).json({
+        success: false,
+        message: "Access denied or project not in progress",
+        debug: {
+          userId,
+          projectId,
+          userRole,
+          projectExists: !!anyProject,
+          projectStatus: anyProject?.status,
+        },
+      });
+    }
+
+    // Check if user already has 5 milestones
+    const existingMilestones = await Milestone.countDocuments({ projectId });
+    console.log("Existing milestones count:", existingMilestones);
+
+    if (existingMilestones >= 5) {
+      return res.status(400).json({
+        success: false,
+        message: "Maximum 5 milestones allowed per project",
+      });
+    }
+
+    const milestone = new Milestone({
+      title: title.trim(),
+      description: description || `Milestone: ${title.trim()}`,
+      projectId,
+      learnerId: project.learnerId,
+      mentorId: project.mentorId,
+      dueDate:
+        dueDate ||
+        project.expectedEndDate ||
+        new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+      order: order || existingMilestones + 1,
+      status: "Not Started",
+    });
+
+    console.log("Milestone to be created:", {
+      title: milestone.title,
+      projectId: milestone.projectId,
+      learnerId: milestone.learnerId,
+      mentorId: milestone.mentorId,
+    });
+
+    await milestone.save();
+
+    // Populate the milestone before sending response
+    const populatedMilestone = await Milestone.findById(milestone._id)
+      .populate("learnerId", "name email avatar")
+      .populate("mentorId", "name email avatar")
+      .lean();
+
+    console.log("Milestone created successfully");
+
+    res.status(201).json({
+      success: true,
+      milestone: populatedMilestone,
+      message: "Milestone created successfully",
+    });
+  } catch (error) {
+    console.error("Error creating milestone:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to create milestone",
+      error: error.message,
+      stack: process.env.NODE_ENV === "development" ? error.stack : undefined,
+    });
+  }
+};
+
+// Get active project with mentor for the logged-in user
+const getActiveProjectWithMentor = async (req, res) => {
+  try {
+    console.log("=== GET ACTIVE PROJECT DEBUG ===");
+    console.log("User from req.user:", req.user);
+
+    const userId = req.user._id || req.user.id;
+    const userRole = req.user.role;
+    console.log("Extracted userId:", userId);
+    console.log("User role:", userRole);
+
+    // Find the user's active project that's "In Progress" based on role
+    let project = null;
+
+    if (userRole === "user") {
+      // For learners, find their learner profile first
+      const learnerProfile = await Learner.findOne({ userId });
+      if (learnerProfile) {
+        project = await Project.findOne({
+          learnerId: learnerProfile._id,
+          status: "In Progress",
+        })
+          .populate("learnerId", "name email avatar")
+          .populate("mentorId", "name email avatar")
+          .lean();
+      }
+    } else if (userRole === "mentor") {
+      // For mentors, find their mentor profile first
+      const mentorProfile = await Mentor.findOne({ userId });
+      if (mentorProfile) {
+        project = await Project.findOne({
+          mentorId: mentorProfile._id,
+          status: "In Progress",
+        })
+          .populate("learnerId", "name email avatar")
+          .populate("mentorId", "name email avatar")
+          .lean();
+      }
+    }
+
+    console.log("Active project found:", project ? "YES" : "NO");
+
+    if (!project) {
+      return res.json({
+        success: true,
+        project: null,
+        message: "No active project found",
+        debug: {
+          userId,
+          userRole,
+        },
+      });
+    }
+
+    // Auto-create milestone entry if it doesn't exist for this project
+    const existingMilestones = await Milestone.find({ projectId: project._id });
+    console.log("Existing milestones for project:", existingMilestones.length);
+
+    if (existingMilestones.length === 0) {
+      console.log("Creating initial milestone...");
+      // Create initial milestone structure for the project
+      await createInitialMilestone(
+        project._id,
+        project.learnerId._id || project.learnerId,
+        project.mentorId._id || project.mentorId
+      );
+    }
+
+    res.json({
+      success: true,
+      project,
+    });
+  } catch (error) {
+    console.error("Error fetching active project:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch project data",
+      error: error.message,
+    });
+  }
+};
+
+// Helper function to create initial milestone entry
+const createInitialMilestone = async (projectId, learnerId, mentorId) => {
+  try {
+    console.log("Creating initial milestone with:", {
+      projectId,
+      learnerId,
+      mentorId,
+    });
+
+    // This is just a placeholder milestone that gets created when project starts
+    const initialMilestone = new Milestone({
+      title: "Project Setup & Planning",
+      description: "Initial project setup and planning phase",
+      projectId,
+      learnerId,
+      mentorId,
+      dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days from now
+      order: 1,
+      status: "Not Started",
+    });
+
+    await initialMilestone.save();
+    console.log("Initial milestone created successfully");
+    return initialMilestone;
+  } catch (error) {
+    console.error("Error creating initial milestone:", error);
+    throw error;
+  }
+};
+
+// Learner verify milestone
+const learnerVerifyMilestone = async (req, res) => {
+  try {
+    const { milestoneId } = req.params;
+    const { verificationNotes, submissionUrl } = req.body;
+    const userId = req.user._id || req.user.id;
+    const userRole = req.user.role;
+
+    let milestone = null;
+
+    if (userRole === "user") {
+      const learnerProfile = await Learner.findOne({ userId });
+      if (learnerProfile) {
+        milestone = await Milestone.findOne({
+          _id: milestoneId,
+          learnerId: learnerProfile._id,
+        });
+      }
+    }
+
+    if (!milestone) {
+      return res.status(404).json({
+        success: false,
+        message: "Milestone not found or access denied",
+      });
+    }
+
+    // Update learner verification
+    milestone.learnerVerification.isVerified = true;
+    milestone.learnerVerification.verifiedAt = new Date();
+    milestone.learnerVerification.verificationNotes =
+      verificationNotes || "Marked as done by learner";
+    milestone.learnerVerification.submissionUrl = submissionUrl || "";
+
+    // Update status based on verification state
+    if (milestone.mentorVerification.isVerified) {
+      milestone.status = "Completed";
+      milestone.completedDate = new Date();
+    } else {
+      milestone.status = "Pending Review";
+    }
+
+    await milestone.save();
+
+    // Populate and return updated milestone
+    const updatedMilestone = await Milestone.findById(milestoneId)
+      .populate("learnerId", "name email avatar")
+      .populate("mentorId", "name email avatar")
+      .lean();
+
+    res.json({
+      success: true,
+      milestone: updatedMilestone,
+      message: "Milestone marked as completed by learner",
+    });
+  } catch (error) {
+    console.error("Error verifying milestone:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to verify milestone",
+      error: error.message,
+    });
+  }
+};
+
+// Learner unverify milestone
+const learnerUnverifyMilestone = async (req, res) => {
+  try {
+    const { milestoneId } = req.params;
+    const userId = req.user._id || req.user.id;
+    const userRole = req.user.role;
+
+    let milestone = null;
+
+    if (userRole === "user") {
+      const learnerProfile = await Learner.findOne({ userId });
+      if (learnerProfile) {
+        milestone = await Milestone.findOne({
+          _id: milestoneId,
+          learnerId: learnerProfile._id,
+        });
+      }
+    }
+
+    if (!milestone) {
+      return res.status(404).json({
+        success: false,
+        message: "Milestone not found or access denied",
+      });
+    }
+
+    // Can only undo if mentor hasn't verified yet
+    if (milestone.mentorVerification.isVerified) {
+      return res.status(400).json({
+        success: false,
+        message: "Cannot undo milestone that has been approved by mentor",
+      });
+    }
+
+    // Reset learner verification
+    milestone.learnerVerification.isVerified = false;
+    milestone.learnerVerification.verifiedAt = null;
+    milestone.learnerVerification.verificationNotes = "";
+    milestone.learnerVerification.submissionUrl = "";
+    milestone.status = "Not Started";
+    milestone.completedDate = null;
+
+    await milestone.save();
+
+    const updatedMilestone = await Milestone.findById(milestoneId)
+      .populate("learnerId", "name email avatar")
+      .populate("mentorId", "name email avatar")
+      .lean();
+
+    res.json({
+      success: true,
+      milestone: updatedMilestone,
+      message: "Milestone verification undone",
+    });
+  } catch (error) {
+    console.error("Error undoing milestone:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to undo milestone",
+      error: error.message,
+    });
+  }
+};
+
+// Mentor verify milestone
+const mentorVerifyMilestone = async (req, res) => {
+  try {
+    const { milestoneId } = req.params;
+    const { verificationNotes, rating, feedback } = req.body;
+    const userId = req.user._id || req.user.id;
+    const userRole = req.user.role;
+
+    let milestone = null;
+
+    if (userRole === "mentor") {
+      const mentorProfile = await Mentor.findOne({ userId });
+      if (mentorProfile) {
+        milestone = await Milestone.findOne({
+          _id: milestoneId,
+          mentorId: mentorProfile._id,
+        });
+      }
+    }
+
+    if (!milestone) {
+      return res.status(404).json({
+        success: false,
+        message: "Milestone not found or access denied",
+      });
+    }
+
+    // Mentor can only verify if learner has already verified
+    if (!milestone.learnerVerification.isVerified) {
+      return res.status(400).json({
+        success: false,
+        message: "Learner must verify milestone first",
+      });
+    }
+
+    // Update mentor verification
+    milestone.mentorVerification.isVerified = true;
+    milestone.mentorVerification.verifiedAt = new Date();
+    milestone.mentorVerification.verificationNotes =
+      verificationNotes || "Approved by mentor";
+    milestone.mentorVerification.rating = rating || 5;
+    milestone.mentorVerification.feedback = feedback || "";
+
+    // Both parties verified - mark as completed
+    milestone.status = "Completed";
+    milestone.completedDate = new Date();
+
+    await milestone.save();
+
+    const updatedMilestone = await Milestone.findById(milestoneId)
+      .populate("learnerId", "name email avatar")
+      .populate("mentorId", "name email avatar")
+      .lean();
+
+    res.json({
+      success: true,
+      milestone: updatedMilestone,
+      message: "Milestone approved by mentor",
+    });
+  } catch (error) {
+    console.error("Error mentor verifying milestone:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to verify milestone",
+      error: error.message,
+    });
+  }
+};
+
+// Delete milestone
+const deleteMilestone = async (req, res) => {
+  try {
+    const { milestoneId } = req.params;
+    const userId = req.user._id || req.user.id;
+    const userRole = req.user.role;
+
+    let milestone = null;
+
+    if (userRole === "user") {
+      const learnerProfile = await Learner.findOne({ userId });
+      if (learnerProfile) {
+        milestone = await Milestone.findOne({
+          _id: milestoneId,
+          learnerId: learnerProfile._id,
+        });
+      }
+    } else if (userRole === "mentor") {
+      const mentorProfile = await Mentor.findOne({ userId });
+      if (mentorProfile) {
+        milestone = await Milestone.findOne({
+          _id: milestoneId,
+          mentorId: mentorProfile._id,
+        });
+      }
+    }
+
+    if (!milestone) {
+      return res.status(404).json({
+        success: false,
+        message: "Milestone not found or access denied",
+      });
+    }
+
+    // Can't delete if any verification exists
+    if (
+      milestone.learnerVerification.isVerified ||
+      milestone.mentorVerification.isVerified
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Cannot delete milestone with existing verifications",
+      });
+    }
+
+    await Milestone.findByIdAndDelete(milestoneId);
+
+    // Reorder remaining milestones
+    const remainingMilestones = await Milestone.find({
+      projectId: milestone.projectId,
+    }).sort({ order: 1 });
+
+    for (let i = 0; i < remainingMilestones.length; i++) {
+      remainingMilestones[i].order = i + 1;
+      await remainingMilestones[i].save();
+    }
+
+    res.json({
+      success: true,
+      message: "Milestone deleted successfully",
+    });
+  } catch (error) {
+    console.error("Error deleting milestone:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to delete milestone",
+      error: error.message,
+    });
+  }
+};
+
+// Get milestone by ID
+const getMilestoneById = async (req, res) => {
+  try {
+    const { milestoneId } = req.params;
+    const userId = req.user._id || req.user.id;
+    const userRole = req.user.role;
+
+    let milestone = null;
+
+    if (userRole === "user") {
+      const learnerProfile = await Learner.findOne({ userId });
+      if (learnerProfile) {
+        milestone = await Milestone.findOne({
+          _id: milestoneId,
+          learnerId: learnerProfile._id,
+        })
+          .populate("learnerId", "name email avatar")
+          .populate("mentorId", "name email avatar")
+          .populate("projectId", "name shortDescription")
+          .lean();
+      }
+    } else if (userRole === "mentor") {
+      const mentorProfile = await Mentor.findOne({ userId });
+      if (mentorProfile) {
+        milestone = await Milestone.findOne({
+          _id: milestoneId,
+          mentorId: mentorProfile._id,
+        })
+          .populate("learnerId", "name email avatar")
+          .populate("mentorId", "name email avatar")
+          .populate("projectId", "name shortDescription")
+          .lean();
+      }
+    }
+
+    if (!milestone) {
+      return res.status(404).json({
+        success: false,
+        message: "Milestone not found or access denied",
+      });
+    }
+
+    res.json({
+      success: true,
+      milestone,
+    });
+  } catch (error) {
+    console.error("Error fetching milestone:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch milestone",
+      error: error.message,
+    });
+  }
+};
+
+// Update milestone (edit functionality)
+const updateMilestone = async (req, res) => {
+  try {
+    const { milestoneId } = req.params;
+    const { title, description, dueDate } = req.body;
+    const userId = req.user._id || req.user.id;
+    const userRole = req.user.role;
+
+    let milestone = null;
+
+    if (userRole === "user") {
+      const learnerProfile = await Learner.findOne({ userId });
+      if (learnerProfile) {
+        milestone = await Milestone.findOne({
+          _id: milestoneId,
+          learnerId: learnerProfile._id,
+        });
+      }
+    } else if (userRole === "mentor") {
+      const mentorProfile = await Mentor.findOne({ userId });
+      if (mentorProfile) {
+        milestone = await Milestone.findOne({
+          _id: milestoneId,
+          mentorId: mentorProfile._id,
+        });
+      }
+    }
+
+    if (!milestone) {
+      return res.status(404).json({
+        success: false,
+        message: "Milestone not found or access denied",
+      });
+    }
+
+    // Can't edit if milestone is completed
+    if (milestone.status === "Completed") {
+      return res.status(400).json({
+        success: false,
+        message: "Cannot edit completed milestone",
+      });
+    }
+
+    // Update fields
+    if (title) milestone.title = title.trim();
+    if (description) milestone.description = description;
+    if (dueDate) milestone.dueDate = dueDate;
+
+    await milestone.save();
+
+    const updatedMilestone = await Milestone.findById(milestoneId)
+      .populate("learnerId", "name email avatar")
+      .populate("mentorId", "name email avatar")
+      .lean();
+
+    res.json({
+      success: true,
+      milestone: updatedMilestone,
+      message: "Milestone updated successfully",
+    });
+  } catch (error) {
+    console.error("Error updating milestone:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to update milestone",
+      error: error.message,
+    });
+  }
+};
+
+module.exports = {
+  getActiveProjectWithMentor,
+  getMilestonesByProject,
+  createMilestone,
+  learnerVerifyMilestone,
+  learnerUnverifyMilestone,
+  mentorVerifyMilestone,
+  deleteMilestone,
+  getMilestoneById,
+  updateMilestone,
+};

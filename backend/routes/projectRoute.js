@@ -5,6 +5,7 @@ const {
   requireMentor,
   authenticateJWT,
 } = require("../middleware/roleAuth");
+const milestoneController = require("../controller/milestoneController");
 const {
   createProject,
   getProjectById,

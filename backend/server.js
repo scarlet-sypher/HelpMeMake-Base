@@ -90,15 +90,19 @@ app.use(passport.initialize());
 
 // Routes
 app.use("/auth", authRoutes);
-app.use("/user", userRoutes); // This will handle /user/data and other user-specific routes
-app.use("/users", userRoutes); // This will handle /users/:userId for cross-role access
+app.use("/user", userRoutes);
+app.use("/users", userRoutes);
 app.use("/mentor", mentorRoutes);
 app.use("/mentors", mentorRoutes);
 app.use("/meta", metaRoutes);
 app.use("/projects", projectRoutes);
+
+// IMPORTANT: Order matters! Put milestone routes BEFORE project routes
+// to catch /api/project/active-with-mentor
 app.use("/api/project", projectRoutes);
-app.use("/api/ai", aiRoutes);
 app.use("/api/milestone", milestoneRoutes);
+
+app.use("/api/ai", aiRoutes);
 app.use("/api/achievements", achievementRoutes);
 app.use("/api/sync", syncRoutes);
 

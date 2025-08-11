@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const Milestone = require("./Milestone");
 
 const projectSchema = new mongoose.Schema(
   {
@@ -936,6 +937,56 @@ projectSchema.virtual("daysUntilDeadline").get(function () {
 projectSchema.pre("save", function (next) {
   if (this.isModified("expectedEndDate") || this.isNew) {
     this.checkOverdue();
+  }
+  next();
+});
+
+projectSchema.post("save", async function (doc, next) {
+  try {
+    // Check if status changed to "In Progress"
+    if (
+      this.isModified("status") &&
+      doc.status === "In Progress" &&
+      doc.mentorId
+    ) {
+      // Check if milestones already exist for this project
+      const existingMilestones = await Milestone.countDocuments({
+        projectId: doc._id,
+      });
+
+      if (existingMilestones === 0) {
+        // Create initial milestone entry
+        const initialMilestone = new Milestone({
+          title: "Project Kickoff & Setup",
+          description:
+            "Initial project setup, requirements discussion, and planning phase",
+          projectId: doc._id,
+          learnerId: doc.learnerId,
+          mentorId: doc.mentorId,
+          dueDate:
+            doc.expectedEndDate ||
+            new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days from now
+          order: 1,
+          status: "Not Started",
+          priority: "High",
+        });
+
+        await initialMilestone.save();
+        console.log(`Initial milestone created for project: ${doc.name}`);
+      }
+    }
+    next();
+  } catch (error) {
+    console.error("Error in project post-save middleware:", error);
+    next(error);
+  }
+});
+
+// Also add this pre-save middleware to update milestone project references if needed
+projectSchema.pre("save", function (next) {
+  // Update lastUpdated timestamp
+  if (this.isModified()) {
+    this.updatedAt = new Date();
   }
   next();
 });

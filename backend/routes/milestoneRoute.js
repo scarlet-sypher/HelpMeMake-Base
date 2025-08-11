@@ -1,26 +1,55 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const milestoneController = require('../controller/milestoneController');
-const { authenticateJWT } = require('../middleware/roleAuth'); // Changed from authenticateToken
+const milestoneController = require("../controller/milestoneController");
+const {
+  authenticateJWT,
+  requireUserOrMentor,
+} = require("../middleware/roleAuth");
 
-// Get milestones for a specific project
-router.get('/project/:projectId', authenticateJWT, milestoneController.getMilestonesByProject);
+// Note: The /active-with-mentor route is handled in projectRoute.js for frontend compatibility
 
-// Create a new milestone
-router.post('/create', authenticateJWT, milestoneController.createMilestone);
+// Milestone CRUD operations
+router.get(
+  "/project/:projectId",
+  requireUserOrMentor,
+  milestoneController.getMilestonesByProject
+);
+router.post(
+  "/create",
+  requireUserOrMentor,
+  milestoneController.createMilestone
+);
+router.get(
+  "/:milestoneId",
+  authenticateJWT,
+  milestoneController.getMilestoneById
+);
+router.put(
+  "/:milestoneId",
+  authenticateJWT,
+  milestoneController.updateMilestone
+);
+router.delete(
+  "/:milestoneId",
+  authenticateJWT,
+  milestoneController.deleteMilestone
+);
 
-// Update milestone (learner verification)
-router.patch('/:milestoneId/learner-verify', authenticateJWT, milestoneController.learnerVerifyMilestone);
-
-router.patch('/:milestoneId/learner-unverify', authenticateJWT, milestoneController.learnerUnverifyMilestone);
-
-// Update milestone (mentor verification)
-router.patch('/:milestoneId/mentor-verify', authenticateJWT, milestoneController.mentorVerifyMilestone);
-
-// Delete milestone
-router.delete('/:milestoneId', authenticateJWT, milestoneController.deleteMilestone);
-
-// Get milestone details
-router.get('/:milestoneId', authenticateJWT, milestoneController.getMilestoneById);
+// Verification routes
+router.patch(
+  "/:milestoneId/learner-verify",
+  authenticateJWT,
+  milestoneController.learnerVerifyMilestone
+);
+router.patch(
+  "/:milestoneId/learner-unverify",
+  authenticateJWT,
+  milestoneController.learnerUnverifyMilestone
+);
+router.patch(
+  "/:milestoneId/mentor-verify",
+  authenticateJWT,
+  milestoneController.mentorVerifyMilestone
+);
 
 module.exports = router;
