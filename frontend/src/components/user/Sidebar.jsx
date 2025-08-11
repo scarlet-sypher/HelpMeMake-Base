@@ -59,7 +59,7 @@ const Sidebar = ({
             icon: Target,
             label: "Milestones",
             id: "milestones",
-            path: "mentor/milestone-page",
+            path: "/mentor/mileStone",
           },
           {
             icon: MessageCircle,
