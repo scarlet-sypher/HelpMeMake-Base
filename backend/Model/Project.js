@@ -232,13 +232,6 @@ const projectSchema = new mongoose.Schema(
       default: 0,
     },
 
-    progressPercentage: {
-      type: Number,
-      default: 0,
-      min: 0,
-      max: 100,
-    },
-
     // Communication & Feedback
     messages: [
       {
@@ -383,6 +376,18 @@ const projectSchema = new mongoose.Schema(
       default: false,
     },
 
+    progressPercentage: {
+      type: Number,
+      default: 0,
+      min: 0,
+      max: 100,
+    },
+
+    lastProgressUpdate: {
+      type: Date,
+      default: null,
+    },
+
     // Progress History Tracking
     progressHistory: [
       {
@@ -408,6 +413,43 @@ const projectSchema = new mongoose.Schema(
         },
       },
     ],
+
+    trackerPercentage: {
+      type: Number,
+      default: 0,
+      min: 0,
+      max: 100,
+    },
+
+    trackerHistory: [
+      {
+        percentage: {
+          type: Number,
+          required: true,
+          min: 0,
+          max: 100,
+        },
+        note: {
+          type: String,
+          trim: true,
+          maxlength: 1000,
+        },
+        date: {
+          type: Date,
+          default: Date.now,
+        },
+        updatedBy: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+          required: true,
+        },
+      },
+    ],
+
+    lastTrackerUpdate: {
+      type: Date,
+      default: null,
+    },
 
     // Completion Request Management
     completionRequest: {
@@ -541,10 +583,7 @@ const projectSchema = new mongoose.Schema(
     },
 
     // Additional Project Tracking
-    lastProgressUpdate: {
-      type: Date,
-      default: null,
-    },
+
     nextMilestoneDate: {
       type: Date,
       default: null,
@@ -885,6 +924,24 @@ projectSchema.methods.addProgressUpdate = function (
 
   this.progressPercentage = percentage;
   this.lastProgressUpdate = new Date();
+
+  return this.save();
+};
+
+projectSchema.methods.addTrackerUpdate = function (
+  percentage,
+  note,
+  updatedBy
+) {
+  this.trackerHistory.push({
+    percentage,
+    note,
+    date: new Date(),
+    updatedBy,
+  });
+
+  this.trackerPercentage = percentage;
+  this.lastTrackerUpdate = new Date();
 
   return this.save();
 };

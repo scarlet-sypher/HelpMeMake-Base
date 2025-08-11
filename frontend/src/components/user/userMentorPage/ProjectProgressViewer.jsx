@@ -25,7 +25,7 @@ const ProjectProgressViewer = ({ projectData }) => {
           const token = localStorage.getItem("access_token");
 
           const response = await axios.get(
-            `${apiUrl}/api/sync/progress-history/${projectData._id}`,
+            `${apiUrl}/api/sync/tracker-history/${projectData._id}`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -34,7 +34,7 @@ const ProjectProgressViewer = ({ projectData }) => {
           );
 
           if (response.data.success) {
-            setProgressHistory(response.data.progressHistory || []);
+            setProgressHistory(response.data.trackerHistory || []);
           }
         } catch (error) {
           console.error("Error fetching progress history:", error);
@@ -68,7 +68,7 @@ const ProjectProgressViewer = ({ projectData }) => {
     return "from-red-400 to-pink-500";
   };
 
-  const currentProgress = projectData?.progressPercentage || 0;
+  const currentProgress = projectData?.trackerPercentage || 0;
 
   return (
     <>
@@ -76,7 +76,7 @@ const ProjectProgressViewer = ({ projectData }) => {
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl font-bold text-white flex items-center">
             <Activity className="mr-2 text-green-400" size={24} />
-            Project Progress
+            Project Tracker
           </h2>
           <div className="flex items-center space-x-2">
             <TrendingUp className="text-green-400" size={16} />

@@ -174,24 +174,24 @@ const updateProjectProgress = async (req, res) => {
     }
 
     // Check if new percentage is higher than current
-    if (percentage < project.progressPercentage) {
+    if (percentage < project.trackerPercentage) {
       return res.status(400).json({
         success: false,
         message: "Progress can only be increased, not decreased",
       });
     }
 
-    // Add progress update to history
-    const progressUpdate = {
+    // Add tracker update to history
+    const trackerUpdate = {
       percentage: percentage,
       note: note.trim(),
       date: new Date(),
       updatedBy: userId,
     };
 
-    project.progressHistory.push(progressUpdate);
-    project.progressPercentage = percentage;
-    project.lastProgressUpdate = new Date();
+    project.trackerHistory.push(trackerUpdate);
+    project.trackerPercentage = percentage;
+    project.lastTrackerUpdate = new Date();
 
     await project.save();
 
@@ -199,7 +199,7 @@ const updateProjectProgress = async (req, res) => {
       success: true,
       message: "Progress updated successfully",
       project: project,
-      progressUpdate: progressUpdate,
+      trackerUpdate: trackerUpdate,
     });
   } catch (error) {
     console.error("Error updating progress:", error);
@@ -415,11 +415,11 @@ const getProgressHistory = async (req, res) => {
       });
     }
 
-    const progressHistory = project.progressHistory || [];
+    const trackerHistory = project.trackerHistory || [];
 
     res.json({
       success: true,
-      progressHistory: progressHistory.sort(
+      trackerHistory: trackerHistory.sort(
         (a, b) => new Date(a.date) - new Date(b.date)
       ),
     });

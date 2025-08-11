@@ -14,7 +14,7 @@ const ProjectProgressSetter = ({ projectData, onDataRefresh }) => {
 
   useEffect(() => {
     if (projectData) {
-      const progress = projectData.progressPercentage || 0;
+      const progress = projectData.trackerPercentage || 0;
       setCurrentProgress(progress);
       setNewProgress(progress);
     }
@@ -29,7 +29,7 @@ const ProjectProgressSetter = ({ projectData, onDataRefresh }) => {
       const token = localStorage.getItem("access_token");
 
       const response = await axios.get(
-        `${apiUrl}/api/sync/mentor-progress-history/${projectData._id}`,
+        `${apiUrl}/api/sync/mentor-tracker-history/${projectData._id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -39,7 +39,7 @@ const ProjectProgressSetter = ({ projectData, onDataRefresh }) => {
       );
 
       if (response.data.success) {
-        setProgressHistory(response.data.progressHistory);
+        setProgressHistory(response.data.trackerHistory);
       }
     } catch (error) {
       console.error("Error fetching progress history:", error);
@@ -83,7 +83,7 @@ const ProjectProgressSetter = ({ projectData, onDataRefresh }) => {
       const token = localStorage.getItem("access_token");
 
       const response = await axios.post(
-        `${apiUrl}/api/sync/update-progress`,
+        `${apiUrl}/api/sync/update-tracker`,
         {
           projectId: projectData._id,
           percentage: newProgress,
@@ -130,10 +130,10 @@ const ProjectProgressSetter = ({ projectData, onDataRefresh }) => {
           <div>
             <h3 className="text-2xl font-bold text-white mb-2 flex items-center">
               <TrendingUp className="mr-3 text-green-400" size={28} />
-              Update Project Progress
+              Update Project Tracker
             </h3>
             <p className="text-gray-300">
-              Track and update your apprentice's learning progress
+              Track and update your apprentice's learning tracker
             </p>
           </div>
           <button

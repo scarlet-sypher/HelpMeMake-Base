@@ -146,11 +146,11 @@ const getProgressHistory = async (req, res) => {
       });
     }
 
-    const progressHistory = project.progressHistory || [];
+    const trackerHistory = project.trackerHistory || [];
 
     res.json({
       success: true,
-      progressHistory: progressHistory.sort(
+      trackerHistory: trackerHistory.sort(
         (a, b) => new Date(a.date) - new Date(b.date)
       ),
     });

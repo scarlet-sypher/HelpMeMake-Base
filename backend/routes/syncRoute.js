@@ -31,7 +31,7 @@ const {
 // User (Learner) routes for My Mentor page
 router.get("/mentor-project-data", requireUser, getMentorProjectData);
 router.post("/confirm-expected-end-date", requireUser, confirmExpectedEndDate);
-router.get("/progress-history/:projectId", requireUser, getProgressHistory);
+router.get("/tracker-history/:projectId", requireUser, getProgressHistory);
 router.post("/completion-request", requireUser, sendCompletionRequest);
 router.post("/submit-review", requireUser, submitMentorReview);
 router.get("/completion-requests", requireUser, getCompletionRequests);
@@ -39,11 +39,11 @@ router.get("/completion-requests", requireUser, getCompletionRequests);
 // Mentor routes for My Apprentice page
 router.get("/apprentice-project-data", requireMentor, getApprenticeProjectData);
 router.post("/set-expected-end-date", requireMentor, setTempExpectedEndDate);
-router.post("/update-progress", requireMentor, updateProjectProgress);
+router.post("/update-tracker", requireMentor, updateProjectProgress);
 router.post("/submit-apprentice-review", requireMentor, submitApprenticeReview);
 
 router.get(
-  "/mentor-progress-history/:projectId",
+  "/mentor-tracker-history/:projectId",
   requireMentor,
   mentorGetProgressHistory
 );
