@@ -227,6 +227,26 @@ const milestoneSchema = new mongoose.Schema(
       },
     ],
 
+    reviewNote: {
+      type: String,
+      default: "",
+      trim: true,
+      maxlength: 1000,
+    },
+    reviewReadByLearner: {
+      type: Boolean,
+      default: true, // true = read, false = unread (blinking)
+    },
+    reviewedAt: {
+      type: Date,
+      default: null,
+    },
+    reviewedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
+    },
+
     // Communication & Updates
     comments: [
       {
@@ -572,6 +592,66 @@ milestoneSchema.methods.areDependenciesMet = async function () {
 
   return dependencies.every((dep) => dep.isFullyCompleted);
 };
+
+milestoneSchema.methods.addReviewNote = function (mentorId, note) {
+  this.reviewNote = note;
+  this.reviewReadByLearner = false; // Mark as unread for blinking
+  this.reviewedAt = new Date();
+  this.reviewedBy = mentorId;
+  return this.save();
+};
+
+milestoneSchema.methods.markReviewAsRead = function () {
+  this.reviewReadByLearner = true;
+  return this.save();
+};
+
+// Add this virtual for checking if milestone can be edited
+milestoneSchema.virtual("canBeEdited").get(function () {
+  return !(
+    this.learnerVerification.isVerified && this.mentorVerification.isVerified
+  );
+});
+
+// Update the pre-save middleware to handle review notifications
+milestoneSchema.pre("save", function (next) {
+  // Existing pre-save logic...
+
+  // Update status based on verification
+  if (this.isFullyCompleted) {
+    this.status = "Completed";
+    if (!this.completedDate) {
+      this.completedDate = new Date();
+    }
+    this.progressPercentage = 100;
+  } else if (this.isPartiallyCompleted) {
+    if (this.status === "Not Started") {
+      this.status = "Pending Review";
+    }
+  }
+
+  // Update progress percentage based on criteria
+  if (this.acceptanceCriteria.length > 0) {
+    const completedCriteria = this.acceptanceCriteria.filter(
+      (c) => c.isCompleted
+    ).length;
+    const baseProgress = Math.round(
+      (completedCriteria / this.acceptanceCriteria.length) * 80
+    ); // 80% from criteria
+
+    // Add verification bonus
+    let verificationBonus = 0;
+    if (this.learnerVerification.isVerified) verificationBonus += 10;
+    if (this.mentorVerification.isVerified) verificationBonus += 10;
+
+    this.progressPercentage = Math.min(baseProgress + verificationBonus, 100);
+  }
+
+  // Update lastUpdated
+  this.lastUpdated = new Date();
+
+  next();
+});
 
 // Configure JSON output
 milestoneSchema.set("toJSON", {

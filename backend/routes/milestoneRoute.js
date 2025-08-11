@@ -4,6 +4,8 @@ const milestoneController = require("../controller/milestoneController");
 const {
   authenticateJWT,
   requireUserOrMentor,
+  requireMentor,
+  requireUser,
 } = require("../middleware/roleAuth");
 
 // Note: The /active-with-mentor route is handled in projectRoute.js for frontend compatibility
@@ -50,6 +52,81 @@ router.patch(
   "/:milestoneId/mentor-verify",
   authenticateJWT,
   milestoneController.mentorVerifyMilestone
+);
+
+router.get(
+  "/mentor/projects",
+  requireMentor,
+  milestoneController.getMentorMilestones
+);
+
+// Milestone CRUD operations
+router.get(
+  "/project/:projectId",
+  requireUserOrMentor,
+  milestoneController.getMilestonesByProject
+);
+
+router.post(
+  "/create",
+  requireUserOrMentor,
+  milestoneController.createMilestone
+);
+
+router.get(
+  "/:milestoneId",
+  authenticateJWT,
+  milestoneController.getMilestoneById
+);
+
+router.put(
+  "/:milestoneId",
+  authenticateJWT,
+  milestoneController.updateMilestone
+);
+
+router.delete(
+  "/:milestoneId",
+  authenticateJWT,
+  milestoneController.deleteMilestone
+);
+
+// Verification routes
+router.patch(
+  "/:milestoneId/learner-verify",
+  requireUser,
+  milestoneController.learnerVerifyMilestone
+);
+
+router.patch(
+  "/:milestoneId/learner-unverify",
+  requireUser,
+  milestoneController.learnerUnverifyMilestone
+);
+
+router.patch(
+  "/:milestoneId/mentor-verify",
+  requireMentor,
+  milestoneController.mentorVerifyMilestone
+);
+
+router.patch(
+  "/:milestoneId/mentor-unverify",
+  requireMentor,
+  milestoneController.mentorUnverifyMilestone
+);
+
+// Review system routes
+router.put(
+  "/:milestoneId/review",
+  requireMentor,
+  milestoneController.addReviewNote
+);
+
+router.put(
+  "/:milestoneId/review-read",
+  requireUser,
+  milestoneController.markReviewAsRead
 );
 
 module.exports = router;

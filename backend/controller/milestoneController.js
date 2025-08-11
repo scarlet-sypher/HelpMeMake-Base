@@ -568,6 +568,17 @@ const deleteMilestone = async (req, res) => {
       });
     }
 
+    // Check if milestone is completed (both verifications done)
+    if (
+      milestone.learnerVerification.isVerified &&
+      milestone.mentorVerification.isVerified
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Milestone is complete and cannot be modified.",
+      });
+    }
+
     // Can't delete if any verification exists
     if (
       milestone.learnerVerification.isVerified ||
@@ -696,11 +707,14 @@ const updateMilestone = async (req, res) => {
       });
     }
 
-    // Can't edit if milestone is completed
-    if (milestone.status === "Completed") {
+    // Check if milestone is completed (both verifications done)
+    if (
+      milestone.learnerVerification.isVerified &&
+      milestone.mentorVerification.isVerified
+    ) {
       return res.status(400).json({
         success: false,
-        message: "Cannot edit completed milestone",
+        message: "Milestone is complete and cannot be modified.",
       });
     }
 
@@ -731,14 +745,273 @@ const updateMilestone = async (req, res) => {
   }
 };
 
+const getMentorMilestones = async (req, res) => {
+  try {
+    console.log("=== GET MENTOR MILESTONES DEBUG ===");
+    console.log("User from req.user:", req.user);
+
+    const userId = req.user._id || req.user.id;
+    const userRole = req.user.role;
+
+    console.log("Extracted userId:", userId);
+    console.log("User role:", userRole);
+
+    if (userRole !== "mentor") {
+      return res.status(403).json({
+        success: false,
+        message: "Access denied. Mentor role required.",
+      });
+    }
+
+    // Find mentor profile
+    const mentorProfile = await Mentor.findOne({ userId });
+    console.log("Mentor profile found:", mentorProfile ? "YES" : "NO");
+
+    if (!mentorProfile) {
+      return res.status(404).json({
+        success: false,
+        message: "Mentor profile not found",
+      });
+    }
+
+    // Get all in-progress projects for this mentor
+    const projects = await Project.find({
+      mentorId: mentorProfile._id,
+      status: "In Progress",
+    })
+      .populate("learnerId", "name email avatar")
+      .populate("mentorId", "name email avatar")
+      .lean();
+
+    console.log("In-progress projects found:", projects.length);
+
+    // Get milestones for all projects
+    const projectIds = projects.map((p) => p._id);
+    const milestones = await Milestone.find({
+      projectId: { $in: projectIds },
+    })
+      .sort({ projectId: 1, order: 1, createdAt: 1 })
+      .populate("learnerId", "name email avatar")
+      .populate("mentorId", "name email avatar")
+      .populate(
+        "projectId",
+        "name shortDescription thumbnail skills closingPrice"
+      )
+      .lean();
+
+    // Group milestones by project
+    const projectsWithMilestones = projects.map((project) => ({
+      ...project,
+      milestones: milestones.filter(
+        (m) => m.projectId._id.toString() === project._id.toString()
+      ),
+    }));
+
+    console.log("Projects with milestones:", projectsWithMilestones.length);
+
+    res.json({
+      success: true,
+      projects: projectsWithMilestones,
+      totalProjects: projects.length,
+      totalMilestones: milestones.length,
+    });
+  } catch (error) {
+    console.error("Error fetching mentor milestones:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch mentor milestones",
+      error: error.message,
+    });
+  }
+};
+
+// Add review note to milestone (Mentor only)
+const addReviewNote = async (req, res) => {
+  try {
+    const { milestoneId } = req.params;
+    const { note } = req.body;
+    const userId = req.user._id || req.user.id;
+    const userRole = req.user.role;
+
+    if (userRole !== "mentor") {
+      return res.status(403).json({
+        success: false,
+        message: "Only mentors can add review notes",
+      });
+    }
+
+    let milestone = null;
+    const mentorProfile = await Mentor.findOne({ userId });
+
+    if (mentorProfile) {
+      milestone = await Milestone.findOne({
+        _id: milestoneId,
+        mentorId: mentorProfile._id,
+      });
+    }
+
+    if (!milestone) {
+      return res.status(404).json({
+        success: false,
+        message: "Milestone not found or access denied",
+      });
+    }
+
+    // Add review note using schema method
+    await milestone.addReviewNote(userId, note);
+
+    const updatedMilestone = await Milestone.findById(milestoneId)
+      .populate("learnerId", "name email avatar")
+      .populate("mentorId", "name email avatar")
+      .populate("projectId", "name shortDescription")
+      .lean();
+
+    res.json({
+      success: true,
+      milestone: updatedMilestone,
+      message: "Review note added successfully",
+    });
+  } catch (error) {
+    console.error("Error adding review note:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to add review note",
+      error: error.message,
+    });
+  }
+};
+
+// Mark review as read (Learner only)
+const markReviewAsRead = async (req, res) => {
+  try {
+    const { milestoneId } = req.params;
+    const userId = req.user._id || req.user.id;
+    const userRole = req.user.role;
+
+    if (userRole !== "user") {
+      return res.status(403).json({
+        success: false,
+        message: "Only learners can mark reviews as read",
+      });
+    }
+
+    let milestone = null;
+    const learnerProfile = await Learner.findOne({ userId });
+
+    if (learnerProfile) {
+      milestone = await Milestone.findOne({
+        _id: milestoneId,
+        learnerId: learnerProfile._id,
+      });
+    }
+
+    if (!milestone) {
+      return res.status(404).json({
+        success: false,
+        message: "Milestone not found or access denied",
+      });
+    }
+
+    // Mark review as read using schema method
+    await milestone.markReviewAsRead();
+
+    const updatedMilestone = await Milestone.findById(milestoneId)
+      .populate("learnerId", "name email avatar")
+      .populate("mentorId", "name email avatar")
+      .populate("projectId", "name shortDescription")
+      .lean();
+
+    res.json({
+      success: true,
+      milestone: updatedMilestone,
+      message: "Review marked as read",
+    });
+  } catch (error) {
+    console.error("Error marking review as read:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to mark review as read",
+      error: error.message,
+    });
+  }
+};
+
+const mentorUnverifyMilestone = async (req, res) => {
+  try {
+    const { milestoneId } = req.params;
+    const userId = req.user._id || req.user.id;
+    const userRole = req.user.role;
+
+    let milestone = null;
+
+    if (userRole === "mentor") {
+      const mentorProfile = await Mentor.findOne({ userId });
+      if (mentorProfile) {
+        milestone = await Milestone.findOne({
+          _id: milestoneId,
+          mentorId: mentorProfile._id,
+        });
+      }
+    }
+
+    if (!milestone) {
+      return res.status(404).json({
+        success: false,
+        message: "Milestone not found or access denied",
+      });
+    }
+
+    // Can only undo if learner has verified (mentor can't undo if learner hasn't verified)
+    if (!milestone.learnerVerification.isVerified) {
+      return res.status(400).json({
+        success: false,
+        message: "Cannot undo verification when learner hasn't verified yet",
+      });
+    }
+
+    // Reset mentor verification
+    milestone.mentorVerification.isVerified = false;
+    milestone.mentorVerification.verifiedAt = null;
+    milestone.mentorVerification.verificationNotes = "";
+    milestone.mentorVerification.rating = null;
+    milestone.mentorVerification.feedback = "";
+    milestone.status = "Pending Review";
+    milestone.completedDate = null;
+
+    await milestone.save();
+
+    const updatedMilestone = await Milestone.findById(milestoneId)
+      .populate("learnerId", "name email avatar")
+      .populate("mentorId", "name email avatar")
+      .lean();
+
+    res.json({
+      success: true,
+      milestone: updatedMilestone,
+      message: "Mentor verification undone",
+    });
+  } catch (error) {
+    console.error("Error undoing mentor verification:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to undo mentor verification",
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   getActiveProjectWithMentor,
   getMilestonesByProject,
+  getMentorMilestones,
   createMilestone,
   learnerVerifyMilestone,
   learnerUnverifyMilestone,
   mentorVerifyMilestone,
+  mentorUnverifyMilestone,
   deleteMilestone,
   getMilestoneById,
   updateMilestone,
+  addReviewNote,
+  markReviewAsRead,
 };
