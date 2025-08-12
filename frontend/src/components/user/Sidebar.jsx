@@ -146,7 +146,7 @@ const Sidebar = ({
   const themeColor =
     userRole === "mentor"
       ? "from-cyan-500 to-teal-500"
-      : "from-blue-500 to-purple-500";
+      : "from-blue-700 to-indigo-700";
 
   const handleItemClick = (itemId, path) => {
     setActiveItem(itemId);
@@ -199,7 +199,7 @@ const Sidebar = ({
         className={`fixed left-0 top-0 h-full w-64 bg-gradient-to-b backdrop-blur-sm ${
           userRole === "mentor"
             ? "from-slate-900 via-cyan-900 to-teal-900"
-            : "from-slate-900 via-blue-900 to-indigo-900"
+            : "from-slate-950 via-blue-950 to-indigo-950"
         } border-r border-white/10 z-50 transform transition-transform duration-300 ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         } lg:translate-x-0`}

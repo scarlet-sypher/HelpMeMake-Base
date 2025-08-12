@@ -1,82 +1,105 @@
-import React, { useState, useEffect } from 'react';
-import { useAuth } from '../../hooks/useAuth';
-import Sidebar from '../../components/user/Sidebar';
-import ProfileTab from '../../components/user/usersettings/ProfileTab';
-import SocialLinksTab from '../../components/user/usersettings/SocialLinksTab';
-import SecurityTab from '../../components/user/usersettings/SecurityTab';
-import axios from 'axios';
-import { User, Shield, Link, Settings as SettingsIcon, Loader, Menu, Sparkles } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import { useAuth } from "../../hooks/useAuth";
+import Sidebar from "../../components/user/Sidebar";
+import ProfileTab from "../../components/user/usersettings/ProfileTab";
+import SocialLinksTab from "../../components/user/usersettings/SocialLinksTab";
+import SecurityTab from "../../components/user/usersettings/SecurityTab";
+import axios from "axios";
+import {
+  User,
+  Shield,
+  Link,
+  Settings as SettingsIcon,
+  Loader,
+  Menu,
+  Sparkles,
+} from "lucide-react";
 
 const UserSettings = () => {
   const { user, loading, isAuthenticated } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [activeItem, setActiveItem] = useState('settings');
-  const [activeTab, setActiveTab] = useState('profile');
+  const [activeItem, setActiveItem] = useState("settings");
+  const [activeTab, setActiveTab] = useState("profile");
   const [userData, setUserData] = useState(null);
   const [userDataLoading, setUserDataLoading] = useState(true);
-  
+
   // Form states
   const [profileData, setProfileData] = useState({
-    name: '',
-    title: '',
-    description: '',
-    location: '',
-    email: '',
-    updatePercentage: 0 
+    name: "",
+    title: "",
+    description: "",
+    location: "",
+    email: "",
+    updatePercentage: 0,
   });
-  
+
   const [socialLinksData, setSocialLinksData] = useState({
-    github: '',
-    linkedin: '',
-    twitter: ''
+    github: "",
+    linkedin: "",
+    twitter: "",
   });
-  
+
   const [passwordData, setPasswordData] = useState({
-    currentPassword: '',
-    newPassword: '',
-    confirmPassword: ''
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
   });
-  
+
   // UI states
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [profileImage, setProfileImage] = useState(null);
-  const [imagePreview, setImagePreview] = useState('');
+  const [imagePreview, setImagePreview] = useState("");
   const [loadingStates, setLoadingStates] = useState({
     profile: false,
     socialLinks: false,
     password: false,
-    avatar: false
+    avatar: false,
   });
   const [notifications, setNotifications] = useState({
     profile: null,
     socialLinks: null,
     password: null,
-    avatar: null
+    avatar: null,
   });
 
   const [indianStates, setIndianStates] = useState([]);
   const professionalTitles = [
-    'Student','Software Development Engineer (SDE)','Frontend Developer','Backend Developer','Full Stack Developer',
-    'Mobile App Developer','DevOps Engineer','Data Scientist','ML Engineer','UI/UX Designer','Product Manager',
-    'Business Analyst','QA Engineer','Freelancer','Researcher','Consultant','Entrepreneur','Other'
+    "Student",
+    "Software Development Engineer (SDE)",
+    "Frontend Developer",
+    "Backend Developer",
+    "Full Stack Developer",
+    "Mobile App Developer",
+    "DevOps Engineer",
+    "Data Scientist",
+    "ML Engineer",
+    "UI/UX Designer",
+    "Product Manager",
+    "Business Analyst",
+    "QA Engineer",
+    "Freelancer",
+    "Researcher",
+    "Consultant",
+    "Entrepreneur",
+    "Other",
   ];
 
   // Fetch Indian states
   useEffect(() => {
     const fetchIndianStates = async () => {
       try {
-        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+        const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
         const response = await axios.get(`${apiUrl}/meta/indian-states`);
-        
+
         if (response.data.success) {
           setIndianStates(response.data.states);
         }
       } catch (error) {
-        console.error('Error fetching Indian states:', error);
+        console.error("Error fetching Indian states:", error);
         // Fallback to a basic list if API fails
-        setIndianStates(['Delhi', 'Mumbai', 'Bangalore', 'Chennai', 'Kolkata']);
+        setIndianStates(["Delhi", "Mumbai", "Bangalore", "Chennai", "Kolkata"]);
       }
     };
 
@@ -85,15 +108,15 @@ const UserSettings = () => {
 
   useEffect(() => {
     if (!loading && !isAuthenticated) {
-      window.location.href = '/login';
+      window.location.href = "/login";
     }
   }, [loading, isAuthenticated]);
 
   useEffect(() => {
     // Check if user came from password update prompt
     const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('updatePassword') === 'true') {
-      setActiveTab('security');
+    if (urlParams.get("updatePassword") === "true") {
+      setActiveTab("security");
       // Clear URL params
       window.history.replaceState({}, document.title, window.location.pathname);
     }
@@ -105,45 +128,46 @@ const UserSettings = () => {
       if (isAuthenticated) {
         try {
           setUserDataLoading(true);
-          const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+          const apiUrl =
+            import.meta.env.VITE_API_URL || "http://localhost:5000";
           const response = await axios.get(`${apiUrl}/auth/user`, {
             withCredentials: true,
             headers: {
-              'Content-Type': 'application/json',
-            }
+              "Content-Type": "application/json",
+            },
           });
-          
+
           if (response.data.success) {
             const userData = response.data.user;
             setUserData(userData);
-            
+
             // Populate form data
             setProfileData({
-              name: userData.name || userData.displayName || '',
-              title: userData.title || '',
-              description: userData.description || '',
-              location: userData.location || '',
-              email: userData.email || '',
+              name: userData.name || userData.displayName || "",
+              title: userData.title || "",
+              description: userData.description || "",
+              location: userData.location || "",
+              email: userData.email || "",
               updatePercentage: userData.profileScore || 0,
             });
-            
+
             setSocialLinksData({
-              github: userData.socialLinks?.github || '',
-              linkedin: userData.socialLinks?.linkedin || '',
-              twitter: userData.socialLinks?.twitter || ''
+              github: userData.socialLinks?.github || "",
+              linkedin: userData.socialLinks?.linkedin || "",
+              twitter: userData.socialLinks?.twitter || "",
             });
-            
+
             setImagePreview(
               userData.avatar
-                ? userData.avatar.startsWith('/uploads/')
+                ? userData.avatar.startsWith("/uploads/")
                   ? `${import.meta.env.VITE_API_URL}${userData.avatar}`
                   : userData.avatar
-                : ''
+                : ""
             );
           }
         } catch (error) {
-          console.error('Error fetching user data:', error);
-          showNotification('profile', 'error', 'Failed to load user data');
+          console.error("Error fetching user data:", error);
+          showNotification("profile", "error", "Failed to load user data");
         } finally {
           setUserDataLoading(false);
         }
@@ -154,133 +178,170 @@ const UserSettings = () => {
   }, [isAuthenticated]);
 
   const showNotification = (type, status, message) => {
-    setNotifications(prev => ({
+    setNotifications((prev) => ({
       ...prev,
-      [type]: { status, message }
+      [type]: { status, message },
     }));
-    
+
     setTimeout(() => {
-      setNotifications(prev => ({
+      setNotifications((prev) => ({
         ...prev,
-        [type]: null
+        [type]: null,
       }));
     }, 5000);
   };
 
   const setLoading = (type, isLoading) => {
-    setLoadingStates(prev => ({
+    setLoadingStates((prev) => ({
       ...prev,
-      [type]: isLoading
+      [type]: isLoading,
     }));
   };
 
   const handleProfileUpdate = async (e) => {
     e.preventDefault();
-    setLoading('profile', true);
-    
+    setLoading("profile", true);
+
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-      const response = await axios.patch(`${apiUrl}/user/update-profile`, profileData, {
-        withCredentials: true,
-        headers: {
-          'Content-Type': 'application/json',
+      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+      const response = await axios.patch(
+        `${apiUrl}/user/update-profile`,
+        profileData,
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "application/json",
+          },
         }
-      });
-      
+      );
+
       if (response.data.success) {
-        showNotification('profile', 'success', 'Profile updated successfully!');
+        showNotification("profile", "success", "Profile updated successfully!");
       }
     } catch (error) {
-      console.error('Error updating profile:', error);
-      showNotification('profile', 'error', error.response?.data?.message || 'Failed to update profile');
+      console.error("Error updating profile:", error);
+      showNotification(
+        "profile",
+        "error",
+        error.response?.data?.message || "Failed to update profile"
+      );
     } finally {
-      setLoading('profile', false);
+      setLoading("profile", false);
     }
   };
 
   const handleSocialLinksUpdate = async (e) => {
     e.preventDefault();
-    setLoading('socialLinks', true);
-    
+    setLoading("socialLinks", true);
+
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-      const response = await axios.patch(`${apiUrl}/user/social-links`, socialLinksData, {
-        withCredentials: true,
-        headers: {
-          'Content-Type': 'application/json',
+      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+      const response = await axios.patch(
+        `${apiUrl}/user/social-links`,
+        socialLinksData,
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "application/json",
+          },
         }
-      });
-      
+      );
+
       if (response.data.success) {
-        showNotification('socialLinks', 'success', 'Social links updated successfully!');
+        showNotification(
+          "socialLinks",
+          "success",
+          "Social links updated successfully!"
+        );
       }
     } catch (error) {
-      console.error('Error updating social links:', error);
-      showNotification('socialLinks', 'error', error.response?.data?.message || 'Failed to update social links');
+      console.error("Error updating social links:", error);
+      showNotification(
+        "socialLinks",
+        "error",
+        error.response?.data?.message || "Failed to update social links"
+      );
     } finally {
-      setLoading('socialLinks', false);
+      setLoading("socialLinks", false);
     }
   };
 
   const handlePasswordChange = async (e) => {
     e.preventDefault();
-    
+
     if (passwordData.newPassword !== passwordData.confirmPassword) {
-      showNotification('password', 'error', 'New passwords do not match');
+      showNotification("password", "error", "New passwords do not match");
       return;
     }
-    
+
     if (passwordData.newPassword.length < 6) {
-      showNotification('password', 'error', 'Password must be at least 6 characters long');
+      showNotification(
+        "password",
+        "error",
+        "Password must be at least 6 characters long"
+      );
       return;
     }
-    
-    setLoading('password', true);
-    
+
+    setLoading("password", true);
+
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-      const response = await axios.patch(`${apiUrl}/user/change-password`, {
-        currentPassword: passwordData.currentPassword,
-        newPassword: passwordData.newPassword
-      }, {
-        withCredentials: true,
-        headers: {
-          'Content-Type': 'application/json',
+      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+      const response = await axios.patch(
+        `${apiUrl}/user/change-password`,
+        {
+          currentPassword: passwordData.currentPassword,
+          newPassword: passwordData.newPassword,
+        },
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "application/json",
+          },
         }
-      });
-      
+      );
+
       if (response.data.success) {
-        showNotification('password', 'success', 'Password changed successfully!');
+        showNotification(
+          "password",
+          "success",
+          "Password changed successfully!"
+        );
         setPasswordData({
-          currentPassword: '',
-          newPassword: '',
-          confirmPassword: ''
+          currentPassword: "",
+          newPassword: "",
+          confirmPassword: "",
         });
-        
+
         // Update user data to reflect password has been updated
         if (userData) {
           setUserData({
             ...userData,
-            isPasswordUpdated: true
+            isPasswordUpdated: true,
           });
         }
       }
     } catch (error) {
-      console.error('Error changing password:', error);
-      showNotification('password', 'error', error.response?.data?.message || 'Failed to change password');
+      console.error("Error changing password:", error);
+      showNotification(
+        "password",
+        "error",
+        error.response?.data?.message || "Failed to change password"
+      );
     } finally {
-      setLoading('password', false);
+      setLoading("password", false);
     }
   };
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      if (file.size > 5 * 1024 * 1024) { // 5MB limit
-        showNotification('avatar', 'error', 'Image size must be less than 5MB');
+      if (file.size > 5 * 1024 * 1024) {
+        // 5MB limit
+        showNotification("avatar", "error", "Image size must be less than 5MB");
         return;
       }
-      
+
       setProfileImage(file);
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -292,30 +353,42 @@ const UserSettings = () => {
 
   const handleAvatarUpload = async () => {
     if (!profileImage) return;
-    
-    setLoading('avatar', true);
-    
+
+    setLoading("avatar", true);
+
     try {
       const formData = new FormData();
-      formData.append('avatar', profileImage);
-      
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-      const response = await axios.patch(`${apiUrl}/user/upload-avatar`, formData, {
-        withCredentials: true,
-        headers: {
-          'Content-Type': 'multipart/form-data',
+      formData.append("avatar", profileImage);
+
+      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+      const response = await axios.patch(
+        `${apiUrl}/user/upload-avatar`,
+        formData,
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
         }
-      });
-      
+      );
+
       if (response.data.success) {
-        showNotification('avatar', 'success', 'Profile picture updated successfully!');
+        showNotification(
+          "avatar",
+          "success",
+          "Profile picture updated successfully!"
+        );
         setProfileImage(null);
       }
     } catch (error) {
-      console.error('Error uploading avatar:', error);
-      showNotification('avatar', 'error', error.response?.data?.message || 'Failed to upload profile picture');
+      console.error("Error uploading avatar:", error);
+      showNotification(
+        "avatar",
+        "error",
+        error.response?.data?.message || "Failed to upload profile picture"
+      );
     } finally {
-      setLoading('avatar', false);
+      setLoading("avatar", false);
     }
   };
 
@@ -324,14 +397,29 @@ const UserSettings = () => {
   };
 
   const tabs = [
-    { id: 'profile', label: 'Profile', icon: User, gradient: 'from-slate-600 to-blue-700' },
-    { id: 'social', label: 'Social Links', icon: Link, gradient: 'from-blue-700 to-indigo-700' },
-    { id: 'security', label: 'Security', icon: Shield, gradient: 'from-slate-700 to-slate-600' }
+    {
+      id: "profile",
+      label: "Profile",
+      icon: User,
+      gradient: "from-slate-600 to-blue-700",
+    },
+    {
+      id: "social",
+      label: "Social Links",
+      icon: Link,
+      gradient: "from-blue-700 to-indigo-700",
+    },
+    {
+      id: "security",
+      label: "Security",
+      icon: Shield,
+      gradient: "from-slate-700 to-slate-600",
+    },
   ];
 
   if (loading || userDataLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-indigo-950 flex items-center justify-center">
         <div className="text-center">
           <div className="relative w-20 h-20 mx-auto mb-4">
             <div className="absolute inset-0 bg-gradient-to-r from-slate-600 to-blue-700 rounded-full animate-ping opacity-15"></div>
@@ -339,12 +427,20 @@ const UserSettings = () => {
               <Loader className="animate-spin text-white" size={32} />
             </div>
           </div>
-          <p className="text-white text-lg font-medium">Loading your settings...</p>
+          <p className="text-white text-lg font-medium">
+            Loading your settings...
+          </p>
           <div className="flex justify-center mt-2">
             <div className="flex space-x-1">
               <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce"></div>
-              <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
-              <div className="w-2 h-2 bg-indigo-400 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+              <div
+                className="w-2 h-2 bg-blue-400 rounded-full animate-bounce"
+                style={{ animationDelay: "0.1s" }}
+              ></div>
+              <div
+                className="w-2 h-2 bg-indigo-400 rounded-full animate-bounce"
+                style={{ animationDelay: "0.2s" }}
+              ></div>
             </div>
           </div>
         </div>
@@ -357,34 +453,46 @@ const UserSettings = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-indigo-950 relative overflow-hidden">
       {/* Enhanced Background Elements */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-40 -right-40 w-96 h-96 bg-gradient-to-br from-slate-600/15 to-blue-800/15 rounded-full blur-3xl animate-float"></div>
         <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-br from-blue-800/15 to-indigo-700/15 rounded-full blur-3xl animate-float-reverse"></div>
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-r from-slate-700/8 to-blue-700/8 rounded-full blur-3xl animate-pulse"></div>
-        
+
         {/* Floating particles */}
-        <div className="absolute top-20 left-20 w-2 h-2 bg-slate-400/40 rounded-full animate-bounce opacity-30" style={{animationDelay: '0s', animationDuration: '4s'}}></div>
-        <div className="absolute top-40 right-32 w-1 h-1 bg-blue-400/40 rounded-full animate-bounce opacity-25" style={{animationDelay: '1s', animationDuration: '5s'}}></div>
-        <div className="absolute bottom-32 left-40 w-3 h-3 bg-indigo-400/40 rounded-full animate-bounce opacity-30" style={{animationDelay: '2s', animationDuration: '6s'}}></div>
-        <div className="absolute bottom-20 right-20 w-1.5 h-1.5 bg-slate-300/40 rounded-full animate-bounce opacity-35" style={{animationDelay: '0.5s', animationDuration: '4.5s'}}></div>
+        <div
+          className="absolute top-20 left-20 w-2 h-2 bg-slate-400/40 rounded-full animate-bounce opacity-30"
+          style={{ animationDelay: "0s", animationDuration: "4s" }}
+        ></div>
+        <div
+          className="absolute top-40 right-32 w-1 h-1 bg-blue-400/40 rounded-full animate-bounce opacity-25"
+          style={{ animationDelay: "1s", animationDuration: "5s" }}
+        ></div>
+        <div
+          className="absolute bottom-32 left-40 w-3 h-3 bg-indigo-400/40 rounded-full animate-bounce opacity-30"
+          style={{ animationDelay: "2s", animationDuration: "6s" }}
+        ></div>
+        <div
+          className="absolute bottom-20 right-20 w-1.5 h-1.5 bg-slate-300/40 rounded-full animate-bounce opacity-35"
+          style={{ animationDelay: "0.5s", animationDuration: "4.5s" }}
+        ></div>
       </div>
 
       {/* Sidebar */}
-      <Sidebar 
-        isOpen={sidebarOpen} 
-        toggleSidebar={toggleSidebar} 
+      <Sidebar
+        isOpen={sidebarOpen}
+        toggleSidebar={toggleSidebar}
         activeItem={activeItem}
         setActiveItem={setActiveItem}
       />
-      
+
       {/* Main Content */}
       <div className="flex-1 lg:ml-64 relative z-10">
         {/* Enhanced Mobile Header */}
         <div className="lg:hidden bg-gradient-to-r from-slate-900/90 to-blue-900/90 backdrop-blur-xl border-b border-white/10 p-4 sticky top-0 z-50">
           <div className="flex items-center justify-between">
-            <button 
+            <button
               onClick={toggleSidebar}
               className="text-white hover:text-gray-300 transition-all duration-300 p-2 hover:bg-white/10 rounded-xl"
             >
@@ -418,7 +526,9 @@ const UserSettings = () => {
                   <h1 className="text-3xl lg:text-4xl font-bold bg-gradient-to-r from-white via-slate-100 to-blue-100 bg-clip-text text-transparent mb-2">
                     Account Settings
                   </h1>
-                  <p className="text-blue-200/80 text-lg">Customize your profile and manage your preferences</p>
+                  <p className="text-blue-200/80 text-lg">
+                    Customize your profile and manage your preferences
+                  </p>
                 </div>
               </div>
             </div>
@@ -428,7 +538,6 @@ const UserSettings = () => {
           <div className="relative group">
             <div className="absolute -inset-1 bg-gradient-to-r from-slate-600 via-blue-700 to-indigo-700 rounded-3xl blur opacity-15 group-hover:opacity-20 transition duration-1000"></div>
             <div className="relative bg-white/10 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 overflow-hidden">
-              
               {/* Enhanced Tab Navigation */}
               <div className="relative">
                 <div className="flex overflow-x-auto scrollbar-hide bg-gradient-to-r from-white/5 to-white/10 backdrop-blur-sm">
@@ -438,23 +547,31 @@ const UserSettings = () => {
                       onClick={() => setActiveTab(tab.id)}
                       className={`relative flex items-center space-x-3 px-6 lg:px-8 py-4 lg:py-5 font-medium transition-all duration-300 whitespace-nowrap group/tab ${
                         activeTab === tab.id
-                          ? 'text-white'
-                          : 'text-gray-300 hover:text-white'
+                          ? "text-white"
+                          : "text-gray-300 hover:text-white"
                       }`}
                     >
                       {activeTab === tab.id && (
-                        <div className={`absolute inset-0 bg-gradient-to-r ${tab.gradient} opacity-20 rounded-t-2xl`}></div>
+                        <div
+                          className={`absolute inset-0 bg-gradient-to-r ${tab.gradient} opacity-20 rounded-t-2xl`}
+                        ></div>
                       )}
-                      <div className={`relative z-10 p-2 rounded-xl transition-all duration-300 ${
-                        activeTab === tab.id 
-                          ? `bg-gradient-to-r ${tab.gradient} shadow-lg transform scale-105` 
-                          : 'bg-white/10 group-hover/tab:bg-white/20 group-hover/tab:scale-105'
-                      }`}>
+                      <div
+                        className={`relative z-10 p-2 rounded-xl transition-all duration-300 ${
+                          activeTab === tab.id
+                            ? `bg-gradient-to-r ${tab.gradient} shadow-lg transform scale-105`
+                            : "bg-white/10 group-hover/tab:bg-white/20 group-hover/tab:scale-105"
+                        }`}
+                      >
                         <tab.icon size={20} />
                       </div>
-                      <span className="relative z-10 text-sm lg:text-base font-semibold">{tab.label}</span>
+                      <span className="relative z-10 text-sm lg:text-base font-semibold">
+                        {tab.label}
+                      </span>
                       {activeTab === tab.id && (
-                        <div className={`absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r ${tab.gradient} rounded-full`}></div>
+                        <div
+                          className={`absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r ${tab.gradient} rounded-full`}
+                        ></div>
                       )}
                     </button>
                   ))}
@@ -464,7 +581,7 @@ const UserSettings = () => {
               {/* Tab Content */}
               <div className="p-6 lg:p-8">
                 {/* Profile Tab */}
-                {activeTab === 'profile' && (
+                {activeTab === "profile" && (
                   <ProfileTab
                     profileData={profileData}
                     setProfileData={setProfileData}
@@ -484,7 +601,7 @@ const UserSettings = () => {
                 )}
 
                 {/* Social Links Tab */}
-                {activeTab === 'social' && (
+                {activeTab === "social" && (
                   <SocialLinksTab
                     socialLinksData={socialLinksData}
                     setSocialLinksData={setSocialLinksData}
@@ -495,7 +612,7 @@ const UserSettings = () => {
                 )}
 
                 {/* Security Tab */}
-                {activeTab === 'security' && (
+                {activeTab === "security" && (
                   <SecurityTab
                     userData={userData}
                     passwordData={passwordData}

@@ -1,6 +1,12 @@
 import React, { useState } from "react";
 import Sidebar from "../../components/user/Sidebar";
-import { Users, UserCheck, Briefcase, CheckCircle, IndianRupee } from "lucide-react";
+import {
+  Users,
+  UserCheck,
+  Briefcase,
+  CheckCircle,
+  IndianRupee,
+} from "lucide-react";
 
 const adminMenuItems = [
   { icon: Users, label: "Dashboard", id: "dashboard" },
@@ -9,11 +15,36 @@ const adminMenuItems = [
 ];
 
 const statCards = [
-  { label: "Total Users", value: 1200, icon: Users, color: "from-blue-500 to-cyan-500" },
-  { label: "Total Mentors", value: 150, icon: UserCheck, color: "from-purple-500 to-pink-500" },
-  { label: "Active Projects", value: 45, icon: Briefcase, color: "from-green-500 to-emerald-500" },
-  { label: "Completed Projects", value: 320, icon: CheckCircle, color: "from-indigo-500 to-blue-500" },
-  { label: "Total Payment Collected", value: "25,000", icon: IndianRupee, color: "from-yellow-400 to-orange-500" },
+  {
+    label: "Total Users",
+    value: 1200,
+    icon: Users,
+    color: "from-blue-500 to-cyan-500",
+  },
+  {
+    label: "Total Mentors",
+    value: 150,
+    icon: UserCheck,
+    color: "from-purple-500 to-pink-500",
+  },
+  {
+    label: "Active Projects",
+    value: 45,
+    icon: Briefcase,
+    color: "from-green-500 to-emerald-500",
+  },
+  {
+    label: "Completed Projects",
+    value: 320,
+    icon: CheckCircle,
+    color: "from-indigo-500 to-blue-500",
+  },
+  {
+    label: "Total Payment Collected",
+    value: "25,000",
+    icon: IndianRupee,
+    color: "from-yellow-400 to-orange-500",
+  },
 ];
 
 export default function AdminDashboard() {
@@ -27,7 +58,7 @@ export default function AdminDashboard() {
   const mentors = ["Mentor1", "Mentor2", "Mentor3", "Mentor4"];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 flex relative">
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-indigo-950 flex relative">
       {/* Mobile Sidebar Toggle Button */}
       {!isSidebarOpen && (
         <button
@@ -36,7 +67,20 @@ export default function AdminDashboard() {
           aria-label="Open sidebar"
         >
           {/* Hamburger icon */}
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          <svg
+            width="28"
+            height="28"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <line x1="3" y1="12" x2="21" y2="12" />
+            <line x1="3" y1="6" x2="21" y2="6" />
+            <line x1="3" y1="18" x2="21" y2="18" />
+          </svg>
         </button>
       )}
 
@@ -52,7 +96,9 @@ export default function AdminDashboard() {
       {/* Main Content */}
       <div className="flex-1 p-4 md:p-8 lg:ml-64 transition-all duration-300">
         <div className="max-w-7xl mx-auto">
-          <h1 className="text-4xl font-bold text-white mb-8 text-center">Admin Dashboard</h1>
+          <h1 className="text-4xl font-bold text-white mb-8 text-center">
+            Admin Dashboard
+          </h1>
 
           {/* Stat Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 mb-8">
@@ -90,7 +136,9 @@ export default function AdminDashboard() {
               <h2 className="text-xl font-bold text-white mb-4">User List</h2>
               <ul className="space-y-2">
                 {users.map((user) => (
-                  <li key={user} className="text-white/80">{user}</li>
+                  <li key={user} className="text-white/80">
+                    {user}
+                  </li>
                 ))}
               </ul>
             </div>
@@ -102,7 +150,9 @@ export default function AdminDashboard() {
               <h2 className="text-xl font-bold text-white mb-4">Mentor List</h2>
               <ul className="space-y-2">
                 {mentors.map((mentor) => (
-                  <li key={mentor} className="text-white/80">{mentor}</li>
+                  <li key={mentor} className="text-white/80">
+                    {mentor}
+                  </li>
                 ))}
               </ul>
             </div>

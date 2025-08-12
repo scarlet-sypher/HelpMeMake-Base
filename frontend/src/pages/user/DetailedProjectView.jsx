@@ -318,7 +318,7 @@ const DetailedProjectView = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-indigo-950 flex items-center justify-center">
         <div className="text-white text-lg flex items-center space-x-3">
           <Loader2 className="animate-spin" size={24} />
           <span>Loading project details...</span>
@@ -329,7 +329,7 @@ const DetailedProjectView = () => {
 
   if (error || !project) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-indigo-950 flex items-center justify-center">
         <div className="text-center text-white">
           <AlertCircle size={48} className="mx-auto mb-4 text-red-400" />
           <h2 className="text-2xl font-bold mb-2">Project Not Found</h2>
@@ -351,7 +351,7 @@ const DetailedProjectView = () => {
   const CategoryIcon = getCategoryIcon(project.category);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900">
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-indigo-950">
       {/* Animated background elements */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-500/20 rounded-full blur-3xl animate-pulse"></div>

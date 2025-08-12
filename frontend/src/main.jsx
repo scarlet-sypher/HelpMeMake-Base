@@ -29,6 +29,8 @@ import UserProfileView from "./components/mentor/mentorProject/UserProfileView";
 import MyMentor from "./pages/user/MyMentor";
 import MyApprentice from "./pages/mentor/MyApprentice";
 import MentorMilestonePage from "./pages/mentor/MentorMilestonePage";
+import MentorSessions from "./pages/mentor/MentorSessions";
+import UserSessions from "./pages/user/UserSessions";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
@@ -87,7 +89,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
           path="/user/sessions"
           element={
             <ProtectedRoute requiredRole="user">
-              <div>Sessions Page - Coming Soon</div>
+              <UserSessions />
             </ProtectedRoute>
           }
         />
@@ -221,6 +223,14 @@ ReactDOM.createRoot(document.getElementById("root")).render(
           element={
             <ProtectedRoute requiredRole="mentor">
               <MentorMilestonePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/mentor/sessions"
+          element={
+            <ProtectedRoute requiredRole="mentor">
+              <MentorSessions />
             </ProtectedRoute>
           }
         />

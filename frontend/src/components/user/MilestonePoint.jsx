@@ -458,20 +458,7 @@ const MilestonePoint = ({ projectData }) => {
           </div>
 
           {/* Milestone Tracker Section */}
-          <div className="bg-gradient-to-r from-purple-500/10 to-pink-500/10 rounded-2xl p-4 sm:p-6 border border-white/10 mb-6">
-            <div className="flex items-center justify-between mb-6">
-              <h4 className="text-lg font-bold text-white flex items-center">
-                <Target className="mr-2 text-pink-400" size={20} />
-                Milestone Tracker
-              </h4>
-              <div className="flex items-center space-x-2">
-                <div className="w-2 h-2 bg-pink-400 rounded-full animate-pulse"></div>
-                <span className="text-sm text-pink-300 font-medium">
-                  Live Updates
-                </span>
-              </div>
-            </div>
-
+          <div className="bg-gradient-to-r from-slate-800/40 via-blue-900/40 to-indigo-900/40 rounded-2xl p-4 sm:p-6 border border-white/10 mb-6">
             {/* Milestones */}
             <div className="flex flex-col sm:flex-row justify-between items-center relative z-10 space-y-8 sm:space-y-0 px-2 sm:px-4 lg:px-6 py-6 sm:py-8">
               {milestones.map((milestone, index) => (
@@ -493,7 +480,7 @@ const MilestonePoint = ({ projectData }) => {
                     ? `${projectData.name} - Progress`
                     : "Overall Progress"}
                 </span>
-                <span className="text-xs sm:text-sm font-bold text-purple-300">
+                <span className="text-xs sm:text-sm font-bold text-blue-300">
                   {statistics.progressPercentage}%
                 </span>
               </div>

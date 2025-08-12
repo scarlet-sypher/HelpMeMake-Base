@@ -6,6 +6,7 @@ const cookieParser = require("cookie-parser");
 const passport = require("./config/passport");
 const path = require("path");
 const db = require("./connection/conn");
+const { startSessionStatusJob } = require("./jobs/sessionStatusJob");
 
 // Import routes
 const userRoutes = require("./routes/userRoute");
@@ -17,10 +18,11 @@ const aiRoutes = require("./routes/aiRoute");
 const milestoneRoutes = require("./routes/milestoneRoute");
 const achievementRoutes = require("./routes/achievementRoute");
 const syncRoutes = require("./routes/syncRoute");
+const sessionRoutes = require("./routes/sessionRoute");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-
+startSessionStatusJob();
 // CORS Configuration
 const corsOptions = {
   origin: function (origin, callback) {
@@ -105,6 +107,7 @@ app.use("/api/milestone", milestoneRoutes);
 app.use("/api/ai", aiRoutes);
 app.use("/api/achievements", achievementRoutes);
 app.use("/api/sync", syncRoutes);
+app.use("/api/sessions", sessionRoutes);
 
 // Health check endpoint
 app.get("/health", (req, res) => {

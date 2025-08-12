@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { useAuth } from '../../hooks/useAuth';
-import { useNavigate, useParams } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { useAuth } from "../../hooks/useAuth";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   Save,
   X,
@@ -13,19 +13,24 @@ import {
   ArrowLeft,
   Target,
   Image,
-  Sparkles
-} from 'lucide-react';
+  Sparkles,
+} from "lucide-react";
 
 // Import modular components
-import BasicInformation from './projectForm/BasicInformation';
-import TechnicalDetails from './projectForm/TechnicalDetails';
-import ProjectDetails from './projectForm/ProjectDetails';
-import Prerequisites from './projectForm/Prerequisites';
-import References from './projectForm/References';
-import Pricing from './projectForm/Pricing';
-import AIHelper from './projectForm/AIHelper';
+import BasicInformation from "./projectForm/BasicInformation";
+import TechnicalDetails from "./projectForm/TechnicalDetails";
+import ProjectDetails from "./projectForm/ProjectDetails";
+import Prerequisites from "./projectForm/Prerequisites";
+import References from "./projectForm/References";
+import Pricing from "./projectForm/Pricing";
+import AIHelper from "./projectForm/AIHelper";
 
-const ProjectForm = ({ mode = 'create', initialData = null, onSubmit, onCancel }) => {
+const ProjectForm = ({
+  mode = "create",
+  initialData = null,
+  onSubmit,
+  onCancel,
+}) => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { id: projectId } = useParams();
@@ -38,28 +43,28 @@ const ProjectForm = ({ mode = 'create', initialData = null, onSubmit, onCancel }
 
   // Form state
   const [formData, setFormData] = useState({
-    name: '',
-    shortDescription: '',
-    fullDescription: '',
+    name: "",
+    shortDescription: "",
+    fullDescription: "",
     techStack: [],
-    category: '',
-    difficultyLevel: '',
-    duration: '',
-    status: 'Open',
-    thumbnail: '',
+    category: "",
+    difficultyLevel: "",
+    duration: "",
+    status: "Open",
+    thumbnail: "",
     tags: [],
-    openingPrice: '',
-    currency: 'INR',
-    projectOutcome: '',
-    motivation: '',
+    openingPrice: "",
+    currency: "INR",
+    projectOutcome: "",
+    motivation: "",
     prerequisites: [],
-    knowledgeLevel: '',
-    references: []
+    knowledgeLevel: "",
+    references: [],
   });
 
   // Load project data for edit mode
   useEffect(() => {
-    if (mode === 'edit' && projectId) {
+    if (mode === "edit" && projectId) {
       loadProject();
     } else if (initialData) {
       setFormData({ ...formData, ...initialData });
@@ -69,44 +74,47 @@ const ProjectForm = ({ mode = 'create', initialData = null, onSubmit, onCancel }
   const loadProject = async () => {
     setLoadingProject(true);
     try {
-      const response = await axios.get(`${import.meta.env.VITE_API_URL}/projects/${projectId}`, {
-        withCredentials: true,
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_URL}/projects/${projectId}`,
+        {
+          withCredentials: true,
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
         }
-      });
-      
+      );
+
       if (response.data.success) {
         const project = response.data.project;
         setFormData({
-          name: project.name || '',
-          shortDescription: project.shortDescription || '',
-          fullDescription: project.fullDescription || '',
+          name: project.name || "",
+          shortDescription: project.shortDescription || "",
+          fullDescription: project.fullDescription || "",
           techStack: project.techStack || [],
-          category: project.category || '',
-          difficultyLevel: project.difficultyLevel || '',
-          duration: project.duration || '',
-          status: 'Open', // Always set to Open
-          thumbnail: project.thumbnail || '',
+          category: project.category || "",
+          difficultyLevel: project.difficultyLevel || "",
+          duration: project.duration || "",
+          status: "Open", // Always set to Open
+          thumbnail: project.thumbnail || "",
           tags: project.tags || [],
-          openingPrice: project.openingPrice || '',
-          currency: project.currency || 'INR',
-          projectOutcome: project.projectOutcome || '',
-          motivation: project.motivation || '',
+          openingPrice: project.openingPrice || "",
+          currency: project.currency || "INR",
+          projectOutcome: project.projectOutcome || "",
+          motivation: project.motivation || "",
           prerequisites: project.prerequisites || [],
-          knowledgeLevel: project.knowledgeLevel || '',
-          references: project.references || []
+          knowledgeLevel: project.knowledgeLevel || "",
+          references: project.references || [],
         });
       }
     } catch (error) {
-      showToast('Failed to load project data', 'error');
-      console.error('Error loading project:', error);
+      showToast("Failed to load project data", "error");
+      console.error("Error loading project:", error);
     } finally {
       setLoadingProject(false);
     }
   };
 
-  const showToast = (message, type = 'success') => {
+  const showToast = (message, type = "success") => {
     setToast({ message, type });
     setTimeout(() => setToast(null), 5000);
   };
@@ -114,17 +122,25 @@ const ProjectForm = ({ mode = 'create', initialData = null, onSubmit, onCancel }
   const validateForm = () => {
     const newErrors = {};
 
-    if (!formData.name.trim()) newErrors.name = 'Project name is required';
-    if (!formData.shortDescription.trim()) newErrors.shortDescription = 'Short description is required';
-    if (!formData.fullDescription.trim()) newErrors.fullDescription = 'Full description is required';
-    if (formData.techStack.length === 0) newErrors.techStack = 'At least one technology is required';
-    if (!formData.category) newErrors.category = 'Category is required';
-    if (!formData.difficultyLevel) newErrors.difficultyLevel = 'Difficulty level is required';
-    if (!formData.duration.trim()) newErrors.duration = 'Duration is required';
-    if (!formData.openingPrice || formData.openingPrice <= 0) newErrors.openingPrice = 'Valid price is required';
-    if (!formData.projectOutcome.trim()) newErrors.projectOutcome = 'Project outcome is required';
-    if (!formData.motivation.trim()) newErrors.motivation = 'Motivation is required';
-    if (!formData.knowledgeLevel) newErrors.knowledgeLevel = 'Knowledge level is required';
+    if (!formData.name.trim()) newErrors.name = "Project name is required";
+    if (!formData.shortDescription.trim())
+      newErrors.shortDescription = "Short description is required";
+    if (!formData.fullDescription.trim())
+      newErrors.fullDescription = "Full description is required";
+    if (formData.techStack.length === 0)
+      newErrors.techStack = "At least one technology is required";
+    if (!formData.category) newErrors.category = "Category is required";
+    if (!formData.difficultyLevel)
+      newErrors.difficultyLevel = "Difficulty level is required";
+    if (!formData.duration.trim()) newErrors.duration = "Duration is required";
+    if (!formData.openingPrice || formData.openingPrice <= 0)
+      newErrors.openingPrice = "Valid price is required";
+    if (!formData.projectOutcome.trim())
+      newErrors.projectOutcome = "Project outcome is required";
+    if (!formData.motivation.trim())
+      newErrors.motivation = "Motivation is required";
+    if (!formData.knowledgeLevel)
+      newErrors.knowledgeLevel = "Knowledge level is required";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -132,9 +148,9 @@ const ProjectForm = ({ mode = 'create', initialData = null, onSubmit, onCancel }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
-      showToast('Please fix the errors in the form', 'error');
+      showToast("Please fix the errors in the form", "error");
       return;
     }
 
@@ -144,46 +160,57 @@ const ProjectForm = ({ mode = 'create', initialData = null, onSubmit, onCancel }
         ...formData,
         learnerId: user._id,
         openingPrice: parseFloat(formData.openingPrice),
-        status: 'Open' // Ensure status is always Open
+        status: "Open", // Ensure status is always Open
       };
 
       let response;
-      if (mode === 'edit' && projectId) {
-        const token = localStorage.getItem('access_token'); // Use consistent key
-        response = await axios.patch(`${import.meta.env.VITE_API_URL}/projects/${projectId}`, submitData, {
-          withCredentials: true,
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-      } else {
-          response = await axios.post(`${import.meta.env.VITE_API_URL}/projects/create`, submitData, {
+      if (mode === "edit" && projectId) {
+        const token = localStorage.getItem("access_token"); // Use consistent key
+        response = await axios.patch(
+          `${import.meta.env.VITE_API_URL}/projects/${projectId}`,
+          submitData,
+          {
             withCredentials: true,
             headers: {
-              'Authorization': `Bearer ${localStorage.getItem('access_token')}`
-            }
-          });
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+      } else {
+        response = await axios.post(
+          `${import.meta.env.VITE_API_URL}/projects/create`,
+          submitData,
+          {
+            withCredentials: true,
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            },
+          }
+        );
       }
 
       if (response.data.success) {
         showToast(
-          mode === 'edit' ? 'Project updated successfully!' : 'Project created successfully!',
-          'success'
+          mode === "edit"
+            ? "Project updated successfully!"
+            : "Project created successfully!",
+          "success"
         );
-        
+
         if (onSubmit) {
           onSubmit(response.data.project);
         } else {
           setTimeout(() => {
-            navigate('/user/projects');
+            navigate("/user/projects");
           }, 2000);
         }
       }
     } catch (error) {
-      console.error('Error submitting project:', error);
+      console.error("Error submitting project:", error);
       showToast(
-        error.response?.data?.message || 'Failed to save project. Please try again.',
-        'error'
+        error.response?.data?.message ||
+          "Failed to save project. Please try again.",
+        "error"
       );
     } finally {
       setLoading(false);
@@ -200,7 +227,7 @@ const ProjectForm = ({ mode = 'create', initialData = null, onSubmit, onCancel }
 
   if (loadingProject) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-indigo-950 flex items-center justify-center">
         <div className="text-white text-lg flex items-center">
           <Loader className="animate-spin mr-2" size={20} />
           Loading project data...
@@ -210,16 +237,22 @@ const ProjectForm = ({ mode = 'create', initialData = null, onSubmit, onCancel }
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900">
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-indigo-950">
       {/* Toast Notification */}
       {toast && (
-        <div className={`fixed top-4 right-4 z-50 p-4 rounded-xl shadow-2xl backdrop-blur-sm border ${
-          toast.type === 'success' 
-            ? 'bg-emerald-500/20 border-emerald-400/30 text-emerald-200' 
-            : 'bg-red-500/20 border-red-400/30 text-red-200'
-        }`}>
+        <div
+          className={`fixed top-4 right-4 z-50 p-4 rounded-xl shadow-2xl backdrop-blur-sm border ${
+            toast.type === "success"
+              ? "bg-emerald-500/20 border-emerald-400/30 text-emerald-200"
+              : "bg-red-500/20 border-red-400/30 text-red-200"
+          }`}
+        >
           <div className="flex items-center">
-            {toast.type === 'success' ? <CheckCircle size={20} className="mr-2" /> : <AlertCircle size={20} className="mr-2" />}
+            {toast.type === "success" ? (
+              <CheckCircle size={20} className="mr-2" />
+            ) : (
+              <AlertCircle size={20} className="mr-2" />
+            )}
             {toast.message}
           </div>
         </div>
@@ -235,7 +268,7 @@ const ProjectForm = ({ mode = 'create', initialData = null, onSubmit, onCancel }
         <div className="max-w-7xl mx-auto">
           {/* Header */}
           <div className="mb-8 text-center relative">
-            <button 
+            <button
               onClick={handleCancel}
               className="absolute left-0 top-1/2 transform -translate-y-1/2 p-3 text-white/70 hover:text-white hover:bg-white/10 rounded-xl transition-all duration-300 hover:scale-105"
             >
@@ -247,10 +280,12 @@ const ProjectForm = ({ mode = 'create', initialData = null, onSubmit, onCancel }
               </div>
             </div>
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-2">
-              {mode === 'edit' ? 'Edit Project' : 'Create New Project'}
+              {mode === "edit" ? "Edit Project" : "Create New Project"}
             </h1>
             <p className="text-blue-200 text-sm sm:text-base">
-              {mode === 'edit' ? 'Update your project details' : 'Share your project idea with our mentor community'}
+              {mode === "edit"
+                ? "Update your project details"
+                : "Share your project idea with our mentor community"}
             </p>
           </div>
 
@@ -263,10 +298,14 @@ const ProjectForm = ({ mode = 'create', initialData = null, onSubmit, onCancel }
               }}
               className="flex items-center px-6 py-3 bg-white/10 hover:bg-white/20 text-white rounded-xl transition-all backdrop-blur-sm border border-white/20"
             >
-              {showPreview ? <EyeOff size={20} className="mr-2" /> : <Eye size={20} className="mr-2" />}
-              {showPreview ? 'Hide Preview' : 'Show Preview'}
+              {showPreview ? (
+                <EyeOff size={20} className="mr-2" />
+              ) : (
+                <Eye size={20} className="mr-2" />
+              )}
+              {showPreview ? "Hide Preview" : "Show Preview"}
             </button>
-            
+
             <button
               onClick={() => {
                 setShowAIHelper(!showAIHelper);
@@ -275,38 +314,59 @@ const ProjectForm = ({ mode = 'create', initialData = null, onSubmit, onCancel }
               className="flex items-center px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white rounded-xl transition-all duration-300 ease-out backdrop-blur-sm border border-purple-400/30 shadow-sm hover:shadow-md hover:scale-[1.02] active:scale-[0.98]"
             >
               <Sparkles size={20} className="mr-2 drop-shadow-sm" />
-              {showAIHelper ? 'Hide AI Helper' : 'AI Helper'}
+              {showAIHelper ? "Hide AI Helper" : "AI Helper"}
             </button>
-
           </div>
 
-          <div className={`grid ${showAIHelper && !showPreview ? 'lg:grid-cols-3' : 'lg:grid-cols-1'} gap-8`}>
+          <div
+            className={`grid ${
+              showAIHelper && !showPreview ? "lg:grid-cols-3" : "lg:grid-cols-1"
+            } gap-8`}
+          >
             {/* Main Content */}
-            <div className={showAIHelper && !showPreview ? 'lg:col-span-2' : 'lg:col-span-1'}>
+            <div
+              className={
+                showAIHelper && !showPreview ? "lg:col-span-2" : "lg:col-span-1"
+              }
+            >
               {showPreview ? (
                 /* Preview Mode */
                 <div className="bg-white/10 backdrop-blur-sm rounded-3xl shadow-2xl p-4 sm:p-6 border border-white/20">
                   <div className="mb-6">
-                    <h2 className="text-2xl font-bold text-white mb-4">Project Preview</h2>
+                    <h2 className="text-2xl font-bold text-white mb-4">
+                      Project Preview
+                    </h2>
                     <div className="bg-white/5 rounded-2xl p-4 sm:p-6">
                       <div className="flex flex-col sm:flex-row sm:items-start justify-between mb-4 gap-4">
                         <div className="flex-1">
-                          <h3 className="text-xl font-bold text-white mb-2">{formData.name || 'Project Name'}</h3>
-                          <p className="text-blue-200 mb-4">{formData.shortDescription || 'Short description will appear here...'}</p>
+                          <h3 className="text-xl font-bold text-white mb-2">
+                            {formData.name || "Project Name"}
+                          </h3>
+                          <p className="text-blue-200 mb-4">
+                            {formData.shortDescription ||
+                              "Short description will appear here..."}
+                          </p>
                           <div className="flex flex-wrap gap-2 mb-4">
                             {formData.techStack.map((tech, index) => (
-                              <span key={index} className="px-3 py-1 bg-blue-500/20 text-blue-200 rounded-full text-sm border border-blue-400/30">
+                              <span
+                                key={index}
+                                className="px-3 py-1 bg-blue-500/20 text-blue-200 rounded-full text-sm border border-blue-400/30"
+                              >
                                 {tech}
                               </span>
                             ))}
                           </div>
                         </div>
                         <div className="text-right">
-                          <div className="text-2xl font-bold text-emerald-400">₹{formData.openingPrice || '0'}</div>
-                          <div className="text-sm text-white/70">{formData.duration || 'Duration'}</div>
+                          <div className="text-2xl font-bold text-emerald-400">
+                            ₹{formData.openingPrice || "0"}
+                          </div>
+                          <div className="text-sm text-white/70">
+                            {formData.duration || "Duration"}
+                          </div>
                         </div>
                       </div>
-                      
+
                       {/* Thumbnail Preview */}
                       {formData.thumbnail && (
                         <div className="mb-4">
@@ -315,74 +375,89 @@ const ProjectForm = ({ mode = 'create', initialData = null, onSubmit, onCancel }
                             alt="Project thumbnail"
                             className="w-full h-48 object-cover rounded-xl"
                             onError={(e) => {
-                              e.target.src = `${import.meta.env.VITE_API_URL}/uploads/public/default-project.jpg`;
+                              e.target.src = `${
+                                import.meta.env.VITE_API_URL
+                              }/uploads/public/default-project.jpg`;
                             }}
                           />
                         </div>
                       )}
-                      
+
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                         <div className="bg-white/5 rounded-xl p-3">
                           <div className="text-sm text-white/70">Category</div>
-                          <div className="text-white font-medium">{formData.category || 'Not selected'}</div>
+                          <div className="text-white font-medium">
+                            {formData.category || "Not selected"}
+                          </div>
                         </div>
                         <div className="bg-white/5 rounded-xl p-3">
-                          <div className="text-sm text-white/70">Difficulty</div>
-                          <div className="text-white font-medium">{formData.difficultyLevel || 'Not selected'}</div>
+                          <div className="text-sm text-white/70">
+                            Difficulty
+                          </div>
+                          <div className="text-white font-medium">
+                            {formData.difficultyLevel || "Not selected"}
+                          </div>
                         </div>
                         <div className="bg-white/5 rounded-xl p-3">
                           <div className="text-sm text-white/70">Status</div>
-                          <div className="text-emerald-400 font-medium">● Open</div>
+                          <div className="text-emerald-400 font-medium">
+                            ● Open
+                          </div>
                         </div>
                       </div>
                       <div className="mb-4">
-                        <h4 className="text-white font-semibold mb-2">Full Description</h4>
-                        <p className="text-blue-200 text-sm">{formData.fullDescription || 'Full description will appear here...'}</p>
+                        <h4 className="text-white font-semibold mb-2">
+                          Full Description
+                        </h4>
+                        <p className="text-blue-200 text-sm">
+                          {formData.fullDescription ||
+                            "Full description will appear here..."}
+                        </p>
                       </div>
                     </div>
                   </div>
                 </div>
               ) : (
                 /* Form Mode */
-                <form onSubmit={handleSubmit} className="space-y-6 sm:space-y-8">
+                <form
+                  onSubmit={handleSubmit}
+                  className="space-y-6 sm:space-y-8"
+                >
                   {/* Basic Information */}
-                  <BasicInformation 
-                    formData={formData} 
-                    setFormData={setFormData} 
-                    errors={errors} 
+                  <BasicInformation
+                    formData={formData}
+                    setFormData={setFormData}
+                    errors={errors}
                   />
 
                   {/* Technical Details */}
-                  <TechnicalDetails 
-                    formData={formData} 
-                    setFormData={setFormData} 
-                    errors={errors} 
+                  <TechnicalDetails
+                    formData={formData}
+                    setFormData={setFormData}
+                    errors={errors}
                   />
 
                   {/* Project Details */}
-                  <ProjectDetails 
-                    formData={formData} 
-                    setFormData={setFormData} 
-                    errors={errors} 
+                  <ProjectDetails
+                    formData={formData}
+                    setFormData={setFormData}
+                    errors={errors}
                   />
 
                   {/* Prerequisites */}
-                  <Prerequisites 
-                    formData={formData} 
-                    setFormData={setFormData} 
+                  <Prerequisites
+                    formData={formData}
+                    setFormData={setFormData}
                   />
 
                   {/* References */}
-                  <References 
-                    formData={formData} 
-                    setFormData={setFormData} 
-                  />
+                  <References formData={formData} setFormData={setFormData} />
 
                   {/* Pricing */}
-                  <Pricing 
-                    formData={formData} 
-                    setFormData={setFormData} 
-                    errors={errors} 
+                  <Pricing
+                    formData={formData}
+                    setFormData={setFormData}
+                    errors={errors}
                   />
 
                   {/* Form Actions */}
@@ -402,12 +477,14 @@ const ProjectForm = ({ mode = 'create', initialData = null, onSubmit, onCancel }
                       {loading ? (
                         <div className="flex items-center">
                           <Loader className="animate-spin mr-2" size={20} />
-                          {mode === 'edit' ? 'Updating...' : 'Creating...'}
+                          {mode === "edit" ? "Updating..." : "Creating..."}
                         </div>
                       ) : (
                         <div className="flex items-center">
                           <Save className="mr-2" size={20} />
-                          {mode === 'edit' ? 'Update Project' : 'Create Project'}
+                          {mode === "edit"
+                            ? "Update Project"
+                            : "Create Project"}
                         </div>
                       )}
                     </button>
@@ -426,7 +503,8 @@ const ProjectForm = ({ mode = 'create', initialData = null, onSubmit, onCancel }
                       <h3 className="text-white font-semibold">AI Helper</h3>
                     </div>
                     <p className="text-blue-200 text-sm">
-                      Generate images and descriptions using AI to enhance your project
+                      Generate images and descriptions using AI to enhance your
+                      project
                     </p>
                   </div>
                   <AIHelper formData={formData} setFormData={setFormData} />
@@ -437,8 +515,6 @@ const ProjectForm = ({ mode = 'create', initialData = null, onSubmit, onCancel }
         </div>
       </div>
     </div>
-
-    
   );
 };
 

@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { useAuth } from '../../hooks/useAuth';
-import AchievementBadge from '../../components/user/AchievementBadge';
-import Sidebar from '../../components/user/Sidebar';
-import { 
+import React, { useState, useEffect } from "react";
+import { useAuth } from "../../hooks/useAuth";
+import AchievementBadge from "../../components/user/AchievementBadge";
+import Sidebar from "../../components/user/Sidebar";
+import {
   Award,
   Star,
   Filter,
@@ -20,8 +20,8 @@ import {
   Sparkles,
   Medal,
   Gift,
-  Activity
-} from 'lucide-react';
+  Activity,
+} from "lucide-react";
 
 // Add custom styles for scrollbar hiding
 const customStyles = `
@@ -37,40 +37,40 @@ const customStyles = `
 const AchievementsPage = () => {
   const { user, loading, isAuthenticated } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [activeItem, setActiveItem] = useState('achievements');
+  const [activeItem, setActiveItem] = useState("achievements");
   const [achievements, setAchievements] = useState([]);
   const [achievementsLoading, setAchievementsLoading] = useState(true);
   const [achievementStats, setAchievementStats] = useState(null);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedFilter, setSelectedFilter] = useState('all');
-  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedFilter, setSelectedFilter] = useState("all");
+  const [selectedCategory, setSelectedCategory] = useState("all");
 
   // Filter options
   const filterOptions = [
-    { id: 'all', label: 'All Achievements', icon: Trophy },
-    { id: 'achieved', label: 'Unlocked', icon: CheckCircle },
-    { id: 'locked', label: 'Locked', icon: Lock },
-    { id: 'in-progress', label: 'In Progress', icon: Activity }
+    { id: "all", label: "All Achievements", icon: Trophy },
+    { id: "achieved", label: "Unlocked", icon: CheckCircle },
+    { id: "locked", label: "Locked", icon: Lock },
+    { id: "in-progress", label: "In Progress", icon: Activity },
   ];
 
   const categoryOptions = [
-    { id: 'all', label: 'All Categories', icon: Trophy },
-    { id: 'projects', label: 'Projects', icon: Target },
-    { id: 'social', label: 'Social', icon: Users },
-    { id: 'learning', label: 'Learning', icon: Award },
-    { id: 'milestones', label: 'Milestones', icon: Star }
+    { id: "all", label: "All Categories", icon: Trophy },
+    { id: "projects", label: "Projects", icon: Target },
+    { id: "social", label: "Social", icon: Users },
+    { id: "learning", label: "Learning", icon: Award },
+    { id: "milestones", label: "Milestones", icon: Star },
   ];
 
   const rarityOptions = [
-    { id: 'common', label: 'Common', color: 'text-blue-400' },
-    { id: 'rare', label: 'Rare', color: 'text-purple-400' },
-    { id: 'epic', label: 'Epic', color: 'text-orange-400' },
-    { id: 'legendary', label: 'Legendary', color: 'text-yellow-400' }
+    { id: "common", label: "Common", color: "text-blue-400" },
+    { id: "rare", label: "Rare", color: "text-purple-400" },
+    { id: "epic", label: "Epic", color: "text-orange-400" },
+    { id: "legendary", label: "Legendary", color: "text-yellow-400" },
   ];
 
   useEffect(() => {
     if (!loading && !isAuthenticated) {
-      window.location.href = '/login';
+      window.location.href = "/login";
     }
   }, [loading, isAuthenticated]);
 
@@ -80,17 +80,21 @@ const AchievementsPage = () => {
       if (isAuthenticated) {
         try {
           setAchievementsLoading(true);
-          const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-          
+          const apiUrl =
+            import.meta.env.VITE_API_URL || "http://localhost:5000";
+
           // Fetch achievements
-          const achievementsResponse = await fetch(`${apiUrl}/api/achievements`, {
-            method: 'GET',
-            credentials: 'include',
-            headers: {
-              'Content-Type': 'application/json',
+          const achievementsResponse = await fetch(
+            `${apiUrl}/api/achievements`,
+            {
+              method: "GET",
+              credentials: "include",
+              headers: {
+                "Content-Type": "application/json",
+              },
             }
-          });
-          
+          );
+
           if (achievementsResponse.ok) {
             const achievementsData = await achievementsResponse.json();
             if (achievementsData.success) {
@@ -99,23 +103,25 @@ const AchievementsPage = () => {
           }
 
           // Fetch achievement stats
-          const statsResponse = await fetch(`${apiUrl}/api/achievements/stats/summary`, {
-            method: 'GET',
-            credentials: 'include',
-            headers: {
-              'Content-Type': 'application/json',
+          const statsResponse = await fetch(
+            `${apiUrl}/api/achievements/stats/summary`,
+            {
+              method: "GET",
+              credentials: "include",
+              headers: {
+                "Content-Type": "application/json",
+              },
             }
-          });
-          
+          );
+
           if (statsResponse.ok) {
             const statsData = await statsResponse.json();
             if (statsData.success) {
               setAchievementStats(statsData.data);
             }
           }
-
         } catch (error) {
-          console.error('Error fetching achievements:', error);
+          console.error("Error fetching achievements:", error);
         } finally {
           setAchievementsLoading(false);
         }
@@ -126,20 +132,28 @@ const AchievementsPage = () => {
   }, [isAuthenticated]);
 
   // Filter achievements based on search and filters
-  const filteredAchievements = achievements.filter(achievement => {
+  const filteredAchievements = achievements.filter((achievement) => {
     // Search filter
-    if (searchTerm && !achievement.title.toLowerCase().includes(searchTerm.toLowerCase()) 
-        && !achievement.description.toLowerCase().includes(searchTerm.toLowerCase())) {
+    if (
+      searchTerm &&
+      !achievement.title.toLowerCase().includes(searchTerm.toLowerCase()) &&
+      !achievement.description.toLowerCase().includes(searchTerm.toLowerCase())
+    ) {
       return false;
     }
 
     // Status filter
-    if (selectedFilter === 'achieved' && !achievement.achieved) return false;
-    if (selectedFilter === 'locked' && achievement.achieved) return false;
-    if (selectedFilter === 'in-progress' && (achievement.achieved || achievement.progressPercentage === 0)) return false;
+    if (selectedFilter === "achieved" && !achievement.achieved) return false;
+    if (selectedFilter === "locked" && achievement.achieved) return false;
+    if (
+      selectedFilter === "in-progress" &&
+      (achievement.achieved || achievement.progressPercentage === 0)
+    )
+      return false;
 
     // Category filter
-    if (selectedCategory !== 'all' && achievement.category !== selectedCategory) return false;
+    if (selectedCategory !== "all" && achievement.category !== selectedCategory)
+      return false;
 
     return true;
   });
@@ -150,7 +164,7 @@ const AchievementsPage = () => {
 
   if (loading || achievementsLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 flex items-center justify-center w-full overflow-hidden">
+      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-indigo-950 flex items-center justify-center w-full overflow-hidden">
         <div className="text-white text-lg">Loading achievements...</div>
       </div>
     );
@@ -163,21 +177,21 @@ const AchievementsPage = () => {
   return (
     <>
       <style>{customStyles}</style>
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 flex w-full overflow-x-hidden">
+      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-indigo-950 flex w-full overflow-x-hidden">
         {/* Sidebar */}
-        <Sidebar 
-          isOpen={sidebarOpen} 
-          toggleSidebar={toggleSidebar} 
+        <Sidebar
+          isOpen={sidebarOpen}
+          toggleSidebar={toggleSidebar}
           activeItem={activeItem}
           setActiveItem={setActiveItem}
         />
-        
+
         {/* Main Content */}
         <div className="flex-1 w-full min-w-0 lg:ml-64">
           {/* Mobile Header */}
           <div className="lg:hidden bg-gradient-to-r from-slate-900/80 to-blue-900/80 backdrop-blur-sm border-b border-white/10 p-4">
             <div className="flex items-center justify-between">
-              <button 
+              <button
                 onClick={toggleSidebar}
                 className="text-white hover:text-gray-300 transition-colors"
               >
@@ -195,7 +209,6 @@ const AchievementsPage = () => {
           </div>
 
           <div className="relative z-10 p-3 sm:p-4 lg:p-6 space-y-4 sm:space-y-6 w-full">
-            
             {/* Hero Section */}
             <div className="relative group w-full">
               <div className="absolute -inset-0.5 bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 rounded-2xl sm:rounded-3xl blur opacity-20 group-hover:opacity-30 transition duration-500"></div>
@@ -214,25 +227,41 @@ const AchievementsPage = () => {
                       </p>
                     </div>
                   </div>
-                  
+
                   {/* Quick Stats */}
                   {achievementStats && (
                     <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4 w-full max-w-4xl">
                       <div className="text-center bg-white/10 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 sm:p-4">
-                        <div className="text-lg sm:text-2xl font-bold text-yellow-200">{achievementStats.achieved}</div>
-                        <div className="text-xs sm:text-sm text-yellow-300">Unlocked</div>
+                        <div className="text-lg sm:text-2xl font-bold text-yellow-200">
+                          {achievementStats.achieved}
+                        </div>
+                        <div className="text-xs sm:text-sm text-yellow-300">
+                          Unlocked
+                        </div>
                       </div>
                       <div className="text-center bg-white/10 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 sm:p-4">
-                        <div className="text-lg sm:text-2xl font-bold text-orange-200">{achievementStats.total}</div>
-                        <div className="text-xs sm:text-sm text-orange-300">Total</div>
+                        <div className="text-lg sm:text-2xl font-bold text-orange-200">
+                          {achievementStats.total}
+                        </div>
+                        <div className="text-xs sm:text-sm text-orange-300">
+                          Total
+                        </div>
                       </div>
                       <div className="text-center bg-white/10 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 sm:p-4">
-                        <div className="text-lg sm:text-2xl font-bold text-purple-200">{achievementStats.inProgress}</div>
-                        <div className="text-xs sm:text-sm text-purple-300">In Progress</div>
+                        <div className="text-lg sm:text-2xl font-bold text-purple-200">
+                          {achievementStats.inProgress}
+                        </div>
+                        <div className="text-xs sm:text-sm text-purple-300">
+                          In Progress
+                        </div>
                       </div>
                       <div className="text-center bg-white/10 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 sm:p-4">
-                        <div className="text-lg sm:text-2xl font-bold text-emerald-200">{achievementStats.totalXpEarned}</div>
-                        <div className="text-xs sm:text-sm text-emerald-300">XP Earned</div>
+                        <div className="text-lg sm:text-2xl font-bold text-emerald-200">
+                          {achievementStats.totalXpEarned}
+                        </div>
+                        <div className="text-xs sm:text-sm text-emerald-300">
+                          XP Earned
+                        </div>
                       </div>
                     </div>
                   )}
@@ -249,14 +278,35 @@ const AchievementsPage = () => {
                 </h2>
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4">
                   {rarityOptions.map((rarity) => (
-                    <div key={rarity.id} className="bg-white/5 rounded-lg sm:rounded-xl p-3 sm:p-4 text-center border border-white/10 hover:border-white/20 transition-all">
-                      <div className={`text-xl sm:text-2xl font-bold ${rarity.color} mb-2`}>
+                    <div
+                      key={rarity.id}
+                      className="bg-white/5 rounded-lg sm:rounded-xl p-3 sm:p-4 text-center border border-white/10 hover:border-white/20 transition-all"
+                    >
+                      <div
+                        className={`text-xl sm:text-2xl font-bold ${rarity.color} mb-2`}
+                      >
                         {achievementStats.byRarity[rarity.id] || 0}
                       </div>
-                      <div className="text-xs sm:text-sm text-gray-300 capitalize">{rarity.label}</div>
+                      <div className="text-xs sm:text-sm text-gray-300 capitalize">
+                        {rarity.label}
+                      </div>
                       <div className="flex justify-center mt-1 sm:mt-2 space-x-0.5">
-                        {[...Array(rarity.id === 'common' ? 1 : rarity.id === 'rare' ? 2 : rarity.id === 'epic' ? 3 : 4)].map((_, i) => (
-                          <Star key={i} size={6} className={`${rarity.color} fill-current`} />
+                        {[
+                          ...Array(
+                            rarity.id === "common"
+                              ? 1
+                              : rarity.id === "rare"
+                              ? 2
+                              : rarity.id === "epic"
+                              ? 3
+                              : 4
+                          ),
+                        ].map((_, i) => (
+                          <Star
+                            key={i}
+                            size={6}
+                            className={`${rarity.color} fill-current`}
+                          />
                         ))}
                       </div>
                     </div>
@@ -270,7 +320,10 @@ const AchievementsPage = () => {
               <div className="flex flex-col space-y-3 sm:space-y-4">
                 {/* Search */}
                 <div className="relative w-full">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+                  <Search
+                    className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                    size={18}
+                  />
                   <input
                     type="text"
                     placeholder="Search achievements..."
@@ -289,13 +342,15 @@ const AchievementsPage = () => {
                         onClick={() => setSelectedFilter(filter.id)}
                         className={`flex items-center space-x-1 sm:space-x-2 px-2 sm:px-4 py-2 sm:py-3 rounded-lg sm:rounded-xl font-medium transition-all whitespace-nowrap text-xs sm:text-sm flex-shrink-0 ${
                           selectedFilter === filter.id
-                            ? 'bg-blue-600/50 text-white border border-blue-400/30'
-                            : 'bg-white/5 text-gray-300 hover:bg-white/10 hover:text-white border border-white/10'
+                            ? "bg-blue-600/50 text-white border border-blue-400/30"
+                            : "bg-white/5 text-gray-300 hover:bg-white/10 hover:text-white border border-white/10"
                         }`}
                       >
                         <filter.icon size={14} />
                         <span className="hidden sm:inline">{filter.label}</span>
-                        <span className="sm:hidden">{filter.label.split(' ')[0]}</span>
+                        <span className="sm:hidden">
+                          {filter.label.split(" ")[0]}
+                        </span>
                       </button>
                     ))}
                   </div>
@@ -310,13 +365,17 @@ const AchievementsPage = () => {
                         onClick={() => setSelectedCategory(category.id)}
                         className={`flex items-center space-x-1 sm:space-x-2 px-2 sm:px-4 py-2 sm:py-3 rounded-lg sm:rounded-xl font-medium transition-all whitespace-nowrap text-xs sm:text-sm flex-shrink-0 ${
                           selectedCategory === category.id
-                            ? 'bg-purple-600/50 text-white border border-purple-400/30'
-                            : 'bg-white/5 text-gray-300 hover:bg-white/10 hover:text-white border border-white/10'
+                            ? "bg-purple-600/50 text-white border border-purple-400/30"
+                            : "bg-white/5 text-gray-300 hover:bg-white/10 hover:text-white border border-white/10"
                         }`}
                       >
                         <category.icon size={14} />
-                        <span className="hidden sm:inline">{category.label}</span>
-                        <span className="sm:hidden">{category.label.split(' ')[0]}</span>
+                        <span className="hidden sm:inline">
+                          {category.label}
+                        </span>
+                        <span className="sm:hidden">
+                          {category.label.split(" ")[0]}
+                        </span>
                       </button>
                     ))}
                   </div>
@@ -332,7 +391,10 @@ const AchievementsPage = () => {
                   Achievement Collection
                 </h2>
                 <div className="flex items-center space-x-2">
-                  <Sparkles className="text-yellow-400 animate-pulse" size={14} />
+                  <Sparkles
+                    className="text-yellow-400 animate-pulse"
+                    size={14}
+                  />
                   <span className="text-xs sm:text-sm text-yellow-300 font-medium">
                     {filteredAchievements.length} of {achievements.length} shown
                   </span>
@@ -351,13 +413,18 @@ const AchievementsPage = () => {
                         rarity={achievement.rarity}
                         progressPercentage={achievement.progressPercentage}
                       />
-                      
+
                       {/* How to unlock tooltip/info - Hidden on mobile for space */}
                       {!achievement.achieved && (
                         <div className="mt-2 sm:mt-3 p-2 sm:p-3 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-lg sm:rounded-xl border border-white/10 opacity-0 group-hover:opacity-100 transition-all duration-300 hidden sm:block">
                           <div className="flex items-center mb-1 sm:mb-2">
-                            <Target className="text-blue-400 mr-1 sm:mr-2" size={12} />
-                            <span className="text-xs font-medium text-blue-200">How to unlock:</span>
+                            <Target
+                              className="text-blue-400 mr-1 sm:mr-2"
+                              size={12}
+                            />
+                            <span className="text-xs font-medium text-blue-200">
+                              How to unlock:
+                            </span>
                           </div>
                           <p className="text-xs text-gray-300 leading-relaxed">
                             {getUnlockInstructions(achievement)}
@@ -365,9 +432,11 @@ const AchievementsPage = () => {
                           {achievement.progressPercentage > 0 && (
                             <div className="mt-2 flex items-center">
                               <div className="flex-1 bg-white/10 rounded-full h-1.5 mr-2">
-                                <div 
+                                <div
                                   className="bg-gradient-to-r from-blue-400 to-purple-400 h-1.5 rounded-full transition-all duration-500"
-                                  style={{ width: `${achievement.progressPercentage}%` }}
+                                  style={{
+                                    width: `${achievement.progressPercentage}%`,
+                                  }}
                                 ></div>
                               </div>
                               <span className="text-xs text-purple-300 font-medium">
@@ -379,22 +448,27 @@ const AchievementsPage = () => {
                       )}
 
                       {/* Mobile-friendly progress indicator */}
-                      {!achievement.achieved && achievement.progressPercentage > 0 && (
-                        <div className="mt-2 sm:hidden">
-                          <div className="flex items-center justify-between mb-1">
-                            <span className="text-xs text-blue-200">Progress</span>
-                            <span className="text-xs text-purple-300 font-medium">
-                              {achievement.progressPercentage}%
-                            </span>
+                      {!achievement.achieved &&
+                        achievement.progressPercentage > 0 && (
+                          <div className="mt-2 sm:hidden">
+                            <div className="flex items-center justify-between mb-1">
+                              <span className="text-xs text-blue-200">
+                                Progress
+                              </span>
+                              <span className="text-xs text-purple-300 font-medium">
+                                {achievement.progressPercentage}%
+                              </span>
+                            </div>
+                            <div className="w-full bg-white/10 rounded-full h-1.5">
+                              <div
+                                className="bg-gradient-to-r from-blue-400 to-purple-400 h-1.5 rounded-full transition-all duration-500"
+                                style={{
+                                  width: `${achievement.progressPercentage}%`,
+                                }}
+                              ></div>
+                            </div>
                           </div>
-                          <div className="w-full bg-white/10 rounded-full h-1.5">
-                            <div 
-                              className="bg-gradient-to-r from-blue-400 to-purple-400 h-1.5 rounded-full transition-all duration-500"
-                              style={{ width: `${achievement.progressPercentage}%` }}
-                            ></div>
-                          </div>
-                        </div>
-                      )}
+                        )}
                     </div>
                   ))}
                 </div>
@@ -403,13 +477,17 @@ const AchievementsPage = () => {
                   <div className="w-16 h-16 sm:w-24 sm:h-24 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4">
                     <Search className="text-gray-400" size={24} />
                   </div>
-                  <h3 className="text-lg sm:text-xl font-semibold text-white mb-2">No achievements found</h3>
-                  <p className="text-gray-400 text-sm sm:text-base mb-4">Try adjusting your search or filter criteria</p>
-                  <button 
+                  <h3 className="text-lg sm:text-xl font-semibold text-white mb-2">
+                    No achievements found
+                  </h3>
+                  <p className="text-gray-400 text-sm sm:text-base mb-4">
+                    Try adjusting your search or filter criteria
+                  </p>
+                  <button
                     onClick={() => {
-                      setSearchTerm('');
-                      setSelectedFilter('all');
-                      setSelectedCategory('all');
+                      setSearchTerm("");
+                      setSelectedFilter("all");
+                      setSelectedCategory("all");
                     }}
                     className="px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white rounded-lg sm:rounded-xl font-semibold transition-all transform hover:scale-105 text-sm sm:text-base"
                   >
@@ -429,20 +507,36 @@ const AchievementsPage = () => {
                 <Gift className="text-emerald-400 animate-bounce" size={20} />
               </div>
               <p className="text-emerald-200 mb-3 sm:mb-4 text-sm sm:text-base">
-                You're making great progress! Complete more projects and engage with mentors to unlock new achievements.
+                You're making great progress! Complete more projects and engage
+                with mentors to unlock new achievements.
               </p>
               <div className="flex flex-col sm:flex-row sm:flex-wrap gap-2 sm:gap-3">
                 <div className="flex items-center bg-white/10 rounded-lg px-2 sm:px-3 py-2">
-                  <Calendar className="text-blue-400 mr-2 flex-shrink-0" size={14} />
-                  <span className="text-xs sm:text-sm text-blue-200">Schedule more sessions</span>
+                  <Calendar
+                    className="text-blue-400 mr-2 flex-shrink-0"
+                    size={14}
+                  />
+                  <span className="text-xs sm:text-sm text-blue-200">
+                    Schedule more sessions
+                  </span>
                 </div>
                 <div className="flex items-center bg-white/10 rounded-lg px-2 sm:px-3 py-2">
-                  <Target className="text-green-400 mr-2 flex-shrink-0" size={14} />
-                  <span className="text-xs sm:text-sm text-green-200">Complete project milestones</span>
+                  <Target
+                    className="text-green-400 mr-2 flex-shrink-0"
+                    size={14}
+                  />
+                  <span className="text-xs sm:text-sm text-green-200">
+                    Complete project milestones
+                  </span>
                 </div>
                 <div className="flex items-center bg-white/10 rounded-lg px-2 sm:px-3 py-2">
-                  <Users className="text-purple-400 mr-2 flex-shrink-0" size={14} />
-                  <span className="text-xs sm:text-sm text-purple-200">Connect with new mentors</span>
+                  <Users
+                    className="text-purple-400 mr-2 flex-shrink-0"
+                    size={14}
+                  />
+                  <span className="text-xs sm:text-sm text-purple-200">
+                    Connect with new mentors
+                  </span>
                 </div>
               </div>
             </div>
@@ -457,20 +551,31 @@ const AchievementsPage = () => {
 const getUnlockInstructions = (achievement) => {
   // This would ideally come from the backend, but we can generate basic instructions
   const instructions = {
-    'First Project': 'Create and submit your first project to get started on your learning journey.',
-    'Project Master': 'Successfully complete 5 projects with mentor approval to demonstrate your dedication.',
-    'Social Butterfly': 'Connect and work with 3 different mentors to expand your network.',
-    'Quick Learner': 'Complete your first project within 2 weeks to show your efficiency.',
-    'Milestone Achiever': 'Complete all milestones in a single project to show attention to detail.',
-    'Streak Master': 'Maintain a 7-day learning streak by engaging with the platform daily.',
-    'Session Regular': 'Schedule and complete 10 mentoring sessions to build consistent learning habits.',
-    'High Achiever': 'Maintain a 4.5+ average rating across all your completed projects.',
-    'Explorer': 'Try projects in 3 different categories to showcase your versatility.',
-    'Collaborator': 'Successfully work on 3 group projects with other learners.'
+    "First Project":
+      "Create and submit your first project to get started on your learning journey.",
+    "Project Master":
+      "Successfully complete 5 projects with mentor approval to demonstrate your dedication.",
+    "Social Butterfly":
+      "Connect and work with 3 different mentors to expand your network.",
+    "Quick Learner":
+      "Complete your first project within 2 weeks to show your efficiency.",
+    "Milestone Achiever":
+      "Complete all milestones in a single project to show attention to detail.",
+    "Streak Master":
+      "Maintain a 7-day learning streak by engaging with the platform daily.",
+    "Session Regular":
+      "Schedule and complete 10 mentoring sessions to build consistent learning habits.",
+    "High Achiever":
+      "Maintain a 4.5+ average rating across all your completed projects.",
+    Explorer:
+      "Try projects in 3 different categories to showcase your versatility.",
+    Collaborator: "Successfully work on 3 group projects with other learners.",
   };
 
-  return instructions[achievement.title] || 
-    `Complete the required activities for "${achievement.title}" to unlock this achievement. Check your progress regularly and stay engaged with your learning journey.`;
+  return (
+    instructions[achievement.title] ||
+    `Complete the required activities for "${achievement.title}" to unlock this achievement. Check your progress regularly and stay engaged with your learning journey.`
+  );
 };
 
 export default AchievementsPage;
