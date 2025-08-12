@@ -220,6 +220,139 @@ const getMentorSessions = async (req, res) => {
   }
 };
 
+// NEW: Get upcoming sessions for learner (completely rewritten to match getMentorSessions pattern)
+const getLearnerSessions = async (req, res) => {
+  try {
+    console.log("=== GET LEARNER SESSIONS DEBUG ===");
+    console.log("User from req.user:", req.user);
+
+    const userId = req.user._id || req.user.id;
+    const userRole = req.user.role;
+
+    console.log("Extracted userId:", userId);
+    console.log("User role:", userRole);
+
+    if (userRole !== "user") {
+      return res.status(403).json({
+        success: false,
+        message: "Access denied. User role required.",
+      });
+    }
+
+    // Find learner profile
+    const learnerProfile = await Learner.findOne({ userId });
+    if (!learnerProfile) {
+      return res.status(404).json({
+        success: false,
+        message: "Learner profile not found",
+      });
+    }
+
+    // Get active project for this learner
+    const activeProject = await Project.findOne({
+      learnerId: learnerProfile._id,
+      status: "In Progress",
+    }).populate({
+      path: "mentorId",
+      populate: {
+        path: "userId",
+        select: "name email avatar",
+      },
+    });
+
+    // If no active project, return early
+    if (!activeProject) {
+      return res.json({
+        success: true,
+        sessions: [],
+        hasActiveProject: false,
+        totalSessions: 0,
+      });
+    }
+
+    const now = new Date();
+
+    // Get ALL sessions for this learner from active project (following getMentorSessions pattern)
+    const allSessions = await Session.find({
+      learnerId: learnerProfile._id,
+      projectId: activeProject._id,
+    })
+      .populate({
+        path: "mentorId",
+        populate: {
+          path: "userId",
+          select: "name email avatar",
+        },
+      })
+      .populate("projectId", "name shortDescription status")
+      .sort({ scheduledAt: 1 }) // Ascending order (earliest first)
+      .lean();
+
+    // Filter for upcoming sessions and handle expired sessions (similar to getMentorSessions)
+    const upcomingSessions = allSessions.filter((session) => {
+      const sessionTime = new Date(session.scheduledAt);
+      const tenMinutesAfter = new Date(sessionTime.getTime() + 10 * 60 * 1000);
+
+      // Check if session should be expired
+      if (
+        now > tenMinutesAfter &&
+        session.status === "scheduled" &&
+        (!session.isLearnerPresent || !session.isMentorPresent)
+      ) {
+        // Mark as expired (you might want to update this in the database too)
+        session.status = "expired";
+        return false; // Don't include expired sessions
+      }
+
+      // Only include future sessions that are scheduled, rescheduled, or ongoing
+      return (
+        sessionTime >= now &&
+        ["scheduled", "rescheduled", "ongoing"].includes(session.status)
+      );
+    });
+
+    // Take only the first 3 upcoming sessions
+    const sessions = upcomingSessions.slice(0, 3);
+
+    // Update any expired sessions in the database (similar to getMentorSessions)
+    const expiredSessions = allSessions.filter((session) => {
+      const sessionTime = new Date(session.scheduledAt);
+      const tenMinutesAfter = new Date(sessionTime.getTime() + 10 * 60 * 1000);
+      return (
+        now > tenMinutesAfter &&
+        session.status === "scheduled" &&
+        (!session.isLearnerPresent || !session.isMentorPresent)
+      );
+    });
+
+    // Update expired sessions in database
+    for (let expiredSession of expiredSessions) {
+      await Session.findByIdAndUpdate(expiredSession._id, {
+        status: "expired",
+      });
+    }
+
+    console.log("Active project found:", activeProject ? "YES" : "NO");
+    console.log("Total sessions found:", allSessions.length);
+    console.log("Upcoming sessions after filtering:", sessions.length);
+
+    res.json({
+      success: true,
+      sessions,
+      hasActiveProject: true,
+      totalSessions: sessions.length,
+      activeProject,
+    });
+  } catch (error) {
+    console.error("Error fetching learner sessions:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch sessions",
+      error: error.message,
+    });
+  }
+};
+
 // Update session
 const updateSession = async (req, res) => {
   try {
@@ -1131,6 +1264,7 @@ const updateSessionStatuses = async () => {
 module.exports = {
   createSession,
   getMentorSessions,
+  getLearnerSessions, // NEW: Export the new function
   updateSession,
   deleteSession,
   markAttendance,

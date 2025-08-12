@@ -617,11 +617,8 @@ const UserDashboard = () => {
                   </h2>
                   <Activity className="text-blue-400 animate-pulse" size={20} />
                 </div>
-                <div className="space-y-4">
-                  {upcomingSessions.map((session) => (
-                    <SessionCard key={session.id} {...session} />
-                  ))}
-                </div>
+                <SessionCard />{" "}
+                {/* ✅ Just use SessionCard once, it handles everything */}
               </div>
 
               {/* Project Milestone Tracker */}

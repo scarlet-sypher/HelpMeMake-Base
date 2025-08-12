@@ -10,6 +10,7 @@ const {
 const {
   createSession,
   getMentorSessions,
+  getLearnerSessions, // NEW: Import the new function
   updateSession,
   deleteSession,
   markAttendance,
@@ -39,6 +40,7 @@ router.patch(
 
 // User routes (require user authentication)
 router.get("/user", requireUser, getUserSessions);
+router.get("/learner", requireUser, getLearnerSessions); // NEW: Add the new route
 router.patch("/:sessionId/user-attendance", requireUser, markUserAttendance);
 router.patch("/:sessionId/user-reason", requireUser, submitLearnerReason);
 
