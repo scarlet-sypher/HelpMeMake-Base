@@ -48,7 +48,7 @@ const MilestonePoint = ({ projectData }) => {
       const token = localStorage.getItem("access_token");
 
       const response = await axios.get(
-        `${API_URL}/api/milestone/project/${projectData._id}`,
+        `${API_URL}/api/milestone/project/${projectData._id}/with-user-data`,
         {
           headers: {
             "Content-Type": "application/json",

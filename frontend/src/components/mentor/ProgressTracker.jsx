@@ -36,7 +36,7 @@ const ProgressTracker = ({ userImg }) => {
       setError("");
 
       const response = await axios.get(
-        `${API_URL}/api/milestone/mentor/active-project-progress`,
+        `${API_URL}/api/milestone/mentor/active-project-progress-with-avatars`,
         {
           withCredentials: true,
           headers: {
