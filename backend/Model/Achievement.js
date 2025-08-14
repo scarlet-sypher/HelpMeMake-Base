@@ -1,416 +1,226 @@
 const mongoose = require("mongoose");
 
+const achievementLevelSchema = new mongoose.Schema(
+  {
+    basic: { type: Number, default: 1 }, // Count needed for basic badge
+    common: { type: Number, default: 5 }, // Count needed for common badge
+    rare: { type: Number, default: 15 }, // Count needed for rare badge
+    epic: { type: Number, default: 25 }, // Count needed for epic badge
+    legendary: { type: Number, default: 40 }, // Count needed for legendary badge
+    currentCount: { type: Number, default: 0 }, // Current progress count
+    earnedBadges: { type: [String], default: [] }, // List of badges earned ['basic', 'common', etc.]
+  },
+  { _id: false }
+);
+
 const achievementSchema = new mongoose.Schema(
   {
-    // Unique Achievement Identifier
-    achievementId: {
-      type: String,
-      required: true,
-      unique: true,
-      default: function () {
-        return (
-          "ACH-" + Date.now() + "-" + Math.random().toString(36).substr(2, 9)
-        );
-      },
-    },
-
-    // Core Achievement Information
-    title: {
-      type: String,
-      required: true,
-      trim: true,
-      maxlength: 100,
-    },
-    description: {
-      type: String,
-      required: true,
-      trim: true,
-      maxlength: 500,
-    },
-    icon: {
-      type: String,
-      required: true,
-      trim: true, // emoji or icon identifier
-    },
-
-    // Achievement Classification
-    category: {
-      type: String,
-      required: true,
-      enum: [
-        "learning",
-        "mentoring",
-        "project",
-        "engagement",
-        "milestone",
-        "social",
-      ],
-    },
-    rarity: {
-      type: String,
-      required: true,
-      enum: ["common", "rare", "epic", "legendary"],
-      default: "common",
-    },
-
-    // Achievement Criteria & Progress
-    criteria: {
-      type: {
-        type: String,
-        required: true,
-        enum: [
-          "sessions_completed",
-          "projects_completed",
-          "streak_days",
-          "rating_achieved",
-          "students_mentored",
-          "xp_earned",
-          "profile_completion",
-          "mentor_hours",
-          "custom",
-        ],
-      },
-      targetValue: {
-        type: Number,
-        required: true,
-        min: 1,
-      },
-      currentProgress: {
-        type: Number,
-        default: 0,
-        min: 0,
-      },
-    },
-
-    // Rewards & Benefits
-    rewards: {
-      xpBonus: {
-        type: Number,
-        default: 0,
-        min: 0,
-      },
-      badgeUrl: {
-        type: String,
-        default: null,
-      },
-      title_unlock: {
-        type: String,
-        default: null,
-      },
-      specialPerks: [
-        {
-          type: String,
-          trim: true,
-        },
-      ],
-    },
-
-    // User Association
-    userId: {
+    learner: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      ref: "Learner",
       required: true,
-    },
-    userType: {
-      type: String,
-      required: true,
-      enum: ["Learner", "Mentor"],
+      unique: true, // One achievement record per learner
     },
 
-    // Achievement Status
-    isAchieved: {
-      type: Boolean,
-      default: false,
-      required: true,
-    },
-    achievedAt: {
-      type: Date,
-      default: null,
+    // XP & Level specific to achievements
+    xp: { type: Number, default: 0, required: true },
+    level: { type: Number, default: 0, required: true },
+    nextLevelXp: { type: Number, default: 1000, required: true },
+
+    // Achievement Categories
+    project: {
+      completedProjects: achievementLevelSchema,
+      projectsAdded: achievementLevelSchema,
     },
 
-    // Progress Tracking
-    progressPercentage: {
-      type: Number,
-      default: 0,
-      min: 0,
-      max: 100,
+    social: {
+      completedSessions: achievementLevelSchema,
+      successfulSessions: achievementLevelSchema,
     },
 
-    // Metadata & Analytics
-    isVisible: {
-      type: Boolean,
-      default: true,
-    },
-    displayOrder: {
-      type: Number,
-      default: 0,
+    learnerStats: {
+      firstLogin: { type: Boolean, default: false }, // One-time achievement
+      streakDays: achievementLevelSchema,
+      totalLogins: achievementLevelSchema,
     },
 
-    // Related Data References
-    relatedData: {
-      learnerId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Learner",
-        default: null,
-      },
-      mentorId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Mentor",
-        default: null,
-      },
-      projectIds: [
-        {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "Project",
-        },
-      ],
+    milestone: {
+      completedMilestones: achievementLevelSchema,
     },
 
-    // Achievement History & Updates
-    progressHistory: [
+    // Store all unlocked achievements with details
+    unlocked: [
       {
-        previousProgress: Number,
-        newProgress: Number,
-        updatedAt: {
-          type: Date,
-          default: Date.now,
-        },
-        triggerEvent: {
+        name: { type: String, required: true }, // e.g. "completedProjects - basic"
+        category: {
           type: String,
-          trim: true,
+          enum: ["project", "social", "learnerStats", "milestone"],
+          required: true,
         },
+        level: {
+          type: String,
+          enum: ["basic", "common", "rare", "epic", "legendary", "special"],
+          required: true,
+        },
+        dateUnlocked: { type: Date, default: Date.now },
       },
     ],
+
+    totalBadges: { type: Number, default: 0 },
+    totalAchievements: { type: Number, default: 0 },
   },
-  {
-    timestamps: true,
-  }
+  { timestamps: true }
 );
 
 // Indexes for better performance
-achievementSchema.index({ userId: 1 });
-achievementSchema.index({ userType: 1 });
-achievementSchema.index({ category: 1 });
-achievementSchema.index({ isAchieved: 1 });
-achievementSchema.index({ rarity: 1 });
-// achievementSchema.index({ achievementId: 1 });
+achievementSchema.index({ learner: 1 });
+achievementSchema.index({ level: 1 });
+achievementSchema.index({ xp: -1 });
+achievementSchema.index({ "unlocked.category": 1 });
+achievementSchema.index({ "unlocked.level": 1 });
+achievementSchema.index({ "unlocked.dateUnlocked": -1 });
 
-// Compound indexes
-achievementSchema.index({ userId: 1, isAchieved: 1 });
-achievementSchema.index({ userId: 1, category: 1 });
-
-// Virtual for checking if achievement is in progress
-achievementSchema.virtual("isInProgress").get(function () {
-  return !this.isAchieved && this.criteria.currentProgress > 0;
+// Virtual for progress percentage to next level
+achievementSchema.virtual("progressPercentage").get(function () {
+  if (this.level >= 10) return 100; // Max level
+  const currentLevelXP = this.xp % 1000;
+  return Math.floor((currentLevelXP / 1000) * 100);
 });
 
-// Virtual for time since achievement
-achievementSchema.virtual("daysSinceAchieved").get(function () {
-  if (!this.achievedAt) return null;
-  const diffTime = Math.abs(new Date() - this.achievedAt);
-  return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-});
+// Static method to find or create achievement record
+achievementSchema.statics.findOrCreateByLearner = async function (learnerId) {
+  let achievement = await this.findOne({ learner: learnerId });
 
-// Pre-save middleware to calculate progress percentage
-achievementSchema.pre("save", function (next) {
-  if (
-    this.isModified("criteria.currentProgress") ||
-    this.isModified("criteria.targetValue")
-  ) {
-    this.progressPercentage = Math.min(
-      Math.floor(
-        (this.criteria.currentProgress / this.criteria.targetValue) * 100
-      ),
-      100
-    );
+  if (!achievement) {
+    achievement = new this({
+      learner: learnerId,
+      project: {
+        completedProjects: {
+          basic: 1,
+          common: 5,
+          rare: 15,
+          epic: 25,
+          legendary: 40,
+          currentCount: 0,
+          earnedBadges: [],
+        },
+        projectsAdded: {
+          basic: 1,
+          common: 5,
+          rare: 15,
+          epic: 25,
+          legendary: 40,
+          currentCount: 0,
+          earnedBadges: [],
+        },
+      },
+      social: {
+        completedSessions: {
+          basic: 1,
+          common: 5,
+          rare: 15,
+          epic: 25,
+          legendary: 40,
+          currentCount: 0,
+          earnedBadges: [],
+        },
+        successfulSessions: {
+          basic: 1,
+          common: 5,
+          rare: 15,
+          epic: 25,
+          legendary: 40,
+          currentCount: 0,
+          earnedBadges: [],
+        },
+      },
+      learnerStats: {
+        firstLogin: false,
+        streakDays: {
+          basic: 1,
+          common: 5,
+          rare: 15,
+          epic: 25,
+          legendary: 40,
+          currentCount: 0,
+          earnedBadges: [],
+        },
+        totalLogins: {
+          basic: 1,
+          common: 5,
+          rare: 15,
+          epic: 25,
+          legendary: 40,
+          currentCount: 0,
+          earnedBadges: [],
+        },
+      },
+      milestone: {
+        completedMilestones: {
+          basic: 1,
+          common: 5,
+          rare: 15,
+          epic: 25,
+          legendary: 40,
+          currentCount: 0,
+          earnedBadges: [],
+        },
+      },
+    });
 
-    // Check if achievement should be marked as achieved
-    if (
-      this.criteria.currentProgress >= this.criteria.targetValue &&
-      !this.isAchieved
-    ) {
-      this.isAchieved = true;
-      this.achievedAt = new Date();
-    }
+    await achievement.save();
   }
-  next();
-});
 
-// Static method to create default achievements for a user
-achievementSchema.statics.createDefaultAchievements = async function (
-  userId,
-  userType
-) {
-  const defaultAchievements = [
-    // Achievement 1: First Steps (Common)
-    {
-      title: "First Steps",
-      description:
-        userType === "Learner"
-          ? "Complete your first learning session and begin your journey"
-          : "Complete your first mentoring session and start helping others",
-      icon: "🚀",
-      category: userType === "Learner" ? "learning" : "mentoring",
-      rarity: "common",
-      criteria: {
-        type: "sessions_completed",
-        targetValue: 1,
-        currentProgress: 0,
-      },
-      rewards: {
-        xpBonus: 100,
-        title_unlock: "Starter",
-      },
-      userId,
-      userType,
-      displayOrder: 1,
-    },
-
-    // Achievement 2: Dedicated Learner/Mentor (Rare)
-    {
-      title: userType === "Learner" ? "Dedicated Learner" : "Dedicated Mentor",
-      description:
-        userType === "Learner"
-          ? "Complete 10 learning sessions and show your commitment"
-          : "Complete 10 mentoring sessions and prove your dedication",
-      icon: "⭐",
-      category: userType === "Learner" ? "learning" : "mentoring",
-      rarity: "rare",
-      criteria: {
-        type: "sessions_completed",
-        targetValue: 10,
-        currentProgress: 0,
-      },
-      rewards: {
-        xpBonus: 500,
-        title_unlock:
-          userType === "Learner" ? "Dedicated Student" : "Dedicated Guide",
-      },
-      userId,
-      userType,
-      displayOrder: 2,
-    },
-
-    // Achievement 3: Project Master (Epic)
-    {
-      title: "Project Master",
-      description:
-        userType === "Learner"
-          ? "Successfully complete 5 projects and master your skills"
-          : "Successfully mentor 5 projects to completion",
-      icon: "🏆",
-      category: "project",
-      rarity: "epic",
-      criteria: {
-        type: "projects_completed",
-        targetValue: 5,
-        currentProgress: 0,
-      },
-      rewards: {
-        xpBonus: 1000,
-        title_unlock: "Project Master",
-        specialPerks: ["Priority project matching", "Featured profile badge"],
-      },
-      userId,
-      userType,
-      displayOrder: 3,
-    },
-
-    // Achievement 4: Legend (Legendary)
-    {
-      title: "Legend",
-      description:
-        userType === "Learner"
-          ? "Maintain a 30-day learning streak and become a learning legend"
-          : "Achieve a 4.8+ rating with 20+ reviews and become a mentoring legend",
-      icon: "👑",
-      category: userType === "Learner" ? "engagement" : "mentoring",
-      rarity: "legendary",
-      criteria: {
-        type: userType === "Learner" ? "streak_days" : "rating_achieved",
-        targetValue: userType === "Learner" ? 30 : 480, // 4.8 * 100 for rating
-        currentProgress: 0,
-      },
-      rewards: {
-        xpBonus: 2500,
-        title_unlock: "Legend",
-        specialPerks: [
-          "Exclusive legend badge",
-          "Priority support",
-          "Special profile highlighting",
-          userType === "Learner"
-            ? "Access to premium mentors"
-            : "Higher commission rates",
-        ],
-      },
-      userId,
-      userType,
-      displayOrder: 4,
-    },
-  ];
-
-  try {
-    const achievements = await this.insertMany(defaultAchievements);
-    return achievements;
-  } catch (error) {
-    throw new Error(`Failed to create default achievements: ${error.message}`);
-  }
+  return achievement;
 };
 
-// Instance method to update progress
-achievementSchema.methods.updateProgress = function (
-  newProgress,
-  triggerEvent = ""
+// Instance method to add new unlocked achievement
+achievementSchema.methods.addUnlockedAchievement = function (
+  name,
+  category,
+  level
 ) {
-  const previousProgress = this.criteria.currentProgress;
-  this.criteria.currentProgress = Math.min(
-    newProgress,
-    this.criteria.targetValue
+  const exists = this.unlocked.find(
+    (u) => u.name === name && u.category === category && u.level === level
   );
 
-  // Add to progress history
-  this.progressHistory.push({
-    previousProgress,
-    newProgress: this.criteria.currentProgress,
-    triggerEvent,
-  });
+  if (!exists) {
+    this.unlocked.push({
+      name,
+      category,
+      level,
+      dateUnlocked: new Date(),
+    });
+    this.totalBadges = this.unlocked.length;
+    this.totalAchievements = this.unlocked.length;
+  }
 
-  return this.save();
+  return !exists; // Returns true if new achievement was added
 };
 
-// Static method to update user achievements based on activity
-achievementSchema.statics.updateUserAchievements = async function (
-  userId,
-  userType,
-  activityData
-) {
-  const achievements = await this.find({ userId, isAchieved: false });
+// Instance method to calculate total XP
+achievementSchema.methods.calculateTotalXP = function (completedProjects = 0) {
+  const badgeXP = {
+    basic: 100,
+    common: 200,
+    rare: 350,
+    epic: 500,
+    legendary: 1000,
+  };
 
-  for (const achievement of achievements) {
-    let newProgress = achievement.criteria.currentProgress;
+  let totalXP = 0;
 
-    switch (achievement.criteria.type) {
-      case "sessions_completed":
-        newProgress = activityData.completedSessions || 0;
-        break;
-      case "projects_completed":
-        newProgress = activityData.completedProjects || 0;
-        break;
-      case "streak_days":
-        newProgress = activityData.streakDays || 0;
-        break;
-      case "rating_achieved":
-        newProgress = Math.floor((activityData.rating || 0) * 100);
-        break;
-      case "xp_earned":
-        newProgress = activityData.xp || 0;
-        break;
+  // Add XP for completed projects
+  totalXP += completedProjects * 250;
+
+  // Add XP for badges
+  this.unlocked.forEach((achievement) => {
+    if (badgeXP[achievement.level]) {
+      totalXP += badgeXP[achievement.level];
     }
+  });
 
-    if (newProgress > achievement.criteria.currentProgress) {
-      await achievement.updateProgress(newProgress, "Activity Update");
-    }
-  }
+  return Math.min(totalXP, 10000); // Cap at 10,000 XP
 };
 
 // Configure JSON output

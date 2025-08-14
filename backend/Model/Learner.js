@@ -49,8 +49,7 @@ const learnerSchema = new mongoose.Schema(
     },
     nextLevelXp: {
       type: Number,
-      default: 10000,
-      immutable: true,
+      default: 1000,
       required: true,
     },
 
@@ -76,6 +75,20 @@ const learnerSchema = new mongoose.Schema(
       type: Number,
       default: 0,
       required: true,
+    },
+    maxStreak: {
+      type: Number,
+      default: 0,
+      required: true,
+    },
+    totalLogins: {
+      type: Number,
+      default: 0,
+      required: true,
+    },
+    lastLoginDate: {
+      type: Date,
+      default: null,
     },
     totalAchievement: {
       type: Number,
@@ -190,21 +203,62 @@ const learnerSchema = new mongoose.Schema(
 );
 
 // Indexes for better performance
-// learnerSchema.index({ userId: 1 });
 learnerSchema.index({ level: 1 });
 learnerSchema.index({ rating: -1 });
 learnerSchema.index({ joinDate: -1 });
+learnerSchema.index({ xp: -1 });
+learnerSchema.index({ streakDays: -1 });
+learnerSchema.index({ lastLoginDate: -1 });
 
 // Virtual for progress percentage
 learnerSchema.virtual("progressPercentage").get(function () {
   if (this.nextLevelXp === 0) return 100;
-  return Math.floor((this.xp / this.nextLevelXp) * 100);
+  const currentLevelXP = this.xp % 1000;
+  return Math.floor((currentLevelXP / 1000) * 100);
 });
 
 // Virtual for total sessions (completed + scheduled)
 learnerSchema.virtual("totalSessions").get(function () {
   return this.completedSessions + this.userSessionsScheduled;
 });
+
+// Method to update daily login streak
+learnerSchema.methods.updateDailyStreak = function () {
+  const now = new Date();
+  // Convert to IST (UTC + 5:30)
+  const istOffset = 5.5 * 60 * 60 * 1000;
+  const istNow = new Date(now.getTime() + istOffset);
+  const today = istNow.toDateString();
+
+  const lastLoginIST = this.lastLoginDate
+    ? new Date(new Date(this.lastLoginDate).getTime() + istOffset)
+    : null;
+  const lastLoginDate = lastLoginIST ? lastLoginIST.toDateString() : null;
+
+  if (lastLoginDate !== today) {
+    // Check if yesterday
+    const yesterday = new Date(istNow);
+    yesterday.setDate(yesterday.getDate() - 1);
+    const yesterdayStr = yesterday.toDateString();
+
+    if (lastLoginDate === yesterdayStr) {
+      // Continue streak
+      this.streakDays = (this.streakDays || 0) + 1;
+    } else if (lastLoginDate !== today) {
+      // Reset streak if not yesterday and not today
+      this.streakDays = 1;
+    }
+
+    // Update max streak
+    this.maxStreak = Math.max(this.maxStreak || 0, this.streakDays);
+    this.totalLogins = (this.totalLogins || 0) + 1;
+    this.lastLoginDate = now;
+
+    return true; // Streak was updated
+  }
+
+  return false; // No update needed
+};
 
 learnerSchema.set("toJSON", {
   virtuals: true,

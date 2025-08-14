@@ -1,49 +1,20 @@
 const express = require("express");
 const router = express.Router();
-const achievementController = require("../controller/achievementController");
+const { requireUser } = require("../middleware/roleAuth");
+
 const {
-  authenticateJWT,
-  requireRoleSelection,
-} = require("../middleware/roleAuth");
+  recalculateAchievements,
+  getAchievementSummary,
+  updateTestValues,
+} = require("../controller/achievementController");
 
-// Get all achievements for the current user
-router.get(
-  "/",
-  authenticateJWT,
-  requireRoleSelection,
-  achievementController.getUserAchievements
-);
+// Get achievement summary for the logged-in learner
+router.get("/", requireUser, getAchievementSummary);
 
-// Get specific achievement details
-router.get(
-  "/:achievementId",
-  authenticateJWT,
-  requireRoleSelection,
-  achievementController.getAchievementById
-);
+// Recalculate all achievements (force update)
+router.post("/recalculate", requireUser, recalculateAchievements);
 
-// Update achievement progress (manual trigger)
-router.patch(
-  "/update-progress",
-  authenticateJWT,
-  requireRoleSelection,
-  achievementController.updateAchievementProgress
-);
-
-// Get achievement statistics
-router.get(
-  "/stats/summary",
-  authenticateJWT,
-  requireRoleSelection,
-  achievementController.getAchievementStats
-);
-
-// Initialize achievements for new users (called after role selection)
-router.post(
-  "/initialize",
-  authenticateJWT,
-  requireRoleSelection,
-  achievementController.initializeUserAchievements
-);
+// Test endpoint for debugging (development only)
+router.post("/test-update", requireUser, updateTestValues);
 
 module.exports = router;
