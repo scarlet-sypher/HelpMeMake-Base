@@ -31,6 +31,8 @@ import MyApprentice from "./pages/mentor/MyApprentice";
 import MentorMilestonePage from "./pages/mentor/MentorMilestonePage";
 import MentorSessions from "./pages/mentor/MentorSessions";
 import UserSessions from "./pages/user/UserSessions";
+import MentorAnalysis from "./pages/mentor/MentorAnalysis";
+import UserAnalysis from "./pages/user/UserAnalysis";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
@@ -114,7 +116,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
           path="/user/analytics"
           element={
             <ProtectedRoute requiredRole="user">
-              <div>Analytics Page - Coming Soon</div>
+              <UserAnalysis />
             </ProtectedRoute>
           }
         />
@@ -231,6 +233,14 @@ ReactDOM.createRoot(document.getElementById("root")).render(
           element={
             <ProtectedRoute requiredRole="mentor">
               <MentorSessions />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/mentor/analysis"
+          element={
+            <ProtectedRoute requiredRole="mentor">
+              <MentorAnalysis />
             </ProtectedRoute>
           }
         />

@@ -45,11 +45,19 @@ const ProgressTracker = ({ userImg }) => {
         }
       );
 
+      console.log("API statistics:", response.data.statistics);
+
       if (response.data.success) {
         setProjectData(response.data.project);
         setLearnerData(response.data.learner);
         setMilestones(response.data.milestones);
-        setStatistics(response.data.statistics);
+        setStatistics({
+          total: response.data.statistics?.total ?? 0,
+          completed: response.data.statistics?.completed ?? 0,
+          inProgress: response.data.statistics?.inProgress ?? 0,
+          pending: response.data.statistics?.pending ?? 0,
+          progressPercentage: response.data.statistics?.progressPercentage ?? 0,
+        });
       } else {
         setError(response.data.message || "Failed to fetch progress data");
       }
@@ -394,10 +402,11 @@ const ProgressTracker = ({ userImg }) => {
             <div className="flex items-center space-x-4">
               <div className="relative">
                 <img
-                  src={studentData.image}
-                  alt={studentData.name}
-                  className="w-16 h-16 rounded-full object-cover border-2 border-white/20"
+                  src={statistics?.avatar || "/default-avatar.jpg"}
+                  alt={statistics?.name || "Mentor Avatar"}
+                  className="w-12 h-12 rounded-full object-cover"
                 />
+
                 <div
                   className={`absolute -bottom-1 -right-1 w-5 h-5 ${
                     projectData ? "bg-emerald-400" : "bg-gray-400"

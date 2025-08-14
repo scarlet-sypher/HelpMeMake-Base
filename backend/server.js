@@ -19,6 +19,7 @@ const milestoneRoutes = require("./routes/milestoneRoute");
 const achievementRoutes = require("./routes/achievementRoute");
 const syncRoutes = require("./routes/syncRoute");
 const sessionRoutes = require("./routes/sessionRoute");
+const analysisRoutes = require("./routes/analysisRoute");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -108,7 +109,7 @@ app.use("/api/ai", aiRoutes);
 app.use("/api/achievements", achievementRoutes);
 app.use("/api/sync", syncRoutes);
 app.use("/api/sessions", sessionRoutes);
-
+app.use("/api/analysis", analysisRoutes);
 // Health check endpoint
 app.get("/health", (req, res) => {
   res.json({

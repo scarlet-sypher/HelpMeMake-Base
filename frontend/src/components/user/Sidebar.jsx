@@ -77,7 +77,7 @@ const Sidebar = ({
             icon: BarChart3,
             label: "Analytics",
             id: "analytics",
-            path: "/mentor/analytics",
+            path: "/mentor/analysis",
           },
           {
             icon: Settings,

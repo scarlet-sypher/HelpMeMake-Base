@@ -37,7 +37,14 @@ const achievementSchema = new mongoose.Schema(
     category: {
       type: String,
       required: true,
-      enum: ["projects", "milestones", "social", "learning"],
+      enum: [
+        "learning",
+        "mentoring",
+        "project",
+        "engagement",
+        "milestone",
+        "social",
+      ],
     },
     rarity: {
       type: String,
@@ -46,21 +53,24 @@ const achievementSchema = new mongoose.Schema(
       default: "common",
     },
 
-    // Unlock Conditions
-    unlockCondition: {
-      metric: {
+    // Achievement Criteria & Progress
+    criteria: {
+      type: {
         type: String,
         required: true,
         enum: [
+          "sessions_completed",
           "projects_completed",
-          "milestones_achieved",
-          "mentor_connections",
-          "sessions_attended",
           "streak_days",
+          "rating_achieved",
+          "students_mentored",
+          "xp_earned",
           "profile_completion",
+          "mentor_hours",
+          "custom",
         ],
       },
-      requiredCount: {
+      targetValue: {
         type: Number,
         required: true,
         min: 1,
@@ -72,19 +82,27 @@ const achievementSchema = new mongoose.Schema(
       },
     },
 
-    // XP & Rewards System
-    xpReward: {
-      type: Number,
-      required: true,
-      default: function () {
-        const xpValues = {
-          common: 100,
-          rare: 150,
-          epic: 200,
-          legendary: 1000,
-        };
-        return xpValues[this.rarity] || 100;
+    // Rewards & Benefits
+    rewards: {
+      xpBonus: {
+        type: Number,
+        default: 0,
+        min: 0,
       },
+      badgeUrl: {
+        type: String,
+        default: null,
+      },
+      title_unlock: {
+        type: String,
+        default: null,
+      },
+      specialPerks: [
+        {
+          type: String,
+          trim: true,
+        },
+      ],
     },
 
     // User Association
@@ -103,6 +121,7 @@ const achievementSchema = new mongoose.Schema(
     isAchieved: {
       type: Boolean,
       default: false,
+      required: true,
     },
     achievedAt: {
       type: Date,
@@ -117,56 +136,97 @@ const achievementSchema = new mongoose.Schema(
       max: 100,
     },
 
-    // Animation & UI
-    animationPlayed: {
-      type: Boolean,
-      default: false,
-    },
-
-    // Display Properties
-    displayOrder: {
-      type: Number,
-      default: 0,
-    },
+    // Metadata & Analytics
     isVisible: {
       type: Boolean,
       default: true,
     },
+    displayOrder: {
+      type: Number,
+      default: 0,
+    },
+
+    // Related Data References
+    relatedData: {
+      learnerId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Learner",
+        default: null,
+      },
+      mentorId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Mentor",
+        default: null,
+      },
+      projectIds: [
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Project",
+        },
+      ],
+    },
+
+    // Achievement History & Updates
+    progressHistory: [
+      {
+        previousProgress: Number,
+        newProgress: Number,
+        updatedAt: {
+          type: Date,
+          default: Date.now,
+        },
+        triggerEvent: {
+          type: String,
+          trim: true,
+        },
+      },
+    ],
   },
   {
     timestamps: true,
   }
 );
 
-// Indexes for performance
-achievementSchema.index({ userId: 1, category: 1 });
+// Indexes for better performance
+achievementSchema.index({ userId: 1 });
+achievementSchema.index({ userType: 1 });
+achievementSchema.index({ category: 1 });
+achievementSchema.index({ isAchieved: 1 });
+achievementSchema.index({ rarity: 1 });
+// achievementSchema.index({ achievementId: 1 });
+
+// Compound indexes
 achievementSchema.index({ userId: 1, isAchieved: 1 });
-achievementSchema.index({ category: 1, rarity: 1 });
+achievementSchema.index({ userId: 1, category: 1 });
 
 // Virtual for checking if achievement is in progress
 achievementSchema.virtual("isInProgress").get(function () {
-  return !this.isAchieved && this.unlockCondition.currentProgress > 0;
+  return !this.isAchieved && this.criteria.currentProgress > 0;
 });
 
-// Pre-save middleware to calculate progress and handle unlocks
+// Virtual for time since achievement
+achievementSchema.virtual("daysSinceAchieved").get(function () {
+  if (!this.achievedAt) return null;
+  const diffTime = Math.abs(new Date() - this.achievedAt);
+  return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+});
+
+// Pre-save middleware to calculate progress percentage
 achievementSchema.pre("save", function (next) {
   if (
-    this.isModified("unlockCondition.currentProgress") ||
-    this.isModified("unlockCondition.requiredCount")
+    this.isModified("criteria.currentProgress") ||
+    this.isModified("criteria.targetValue")
   ) {
     this.progressPercentage = Math.min(
       Math.floor(
-        (this.unlockCondition.currentProgress /
-          this.unlockCondition.requiredCount) *
-          100
+        (this.criteria.currentProgress / this.criteria.targetValue) * 100
       ),
       100
     );
 
-    // Check if achievement should be unlocked
+    // Check if achievement should be marked as achieved
     if (
-      this.unlockCondition.currentProgress >=
-        this.unlockCondition.requiredCount &&
+      this.criteria.currentProgress >= this.criteria.targetValue &&
       !this.isAchieved
     ) {
       this.isAchieved = true;
@@ -176,266 +236,181 @@ achievementSchema.pre("save", function (next) {
   next();
 });
 
-// Static method to create category-based achievements for a user
-achievementSchema.statics.createCategoryAchievements = async function (
+// Static method to create default achievements for a user
+achievementSchema.statics.createDefaultAchievements = async function (
   userId,
   userType
 ) {
-  const achievementTemplates = {
-    projects: [
-      {
-        rarity: "common",
-        requiredCount: 5,
-        title: "Project Starter",
-        description: "Complete your first 5 projects",
-        icon: "🚀",
+  const defaultAchievements = [
+    // Achievement 1: First Steps (Common)
+    {
+      title: "First Steps",
+      description:
+        userType === "Learner"
+          ? "Complete your first learning session and begin your journey"
+          : "Complete your first mentoring session and start helping others",
+      icon: "🚀",
+      category: userType === "Learner" ? "learning" : "mentoring",
+      rarity: "common",
+      criteria: {
+        type: "sessions_completed",
+        targetValue: 1,
+        currentProgress: 0,
       },
-      {
-        rarity: "rare",
-        requiredCount: 10,
-        title: "Project Enthusiast",
-        description: "Complete 10 projects and show your dedication",
-        icon: "⭐",
+      rewards: {
+        xpBonus: 100,
+        title_unlock: "Starter",
       },
-      {
-        rarity: "epic",
-        requiredCount: 20,
-        title: "Project Expert",
-        description: "Complete 20 projects like a pro",
-        icon: "🏆",
-      },
-      {
-        rarity: "legendary",
-        requiredCount: 50,
-        title: "Project Legend",
-        description: "Complete 50 projects and become legendary",
-        icon: "👑",
-      },
-    ],
-    milestones: [
-      {
-        rarity: "common",
-        requiredCount: 10,
-        title: "Milestone Achiever",
-        description: "Reach your first 10 milestones",
-        icon: "🎯",
-      },
-      {
-        rarity: "rare",
-        requiredCount: 25,
-        title: "Milestone Master",
-        description: "Achieve 25 milestones consistently",
-        icon: "🌟",
-      },
-      {
-        rarity: "epic",
-        requiredCount: 50,
-        title: "Milestone Champion",
-        description: "Reach 50 milestones with excellence",
-        icon: "🏅",
-      },
-      {
-        rarity: "legendary",
-        requiredCount: 100,
-        title: "Milestone Legend",
-        description: "Achieve 100 milestones and inspire others",
-        icon: "💎",
-      },
-    ],
-    social: [
-      {
-        rarity: "common",
-        requiredCount: 3,
-        title: "Social Starter",
-        description: "Connect with your first 3 mentors",
-        icon: "🤝",
-      },
-      {
-        rarity: "rare",
-        requiredCount: 7,
-        title: "Network Builder",
-        description: "Build connections with 7 mentors",
-        icon: "🌐",
-      },
-      {
-        rarity: "epic",
-        requiredCount: 15,
-        title: "Community Champion",
-        description: "Connect with 15 mentors in your network",
-        icon: "👥",
-      },
-      {
-        rarity: "legendary",
-        requiredCount: 30,
-        title: "Network Legend",
-        description: "Build an amazing network of 30 mentors",
-        icon: "🌈",
-      },
-    ],
-    learning: [
-      {
-        rarity: "common",
-        requiredCount: 5,
-        title: "Learning Beginner",
-        description: "Attend your first 5 learning sessions",
-        icon: "📚",
-      },
-      {
-        rarity: "rare",
-        requiredCount: 15,
-        title: "Dedicated Learner",
-        description: "Attend 15 sessions and show commitment",
-        icon: "🎓",
-      },
-      {
-        rarity: "epic",
-        requiredCount: 30,
-        title: "Learning Expert",
-        description: "Complete 30 learning sessions expertly",
-        icon: "🧠",
-      },
-      {
-        rarity: "legendary",
-        requiredCount: 75,
-        title: "Learning Legend",
-        description: "Attend 75 sessions and master learning",
-        icon: "🔥",
-      },
-    ],
-  };
+      userId,
+      userType,
+      displayOrder: 1,
+    },
 
-  const achievements = [];
-  let displayOrder = 1;
+    // Achievement 2: Dedicated Learner/Mentor (Rare)
+    {
+      title: userType === "Learner" ? "Dedicated Learner" : "Dedicated Mentor",
+      description:
+        userType === "Learner"
+          ? "Complete 10 learning sessions and show your commitment"
+          : "Complete 10 mentoring sessions and prove your dedication",
+      icon: "⭐",
+      category: userType === "Learner" ? "learning" : "mentoring",
+      rarity: "rare",
+      criteria: {
+        type: "sessions_completed",
+        targetValue: 10,
+        currentProgress: 0,
+      },
+      rewards: {
+        xpBonus: 500,
+        title_unlock:
+          userType === "Learner" ? "Dedicated Student" : "Dedicated Guide",
+      },
+      userId,
+      userType,
+      displayOrder: 2,
+    },
 
-  for (const [category, templates] of Object.entries(achievementTemplates)) {
-    for (const template of templates) {
-      const achievement = {
-        title: template.title,
-        description: template.description,
-        icon: template.icon,
-        category,
-        rarity: template.rarity,
-        unlockCondition: {
-          metric: `${
-            category === "projects"
-              ? "projects_completed"
-              : category === "milestones"
-              ? "milestones_achieved"
-              : category === "social"
-              ? "mentor_connections"
-              : "sessions_attended"
-          }`,
-          requiredCount: template.requiredCount,
-          currentProgress: 0,
-        },
-        xpReward: {
-          common: 100,
-          rare: 150,
-          epic: 200,
-          legendary: 1000,
-        }[template.rarity],
-        userId,
-        userType,
-        displayOrder: displayOrder++,
-      };
-      achievements.push(achievement);
-    }
-  }
+    // Achievement 3: Project Master (Epic)
+    {
+      title: "Project Master",
+      description:
+        userType === "Learner"
+          ? "Successfully complete 5 projects and master your skills"
+          : "Successfully mentor 5 projects to completion",
+      icon: "🏆",
+      category: "project",
+      rarity: "epic",
+      criteria: {
+        type: "projects_completed",
+        targetValue: 5,
+        currentProgress: 0,
+      },
+      rewards: {
+        xpBonus: 1000,
+        title_unlock: "Project Master",
+        specialPerks: ["Priority project matching", "Featured profile badge"],
+      },
+      userId,
+      userType,
+      displayOrder: 3,
+    },
+
+    // Achievement 4: Legend (Legendary)
+    {
+      title: "Legend",
+      description:
+        userType === "Learner"
+          ? "Maintain a 30-day learning streak and become a learning legend"
+          : "Achieve a 4.8+ rating with 20+ reviews and become a mentoring legend",
+      icon: "👑",
+      category: userType === "Learner" ? "engagement" : "mentoring",
+      rarity: "legendary",
+      criteria: {
+        type: userType === "Learner" ? "streak_days" : "rating_achieved",
+        targetValue: userType === "Learner" ? 30 : 480, // 4.8 * 100 for rating
+        currentProgress: 0,
+      },
+      rewards: {
+        xpBonus: 2500,
+        title_unlock: "Legend",
+        specialPerks: [
+          "Exclusive legend badge",
+          "Priority support",
+          "Special profile highlighting",
+          userType === "Learner"
+            ? "Access to premium mentors"
+            : "Higher commission rates",
+        ],
+      },
+      userId,
+      userType,
+      displayOrder: 4,
+    },
+  ];
 
   try {
-    return await this.insertMany(achievements);
+    const achievements = await this.insertMany(defaultAchievements);
+    return achievements;
   } catch (error) {
-    throw new Error(`Failed to create category achievements: ${error.message}`);
+    throw new Error(`Failed to create default achievements: ${error.message}`);
   }
 };
 
-// Static method to update user achievements with batch unlock detection
-achievementSchema.statics.updateUserProgress = async function (
-  userId,
-  progressData
+// Instance method to update progress
+achievementSchema.methods.updateProgress = function (
+  newProgress,
+  triggerEvent = ""
 ) {
-  try {
-    const achievements = await this.find({ userId, isAchieved: false });
-    const unlockedAchievements = [];
-    let highestRarityUnlocked = null;
+  const previousProgress = this.criteria.currentProgress;
+  this.criteria.currentProgress = Math.min(
+    newProgress,
+    this.criteria.targetValue
+  );
 
-    for (const achievement of achievements) {
-      let newProgress = achievement.unlockCondition.currentProgress;
+  // Add to progress history
+  this.progressHistory.push({
+    previousProgress,
+    newProgress: this.criteria.currentProgress,
+    triggerEvent,
+  });
 
-      // Map progress data to achievement metrics
-      switch (achievement.unlockCondition.metric) {
-        case "projects_completed":
-          newProgress = progressData.completedProjects || 0;
-          break;
-        case "milestones_achieved":
-          newProgress = progressData.milestonesAchieved || 0;
-          break;
-        case "mentor_connections":
-          newProgress = progressData.mentorConnections || 0;
-          break;
-        case "sessions_attended":
-          newProgress = progressData.sessionsAttended || 0;
-          break;
-        case "streak_days":
-          newProgress = progressData.streakDays || 0;
-          break;
-      }
-
-      if (newProgress > achievement.unlockCondition.currentProgress) {
-        achievement.unlockCondition.currentProgress = newProgress;
-
-        // Check if this unlocks the achievement
-        if (
-          newProgress >= achievement.unlockCondition.requiredCount &&
-          !achievement.isAchieved
-        ) {
-          unlockedAchievements.push(achievement);
-
-          // Track highest rarity for animation
-          if (
-            !highestRarityUnlocked ||
-            getRarityPriority(achievement.rarity) >
-              getRarityPriority(highestRarityUnlocked)
-          ) {
-            highestRarityUnlocked = achievement.rarity;
-          }
-        }
-
-        await achievement.save();
-      }
-    }
-
-    return {
-      unlockedAchievements,
-      highestRarityUnlocked,
-      totalXpGained: unlockedAchievements.reduce(
-        (sum, a) => sum + a.xpReward,
-        0
-      ),
-    };
-  } catch (error) {
-    throw new Error(`Failed to update user progress: ${error.message}`);
-  }
+  return this.save();
 };
 
-// Helper function for rarity priority
-function getRarityPriority(rarity) {
-  const priorities = { common: 1, rare: 2, epic: 3, legendary: 4 };
-  return priorities[rarity] || 1;
-}
-
-// Instance method to get suggested next achievements
-achievementSchema.statics.getSuggestedNext = async function (
+// Static method to update user achievements based on activity
+achievementSchema.statics.updateUserAchievements = async function (
   userId,
-  limit = 3
+  userType,
+  activityData
 ) {
-  return await this.find({
-    userId,
-    isAchieved: false,
-    "unlockCondition.currentProgress": { $gt: 0 },
-  })
-    .sort({ progressPercentage: -1 })
-    .limit(limit);
+  const achievements = await this.find({ userId, isAchieved: false });
+
+  for (const achievement of achievements) {
+    let newProgress = achievement.criteria.currentProgress;
+
+    switch (achievement.criteria.type) {
+      case "sessions_completed":
+        newProgress = activityData.completedSessions || 0;
+        break;
+      case "projects_completed":
+        newProgress = activityData.completedProjects || 0;
+        break;
+      case "streak_days":
+        newProgress = activityData.streakDays || 0;
+        break;
+      case "rating_achieved":
+        newProgress = Math.floor((activityData.rating || 0) * 100);
+        break;
+      case "xp_earned":
+        newProgress = activityData.xp || 0;
+        break;
+    }
+
+    if (newProgress > achievement.criteria.currentProgress) {
+      await achievement.updateProgress(newProgress, "Activity Update");
+    }
+  }
 };
 
 // Configure JSON output

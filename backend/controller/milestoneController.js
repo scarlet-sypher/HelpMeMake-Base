@@ -1151,6 +1151,312 @@ const getMentorActiveProjectProgress = async (req, res) => {
   }
 };
 
+const getMilestonesByProjectWithUserData = async (req, res) => {
+  try {
+    console.log("=== GET MILESTONES WITH USER DATA DEBUG ===");
+    console.log("User from req.user:", req.user);
+    console.log("Project ID from params:", req.params.projectId);
+
+    const { projectId } = req.params;
+    const userId = req.user._id || req.user.id;
+    const userRole = req.user.role;
+
+    console.log("Extracted userId:", userId);
+    console.log("User role:", userRole);
+
+    // First, let's just find the project without access check to debug
+    const project = await Project.findById(projectId);
+    console.log("Project found:", project ? "YES" : "NO");
+    if (project) {
+      console.log("Project learner ID:", project.learnerId);
+      console.log("Project mentor ID:", project.mentorId);
+      console.log("Project status:", project.status);
+    }
+
+    // Verify user has access to this project based on role
+    let accessProject = null;
+
+    if (userRole === "user") {
+      // For learners, find their learner profile first
+      const learnerProfile = await Learner.findOne({ userId });
+      console.log("Learner profile found:", learnerProfile ? "YES" : "NO");
+      if (learnerProfile) {
+        console.log("Learner profile ID:", learnerProfile._id);
+        accessProject = await Project.findOne({
+          _id: projectId,
+          learnerId: learnerProfile._id,
+        });
+      }
+    } else if (userRole === "mentor") {
+      // For mentors, find their mentor profile first
+      const mentorProfile = await Mentor.findOne({ userId });
+      console.log("Mentor profile found:", mentorProfile ? "YES" : "NO");
+      if (mentorProfile) {
+        console.log("Mentor profile ID:", mentorProfile._id);
+        accessProject = await Project.findOne({
+          _id: projectId,
+          mentorId: mentorProfile._id,
+        });
+      }
+    }
+
+    console.log("Access project found:", accessProject ? "YES" : "NO");
+
+    if (!accessProject) {
+      return res.status(403).json({
+        success: false,
+        message: "Access denied to this project",
+        debug: {
+          userId,
+          projectId,
+          userRole,
+          projectExists: !!project,
+        },
+      });
+    }
+
+    // Fetch milestones with nested user data population
+    const milestones = await Milestone.find({ projectId })
+      .sort({ order: 1, createdAt: 1 })
+      .populate({
+        path: "learnerId",
+        populate: {
+          path: "userId",
+          select: "name email avatar",
+        },
+      })
+      .populate({
+        path: "mentorId",
+        populate: {
+          path: "userId",
+          select: "name email avatar",
+        },
+      })
+      .lean();
+
+    console.log("Milestones found:", milestones.length);
+
+    // Transform the data to maintain backward compatibility
+    const transformedMilestones = milestones.map((milestone) => {
+      return {
+        ...milestone,
+        learnerId: milestone.learnerId?.userId || milestone.learnerId,
+        mentorId: milestone.mentorId?.userId || milestone.mentorId,
+      };
+    });
+
+    res.json({
+      success: true,
+      milestones: transformedMilestones,
+      debug: {
+        userId,
+        projectId,
+        milestonesCount: transformedMilestones.length,
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching milestones with user data:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch milestones",
+      error: error.message,
+    });
+  }
+};
+
+const getMentorActiveProjectProgressWithAvatars = async (req, res) => {
+  try {
+    console.log(
+      "=== GET MENTOR ACTIVE PROJECT PROGRESS WITH AVATARS DEBUG ==="
+    );
+    console.log("User from req.user:", req.user);
+
+    const userId = req.user._id || req.user.id;
+    const userRole = req.user.role;
+
+    console.log("Extracted userId:", userId);
+    console.log("User role:", userRole);
+
+    if (userRole !== "mentor") {
+      return res.status(403).json({
+        success: false,
+        message: "Access denied. Mentor role required.",
+      });
+    }
+
+    // Find mentor profile
+    const mentorProfile = await Mentor.findOne({ userId });
+    console.log("Mentor profile found:", mentorProfile ? "YES" : "NO");
+
+    if (!mentorProfile) {
+      return res.status(404).json({
+        success: false,
+        message: "Mentor profile not found",
+      });
+    }
+
+    // Get active project for this mentor with enhanced population
+    const activeProject = await Project.findOne({
+      mentorId: mentorProfile._id,
+      status: "In Progress",
+    })
+      .populate({
+        path: "learnerId",
+        populate: {
+          path: "userId",
+          select: "name email avatar",
+        },
+      })
+      .populate({
+        path: "mentorId",
+        populate: {
+          path: "userId",
+          select: "name email avatar",
+        },
+      })
+      .lean();
+
+    console.log("Active project found:", activeProject ? "YES" : "NO");
+
+    if (!activeProject) {
+      return res.json({
+        success: true,
+        project: null,
+        learner: null,
+        milestones: [],
+        message: "No active project found",
+        debug: {
+          userId,
+          userRole,
+        },
+      });
+    }
+
+    // Get milestones for the active project with enhanced user data population
+    const milestones = await Milestone.find({ projectId: activeProject._id })
+      .sort({ order: 1, createdAt: 1 })
+      .populate({
+        path: "learnerId",
+        populate: {
+          path: "userId",
+          select: "name email avatar",
+        },
+      })
+      .populate({
+        path: "mentorId",
+        populate: {
+          path: "userId",
+          select: "name email avatar",
+        },
+      })
+      .lean();
+
+    console.log("Milestones found:", milestones.length);
+
+    // Transform milestone data to match frontend expectations with proper user data
+    const transformedMilestones = milestones.slice(0, 5).map((milestone) => ({
+      id: milestone._id,
+      title: milestone.title,
+      description: milestone.description,
+      dueDate: milestone.dueDate,
+      status: milestone.status,
+      order: milestone.order,
+      userVerified: milestone.learnerVerification?.isVerified || false,
+      mentorVerified: milestone.mentorVerification?.isVerified || false,
+      learnerVerification: milestone.learnerVerification,
+      mentorVerification: milestone.mentorVerification,
+      createdAt: milestone.createdAt,
+      updatedAt: milestone.updatedAt,
+      // Include populated user data
+      learnerUser: milestone.learnerId?.userId || null,
+      mentorUser: milestone.mentorId?.userId || null,
+    }));
+
+    // Calculate progress statistics
+    const completedMilestones = transformedMilestones.filter(
+      (m) => m.userVerified && m.mentorVerified
+    );
+    const inProgressMilestones = transformedMilestones.filter(
+      (m) =>
+        (m.userVerified || m.mentorVerified) &&
+        !(m.userVerified && m.mentorVerified)
+    );
+    const pendingMilestones = transformedMilestones.filter(
+      (m) => !m.userVerified && !m.mentorVerified
+    );
+
+    const progressPercentage =
+      transformedMilestones.length > 0
+        ? Math.round(
+            (completedMilestones.length / transformedMilestones.length) * 100
+          )
+        : 0;
+
+    // Extract learner details with proper user data including avatar
+    const learnerDetails = {
+      id: activeProject.learnerId._id,
+      name: activeProject.learnerId.userId?.name || "Unknown Learner",
+      email: activeProject.learnerId.userId?.email || "",
+      avatar:
+        activeProject.learnerId.userId?.avatar || "/uploads/public/default.jpg",
+      // Include profile-specific data
+      title: activeProject.learnerId.title || "Not mentioned",
+      description: activeProject.learnerId.description || "To Lazy to type",
+      location: activeProject.learnerId.location || "Home",
+      level: activeProject.learnerId.level || 0,
+      xp: activeProject.learnerId.xp || 0,
+      rating: activeProject.learnerId.rating || 0,
+    };
+
+    // Project details for frontend
+    const projectDetails = {
+      id: activeProject._id,
+      name: activeProject.name,
+      shortDescription: activeProject.shortDescription,
+      status: activeProject.status,
+      startDate: activeProject.startDate,
+      expectedEndDate: activeProject.expectedEndDate,
+      progressPercentage:
+        activeProject.progressPercentage || progressPercentage,
+      totalMilestones: transformedMilestones.length,
+      completedMilestones: completedMilestones.length,
+    };
+
+    res.json({
+      success: true,
+      project: projectDetails,
+      learner: learnerDetails,
+      milestones: transformedMilestones,
+      statistics: {
+        total: transformedMilestones.length,
+        completed: completedMilestones.length,
+        inProgress: inProgressMilestones.length,
+        pending: pendingMilestones.length,
+        progressPercentage: progressPercentage,
+      },
+      message:
+        "Mentor active project progress with avatars fetched successfully",
+      debug: {
+        userId,
+        projectId: activeProject._id,
+        milestonesCount: milestones.length,
+        mentorProfileId: mentorProfile._id,
+        learnerAvatarFound: !!activeProject.learnerId.userId?.avatar,
+      },
+    });
+  } catch (error) {
+    console.error(
+      "Error fetching mentor active project progress with avatars:",
+      error
+    );
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch mentor active project progress with avatars",
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   getActiveProjectWithMentor,
   getMilestonesByProject,
@@ -1166,4 +1472,6 @@ module.exports = {
   updateMilestone,
   addReviewNote,
   markReviewAsRead,
+  getMilestonesByProjectWithUserData,
+  getMentorActiveProjectProgressWithAvatars,
 };
