@@ -133,5 +133,15 @@ router.put(
   requireUser,
   milestoneController.markReviewAsRead
 );
+router.get(
+  "/project/:projectId/with-user-data",
+  requireUserOrMentor,
+  milestoneController.getMilestonesByProjectWithUserData
+);
+router.get(
+  "/mentor/active-project-progress-with-avatars",
+  requireMentor,
+  milestoneController.getMentorActiveProjectProgressWithAvatars
+);
 
 module.exports = router;
