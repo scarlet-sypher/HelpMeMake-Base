@@ -49,6 +49,8 @@ const UserDashboard = () => {
   const [projectData, setProjectData] = useState(null);
   const [achievements, setAchievements] = useState([]);
   const [achievementsLoading, setAchievementsLoading] = useState(true);
+  const [dashboardData, setDashboardData] = useState(null);
+  const [dashboardLoading, setDashboardLoading] = useState(true);
 
   useEffect(() => {
     const handleOAuthRedirect = async () => {
@@ -126,6 +128,57 @@ const UserDashboard = () => {
 
     fetchUserData();
   }, [isAuthenticated, userDataLoading]);
+
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      if (isAuthenticated && dashboardLoading) {
+        try {
+          setDashboardLoading(true);
+
+          const apiUrl =
+            import.meta.env.VITE_API_URL || "http://localhost:5000";
+          const token = localStorage.getItem("access_token");
+
+          // Updated endpoint for dashboard
+          const response = await fetch(`${apiUrl}/api/dashboard/user/data`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          console.log("Dashboard Response status:", response.status);
+
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+
+          const data = await response.json();
+          console.log("Dashboard API Response:", data);
+
+          if (data.success) {
+            setDashboardData(data.user);
+          } else {
+            console.error("Dashboard API returned error:", data.message);
+          }
+        } catch (error) {
+          console.error("Error fetching dashboard data:", error);
+
+          if (
+            error.message.includes("401") ||
+            error.message.includes("Unauthorized")
+          ) {
+            window.location.href = "/login";
+          }
+        } finally {
+          setDashboardLoading(false);
+        }
+      }
+    };
+
+    fetchDashboardData();
+  }, [isAuthenticated, dashboardLoading]);
 
   useEffect(() => {
     // Check URL params for generated password
@@ -247,44 +300,46 @@ const UserDashboard = () => {
     });
   };
 
-  const userStats = [
-    {
-      icon: Folders,
-      label: "Active Projects",
-      value: userData.userActiveProjects.toString(),
-      change: `${userData.userActiveProjectsChange >= 0 ? "+" : ""}${
-        userData.userActiveProjectsChange
-      } this week`,
-      color: "from-blue-500 to-cyan-500",
-    },
-    {
-      icon: CheckCircle,
-      label: "Total Projects",
-      value: userData.userTotalProjects.toString(),
-      change: `${userData.userTotalProjectsChange >= 0 ? "+" : ""}${
-        userData.userTotalProjectsChange
-      }% in total`,
-      color: "from-emerald-500 to-teal-500",
-    },
-    {
-      icon: Calendar,
-      label: "Sessions Scheduled",
-      value: userData.userSessionsScheduled.toString(),
-      change: `${userData.userSessionsScheduledChange >= 0 ? "+" : ""}${
-        userData.userSessionsScheduledChange
-      } this month`,
-      color: "from-purple-500 to-pink-500",
-    },
-    {
-      icon: Target,
-      label: "Completion Rate",
-      value: `${userData.userCompletionRate}%`,
-      change: `${userData.userCompletionRateChange >= 0 ? "+" : ""}${
-        userData.userCompletionRateChange
-      }% this week`,
-      color: "from-orange-500 to-red-500",
-    },
-  ];
+  const userStats = dashboardData
+    ? [
+        {
+          icon: Folders,
+          label: "Active Projects",
+          value: dashboardData.userActiveProjects.toString(),
+          change: `${dashboardData.userActiveProjectsChange >= 0 ? "+" : ""}${
+            dashboardData.userActiveProjectsChange
+          } this week`,
+          color: "from-blue-500 to-cyan-500",
+        },
+        {
+          icon: CheckCircle,
+          label: "Total Projects",
+          value: dashboardData.userTotalProjects.toString(),
+          change: `${dashboardData.userTotalProjectsChange >= 0 ? "+" : ""}${
+            dashboardData.userTotalProjectsChange
+          } projects`,
+          color: "from-emerald-500 to-teal-500",
+        },
+        {
+          icon: Calendar,
+          label: "Sessions Scheduled",
+          value: dashboardData.userSessionsScheduled.toString(),
+          change: `${
+            dashboardData.userSessionsScheduledChange >= 0 ? "+" : ""
+          }${dashboardData.userSessionsScheduledChange} this month`,
+          color: "from-purple-500 to-pink-500",
+        },
+        {
+          icon: Target,
+          label: "Completion Rate",
+          value: `${dashboardData.userCompletionRate}%`,
+          change: `${dashboardData.userCompletionRateChange >= 0 ? "+" : ""}${
+            dashboardData.userCompletionRateChange
+          }% this week`,
+          color: "from-orange-500 to-red-500",
+        },
+      ]
+    : [];
 
   const recentMessages = [
     {

@@ -152,7 +152,7 @@ const MentorAnalysis = () => {
     responseTimeTrend: sessions.responseTimeTrend,
     completionRate: milestones.completionRate,
     completionRateTrend: milestones.completionRateTrend,
-    totalEarnings: overview.totalEarnings,
+    totalEarnings: overview.completedProjectsEarnings,
     thisMonthEarnings: overview.thisMonthEarnings,
     lastMonthEarnings: overview.lastMonthEarnings,
     avgEarningsPerProject: overview.avgEarningsPerProject,
@@ -259,7 +259,7 @@ const MentorAnalysis = () => {
                 </button>
                 <div className="text-right">
                   <div className="text-xl sm:text-2xl font-bold text-white">
-                    ₹{overview.totalEarnings?.toLocaleString() || 0}
+                    ₹{overview.completedProjectsEarnings?.toLocaleString() || 0}
                   </div>
                   <div className="text-cyan-200 text-xs sm:text-sm">
                     Total Earnings

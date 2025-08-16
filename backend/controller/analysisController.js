@@ -64,11 +64,7 @@ const getMentorAnalysis = async (req, res) => {
     const completedProjectsEarnings = allProjects
       .filter((p) => p.status === "Completed")
       .reduce((sum, project) => {
-        const price =
-          project.closingPrice ||
-          project.negotiatedPrice ||
-          project.openingPrice ||
-          0;
+        const price = project.closingPrice || 0;
         return sum + price;
       }, 0);
 

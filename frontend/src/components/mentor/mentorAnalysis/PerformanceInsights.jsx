@@ -77,7 +77,7 @@ const PerformanceInsights = ({ data, title = "Performance Insights" }) => {
   ];
 
   const earnings = {
-    total: data?.totalEarnings || 0,
+    total: data?.completedProjectsEarnings || 0,
     thisMonth: data?.thisMonthEarnings || 0,
     lastMonth: data?.lastMonthEarnings || 0,
     avgPerProject: data?.avgEarningsPerProject || 0,
