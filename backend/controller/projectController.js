@@ -384,6 +384,12 @@ const applyToProject = async (req, res) => {
 
     await project.save();
 
+    await Mentor.findByIdAndUpdate(mentor._id, {
+      $inc: {
+        totalApplications: 1, // Make sure this field exists in Mentor schema
+      },
+    });
+
     // Populate the new application for response
     const updatedProject = await Project.findById(id).populate({
       path: "applications.mentorId",
@@ -483,16 +489,18 @@ const acceptMentorApplication = async (req, res) => {
     // Update learner stats
     await Learner.findByIdAndUpdate(userLearner._id, {
       $inc: {
-        userActiveProjects: -1, // Move from open to in progress
-        userSessionsScheduled: 1,
+        userActiveProjects: -1, // Decrease active (Open) projects
+        userSessionsScheduled: 1, // Increase scheduled sessions
       },
     });
 
     // Update mentor stats
+    const mentorUser = await User.findById(application.mentorId);
     await Mentor.findByIdAndUpdate(application.mentorId, {
       $inc: {
         mentorActiveStudents: 1,
         totalStudents: 1,
+        mentorSessionsScheduled: 1, // MISSING: Track scheduled sessions
       },
     });
 
@@ -672,10 +680,22 @@ const updateProject = async (req, res) => {
         statusChanges.userActiveProjects = 1;
       }
 
+      // Apply active project changes
       if (Object.keys(statusChanges).length > 0) {
         await Learner.findByIdAndUpdate(userLearner._id, {
           $inc: statusChanges,
         });
+      }
+
+      if (newStatus === "Completed" && oldStatus !== "Completed") {
+        await Learner.findByIdAndUpdate(userLearner._id, {
+          $inc: {
+            completedSessions: 1,
+            userCompletionRate: 1,
+          },
+        });
+      } else if (newStatus === "Cancelled" && oldStatus !== "Cancelled") {
+        // Handle cancellation logic if needed
       }
     }
 
@@ -808,6 +828,17 @@ const deleteProjectById = async (req, res) => {
     // Store project status for stats update
     const projectStatus = project.status;
 
+    if (project.mentorId) {
+      // Update mentor stats when deleting assigned project
+      await Mentor.findByIdAndUpdate(project.mentorId, {
+        $inc: {
+          mentorActiveStudents: project.status === "In Progress" ? -1 : 0,
+          mentorSessionsScheduled: project.status === "In Progress" ? -1 : 0,
+          totalStudents: -1, // Decrease total students
+        },
+      });
+    }
+
     // Delete the project
     await Project.findByIdAndDelete(id);
 
@@ -816,10 +847,11 @@ const deleteProjectById = async (req, res) => {
 
     if (projectStatus === "Open") {
       statsUpdate.userActiveProjects = -1;
+    } else if (projectStatus === "In Progress") {
+      statsUpdate.userSessionsScheduled = -1;
     }
 
     await Learner.findByIdAndUpdate(userLearner._id, { $inc: statsUpdate });
-
     res.json({
       success: true,
       message: "Project deleted successfully",
@@ -1379,6 +1411,7 @@ const takeProject = async (req, res) => {
       $inc: {
         mentorActiveStudents: 1,
         totalStudents: 1,
+        mentorSessionsScheduled: 1, // MISSING: Track scheduled sessions
       },
     });
 
@@ -1387,7 +1420,6 @@ const takeProject = async (req, res) => {
     await Learner.findByIdAndUpdate(project.learnerId, {
       $inc: {
         userActiveProjects: 1,
-        userSessionsScheduled: 1,
       },
     });
 
@@ -1409,6 +1441,223 @@ const takeProject = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Failed to accept project. Please try again.",
+    });
+  }
+};
+
+const completeProject = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { rating, feedback, earnings } = req.body;
+
+    const project = await Project.findById(id);
+    if (!project || project.status !== "In Progress") {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid project for completion",
+      });
+    }
+
+    // Update project status
+    project.status = "Completed";
+    project.actualEndDate = new Date();
+    await project.save();
+
+    // Update Mentor stats
+    await Mentor.findByIdAndUpdate(project.mentorId, {
+      $inc: {
+        mentorActiveStudents: -1,
+        mentorSessionsCompleted: 1,
+        completedSessions: 1,
+        mentorTotalEarnings: earnings || 0,
+      },
+      $push: {
+        sessionHistory: {
+          learnerId: project.learnerId,
+          sessionDate: new Date(),
+          topic: project.name,
+          duration: 60, // Default duration
+          rating: rating || 0,
+          feedback: feedback || "",
+          earnings: earnings || 0,
+        },
+      },
+    });
+
+    // Update Learner stats
+    await Learner.findByIdAndUpdate(project.learnerId, {
+      $inc: {
+        userSessionsScheduled: -1,
+        completedSessions: 1,
+        userCompletionRate: 1,
+      },
+    });
+
+    res.json({
+      success: true,
+      message: "Project completed successfully",
+      project,
+    });
+  } catch (error) {
+    console.error("Complete project error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to complete project",
+    });
+  }
+};
+
+const cancelProject = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { reason } = req.body;
+
+    const project = await Project.findById(id);
+    if (!project || project.status !== "In Progress") {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid project for cancellation",
+      });
+    }
+
+    // Update project status
+    project.status = "Cancelled";
+    await project.save();
+
+    // Update Mentor stats
+    if (project.mentorId) {
+      await Mentor.findByIdAndUpdate(project.mentorId, {
+        $inc: {
+          mentorActiveStudents: -1,
+          mentorSessionsScheduled: -1,
+        },
+      });
+    }
+
+    // Update Learner stats
+    await Learner.findByIdAndUpdate(project.learnerId, {
+      $inc: {
+        userSessionsScheduled: -1,
+        userActiveProjects: 1, // Project becomes available again
+      },
+    });
+
+    res.json({
+      success: true,
+      message: "Project cancelled successfully",
+      project,
+    });
+  } catch (error) {
+    console.error("Cancel project error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to cancel project",
+    });
+  }
+};
+
+const submitProjectReview = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { rating, comment, reviewType } = req.body; // reviewType: 'learner' or 'mentor'
+
+    const project = await Project.findById(id);
+    if (!project || project.status !== "Completed") {
+      return res.status(400).json({
+        success: false,
+        message: "Can only review completed projects",
+      });
+    }
+
+    // Update project with review
+    if (reviewType === "learner") {
+      project.learnerReview = {
+        rating,
+        comment,
+        reviewDate: new Date(),
+      };
+
+      // Update mentor's rating and review count
+      await Mentor.findByIdAndUpdate(project.mentorId, {
+        $inc: {
+          totalReviews: 1,
+        },
+        $push: {
+          reviews: {
+            learnerId: project.learnerId,
+            rating,
+            comment,
+            createdAt: new Date(),
+          },
+        },
+      });
+    } else if (reviewType === "mentor") {
+      project.mentorReview = {
+        rating,
+        comment,
+        reviewDate: new Date(),
+      };
+
+      // Update learner's rating if needed
+      await Learner.findByIdAndUpdate(project.learnerId, {
+        $inc: {
+          rating: rating, // You might want to calculate average instead
+        },
+      });
+    }
+
+    await project.save();
+
+    res.json({
+      success: true,
+      message: "Review submitted successfully",
+      project,
+    });
+  } catch (error) {
+    console.error("Submit review error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to submit review",
+    });
+  }
+};
+
+const updateProjectProgress = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { progressPercentage, note } = req.body;
+
+    const project = await Project.findById(id);
+    if (!project || project.status !== "In Progress") {
+      return res.status(400).json({
+        success: false,
+        message: "Can only update progress for active projects",
+      });
+    }
+
+    // Use the schema method
+    await project.addProgressUpdate(progressPercentage, note, req.user._id);
+
+    // If project reaches 100%, auto-trigger completion request
+    if (progressPercentage >= 100) {
+      // Update mentor satisfaction rate
+      await Mentor.findByIdAndUpdate(project.mentorId, {
+        $inc: {
+          mentorSatisfactionRate: 1, // You might want to calculate this differently
+        },
+      });
+    }
+
+    res.json({
+      success: true,
+      message: "Progress updated successfully",
+      project,
+    });
+  } catch (error) {
+    console.error("Update progress error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to update progress",
     });
   }
 };
@@ -1850,4 +2099,8 @@ module.exports = {
   markPitchesAsRead,
   getMentorActiveProjectStatus,
   getAvailableProjectsForMentorsUpdated,
+  completeProject,
+  cancelProject,
+  submitProjectReview,
+  updateProjectProgress,
 };

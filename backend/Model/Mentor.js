@@ -188,6 +188,30 @@ const mentorSchema = new mongoose.Schema(
       ],
     },
 
+    mentorSessionsScheduled: {
+      type: Number,
+      default: 0,
+      required: true,
+    },
+
+    totalApplications: {
+      type: Number,
+      default: 0,
+      required: true,
+    },
+
+    acceptedApplications: {
+      type: Number,
+      default: 0,
+      required: true,
+    },
+
+    rejectedApplications: {
+      type: Number,
+      default: 0,
+      required: true,
+    },
+
     // Mentor Dashboard Stats
     mentorActiveStudents: {
       type: Number,

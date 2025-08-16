@@ -630,6 +630,18 @@ const projectSchema = new mongoose.Schema(
         },
       },
     ],
+
+    totalPitchesReceived: {
+      type: Number,
+      default: 0,
+      required: true,
+    },
+
+    averagePitchPrice: {
+      type: Number,
+      default: 0,
+      required: true,
+    },
   },
 
   {

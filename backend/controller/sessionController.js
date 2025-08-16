@@ -82,6 +82,20 @@ const createSession = async (req, res) => {
 
     await session.save();
 
+    await Mentor.findByIdAndUpdate(mentorProfile._id, {
+      $inc: {
+        userSessionsScheduled: 1,
+        userSessionsScheduledChange: 1,
+      },
+    });
+
+    await Learner.findByIdAndUpdate(activeProject.learnerId._id, {
+      $inc: {
+        userSessionsScheduled: 1,
+        userSessionsScheduledChange: 1,
+      },
+    });
+
     // Populate session with required data
     const populatedSession = await Session.findById(session._id)
       .populate({
@@ -494,6 +508,21 @@ const deleteSession = async (req, res) => {
 
     await Session.findByIdAndDelete(sessionId);
 
+    await Mentor.findByIdAndUpdate(mentorProfile._id, {
+      $inc: {
+        userSessionsScheduled: -1,
+        userSessionsScheduledChange: -1,
+      },
+    });
+
+    // Get learner ID from session to update their stats
+    await Learner.findByIdAndUpdate(session.learnerId, {
+      $inc: {
+        userSessionsScheduled: -1,
+        userSessionsScheduledChange: -1,
+      },
+    });
+
     res.json({
       success: true,
       message: "Session deleted successfully",
@@ -550,6 +579,24 @@ const markAttendance = async (req, res) => {
     // If both are present, mark as completed
     if (session.isLearnerPresent && session.isMentorPresent) {
       session.status = "completed";
+
+      await Mentor.findByIdAndUpdate(mentorProfile._id, {
+        $inc: {
+          completedSessions: 1,
+          mentorSessionsCompleted: 1,
+          mentorSessionsCompletedChange: 1,
+          userSessionsScheduled: -1,
+          userSessionsScheduledChange: -1,
+        },
+      });
+
+      await Learner.findByIdAndUpdate(session.learnerId, {
+        $inc: {
+          completedSessions: 1,
+          userSessionsScheduled: -1,
+          userSessionsScheduledChange: -1,
+        },
+      });
     }
 
     await session.save();
@@ -716,10 +763,37 @@ const updateSessionStatus = async (req, res) => {
 
     if (status === "cancelled" && reason) {
       session.mentorReason = reason;
+      await Mentor.findByIdAndUpdate(mentorProfile._id, {
+        $inc: {
+          userSessionsScheduled: -1,
+          userSessionsScheduledChange: -1,
+        },
+      });
+
+      await Learner.findByIdAndUpdate(session.learnerId, {
+        $inc: {
+          userSessionsScheduled: -1,
+          userSessionsScheduledChange: -1,
+        },
+      });
     }
 
     if (status === "expired" && reason) {
       session.expireReason = reason;
+
+      await Mentor.findByIdAndUpdate(mentorProfile._id, {
+        $inc: {
+          userSessionsScheduled: -1,
+          userSessionsScheduledChange: -1,
+        },
+      });
+
+      await Learner.findByIdAndUpdate(session.learnerId, {
+        $inc: {
+          userSessionsScheduled: -1,
+          userSessionsScheduledChange: -1,
+        },
+      });
     }
 
     await session.save();
@@ -934,6 +1008,24 @@ const markUserAttendance = async (req, res) => {
     // If both are present, mark as completed
     if (session.isLearnerPresent && session.isMentorPresent) {
       session.status = "completed";
+
+      await Mentor.findByIdAndUpdate(session.mentorId, {
+        $inc: {
+          completedSessions: 1,
+          mentorSessionsCompleted: 1,
+          mentorSessionsCompletedChange: 1,
+          userSessionsScheduled: -1,
+          userSessionsScheduledChange: -1,
+        },
+      });
+
+      await Learner.findByIdAndUpdate(learnerProfile._id, {
+        $inc: {
+          completedSessions: 1,
+          userSessionsScheduled: -1,
+          userSessionsScheduledChange: -1,
+        },
+      });
     }
 
     await session.save();
@@ -1264,7 +1356,7 @@ const updateSessionStatuses = async () => {
 module.exports = {
   createSession,
   getMentorSessions,
-  getLearnerSessions, // NEW: Export the new function
+  getLearnerSessions,
   updateSession,
   deleteSession,
   markAttendance,

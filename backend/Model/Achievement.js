@@ -73,7 +73,6 @@ const achievementSchema = new mongoose.Schema(
 );
 
 // Indexes for better performance
-achievementSchema.index({ learner: 1 });
 achievementSchema.index({ level: 1 });
 achievementSchema.index({ xp: -1 });
 achievementSchema.index({ "unlocked.category": 1 });

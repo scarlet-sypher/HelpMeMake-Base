@@ -142,6 +142,23 @@ const learnerSchema = new mongoose.Schema(
       default: 0,
       required: true,
     },
+    averageProjectRating: {
+      type: Number,
+      default: 0,
+      required: true,
+    },
+
+    totalProjectsPosted: {
+      type: Number,
+      default: 0,
+      required: true,
+    },
+
+    totalProjectsBudget: {
+      type: Number,
+      default: 0,
+      required: true,
+    },
 
     // Learning Preferences & Goals
     learningGoals: [

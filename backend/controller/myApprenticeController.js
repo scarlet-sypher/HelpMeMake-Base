@@ -371,6 +371,34 @@ const submitApprenticeReview = async (req, res) => {
       }
     }
 
+    if (project.status === "Completed") {
+      // Update learner stats
+      await Learner.findByIdAndUpdate(project.learnerId, {
+        $inc: {
+          userTotalProjects: 1,
+          userTotalProjectsChange: 1,
+          userActiveProjects: -1,
+          userActiveProjectsChange: -1,
+        },
+      });
+
+      // Update mentor stats and add earnings
+      const closingPrice =
+        project.closingPrice ||
+        project.negotiatedPrice ||
+        project.openingPrice ||
+        0;
+      await Mentor.findByIdAndUpdate(mentor._id, {
+        $inc: {
+          mentorTotalEarnings: closingPrice,
+          mentorTotalEarningsChange: closingPrice,
+          mentorActiveStudents: -1,
+          mentorActiveStudentsChange: -1,
+          totalStudents: 1, // This tracks total students mentored over time
+        },
+      });
+    }
+
     // Try to finalize project completion
     await finalizeProjectCompletion(projectId);
 
