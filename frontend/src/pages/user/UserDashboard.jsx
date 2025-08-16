@@ -286,42 +286,6 @@ const UserDashboard = () => {
     },
   ];
 
-  const upcomingSessions = [
-    {
-      id: 1,
-      mentorName: "Dracule Mihawk",
-      mentorImage: userImg["mihawk.jpg"],
-      sessionTitle: "Advanced Sword Techniques",
-      date: "Today",
-      time: "3:00 PM",
-      duration: "1 hour",
-      status: "confirmed",
-      statusColor: "bg-emerald-500",
-    },
-    {
-      id: 2,
-      mentorName: "Nico Robin",
-      mentorImage: userImg["robin.jpg"],
-      sessionTitle: "Ancient History Research",
-      date: "Tomorrow",
-      time: "10:00 AM",
-      duration: "2 hours",
-      status: "pending",
-      statusColor: "bg-yellow-500",
-    },
-    {
-      id: 3,
-      mentorName: "Silvers Rayleigh",
-      mentorImage: userImg["Rayleigh.jpg"],
-      sessionTitle: "Haki Training Fundamentals",
-      date: "Dec 22",
-      time: "2:00 PM",
-      duration: "3 hours",
-      status: "confirmed",
-      statusColor: "bg-emerald-500",
-    },
-  ];
-
   const recentMessages = [
     {
       id: 1,
@@ -383,29 +347,6 @@ const UserDashboard = () => {
       title: "Session completed with Trafalgar Law",
       subtitle: "2 days ago",
       color: "text-purple-400",
-    },
-  ];
-
-  const milestones = [
-    {
-      id: 1,
-      title: "Initial Meeting",
-      userVerified: true,
-      mentorVerified: true,
-    },
-    { id: 2, title: "Requirements", userVerified: true, mentorVerified: false },
-    { id: 3, title: "Mid Review", userVerified: false, mentorVerified: false },
-    {
-      id: 4,
-      title: "Final Submission",
-      userVerified: false,
-      mentorVerified: false,
-    },
-    {
-      id: 5,
-      title: "Project Delivery",
-      userVerified: false,
-      mentorVerified: false,
     },
   ];
 
@@ -715,52 +656,8 @@ const UserDashboard = () => {
                 </div>
               </div>
 
-              {/* Achievements */}
-              <div className="bg-white/10 backdrop-blur-sm rounded-3xl shadow-2xl p-6 border border-white/20">
-                <h2 className="text-xl font-bold text-white mb-6 flex items-center">
-                  <Award className="mr-2 text-purple-400" size={20} />
-                  Achievements
-                  {achievementsLoading && (
-                    <div className="ml-2 w-4 h-4 border-2 border-purple-400 border-t-transparent rounded-full animate-spin"></div>
-                  )}
-                </h2>
-
-                {achievementsLoading ? (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    {[...Array(4)].map((_, i) => (
-                      <div
-                        key={i}
-                        className="bg-white/5 border border-white/10 rounded-2xl p-4 animate-pulse"
-                      >
-                        <div className="flex justify-between items-center mb-3">
-                          <div className="w-12 h-12 bg-white/10 rounded"></div>
-                          <div className="w-8 h-8 bg-white/10 rounded-full"></div>
-                        </div>
-                        <div className="h-4 bg-white/10 rounded mb-2"></div>
-                        <div className="h-3 bg-white/10 rounded"></div>
-                      </div>
-                    ))}
-                  </div>
-                ) : achievements.length > 0 ? (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    {achievements.map((achievement) => (
-                      <AchievementBadge
-                        key={achievement.id}
-                        title={achievement.title}
-                        description={achievement.description}
-                        achieved={achievement.achieved}
-                        icon={achievement.icon}
-                        rarity={achievement.rarity}
-                        progressPercentage={achievement.progressPercentage}
-                      />
-                    ))}
-                  </div>
-                ) : (
-                  <div className="text-center py-8 text-gray-400">
-                    <Award className="mx-auto mb-4 opacity-50" size={48} />
-                    <p>No achievements yet. Start your journey!</p>
-                  </div>
-                )}
+              <div className="sticky top-6">
+                <AchievementBadge />
               </div>
             </div>
           </div>
