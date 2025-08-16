@@ -156,7 +156,7 @@ const createProject = async (req, res) => {
     await Learner.findByIdAndUpdate(learner._id, {
       $inc: {
         userTotalProjects: 1,
-        userActiveProjects: savedProject.status === "Open" ? 1 : 0,
+        userActiveProjects: savedProject.status === "In Progress" ? 1 : 0,
       },
     });
 

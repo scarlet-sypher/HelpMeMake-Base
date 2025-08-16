@@ -238,7 +238,7 @@ const MentorDashboard = () => {
         : mentorData.avatar
       : userImg["luffy.jpg"],
     isOnline: mentorData.isOnline || true,
-    rating: mentorData.rating || 5.0,
+    rating: mentorData.rating || 0.0,
     totalReviews: mentorData.totalReviews || 0,
     location: mentorData.location || "Remote",
     joinDate: formatDate(mentorData.joinDate || mentorData.createdAt),
