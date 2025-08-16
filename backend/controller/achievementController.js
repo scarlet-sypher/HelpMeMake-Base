@@ -602,8 +602,137 @@ const updateTestValues = async (req, res) => {
   }
 };
 
+const getBadgesData = async (req, res) => {
+  try {
+    console.log("=== GET BADGES DATA DEBUG START ===");
+    console.log("User from req.user:", req.user);
+
+    const userId = req.user._id;
+    console.log("Extracted userId:", userId);
+
+    // Fetch learner profile
+    const learner = await Learner.findOne({ userId }).populate(
+      "userId",
+      "name avatar"
+    );
+    console.log("Learner profile found:", learner ? learner._id : "Not found");
+
+    if (!learner) {
+      console.warn("No learner profile for user:", userId);
+      return res.status(404).json({
+        success: false,
+        message: "Learner profile not found",
+      });
+    }
+
+    // Get or create achievement data
+    const achievement = await getOrCreateAchievement(learner._id);
+    console.log(
+      "Achievement object fetched/created:",
+      JSON.stringify(achievement, null, 2)
+    );
+
+    // Define badge categories with metadata
+    const badgeCategories = [
+      {
+        id: "completedProjects",
+        category: "project",
+        title: "Project Master",
+        description: "Complete projects to earn badges",
+        icon: "🚀",
+        data: achievement.project.completedProjects,
+      },
+      {
+        id: "completedSessions",
+        category: "social",
+        title: "Session Hero",
+        description: "Attend sessions to unlock achievements",
+        icon: "📚",
+        data: achievement.social.completedSessions,
+      },
+      {
+        id: "streakDays",
+        category: "learnerStats",
+        title: "Streak Master",
+        description: "Maintain daily login streaks",
+        icon: "🔥",
+        data: achievement.learnerStats.streakDays,
+      },
+      {
+        id: "completedMilestones",
+        category: "milestone",
+        title: "Milestone Champion",
+        description: "Complete project milestones",
+        icon: "🎯",
+        data: achievement.milestone.completedMilestones,
+      },
+    ];
+
+    console.log(
+      "Badge categories prepared:",
+      JSON.stringify(badgeCategories, null, 2)
+    );
+
+    // Process badges for each category
+    const processedBadges = badgeCategories.map((cat) => {
+      console.log(`Processing category: ${cat.id}`);
+      console.log("Category raw data:", JSON.stringify(cat.data, null, 2));
+
+      const badges = ["basic", "common", "rare", "epic", "legendary"].map(
+        (level) => ({
+          level,
+          required: cat.data[level],
+          current: cat.data.currentCount,
+          unlocked: cat.data.earnedBadges.includes(level),
+          progress: Math.min(
+            (cat.data.currentCount / cat.data[level]) * 100,
+            100
+          ),
+        })
+      );
+
+      console.log(
+        `Processed badges for ${cat.id}:`,
+        JSON.stringify(badges, null, 2)
+      );
+
+      return {
+        ...cat,
+        badges,
+        totalUnlocked: cat.data.earnedBadges.length,
+        currentProgress: cat.data.currentCount,
+      };
+    });
+
+    console.log(
+      "Processed badges data:",
+      JSON.stringify(processedBadges, null, 2)
+    );
+
+    res.json({
+      success: true,
+      data: {
+        categories: processedBadges,
+        totalBadges: achievement.unlocked.length,
+        learnerLevel: learner.level,
+        learnerXP: learner.xp,
+      },
+    });
+
+    console.log("=== GET BADGES DATA DEBUG END ===");
+  } catch (error) {
+    console.error("Error fetching badge data:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch badge data",
+      error: process.env.NODE_ENV === "development" ? error.message : undefined,
+    });
+  }
+};
+
 module.exports = {
   recalculateAchievements,
   getAchievementSummary,
   updateTestValues,
+  getBadgesData,
 };

@@ -397,7 +397,7 @@ const AchievementBadge = () => {
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-lg font-bold text-white flex items-center">
             <Trophy className="mr-2 text-yellow-400" size={20} />
-            Achievements
+            Hall of Frames
           </h2>
           <div className="text-right">
             <div className="text-xl font-bold text-yellow-400">

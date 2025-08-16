@@ -4,17 +4,18 @@ body,
 html {
   margin: 0;
   padding: 0;
-  /* box-sizing: border-box; */
   height: 100%;
+  overflow-y: scroll; /* Keeps layout stable */
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 }
 
-.no-scrollbar::-webkit-scrollbar {
+/* Hide scrollbar for Chrome, Safari and Opera */
+body::-webkit-scrollbar,
+html::-webkit-scrollbar {
   display: none;
 }
-.no-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
+
 #root {
   height: 100%;
 }

@@ -6,6 +6,7 @@ const {
   recalculateAchievements,
   getAchievementSummary,
   updateTestValues,
+  getBadgesData,
 } = require("../controller/achievementController");
 
 // Get achievement summary for the logged-in learner
@@ -16,5 +17,7 @@ router.post("/recalculate", requireUser, recalculateAchievements);
 
 // Test endpoint for debugging (development only)
 router.post("/test-update", requireUser, updateTestValues);
+
+router.get("/badges", requireUser, getBadgesData);
 
 module.exports = router;
