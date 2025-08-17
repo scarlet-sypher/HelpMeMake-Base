@@ -8,7 +8,6 @@ const goalSchema = new mongoose.Schema(
       required: true,
       index: true,
     },
-
     // Core Goal Data
     monthlyGoal: {
       type: Number,
@@ -21,7 +20,6 @@ const goalSchema = new mongoose.Schema(
       default: 0,
       min: 0,
     },
-
     // Progress Tracking
     sessionsCompleted: {
       type: Number,
@@ -33,7 +31,6 @@ const goalSchema = new mongoose.Schema(
       default: 0,
       min: 0,
     },
-
     // Time-bound Goal
     month: {
       type: Number,
@@ -45,7 +42,6 @@ const goalSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-
     // Comparisons / Insights
     lastMonthEarnings: {
       type: Number,
@@ -55,7 +51,6 @@ const goalSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
-
     // Achievement Tracking
     milestones: [
       {

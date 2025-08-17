@@ -71,7 +71,7 @@ const Sidebar = ({
             icon: Star,
             label: "Achievements",
             id: "achievements",
-            path: "/mentor/achievements",
+            path: "/mentor/goals",
           },
           {
             icon: BarChart3,

@@ -33,6 +33,7 @@ import MentorSessions from "./pages/mentor/MentorSessions";
 import UserSessions from "./pages/user/UserSessions";
 import MentorAnalysis from "./pages/mentor/MentorAnalysis";
 import UserAnalysis from "./pages/user/UserAnalysis";
+import GoalSetter from "./pages/mentor/GoalSetter";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
@@ -241,6 +242,14 @@ ReactDOM.createRoot(document.getElementById("root")).render(
           element={
             <ProtectedRoute requiredRole="mentor">
               <MentorAnalysis />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/mentor/goals"
+          element={
+            <ProtectedRoute requiredRole="mentor">
+              <GoalSetter />
             </ProtectedRoute>
           }
         />
