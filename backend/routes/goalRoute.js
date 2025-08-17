@@ -6,6 +6,7 @@ const {
   getMentorGoalAndReviews,
   setMentorGoal,
   getMentorReviews,
+  getRecentMentorReviews,
 } = require("../controller/goalController");
 
 // Get mentor goal and reviews
@@ -17,5 +18,7 @@ router.put("/mentor/goal", requireMentor, setMentorGoal);
 
 // Get mentor reviews only
 router.get("/mentor/reviews", requireMentor, getMentorReviews);
+
+router.get("/mentor/recent-reviews", requireMentor, getRecentMentorReviews);
 
 module.exports = router;

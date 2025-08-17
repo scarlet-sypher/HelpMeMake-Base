@@ -367,8 +367,109 @@ const getMentorReviews = async (req, res) => {
   }
 };
 
+// Get recent mentor reviews for dashboard
+const getRecentMentorReviews = async (req, res) => {
+  try {
+    const userId = req.user._id;
+
+    // Find the mentor profile
+    const mentor = await Mentor.findOne({ userId });
+
+    if (!mentor) {
+      return res.status(404).json({
+        success: false,
+        message: "Mentor profile not found",
+      });
+    }
+
+    // Get projects where this mentor was assigned and status is completed/cancelled
+    const completedProjects = await Project.find({
+      mentorId: mentor._id,
+      status: { $in: ["Completed", "Cancelled"] },
+      "learnerReview.rating": { $exists: true },
+    })
+      .populate({
+        path: "learnerId",
+        populate: {
+          path: "userId",
+          select: "name avatar",
+        },
+      })
+      .select("name closingPrice learnerReview createdAt status")
+      .sort({ "learnerReview.reviewDate": -1 })
+      .limit(4); // Get only 4 most recent reviews
+
+    // Get total count of reviews for "View All" button
+    const totalReviewsCount = await Project.countDocuments({
+      mentorId: mentor._id,
+      status: { $in: ["Completed", "Cancelled"] },
+      "learnerReview.rating": { $exists: true },
+    });
+
+    // Calculate overall stats
+    const allReviewsForStats = await Project.find({
+      mentorId: mentor._id,
+      status: { $in: ["Completed", "Cancelled"] },
+      "learnerReview.rating": { $exists: true },
+    }).select("learnerReview");
+
+    let overallStats = {
+      averageRating: 0,
+      totalReviews: totalReviewsCount,
+      fiveStarPercentage: 0,
+    };
+
+    if (allReviewsForStats.length > 0) {
+      const totalRating = allReviewsForStats.reduce(
+        (sum, project) => sum + project.learnerReview.rating,
+        0
+      );
+      const fiveStarCount = allReviewsForStats.filter(
+        (project) => project.learnerReview.rating === 5
+      ).length;
+
+      overallStats.averageRating = Number(
+        (totalRating / allReviewsForStats.length).toFixed(1)
+      );
+      overallStats.fiveStarPercentage = Math.round(
+        (fiveStarCount / allReviewsForStats.length) * 100
+      );
+    }
+
+    // Format reviews data
+    const reviews = completedProjects.map((project) => ({
+      name: project.learnerId.userId.name,
+      image: project.learnerId.userId.avatar,
+      rating: project.learnerReview.rating,
+      comment: project.learnerReview.comment || "",
+      date: project.learnerReview.reviewDate || project.createdAt,
+      projectName: project.name,
+      status: project.status,
+      closingPrice: project.closingPrice || 0,
+    }));
+
+    res.json({
+      success: true,
+      data: {
+        reviews,
+        overallStats,
+        totalReviews: totalReviewsCount,
+        hasMoreReviews: totalReviewsCount > 4,
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching recent mentor reviews:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch recent reviews",
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   getMentorGoalAndReviews,
   setMentorGoal,
   getMentorReviews,
+  getRecentMentorReviews,
 };
