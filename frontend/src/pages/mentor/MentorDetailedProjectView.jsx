@@ -35,8 +35,11 @@ import {
   Send,
   HandHeart,
   Loader2,
+  Mail, // NEW: For show requests button
+  BellRing, // NEW: For notification
 } from "lucide-react";
 import PitchModal from "../../components/mentor/mentorProject/PitchModal";
+import ShowRequestsModal from "../../components/mentor/mentorProject/ShowRequestsModal"; // NEW
 
 const MentorDetailedProjectView = () => {
   const { id } = useParams();
@@ -55,6 +58,11 @@ const MentorDetailedProjectView = () => {
   const [confirmationText, setConfirmationText] = useState("");
 
   const [hasAppliedForProject, setHasAppliedForProject] = useState(false);
+
+  // NEW: Request-related state
+  const [showRequestsModal, setShowRequestsModal] = useState(false);
+  const [hasRequests, setHasRequests] = useState(false);
+  const [requestCount, setRequestCount] = useState(0);
 
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
@@ -134,6 +142,32 @@ const MentorDetailedProjectView = () => {
     }
   };
 
+  // NEW: Check for requests
+  const checkProjectRequests = async () => {
+    try {
+      const token = localStorage.getItem("access_token");
+
+      // Get all mentor requests
+      const response = await axios.get(`${API_URL}/requests/mentor`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.data.success) {
+        // Filter requests for this specific project (including all statuses)
+        const projectRequests = response.data.requests.filter(
+          (request) => request.projectId === id
+        );
+
+        setRequestCount(projectRequests.length);
+        setHasRequests(projectRequests.length > 0);
+      }
+    } catch (error) {
+      console.error("Error checking requests:", error);
+    }
+  };
+
   // Status colors
   const getStatusColor = (status) => {
     const colors = {
@@ -164,6 +198,8 @@ const MentorDetailedProjectView = () => {
           setProject(response.data.project);
           // Check mentor status after project is loaded
           await checkMentorActiveProject();
+          // NEW: Check for requests
+          await checkProjectRequests();
         } else {
           setError("Failed to load project details");
         }
@@ -223,6 +259,11 @@ const MentorDetailedProjectView = () => {
       return;
     }
     setShowPitchModal(true);
+  };
+
+  // NEW: Handle show requests modal
+  const handleShowRequests = () => {
+    setShowRequestsModal(true);
   };
 
   const calculateNegotiatedPrice = (project) => {
@@ -334,6 +375,18 @@ const MentorDetailedProjectView = () => {
             <div className="flex-1">
               <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2 break-words">
                 {project.name}
+                {/* NEW: Request notification in title */}
+                {hasRequests && (
+                  <span className="ml-3 inline-flex items-center">
+                    <BellRing
+                      size={20}
+                      className="text-red-400 animate-bounce"
+                    />
+                    <span className="ml-1 text-red-400 text-lg">
+                      {requestCount}
+                    </span>
+                  </span>
+                )}
               </h1>
               <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-gray-300 text-sm sm:text-base">
                 <div className="flex items-center space-x-1">
@@ -667,6 +720,36 @@ const MentorDetailedProjectView = () => {
                   <span>Message User</span>
                 </button>
 
+                {/* NEW: Show Requests Button */}
+                <button
+                  onClick={handleShowRequests}
+                  disabled={!hasRequests}
+                  title={
+                    hasRequests
+                      ? `View ${requestCount} request${
+                          requestCount > 1 ? "s" : ""
+                        } for this project`
+                      : "No requests for this project"
+                  }
+                  className={`w-full flex items-center justify-center space-x-2 px-4 py-3 rounded-xl font-medium transition-all duration-200 ${
+                    hasRequests
+                      ? "bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white transform hover:scale-105"
+                      : "bg-gray-600 text-gray-400 cursor-not-allowed"
+                  }`}
+                >
+                  {hasRequests ? (
+                    <>
+                      <BellRing size={18} />
+                      <span>Show Requests ({requestCount})</span>
+                    </>
+                  ) : (
+                    <>
+                      <Mail size={18} />
+                      <span>No Requests</span>
+                    </>
+                  )}
+                </button>
+
                 {/* Interest / Pitch / Negotiate */}
                 <div className="relative">
                   <button
@@ -770,6 +853,15 @@ const MentorDetailedProjectView = () => {
           <PitchModal
             project={project}
             onClose={() => setShowPitchModal(false)}
+            API_URL={API_URL}
+          />
+        )}
+
+        {/* NEW: Show Requests Modal */}
+        {showRequestsModal && (
+          <ShowRequestsModal
+            project={project}
+            onClose={() => setShowRequestsModal(false)}
             API_URL={API_URL}
           />
         )}

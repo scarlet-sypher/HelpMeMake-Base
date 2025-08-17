@@ -15,13 +15,12 @@ import {
   Image,
   CheckCircle2,
   AlertCircle,
+  Bell, // NEW: For notification badge
+  BellRing, // NEW: For active notifications
 } from "lucide-react";
+import axios from "axios";
 
 const ShortProjectView = ({ project, onApply = null }) => {
-  //   console.log("Learner avatar:", project?.learner?.avatar);
-
-  console.log("Full project data in ShortProjectView:", project);
-
   const navigate = useNavigate();
   const [isApplying, setIsApplying] = useState(false);
   const [hasApplied, setHasApplied] = useState(project.hasApplied || false);
@@ -33,6 +32,10 @@ const ShortProjectView = ({ project, onApply = null }) => {
     estimatedDuration: "",
   });
 
+  // NEW: Notification state
+  const [hasNewRequests, setHasNewRequests] = useState(false);
+  const [requestCount, setRequestCount] = useState(0);
+
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
   const [mentorStatus, setMentorStatus] = useState({
@@ -43,6 +46,8 @@ const ShortProjectView = ({ project, onApply = null }) => {
 
   useEffect(() => {
     checkMentorActiveProject();
+    // NEW: Check for requests when component mounts
+    checkProjectRequests();
   }, []);
 
   useEffect(() => {
@@ -98,6 +103,33 @@ const ShortProjectView = ({ project, onApply = null }) => {
     checkMentorPitchStatus();
   }, [project._id]);
 
+  // NEW: Check for requests function
+  const checkProjectRequests = async () => {
+    try {
+      const token = localStorage.getItem("access_token");
+
+      // Get all mentor requests
+      const response = await axios.get(`${API_URL}/requests/mentor`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.data.success) {
+        // Filter requests for this specific project
+        const projectRequests = response.data.requests.filter(
+          (request) =>
+            request.projectId === project._id && request.status === "pending"
+        );
+
+        setRequestCount(projectRequests.length);
+        setHasNewRequests(projectRequests.length > 0);
+      }
+    } catch (error) {
+      console.error("Error checking requests:", error);
+    }
+  };
+
   // Get difficulty color
   const getDifficultyColor = (level) => {
     switch (level) {
@@ -119,6 +151,10 @@ const ShortProjectView = ({ project, onApply = null }) => {
   };
 
   const handleViewProject = () => {
+    // NEW: Clear notification when mentor views project
+    setHasNewRequests(false);
+    setRequestCount(0);
+
     window.location.href = `/mentor/project/${project._id}`;
   };
 
@@ -239,6 +275,22 @@ const ShortProjectView = ({ project, onApply = null }) => {
             }}
           />
 
+          {/* NEW: Request Notification Badge */}
+          {hasNewRequests && (
+            <div className="absolute top-4 left-4">
+              <div className="relative">
+                <div className="bg-gradient-to-r from-red-500 to-pink-500 text-white px-3 py-1 rounded-full text-xs font-bold flex items-center space-x-1 animate-pulse">
+                  <BellRing size={12} />
+                  <span>
+                    {requestCount} Request{requestCount > 1 ? "s" : ""}
+                  </span>
+                </div>
+                {/* Blinking effect */}
+                <div className="absolute inset-0 bg-red-400/50 rounded-full animate-ping"></div>
+              </div>
+            </div>
+          )}
+
           {/* Price Badge */}
           <div className="absolute top-4 right-4">
             <div className="bg-gradient-to-r from-cyan-500 to-teal-500 text-white px-3 py-1 rounded-full text-sm font-bold">
@@ -256,7 +308,9 @@ const ShortProjectView = ({ project, onApply = null }) => {
           )}
 
           {/* Difficulty Badge */}
-          <div className="absolute top-4 left-4">
+          <div
+            className={`absolute ${hasNewRequests ? "top-16" : "top-4"} left-4`}
+          >
             <div
               className={`px-3 py-1 rounded-full text-xs font-medium border ${getDifficultyColor(
                 project.difficultyLevel
@@ -291,6 +345,12 @@ const ShortProjectView = ({ project, onApply = null }) => {
           {/* Project Name */}
           <h3 className="text-xl font-bold text-white mb-3 line-clamp-2 group-hover:text-cyan-300 transition-colors">
             {project.name}
+            {/* NEW: Small notification indicator in title */}
+            {hasNewRequests && (
+              <span className="ml-2 inline-flex items-center">
+                <Bell size={16} className="text-red-400 animate-bounce" />
+              </span>
+            )}
           </h3>
 
           {/* Short Description */}
@@ -414,14 +474,27 @@ const ShortProjectView = ({ project, onApply = null }) => {
               </p>
             </div>
 
-            {/* Views */}
+            {/* Views / Requests */}
             <div className="bg-white/5 rounded-xl p-3 border border-white/10">
               <div className="flex items-center mb-1">
-                <Eye size={14} className="text-blue-400 mr-2" />
-                <span className="text-xs text-blue-300 font-medium">Views</span>
+                {hasNewRequests ? (
+                  <>
+                    <Bell size={14} className="text-red-400 mr-2" />
+                    <span className="text-xs text-red-300 font-medium">
+                      Requests
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    <Eye size={14} className="text-blue-400 mr-2" />
+                    <span className="text-xs text-blue-300 font-medium">
+                      Views
+                    </span>
+                  </>
+                )}
               </div>
               <p className="text-sm text-white font-semibold">
-                {project.viewCount || 0}
+                {hasNewRequests ? requestCount : project.viewCount || 0}
               </p>
             </div>
           </div>
@@ -441,16 +514,31 @@ const ShortProjectView = ({ project, onApply = null }) => {
           {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-4 border-t border-white/10">
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:space-x-3 flex-1">
-              {/* View Project Button */}
+              {/* View Project Button - Enhanced with notification */}
               <button
                 onClick={handleViewProject}
-                className="group/btn flex items-center justify-center space-x-2 px-3 sm:px-4 py-2 bg-gradient-to-r from-cyan-500 to-teal-500 hover:from-cyan-600 hover:to-teal-600 text-white rounded-xl font-medium transition-all transform hover:scale-105 shadow-lg hover:shadow-cyan-500/25"
+                className={`group/btn flex items-center justify-center space-x-2 px-3 sm:px-4 py-2 rounded-xl font-medium transition-all transform hover:scale-105 shadow-lg ${
+                  hasNewRequests
+                    ? "bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 hover:shadow-red-500/25 animate-pulse"
+                    : "bg-gradient-to-r from-cyan-500 to-teal-500 hover:from-cyan-600 hover:to-teal-600 hover:shadow-cyan-500/25"
+                } text-white`}
               >
-                <Eye
-                  size={16}
-                  className="group-hover/btn:scale-110 transition-transform"
-                />
-                <span className="text-xs sm:text-sm">View Project</span>
+                {hasNewRequests ? (
+                  <BellRing
+                    size={16}
+                    className="group-hover/btn:scale-110 transition-transform"
+                  />
+                ) : (
+                  <Eye
+                    size={16}
+                    className="group-hover/btn:scale-110 transition-transform"
+                  />
+                )}
+                <span className="text-xs sm:text-sm">
+                  {hasNewRequests
+                    ? `View (${requestCount} req)`
+                    : "View Project"}
+                </span>
               </button>
 
               {/* Apply Button */}

@@ -28,9 +28,146 @@ import {
   AlertCircle,
   MessageCircle,
   Activity,
+  XCircle,
 } from "lucide-react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+
+// Request Modal Component
+const RequestModal = ({ mentor, project, onClose, onRequestSent, API_URL }) => {
+  const [message, setMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSendRequest = async (e) => {
+    e.preventDefault();
+
+    if (!message.trim() || message.trim().length < 10) {
+      toast.error("Message must be at least 10 characters long");
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+
+      const response = await axios.post(
+        `${API_URL}/requests/send`,
+        {
+          projectId: project._id,
+          mentorId: mentor._id,
+          message: message.trim(),
+        },
+        {
+          withCredentials: true,
+        }
+      );
+
+      if (response.data.success) {
+        toast.success(`Request sent to ${mentor.userId?.name} successfully!`);
+        onRequestSent(mentor._id);
+        onClose();
+      }
+    } catch (error) {
+      console.error("Error sending request:", error);
+      toast.error(error.response?.data?.message || "Failed to send request");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+      <div className="bg-gradient-to-br from-slate-900 to-blue-900 rounded-3xl border border-white/20 max-w-md w-full">
+        <div className="p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-bold text-white">Send Request</h2>
+            <button
+              onClick={onClose}
+              className="text-gray-400 hover:text-white transition-colors"
+            >
+              <XCircle size={24} />
+            </button>
+          </div>
+
+          <div className="mb-4">
+            <div className="flex items-center space-x-3 mb-3">
+              <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+                {mentor.userId?.avatar ? (
+                  <img
+                    src={
+                      mentor.userId.avatar.startsWith("/uploads/")
+                        ? `${API_URL}${mentor.userId.avatar}`
+                        : mentor.userId.avatar
+                    }
+                    alt={mentor.userId.name}
+                    className="w-full h-full rounded-full object-cover"
+                  />
+                ) : (
+                  <User className="text-white" size={20} />
+                )}
+              </div>
+              <div>
+                <h3 className="text-white font-semibold">
+                  {mentor.userId?.name || "Anonymous Mentor"}
+                </h3>
+                <p className="text-blue-300 text-sm">{mentor.title}</p>
+              </div>
+            </div>
+            <p className="text-gray-300 text-sm">
+              <strong>Project:</strong> {project.name}
+            </p>
+          </div>
+
+          <form onSubmit={handleSendRequest}>
+            <div className="mb-4">
+              <label className="block text-white text-sm font-medium mb-2">
+                Your Message <span className="text-red-400">*</span>
+              </label>
+              <textarea
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                placeholder="Introduce yourself and explain why you'd like this mentor for your project..."
+                rows={4}
+                className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 transition-all resize-none"
+                required
+              />
+              <div className="flex justify-between mt-1">
+                <p className="text-xs text-gray-400">
+                  Minimum 10 characters required
+                </p>
+                <p className="text-xs text-gray-400">{message.length}/2000</p>
+              </div>
+            </div>
+
+            <div className="flex space-x-3">
+              <button
+                type="button"
+                onClick={onClose}
+                disabled={isLoading}
+                className="flex-1 px-4 py-3 bg-white/10 hover:bg-white/20 text-white rounded-xl font-medium transition-all border border-white/20 disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={isLoading || message.trim().length < 10}
+                className="flex-1 px-4 py-3 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 disabled:from-gray-500 disabled:to-gray-600 disabled:cursor-not-allowed text-white rounded-xl font-medium transition-all flex items-center justify-center space-x-2"
+              >
+                {isLoading ? (
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                ) : (
+                  <>
+                    <Send size={16} />
+                    <span>Send Request</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const ShowMentorDetails = () => {
   const { mentorId } = useParams();
@@ -44,7 +181,45 @@ const ShowMentorDetails = () => {
   const [loading, setLoading] = useState(!mentor);
   const [project, setProject] = useState(location.state?.project || null);
 
+  // Request handling states
+  const [showRequestModal, setShowRequestModal] = useState(false);
+  const [requestStatus, setRequestStatus] = useState(null); // null, 'pending', 'accepted', 'rejected'
+  const [mentorResponse, setMentorResponse] = useState("");
+  const [respondedAt, setRespondedAt] = useState(null);
+  const [checkingRequest, setCheckingRequest] = useState(false);
+
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+
+  // Check if user has already sent a request to this mentor for the project
+  const checkExistingRequest = async () => {
+    if (!project?._id || !mentorId) return;
+
+    try {
+      setCheckingRequest(true);
+      const response = await axios.get(
+        `${API_URL}/requests/project/${project._id}`,
+        {
+          withCredentials: true,
+        }
+      );
+
+      if (response.data.success) {
+        const existingRequest = response.data.requests.find(
+          (req) => req.mentorId.toString() === mentorId.toString()
+        );
+
+        if (existingRequest) {
+          setRequestStatus(existingRequest.status);
+          setMentorResponse(existingRequest.mentorResponse || "");
+          setRespondedAt(existingRequest.respondedAt);
+        }
+      }
+    } catch (error) {
+      console.error("Error checking existing request:", error);
+    } finally {
+      setCheckingRequest(false);
+    }
+  };
 
   // Fetch mentor details if not available from state
   useEffect(() => {
@@ -88,18 +263,36 @@ const ShowMentorDetails = () => {
     }
   }, [mentorId, mentor, whyReason, API_URL, navigate]);
 
+  // Check for existing request when component mounts
+  useEffect(() => {
+    checkExistingRequest();
+  }, [project?._id, mentorId]);
+
   // Handle sending mentor request
   const handleSendRequest = () => {
-    // Navigate back to project with selected mentor
-    if (project) {
-      navigate(`/user/projects/${project._id}`, {
-        state: { selectedMentor: mentor, fromAI: true },
-      });
-    } else {
-      // If no project context, show a message or redirect
-      toast.info("Please select a project to send mentor request");
+    if (!project) {
+      toast.error(
+        "Project information not available. Please return to projects."
+      );
       navigate("/user/projects");
+      return;
     }
+
+    if (requestStatus) {
+      toast.info(
+        "You have already sent a request to this mentor for this project."
+      );
+      return;
+    }
+
+    setShowRequestModal(true);
+  };
+
+  // Handle request sent callback
+  const handleRequestSent = (mentorId) => {
+    setRequestStatus("pending");
+    setMentorResponse("");
+    setRespondedAt(null);
   };
 
   // Format price helper
@@ -224,10 +417,12 @@ const ShowMentorDetails = () => {
                 </div>
 
                 {/* AI Badge */}
-                <div className="absolute -top-2 -right-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white px-2 py-1 rounded-lg text-xs font-bold flex items-center space-x-1">
-                  <Bot size={10} />
-                  <span>AI Pick</span>
-                </div>
+                {location.state?.fromAI && (
+                  <div className="absolute -top-2 -right-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white px-2 py-1 rounded-lg text-xs font-bold flex items-center space-x-1">
+                    <Bot size={10} />
+                    <span>AI Pick</span>
+                  </div>
+                )}
 
                 {/* Online Status */}
                 <div
@@ -254,7 +449,7 @@ const ShowMentorDetails = () => {
                       {mentor.rating}
                     </span>
                     <span className="text-gray-300">
-                      ({mentor.totalReviews} reviews)
+                      ({mentor.totalReviews || 0} reviews)
                     </span>
                   </div>
                   <div className="flex items-center space-x-1 text-sm">
@@ -293,13 +488,94 @@ const ShowMentorDetails = () => {
 
             {/* Action Buttons */}
             <div className="flex flex-col space-y-3 lg:w-64">
-              <button
-                onClick={handleSendRequest}
-                className="w-full px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-xl font-semibold transition-all transform hover:scale-105 shadow-lg flex items-center justify-center space-x-2"
-              >
-                <Send size={16} />
-                <span>Send Request</span>
-              </button>
+              {/* Request Status or Send Request Button */}
+              {checkingRequest ? (
+                <div className="w-full px-6 py-3 bg-white/10 border border-white/20 text-white rounded-xl font-medium flex items-center justify-center space-x-2">
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                  <span>Checking...</span>
+                </div>
+              ) : requestStatus ? (
+                <div className="space-y-3">
+                  {/* Status Display */}
+                  <div
+                    className={`w-full px-6 py-3 rounded-xl font-medium flex items-center justify-center space-x-2 ${
+                      requestStatus === "accepted"
+                        ? "bg-green-500/20 border border-green-500/30 text-green-300"
+                        : requestStatus === "rejected"
+                        ? "bg-red-500/20 border border-red-500/30 text-red-300"
+                        : "bg-yellow-500/20 border border-yellow-500/30 text-yellow-300"
+                    }`}
+                  >
+                    {requestStatus === "accepted" && <CheckCircle size={16} />}
+                    {requestStatus === "rejected" && <XCircle size={16} />}
+                    {requestStatus === "pending" && <Clock size={16} />}
+                    <span>
+                      {requestStatus === "accepted" && "Request Accepted"}
+                      {requestStatus === "rejected" && "Request Rejected"}
+                      {requestStatus === "pending" && "Request Pending"}
+                    </span>
+                  </div>
+
+                  {/* Mentor Response */}
+                  {mentorResponse && requestStatus !== "pending" && (
+                    <div className="bg-white/5 rounded-xl p-4 border border-white/10">
+                      <div className="flex items-start space-x-2">
+                        <MessageCircle
+                          size={16}
+                          className="text-blue-400 mt-0.5 flex-shrink-0"
+                        />
+                        <div className="flex-1">
+                          <p className="text-xs text-gray-400 mb-1">
+                            Mentor's Response:
+                          </p>
+                          <p className="text-sm text-gray-200 leading-relaxed">
+                            {mentorResponse}
+                          </p>
+                          {respondedAt && (
+                            <p className="text-xs text-gray-400 mt-2">
+                              Responded on{" "}
+                              {new Date(respondedAt).toLocaleDateString(
+                                "en-US",
+                                {
+                                  year: "numeric",
+                                  month: "long",
+                                  day: "numeric",
+                                }
+                              )}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <button
+                  onClick={handleSendRequest}
+                  disabled={!mentor.isAvailable || !project}
+                  className={`w-full px-6 py-3 rounded-xl font-semibold transition-all transform hover:scale-105 shadow-lg flex items-center justify-center space-x-2 ${
+                    mentor.isAvailable && project
+                      ? "bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white"
+                      : "bg-gray-500/20 text-gray-400 cursor-not-allowed transform-none"
+                  }`}
+                  title={
+                    !project
+                      ? "Project information not available"
+                      : !mentor.isAvailable
+                      ? "Mentor is not available"
+                      : "Send a request to this mentor"
+                  }
+                >
+                  <Send size={16} />
+                  <span>
+                    {!project
+                      ? "No Project Selected"
+                      : mentor.isAvailable
+                      ? "Send Request"
+                      : "Not Available"}
+                  </span>
+                </button>
+              )}
 
               <button
                 onClick={() => {
@@ -319,63 +595,94 @@ const ShowMentorDetails = () => {
           {/* Left Column - Mentor Details */}
           <div className="xl:col-span-2 space-y-6">
             {/* AI Reasoning Section */}
-            <div className="bg-gradient-to-r from-purple-500/20 to-blue-500/20 backdrop-blur-sm rounded-3xl shadow-2xl p-6 border border-purple-500/30">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-bold text-white flex items-center">
-                  <Bot className="mr-2 text-purple-400" size={24} />
-                  Why AI Picked This Mentor
-                  <Sparkles
-                    className="ml-2 text-yellow-400 animate-pulse"
-                    size={16}
-                  />
-                </h2>
-                {aiScore > 0 && (
-                  <div className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-3 py-1 rounded-lg text-sm font-bold">
-                    AI Score: {aiScore}/100
+            {location.state?.fromAI && whyReason && (
+              <div className="bg-gradient-to-r from-purple-500/20 to-blue-500/20 backdrop-blur-sm rounded-3xl shadow-2xl p-6 border border-purple-500/30">
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-xl font-bold text-white flex items-center">
+                    <Bot className="mr-2 text-purple-400" size={24} />
+                    Why AI Picked This Mentor
+                    <Sparkles
+                      className="ml-2 text-yellow-400 animate-pulse"
+                      size={16}
+                    />
+                  </h2>
+                  {aiScore > 0 && (
+                    <div className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-3 py-1 rounded-lg text-sm font-bold">
+                      AI Score: {aiScore}/100
+                    </div>
+                  )}
+                </div>
+
+                <div className="bg-white/10 rounded-2xl p-4 mb-4 border border-white/10">
+                  <div className="flex items-start space-x-3">
+                    <div className="p-2 bg-gradient-to-r from-purple-500 to-blue-500 rounded-lg flex-shrink-0">
+                      <Brain className="text-white" size={16} />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="text-white font-semibold mb-2">
+                        AI Analysis Summary
+                      </h3>
+                      <p className="text-gray-200 text-sm leading-relaxed font-mono">
+                        {whyReason}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {reasoningPoints.length > 0 && (
+                  <div className="space-y-3">
+                    <h3 className="text-white font-semibold flex items-center">
+                      <Target className="mr-2 text-cyan-400" size={16} />
+                      Key Matching Factors
+                    </h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      {reasoningPoints.map((point, index) => (
+                        <div
+                          key={index}
+                          className="bg-white/5 rounded-xl p-3 border border-white/10 flex items-start space-x-2"
+                        >
+                          <div className="p-1 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-lg flex-shrink-0 mt-0.5">
+                            <Lightbulb className="text-white" size={12} />
+                          </div>
+                          <p className="text-gray-200 text-sm leading-relaxed">
+                            {point}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 )}
               </div>
+            )}
 
-              <div className="bg-white/10 rounded-2xl p-4 mb-4 border border-white/10">
-                <div className="flex items-start space-x-3">
-                  <div className="p-2 bg-gradient-to-r from-purple-500 to-blue-500 rounded-lg flex-shrink-0">
-                    <Brain className="text-white" size={16} />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="text-white font-semibold mb-2">
-                      AI Analysis Summary
-                    </h3>
-                    <p className="text-gray-200 text-sm leading-relaxed font-mono">
-                      {whyReason}
-                    </p>
+            {/* Project Context */}
+            {project && (
+              <div className="bg-gradient-to-r from-blue-500/20 to-purple-500/20 backdrop-blur-sm rounded-3xl shadow-2xl p-6 border border-blue-500/30">
+                <h2 className="text-xl font-bold text-white mb-4 flex items-center">
+                  <Target className="mr-2 text-blue-400" size={20} />
+                  Requesting For Project
+                </h2>
+                <div className="bg-white/10 rounded-2xl p-4 border border-white/10">
+                  <h3 className="text-white font-semibold mb-2">
+                    {project.name}
+                  </h3>
+                  <p className="text-gray-300 text-sm mb-3">
+                    {project.shortDescription}
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    <span className="px-2 py-1 bg-blue-500/20 text-blue-300 rounded text-xs">
+                      {project.category}
+                    </span>
+                    <span className="px-2 py-1 bg-purple-500/20 text-purple-300 rounded text-xs">
+                      {project.difficultyLevel}
+                    </span>
+                    <span className="px-2 py-1 bg-green-500/20 text-green-300 rounded text-xs">
+                      {formatPrice(project.openingPrice)}
+                    </span>
                   </div>
                 </div>
               </div>
-
-              {reasoningPoints.length > 0 && (
-                <div className="space-y-3">
-                  <h3 className="text-white font-semibold flex items-center">
-                    <Target className="mr-2 text-cyan-400" size={16} />
-                    Key Matching Factors
-                  </h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {reasoningPoints.map((point, index) => (
-                      <div
-                        key={index}
-                        className="bg-white/5 rounded-xl p-3 border border-white/10 flex items-start space-x-2"
-                      >
-                        <div className="p-1 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-lg flex-shrink-0 mt-0.5">
-                          <Lightbulb className="text-white" size={12} />
-                        </div>
-                        <p className="text-gray-200 text-sm leading-relaxed">
-                          {point}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
+            )}
 
             {/* Expertise & Skills */}
             <div className="bg-white/10 backdrop-blur-sm rounded-3xl shadow-2xl p-6 border border-white/20">
@@ -668,6 +975,17 @@ const ShowMentorDetails = () => {
             )}
           </div>
         </div>
+
+        {/* Request Modal */}
+        {showRequestModal && (
+          <RequestModal
+            mentor={mentor}
+            project={project}
+            onClose={() => setShowRequestModal(false)}
+            onRequestSent={handleRequestSent}
+            API_URL={API_URL}
+          />
+        )}
       </div>
     </div>
   );

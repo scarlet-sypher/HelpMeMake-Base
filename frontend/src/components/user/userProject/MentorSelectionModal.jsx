@@ -12,6 +12,7 @@ import {
   Globe,
   AlertCircle,
   Clock,
+  MessageSquare,
 } from "lucide-react";
 import { toast } from "react-toastify";
 
@@ -29,6 +30,7 @@ const MentorSelectionModal = ({
 }) => {
   const [requestedMentorIds, setRequestedMentorIds] = useState([]);
   const [loadingRequests, setLoadingRequests] = useState(false);
+  const [requestStatuses, setRequestStatuses] = useState({});
 
   // Fetch available mentors
   const fetchMentors = async () => {
@@ -66,6 +68,18 @@ const MentorSelectionModal = ({
 
       if (response.data.success) {
         setRequestedMentorIds(response.data.requestedMentorIds || []);
+
+        // Create a map of mentor ID to request details
+        const statusMap = {};
+        response.data.requests.forEach((request) => {
+          statusMap[request.mentorId.toString()] = {
+            status: request.status,
+            mentorResponse: request.mentorResponse,
+            createdAt: request.createdAt,
+            respondedAt: request.respondedAt,
+          };
+        });
+        setRequestStatuses(statusMap);
       }
     } catch (error) {
       console.error("Error fetching project requests:", error);
@@ -145,11 +159,62 @@ const MentorSelectionModal = ({
                   >
                     {/* Request Status Badge */}
                     {isRequested && (
-                      <div className="mb-3">
-                        <div className="inline-flex items-center space-x-2 px-3 py-1 bg-green-500/20 text-green-300 rounded-full text-sm border border-green-500/30">
-                          <CheckCircle size={14} />
-                          <span>Request Sent</span>
+                      <div className="mb-3 space-y-2">
+                        {/* Status Badge */}
+                        <div
+                          className={`inline-flex items-center space-x-2 px-3 py-1 rounded-full text-sm border ${
+                            requestStatuses[mentor._id]?.status === "accepted"
+                              ? "bg-green-500/20 text-green-300 border-green-500/30"
+                              : requestStatuses[mentor._id]?.status ===
+                                "rejected"
+                              ? "bg-red-500/20 text-red-300 border-red-500/30"
+                              : "bg-yellow-500/20 text-yellow-300 border-yellow-500/30"
+                          }`}
+                        >
+                          {requestStatuses[mentor._id]?.status ===
+                            "accepted" && <CheckCircle size={14} />}
+                          {requestStatuses[mentor._id]?.status ===
+                            "rejected" && <XCircle size={14} />}
+                          {requestStatuses[mentor._id]?.status ===
+                            "pending" && <Clock size={14} />}
+                          <span>
+                            {requestStatuses[mentor._id]?.status ===
+                              "accepted" && "Request Accepted"}
+                            {requestStatuses[mentor._id]?.status ===
+                              "rejected" && "Request Rejected"}
+                            {requestStatuses[mentor._id]?.status ===
+                              "pending" && "Request Pending"}
+                          </span>
                         </div>
+
+                        {/* Mentor Response */}
+                        {requestStatuses[mentor._id]?.mentorResponse &&
+                          requestStatuses[mentor._id]?.status !== "pending" && (
+                            <div className="bg-white/5 rounded-xl p-3 border border-white/10">
+                              <div className="flex items-start space-x-2">
+                                <MessageSquare
+                                  size={14}
+                                  className="text-blue-400 mt-0.5 flex-shrink-0"
+                                />
+                                <div className="flex-1">
+                                  <p className="text-xs text-gray-400 mb-1">
+                                    Mentor's Response:
+                                  </p>
+                                  <p className="text-sm text-gray-200 leading-relaxed">
+                                    {requestStatuses[mentor._id].mentorResponse}
+                                  </p>
+                                  {requestStatuses[mentor._id]?.respondedAt && (
+                                    <p className="text-xs text-gray-400 mt-1">
+                                      Responded on{" "}
+                                      {new Date(
+                                        requestStatuses[mentor._id].respondedAt
+                                      ).toLocaleDateString()}
+                                    </p>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          )}
                       </div>
                     )}
 
@@ -292,9 +357,32 @@ const MentorSelectionModal = ({
 
                     {/* Action Button */}
                     {isRequested ? (
-                      <div className="w-full px-4 py-3 bg-green-500/20 border border-green-500/30 text-green-300 rounded-xl font-medium flex items-center justify-center space-x-2">
-                        <Clock size={16} />
-                        <span>Request Pending</span>
+                      <div
+                        className={`w-full px-4 py-3 rounded-xl font-medium flex items-center justify-center space-x-2 ${
+                          requestStatuses[mentor._id]?.status === "accepted"
+                            ? "bg-green-500/20 border border-green-500/30 text-green-300"
+                            : requestStatuses[mentor._id]?.status === "rejected"
+                            ? "bg-red-500/20 border border-red-500/30 text-red-300"
+                            : "bg-yellow-500/20 border border-yellow-500/30 text-yellow-300"
+                        }`}
+                      >
+                        {requestStatuses[mentor._id]?.status === "accepted" && (
+                          <CheckCircle size={16} />
+                        )}
+                        {requestStatuses[mentor._id]?.status === "rejected" && (
+                          <XCircle size={16} />
+                        )}
+                        {requestStatuses[mentor._id]?.status === "pending" && (
+                          <Clock size={16} />
+                        )}
+                        <span>
+                          {requestStatuses[mentor._id]?.status === "accepted" &&
+                            "Request Accepted"}
+                          {requestStatuses[mentor._id]?.status === "rejected" &&
+                            "Request Rejected"}
+                          {requestStatuses[mentor._id]?.status === "pending" &&
+                            "Request Pending"}
+                        </span>
                       </div>
                     ) : (
                       <button

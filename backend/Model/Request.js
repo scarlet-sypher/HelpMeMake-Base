@@ -23,12 +23,40 @@ const requestSchema = new mongoose.Schema(
       trim: true,
       maxlength: 2000, // cover letter limit
     },
+
+    // NEW: Status tracking for mentor responses
+    status: {
+      type: String,
+      enum: ["pending", "accepted", "rejected"],
+      default: "pending",
+      required: true,
+    },
+
+    // NEW: Mentor's response message (optional)
+    mentorResponse: {
+      type: String,
+      trim: true,
+      maxlength: 1000,
+      default: "",
+    },
+
+    // NEW: When mentor responded
+    respondedAt: {
+      type: Date,
+      default: null,
+    },
+
+    // NEW: Track if learner has seen the response
+    isReadByLearner: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: {
       createdAt: true,
-      updatedAt: false,
-    }, // only track createdAt
+      updatedAt: true, // Allow updates now for status changes
+    },
   }
 );
 
@@ -42,9 +70,11 @@ requestSchema.index(
 requestSchema.index({ projectId: 1 });
 requestSchema.index({ mentorId: 1 });
 requestSchema.index({ learnerId: 1 });
+requestSchema.index({ status: 1 });
 requestSchema.index({ createdAt: -1 });
+requestSchema.index({ respondedAt: -1 });
 
-// Virtual for learner population (uses mentorId -> Mentor -> userId -> User)
+// Virtual for learner population (uses learnerId -> Learner -> userId -> User)
 requestSchema.virtual("learnerUser", {
   ref: "Learner",
   localField: "learnerId",
@@ -96,6 +126,66 @@ requestSchema.statics.getProjectRequests = function (projectId) {
     })
     .sort({ createdAt: -1 });
 };
+
+// NEW: Static method to get pending requests count for a mentor
+requestSchema.statics.getPendingRequestsCount = function (mentorId) {
+  return this.countDocuments({ mentorId, status: "pending" });
+};
+
+// NEW: Static method to get requests by mentor with filtering
+requestSchema.statics.getMentorRequests = function (mentorId, status = null) {
+  const query = { mentorId };
+  if (status) query.status = status;
+
+  return this.find(query)
+    .populate({
+      path: "learnerUser",
+      populate: {
+        path: "userId",
+        select: "name email avatar",
+      },
+    })
+    .populate("project", "name shortDescription status")
+    .sort({ createdAt: -1 });
+};
+
+// NEW: Instance method to accept request
+requestSchema.methods.accept = function (response = "") {
+  this.status = "accepted";
+  this.mentorResponse = response;
+  this.respondedAt = new Date();
+  return this.save();
+};
+
+// NEW: Instance method to reject request
+requestSchema.methods.reject = function (response = "") {
+  this.status = "rejected";
+  this.mentorResponse = response;
+  this.respondedAt = new Date();
+  return this.save();
+};
+
+// NEW: Virtual to check if request is pending
+requestSchema.virtual("isPending").get(function () {
+  return this.status === "pending";
+});
+
+// NEW: Virtual to check if request has been responded to
+requestSchema.virtual("hasResponse").get(function () {
+  return this.status !== "pending";
+});
+
+// NEW: Virtual to format response time
+requestSchema.virtual("responseTime").get(function () {
+  if (!this.respondedAt) return null;
+  const diffTime = this.respondedAt - this.createdAt;
+  const diffHours = Math.floor(diffTime / (1000 * 60 * 60));
+  const diffDays = Math.floor(diffHours / 24);
+
+  if (diffDays > 0) return `${diffDays} days`;
+  if (diffHours > 0) return `${diffHours} hours`;
+  return "< 1 hour";
+});
 
 requestSchema.set("toJSON", {
   virtuals: true,

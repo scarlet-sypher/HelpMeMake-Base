@@ -99,6 +99,7 @@ const sendRequest = async (req, res) => {
       mentorId,
       learnerId: learner._id,
       message: message.trim(),
+      status: "pending", // default status
     });
 
     await newRequest.save();
@@ -281,8 +282,135 @@ const getLearnerRequests = async (req, res) => {
   }
 };
 
+// NEW: Get all requests sent to a mentor (MENTOR SIDE)
+const getMentorRequests = async (req, res) => {
+  try {
+    const userId = req.user._id;
+
+    // Find the mentor profile for this user
+    const mentor = await Mentor.findOne({ userId });
+    if (!mentor) {
+      return res.status(403).json({
+        success: false,
+        message: "Only mentors can view their requests",
+      });
+    }
+
+    // Get all requests sent to this mentor
+    const requests = await Request.find({ mentorId: mentor._id })
+      .populate({
+        path: "learnerUser",
+        populate: {
+          path: "userId",
+          select: "name email avatar",
+        },
+      })
+      .populate("project", "name shortDescription status")
+      .sort({ createdAt: -1 });
+
+    res.json({
+      success: true,
+      requests,
+      totalRequests: requests.length,
+    });
+  } catch (error) {
+    console.error("Get mentor requests error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch mentor requests",
+    });
+  }
+};
+
+// NEW: Respond to a request (Accept/Reject)
+const respondToRequest = async (req, res) => {
+  try {
+    const { requestId } = req.params;
+    const { status, response } = req.body; // status: 'accepted' | 'rejected', response: optional message
+    const userId = req.user._id;
+
+    // Validation
+    if (!["accepted", "rejected"].includes(status)) {
+      return res.status(400).json({
+        success: false,
+        message: "Status must be either 'accepted' or 'rejected'",
+      });
+    }
+
+    // Find the mentor profile for this user
+    const mentor = await Mentor.findOne({ userId });
+    if (!mentor) {
+      return res.status(403).json({
+        success: false,
+        message: "Only mentors can respond to requests",
+      });
+    }
+
+    // Find the request and verify it belongs to this mentor
+    const request = await Request.findById(requestId)
+      .populate({
+        path: "learnerUser",
+        populate: {
+          path: "userId",
+          select: "name email avatar",
+        },
+      })
+      .populate("project", "name shortDescription status");
+
+    if (!request) {
+      return res.status(404).json({
+        success: false,
+        message: "Request not found",
+      });
+    }
+
+    if (request.mentorId.toString() !== mentor._id.toString()) {
+      return res.status(403).json({
+        success: false,
+        message: "You can only respond to requests sent to you",
+      });
+    }
+
+    if (request.status !== "pending") {
+      return res.status(400).json({
+        success: false,
+        message: `This request has already been ${request.status}`,
+      });
+    }
+
+    // Update request status
+    request.status = status;
+    request.mentorResponse = response || "";
+    request.respondedAt = new Date();
+
+    await request.save();
+
+    res.json({
+      success: true,
+      message: `Request ${status} successfully!`,
+      request,
+    });
+  } catch (error) {
+    console.error("Respond to request error:", error);
+
+    if (error.name === "CastError") {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid request ID format",
+      });
+    }
+
+    res.status(500).json({
+      success: false,
+      message: "Failed to respond to request",
+    });
+  }
+};
+
 module.exports = {
   sendRequest,
   getProjectRequests,
   getLearnerRequests,
+  getMentorRequests,
+  respondToRequest,
 };

@@ -11,6 +11,8 @@ const {
   sendRequest,
   getProjectRequests,
   getLearnerRequests,
+  getMentorRequests,
+  respondToRequest,
 } = require("../controller/requestController");
 
 // Learner routes (require user authentication with learner role)
@@ -18,8 +20,8 @@ router.post("/send", requireUser, sendRequest);
 router.get("/project/:projectId", requireUser, getProjectRequests);
 router.get("/learner", requireUser, getLearnerRequests);
 
-// Note: Mentor-side routes will be added later
-// router.get("/mentor", requireMentor, getMentorRequests);
-// router.patch("/:requestId/respond", requireMentor, respondToRequest);
+//  Mentor routes (require mentor authentication)
+router.get("/mentor", requireMentor, getMentorRequests);
+router.patch("/:requestId/respond", requireMentor, respondToRequest);
 
 module.exports = router;
