@@ -17,8 +17,8 @@ import AssignedMentorSection from "../../components/user/userProject/AssignedMen
 import SetClosingPriceModal from "../../components/user/userProject/SetClosingPriceModal";
 import ViewPitchesModal from "../../components/user/userProject/ViewPitchesModal";
 
-//Apprentice request model
-import MentorRequestModal from "../../components/user/userProject/MentorRequestModal";
+// Request system components
+import RequestMentorModal from "../../components/user/userProject/RequestModal";
 import MentorSelectionModal from "../../components/user/userProject/MentorSelectionModal";
 import ProjectActionsButtons from "../../components/user/userProject/ProjectActionsButtons";
 import MentorAiSelectionModal from "../../components/user/userProject/MentorAiSelectionModal";
@@ -37,8 +37,7 @@ const DetailedProjectView = () => {
   const [isLoadingPitches, setIsLoadingPitches] = useState(false);
   const [averagePitch, setAveragePitch] = useState(0);
 
-  //mentor request model
-
+  // mentor request model states
   const [mentors, setMentors] = useState([]);
   const [mentorsLoading, setMentorsLoading] = useState(false);
   const [selectedMentor, setSelectedMentor] = useState(null);
@@ -267,24 +266,38 @@ const DetailedProjectView = () => {
   const fetchMentors = async () => {
     try {
       setMentorsLoading(true);
-      const response = await axios.get(`${API_URL}/mentors/all`, {
-        withCredentials: true,
+      const token = localStorage.getItem("access_token");
+
+      const response = await fetch(`${API_URL}/mentors/all`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
       });
 
-      if (response.data.success) {
-        setMentors(response.data.mentors);
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        setMentors(data.mentors);
         return Promise.resolve();
       } else {
-        toast.error("Failed to load mentors");
+        showToast("Failed to load mentors", "error");
         return Promise.reject();
       }
     } catch (error) {
       console.error("Error fetching mentors:", error);
-      toast.error("Error loading mentors");
+      showToast("Error loading mentors", "error");
       return Promise.reject();
     } finally {
       setMentorsLoading(false);
     }
+  };
+
+  // Handle request sent callback - this will be called when a request is successfully sent
+  const handleRequestSent = (mentorId) => {
+    // You can add any additional logic here if needed
+    // The modal components will handle their own state updates
+    console.log(`Request sent to mentor: ${mentorId}`);
   };
 
   if (loading) {
@@ -429,11 +442,12 @@ const DetailedProjectView = () => {
           mentorsLoading={mentorsLoading}
           setMentorsLoading={setMentorsLoading}
           setSelectedMentor={setSelectedMentor}
+          project={project}
           API_URL={API_URL}
           formatPrice={formatPrice}
         />
 
-        {/* Mentor Selection Modal By Ai*/}
+        {/* Mentor Selection Modal By AI */}
         <MentorAiSelectionModal
           showAIMentorSelection={showAIMentorSelection}
           setShowAIMentorSelection={setShowAIMentorSelection}
@@ -445,11 +459,11 @@ const DetailedProjectView = () => {
         />
 
         {/* Mentor Request Modal */}
-        <MentorRequestModal
+        <RequestMentorModal
           selectedMentor={selectedMentor}
           setSelectedMentor={setSelectedMentor}
           project={project}
-          setProject={setProject}
+          onRequestSent={handleRequestSent}
           API_URL={API_URL}
           formatPrice={formatPrice}
         />

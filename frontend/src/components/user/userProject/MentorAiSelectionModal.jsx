@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { 
-  Users, 
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import {
+  Users,
   User,
   XCircle,
   Star,
@@ -15,31 +15,57 @@ import {
   Sparkles,
   Brain,
   Target,
-  Award
-} from 'lucide-react';
-import { toast } from 'react-toastify';
+  Award,
+  Clock,
+} from "lucide-react";
+import { toast } from "react-toastify";
 
-const MentorAiSelectionModal = ({ 
-  showAIMentorSelection, 
-  setShowAIMentorSelection, 
+const MentorAiSelectionModal = ({
+  showAIMentorSelection,
+  setShowAIMentorSelection,
   project,
   mentors,
-  setSelectedMentor, 
-  API_URL, 
-  formatPrice 
+  setSelectedMentor,
+  API_URL,
+  formatPrice,
 }) => {
   const [aiMentors, setAiMentors] = useState([]);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [loadingStep, setLoadingStep] = useState(0);
   const [analysisComplete, setAnalysisComplete] = useState(false);
+  const [requestedMentorIds, setRequestedMentorIds] = useState([]);
+  const [loadingRequests, setLoadingRequests] = useState(false);
   const navigate = useNavigate();
 
   const loadingSteps = [
     "🤖 Analyzing your project requirements...",
     "🎯 Matching skills with available mentors...",
     "⚡ AI is evaluating mentor compatibility...",
-    "🌟 Preparing personalized recommendations..."
+    "🌟 Preparing personalized recommendations...",
   ];
+
+  // Fetch existing requests for this project
+  const fetchProjectRequests = async () => {
+    if (!project?._id) return;
+
+    try {
+      setLoadingRequests(true);
+      const response = await axios.get(
+        `${API_URL}/requests/project/${project._id}`,
+        {
+          withCredentials: true,
+        }
+      );
+
+      if (response.data.success) {
+        setRequestedMentorIds(response.data.requestedMentorIds || []);
+      }
+    } catch (error) {
+      console.error("Error fetching project requests:", error);
+    } finally {
+      setLoadingRequests(false);
+    }
+  };
 
   // AI Analysis function
   const performAIAnalysis = async () => {
@@ -50,7 +76,7 @@ const MentorAiSelectionModal = ({
 
       // Simulate loading steps with intervals
       const stepInterval = setInterval(() => {
-        setLoadingStep(prev => {
+        setLoadingStep((prev) => {
           if (prev < loadingSteps.length - 1) {
             return prev + 1;
           }
@@ -69,13 +95,13 @@ const MentorAiSelectionModal = ({
         shortDescription: project.shortDescription,
         duration: project.duration,
         openingPrice: project.openingPrice,
-        prerequisites: project.prerequisites || []
+        prerequisites: project.prerequisites || [],
       };
 
       // Prepare mentors metadata
-      const mentorMetaDataList = mentors.map(mentor => ({
+      const mentorMetaDataList = mentors.map((mentor) => ({
         _id: mentor._id,
-        name: mentor.userId?.name || 'Anonymous Mentor',
+        name: mentor.userId?.name || "Anonymous Mentor",
         title: mentor.title,
         expertise: mentor.expertise,
         rating: mentor.rating,
@@ -85,56 +111,73 @@ const MentorAiSelectionModal = ({
         responseTime: mentor.responseTime,
         pricing: mentor.pricing,
         isOnline: mentor.isOnline,
+        isAvailable: mentor.isAvailable,
         description: mentor.description,
         socialLinks: mentor.socialLinks,
-        userId: mentor.userId
+        userId: mentor.userId,
       }));
 
-      const response = await axios.post(`${API_URL}/api/ai/select-mentors`, {
-        projectMetaData,
-        mentorMetaDataList
-      }, {
-        withCredentials: true,
-        timeout: 30000 // 30 seconds timeout
-      });
+      const response = await axios.post(
+        `${API_URL}/api/ai/select-mentors`,
+        {
+          projectMetaData,
+          mentorMetaDataList,
+        },
+        {
+          withCredentials: true,
+          timeout: 30000, // 30 seconds timeout
+        }
+      );
 
       if (response.data.success) {
         setAiMentors(response.data.mentors);
         setAnalysisComplete(true);
-        toast.success('🤖 AI has found the perfect mentors for you!');
+        toast.success("🤖 AI has found the perfect mentors for you!");
       } else {
-        toast.error('AI analysis failed. Please try again.');
+        toast.error("AI analysis failed. Please try again.");
         setShowAIMentorSelection(false);
       }
     } catch (error) {
-      console.error('Error in AI mentor selection:', error);
-      toast.error('AI analysis failed. Please try manual selection.');
+      console.error("Error in AI mentor selection:", error);
+      toast.error("AI analysis failed. Please try manual selection.");
       setShowAIMentorSelection(false);
     } finally {
       setIsAnalyzing(false);
     }
   };
 
-  // Start AI analysis when modal opens
+  // Start AI analysis and fetch requests when modal opens
   useEffect(() => {
-    if (showAIMentorSelection && !analysisComplete && !isAnalyzing) {
-      performAIAnalysis();
+    if (showAIMentorSelection) {
+      if (!analysisComplete && !isAnalyzing) {
+        performAIAnalysis();
+      }
+      fetchProjectRequests();
     }
   }, [showAIMentorSelection]);
 
   // Handle see why mentor is best
   const handleSeeWhy = (mentorId, whyReason, aiScore, mentorData) => {
-  // Navigate to the new mentor details page with all necessary data
     navigate(`/user/mentors/${mentorId}/ai-reason`, {
-        state: {
+      state: {
         mentor: mentorData,
         whyReason: whyReason,
         aiScore: aiScore,
-        project: project, // Pass the current project for context
-        fromAI: true
-        }
+        project: project,
+        fromAI: true,
+      },
     });
-};
+  };
+
+  // Check if mentor has been requested
+  const isMentorRequested = (mentorId) => {
+    return requestedMentorIds.includes(mentorId.toString());
+  };
+
+  // Handle request sent callback
+  const handleRequestSent = (mentorId) => {
+    setRequestedMentorIds((prev) => [...prev, mentorId.toString()]);
+  };
 
   if (!showAIMentorSelection) return null;
 
@@ -147,7 +190,10 @@ const MentorAiSelectionModal = ({
             <h2 className="text-2xl font-bold text-white flex items-center">
               <Bot className="mr-2 text-purple-400" size={24} />
               AI Mentor Recommendations
-              <Sparkles className="ml-2 text-yellow-400 animate-pulse" size={20} />
+              <Sparkles
+                className="ml-2 text-yellow-400 animate-pulse"
+                size={20}
+              />
             </h2>
             <button
               onClick={() => setShowAIMentorSelection(false)}
@@ -155,6 +201,22 @@ const MentorAiSelectionModal = ({
             >
               <XCircle size={24} />
             </button>
+          </div>
+
+          {/* Project Info Banner */}
+          <div className="bg-gradient-to-r from-purple-500/20 to-blue-500/20 rounded-2xl p-4 mb-6 border border-purple-500/30">
+            <div className="flex items-center space-x-3">
+              <Target className="text-purple-400" size={20} />
+              <div>
+                <h3 className="text-white font-semibold">
+                  AI analyzing project:
+                </h3>
+                <p className="text-purple-200 font-medium">{project?.name}</p>
+                <p className="text-gray-300 text-sm">
+                  {project?.shortDescription}
+                </p>
+              </div>
+            </div>
           </div>
 
           {/* Loading Animation */}
@@ -167,30 +229,37 @@ const MentorAiSelectionModal = ({
                   {/* First spinning ring */}
                   <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-purple-500 animate-spin"></div>
                   {/* Second spinning ring with delay */}
-                  <div 
+                  <div
                     className="absolute inset-2 rounded-full border-4 border-transparent border-t-blue-500 animate-spin"
-                    style={{ animationDelay: '0.15s' }}
+                    style={{ animationDelay: "0.15s" }}
                   ></div>
                   {/* Third spinning ring with delay */}
-                  <div 
+                  <div
                     className="absolute inset-4 rounded-full border-4 border-transparent border-t-cyan-500 animate-spin"
-                    style={{ animationDelay: '0.3s' }}
+                    style={{ animationDelay: "0.3s" }}
                   ></div>
                   {/* Brain icon in center */}
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <Brain className="text-purple-400 animate-pulse" size={24} />
+                    <Brain
+                      className="text-purple-400 animate-pulse"
+                      size={24}
+                    />
                   </div>
                 </div>
               </div>
-              
+
               <div className="space-y-4">
                 <div className="text-xl font-bold text-white mb-2">
                   {loadingSteps[loadingStep]}
                 </div>
                 <div className="w-64 mx-auto bg-white/20 rounded-full h-2">
-                  <div 
+                  <div
                     className="bg-gradient-to-r from-purple-500 to-blue-500 h-2 rounded-full transition-all duration-500"
-                    style={{ width: `${((loadingStep + 1) / loadingSteps.length) * 100}%` }}
+                    style={{
+                      width: `${
+                        ((loadingStep + 1) / loadingSteps.length) * 100
+                      }%`,
+                    }}
                   ></div>
                 </div>
                 <div className="text-gray-300 text-sm">
@@ -207,8 +276,13 @@ const MentorAiSelectionModal = ({
                 <div className="flex items-center space-x-3">
                   <Target className="text-purple-400" size={20} />
                   <div>
-                    <h3 className="text-white font-semibold">AI Analysis Complete!</h3>
-                    <p className="text-purple-200 text-sm">Found {aiMentors.length} perfectly matched mentors for your project</p>
+                    <h3 className="text-white font-semibold">
+                      AI Analysis Complete!
+                    </h3>
+                    <p className="text-purple-200 text-sm">
+                      Found {aiMentors.length} perfectly matched mentors for
+                      your project
+                    </p>
                   </div>
                 </div>
               </div>
@@ -216,21 +290,43 @@ const MentorAiSelectionModal = ({
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {aiMentors.map((aiMentor, index) => {
                   const mentor = aiMentor.mentorData;
+                  const isRequested = isMentorRequested(mentor._id);
+
                   return (
-                    <div key={mentor._id} className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20 hover:border-purple-400/50 transition-all duration-300 relative overflow-hidden">
+                    <div
+                      key={mentor._id}
+                      className={`bg-white/10 backdrop-blur-sm rounded-2xl p-6 border transition-all duration-300 relative overflow-hidden ${
+                        isRequested
+                          ? "border-green-500/30 bg-green-500/5"
+                          : "border-white/20 hover:border-purple-400/50"
+                      }`}
+                    >
                       {/* AI Badge */}
                       <div className="absolute top-4 right-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white px-2 py-1 rounded-lg text-xs font-bold flex items-center space-x-1">
                         <Award size={12} />
                         <span>AI Pick #{index + 1}</span>
                       </div>
 
+                      {/* Request Status Badge */}
+                      {isRequested && (
+                        <div className="mb-3">
+                          <div className="inline-flex items-center space-x-2 px-3 py-1 bg-green-500/20 text-green-300 rounded-full text-sm border border-green-500/30">
+                            <CheckCircle size={14} />
+                            <span>Request Sent</span>
+                          </div>
+                        </div>
+                      )}
+
                       {/* Mentor Info */}
                       <div className="flex items-start space-x-4 mb-4 mt-2">
                         <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center flex-shrink-0">
                           {mentor.userId?.avatar ? (
-                            <img 
-                              src={mentor.userId.avatar.startsWith('/uploads/') ? 
-                                `${API_URL}${mentor.userId.avatar}` : mentor.userId.avatar} 
+                            <img
+                              src={
+                                mentor.userId.avatar.startsWith("/uploads/")
+                                  ? `${API_URL}${mentor.userId.avatar}`
+                                  : mentor.userId.avatar
+                              }
                               alt={mentor.userId.name}
                               className="w-full h-full rounded-full object-cover"
                             />
@@ -239,8 +335,12 @@ const MentorAiSelectionModal = ({
                           )}
                         </div>
                         <div className="flex-1">
-                          <h3 className="text-lg font-bold text-white">{mentor.userId?.name || 'Anonymous Mentor'}</h3>
-                          <p className="text-blue-300 text-sm">{mentor.title}</p>
+                          <h3 className="text-lg font-bold text-white">
+                            {mentor.userId?.name || "Anonymous Mentor"}
+                          </h3>
+                          <p className="text-blue-300 text-sm">
+                            {mentor.title}
+                          </p>
                           <div className="flex items-center space-x-4 mt-2 text-sm text-gray-300">
                             <div className="flex items-center space-x-1">
                               <Star className="text-yellow-400" size={14} />
@@ -251,21 +351,31 @@ const MentorAiSelectionModal = ({
                               <span>{mentor.totalStudents} students</span>
                             </div>
                             <div className="flex items-center space-x-1">
-                              <CheckCircle className="text-blue-400" size={14} />
+                              <CheckCircle
+                                className="text-blue-400"
+                                size={14}
+                              />
                               <span>{mentor.completedSessions} sessions</span>
                             </div>
                           </div>
                         </div>
                       </div>
 
-                      <p className="text-gray-200 text-sm mb-4 leading-relaxed">{mentor.description}</p>
+                      <p className="text-gray-200 text-sm mb-4 leading-relaxed">
+                        {mentor.description}
+                      </p>
 
                       {/* Expertise */}
                       <div className="mb-4">
-                        <h4 className="text-white font-semibold mb-2 text-sm">Expertise</h4>
+                        <h4 className="text-white font-semibold mb-2 text-sm">
+                          Expertise
+                        </h4>
                         <div className="flex flex-wrap gap-1">
                           {mentor.expertise.slice(0, 4).map((exp, expIndex) => (
-                            <span key={expIndex} className="px-2 py-1 bg-gradient-to-r from-green-500/20 to-emerald-500/20 text-green-300 rounded text-xs border border-green-500/30">
+                            <span
+                              key={expIndex}
+                              className="px-2 py-1 bg-gradient-to-r from-green-500/20 to-emerald-500/20 text-green-300 rounded text-xs border border-green-500/30"
+                            >
                               {exp.skill} ({exp.level})
                             </span>
                           ))}
@@ -281,16 +391,23 @@ const MentorAiSelectionModal = ({
                       <div className="mb-4">
                         <div className="flex items-center justify-between text-sm">
                           <span className="text-gray-300">Experience:</span>
-                          <span className="text-white font-semibold">{mentor.experience.years} years</span>
+                          <span className="text-white font-semibold">
+                            {mentor.experience.years} years
+                          </span>
                         </div>
                         <div className="flex items-center justify-between text-sm">
                           <span className="text-gray-300">Response Time:</span>
-                          <span className="text-white font-semibold">{mentor.responseTime} mins</span>
+                          <span className="text-white font-semibold">
+                            {mentor.responseTime} mins
+                          </span>
                         </div>
                         <div className="flex items-center justify-between text-sm">
                           <span className="text-gray-300">Hourly Rate:</span>
                           <span className="text-white font-semibold">
-                            {formatPrice(mentor.pricing.hourlyRate, mentor.pricing.currency)}
+                            {formatPrice(
+                              mentor.pricing.hourlyRate,
+                              mentor.pricing.currency
+                            )}
                           </span>
                         </div>
                       </div>
@@ -298,48 +415,90 @@ const MentorAiSelectionModal = ({
                       {/* Social Links */}
                       <div className="flex items-center justify-between mb-4">
                         <div className="flex space-x-2">
-                          {mentor.socialLinks?.linkedin && mentor.socialLinks.linkedin !== '#' && (
-                            <a href={mentor.socialLinks.linkedin} target="_blank" rel="noopener noreferrer" 
-                               className="p-2 bg-blue-600/20 text-blue-400 rounded-lg hover:bg-blue-600/30 transition-colors">
-                              <Linkedin size={16} />
-                            </a>
-                          )}
-                          {mentor.socialLinks?.github && mentor.socialLinks.github !== '#' && (
-                            <a href={mentor.socialLinks.github} target="_blank" rel="noopener noreferrer"
-                               className="p-2 bg-gray-600/20 text-gray-400 rounded-lg hover:bg-gray-600/30 transition-colors">
-                              <Github size={16} />
-                            </a>
-                          )}
-                          {mentor.socialLinks?.portfolio && mentor.socialLinks.portfolio !== '#' && (
-                            <a href={mentor.socialLinks.portfolio} target="_blank" rel="noopener noreferrer"
-                               className="p-2 bg-purple-600/20 text-purple-400 rounded-lg hover:bg-purple-600/30 transition-colors">
-                              <Globe size={16} />
-                            </a>
-                          )}
+                          {mentor.socialLinks?.linkedin &&
+                            mentor.socialLinks.linkedin !== "#" && (
+                              <a
+                                href={mentor.socialLinks.linkedin}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="p-2 bg-blue-600/20 text-blue-400 rounded-lg hover:bg-blue-600/30 transition-colors"
+                              >
+                                <Linkedin size={16} />
+                              </a>
+                            )}
+                          {mentor.socialLinks?.github &&
+                            mentor.socialLinks.github !== "#" && (
+                              <a
+                                href={mentor.socialLinks.github}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="p-2 bg-gray-600/20 text-gray-400 rounded-lg hover:bg-gray-600/30 transition-colors"
+                              >
+                                <Github size={16} />
+                              </a>
+                            )}
+                          {mentor.socialLinks?.portfolio &&
+                            mentor.socialLinks.portfolio !== "#" && (
+                              <a
+                                href={mentor.socialLinks.portfolio}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="p-2 bg-purple-600/20 text-purple-400 rounded-lg hover:bg-purple-600/30 transition-colors"
+                              >
+                                <Globe size={16} />
+                              </a>
+                            )}
                         </div>
-                        <div className={`px-2 py-1 rounded-lg text-xs font-medium ${
-                          mentor.isOnline ? 'bg-green-500/20 text-green-300' : 'bg-gray-500/20 text-gray-300'
-                        }`}>
-                          {mentor.isOnline ? 'Online' : 'Offline'}
+                        <div
+                          className={`px-2 py-1 rounded-lg text-xs font-medium ${
+                            mentor.isOnline
+                              ? "bg-green-500/20 text-green-300"
+                              : "bg-gray-500/20 text-gray-300"
+                          }`}
+                        >
+                          {mentor.isOnline ? "Online" : "Offline"}
                         </div>
                       </div>
 
                       {/* Action Buttons */}
                       <div className="space-y-2">
+                        {isRequested ? (
+                          <div className="w-full px-4 py-3 bg-green-500/20 border border-green-500/30 text-green-300 rounded-xl font-medium flex items-center justify-center space-x-2">
+                            <Clock size={16} />
+                            <span>Request Pending</span>
+                          </div>
+                        ) : (
+                          <button
+                            onClick={() => setSelectedMentor(mentor)}
+                            disabled={!mentor.isAvailable}
+                            className={`w-full px-4 py-3 rounded-xl font-semibold transition-all transform hover:scale-105 shadow-lg flex items-center justify-center space-x-2 ${
+                              mentor.isAvailable
+                                ? "bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white"
+                                : "bg-gray-500/20 text-gray-400 cursor-not-allowed transform-none"
+                            }`}
+                          >
+                            <Send size={16} />
+                            <span>
+                              {mentor.isAvailable
+                                ? "Send Request"
+                                : "Not Available"}
+                            </span>
+                          </button>
+                        )}
+
                         <button
-                          onClick={() => setSelectedMentor(mentor)}
-                          className="w-full px-4 py-3 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-xl font-semibold transition-all transform hover:scale-105 shadow-lg flex items-center justify-center space-x-2"
+                          onClick={() =>
+                            handleSeeWhy(
+                              mentor._id,
+                              aiMentor.whyReason,
+                              aiMentor.aiScore,
+                              mentor
+                            )
+                          }
+                          className="w-full px-4 py-2 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 border border-cyan-500/30 text-cyan-300 rounded-xl font-medium hover:bg-gradient-to-r hover:from-cyan-500/30 hover:to-blue-500/30 transition-all flex items-center justify-center space-x-2"
                         >
-                          <Send size={16} />
-                          <span>Send Request</span>
-                        </button>
-                        
-                        <button
-                            onClick={() => handleSeeWhy(mentor._id, aiMentor.whyReason, aiMentor.aiScore, mentor)}
-                            className="w-full px-4 py-2 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 border border-cyan-500/30 text-cyan-300 rounded-xl font-medium hover:bg-gradient-to-r hover:from-cyan-500/30 hover:to-blue-500/30 transition-all flex items-center justify-center space-x-2"
-                            >
-                            <Sparkles size={14} />
-                            <span>See why AI picked this mentor</span>
+                          <Sparkles size={14} />
+                          <span>See why AI picked this mentor</span>
                         </button>
                       </div>
 
@@ -356,8 +515,12 @@ const MentorAiSelectionModal = ({
           {analysisComplete && aiMentors.length === 0 && (
             <div className="text-center py-12">
               <Bot className="mx-auto mb-4 text-gray-400" size={48} />
-              <h3 className="text-xl font-bold text-white mb-2">No AI Recommendations Available</h3>
-              <p className="text-gray-300 mb-6">AI couldn't find suitable mentors. Try manual selection instead.</p>
+              <h3 className="text-xl font-bold text-white mb-2">
+                No AI Recommendations Available
+              </h3>
+              <p className="text-gray-300 mb-6">
+                AI couldn't find suitable mentors. Try manual selection instead.
+              </p>
               <button
                 onClick={() => setShowAIMentorSelection(false)}
                 className="px-6 py-3 bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-xl hover:from-blue-600 hover:to-cyan-600 transition-all"

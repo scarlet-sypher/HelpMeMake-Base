@@ -22,6 +22,7 @@ const sessionRoutes = require("./routes/sessionRoute");
 const analysisRoutes = require("./routes/analysisRoute");
 const dashboardRoutes = require("./routes/dashboardRoutes");
 const goalRoutes = require("./routes/goalRoute");
+const requestRoutes = require("./routes/requestRoute");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -114,6 +115,7 @@ app.use("/api/sessions", sessionRoutes);
 app.use("/api/analysis", analysisRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/goals", goalRoutes);
+app.use("/requests", requestRoutes);
 // Health check endpoint
 app.get("/health", (req, res) => {
   res.json({
