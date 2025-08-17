@@ -165,18 +165,20 @@ const GoalSetter = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 flex">
-      {/* Sidebar */}
-      <Sidebar
-        isOpen={sidebarOpen}
-        toggleSidebar={toggleSidebar}
-        activeItem={activeItem}
-        setActiveItem={setActiveItem}
-        userRole="mentor"
-      />
+    <div className="relative min-h-screen w-full bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 flex">
+      <div className="fixed inset-y-0 left-0 z-30 lg:static lg:inset-auto">
+        {/* Sidebar */}
+        <Sidebar
+          isOpen={sidebarOpen}
+          toggleSidebar={toggleSidebar}
+          activeItem={activeItem}
+          setActiveItem={setActiveItem}
+          userRole="mentor"
+        />
+      </div>
 
       {/* Main Content */}
-      <div className="flex-1 lg:ml-64">
+      <div className="flex-1 w-full lg:ml-64">
         {/* Mobile Header */}
         <div className="lg:hidden bg-gradient-to-r from-slate-900/80 to-gray-900/80 backdrop-blur-sm border-b border-white/10 p-4">
           <div className="flex items-center justify-between">

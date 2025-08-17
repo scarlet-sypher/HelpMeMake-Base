@@ -15,6 +15,7 @@ import {
   Target,
   Users,
   Calendar,
+  Volleyball,
 } from "lucide-react";
 
 const Sidebar = ({
@@ -68,9 +69,9 @@ const Sidebar = ({
             path: "/mentor/messages",
           },
           {
-            icon: Star,
-            label: "Achievements",
-            id: "achievements",
+            icon: Volleyball,
+            label: "Goals & Reviews",
+            id: "goals_feedback",
             path: "/mentor/goals",
           },
           {
