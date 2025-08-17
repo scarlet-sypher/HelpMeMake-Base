@@ -17,6 +17,12 @@ import AssignedMentorSection from "../../components/user/userProject/AssignedMen
 import SetClosingPriceModal from "../../components/user/userProject/SetClosingPriceModal";
 import ViewPitchesModal from "../../components/user/userProject/ViewPitchesModal";
 
+//Apprentice request model
+import MentorRequestModal from "../../components/user/userProject/MentorRequestModal";
+import MentorSelectionModal from "../../components/user/userProject/MentorSelectionModal";
+import ProjectActionsButtons from "../../components/user/userProject/ProjectActionsButtons";
+import MentorAiSelectionModal from "../../components/user/userProject/MentorAiSelectionModal";
+
 const DetailedProjectView = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -30,6 +36,14 @@ const DetailedProjectView = () => {
   const [isSettingPrice, setIsSettingPrice] = useState(false);
   const [isLoadingPitches, setIsLoadingPitches] = useState(false);
   const [averagePitch, setAveragePitch] = useState(0);
+
+  //mentor request model
+
+  const [mentors, setMentors] = useState([]);
+  const [mentorsLoading, setMentorsLoading] = useState(false);
+  const [selectedMentor, setSelectedMentor] = useState(null);
+  const [showMentorSelection, setShowMentorSelection] = useState(false);
+  const [showAIMentorSelection, setShowAIMentorSelection] = useState(false);
 
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
@@ -219,6 +233,11 @@ const DetailedProjectView = () => {
     await fetchPitches();
   };
 
+  const formatPrice = (price, currency = "INR") => {
+    if (!price) return "Not set";
+    return `${currency} ${price.toLocaleString()}`;
+  };
+
   // Format date
   const formatDate = (dateString) => {
     if (!dateString) return "Not set";
@@ -232,6 +251,40 @@ const DetailedProjectView = () => {
   // Handle view mentor profile
   const handleViewMentorProfile = (mentorId) => {
     navigate(`/user/mentor/${mentorId}`);
+  };
+
+  const handleAIMentorSelection = () => {
+    if (mentors.length === 0) {
+      // Fetch mentors first if not already loaded
+      fetchMentors().then(() => {
+        setShowAIMentorSelection(true);
+      });
+    } else {
+      setShowAIMentorSelection(true);
+    }
+  };
+
+  const fetchMentors = async () => {
+    try {
+      setMentorsLoading(true);
+      const response = await axios.get(`${API_URL}/mentors/all`, {
+        withCredentials: true,
+      });
+
+      if (response.data.success) {
+        setMentors(response.data.mentors);
+        return Promise.resolve();
+      } else {
+        toast.error("Failed to load mentors");
+        return Promise.reject();
+      }
+    } catch (error) {
+      console.error("Error fetching mentors:", error);
+      toast.error("Error loading mentors");
+      return Promise.reject();
+    } finally {
+      setMentorsLoading(false);
+    }
   };
 
   if (loading) {
@@ -330,6 +383,16 @@ const DetailedProjectView = () => {
               onSetClosingPrice={() => setShowClosingPriceModal(true)}
               onViewPitches={handleViewPitches}
             />
+
+            <ProjectActionsButtons
+              project={project}
+              setProject={setProject}
+              setShowMentorSelection={setShowMentorSelection}
+              handleAIMentorSelection={handleAIMentorSelection}
+              API_URL={API_URL}
+              formatPrice={formatPrice}
+              formatDate={formatDate}
+            />
           </div>
         </div>
 
@@ -355,6 +418,40 @@ const DetailedProjectView = () => {
           onSetClosingPriceFromPitch={handleSetClosingPriceFromPitch}
           onViewMentorProfile={handleViewMentorProfile}
           showToast={showToast}
+        />
+
+        {/* Mentor Selection Modal */}
+        <MentorSelectionModal
+          showMentorSelection={showMentorSelection}
+          setShowMentorSelection={setShowMentorSelection}
+          mentors={mentors}
+          setMentors={setMentors}
+          mentorsLoading={mentorsLoading}
+          setMentorsLoading={setMentorsLoading}
+          setSelectedMentor={setSelectedMentor}
+          API_URL={API_URL}
+          formatPrice={formatPrice}
+        />
+
+        {/* Mentor Selection Modal By Ai*/}
+        <MentorAiSelectionModal
+          showAIMentorSelection={showAIMentorSelection}
+          setShowAIMentorSelection={setShowAIMentorSelection}
+          project={project}
+          mentors={mentors}
+          setSelectedMentor={setSelectedMentor}
+          API_URL={API_URL}
+          formatPrice={formatPrice}
+        />
+
+        {/* Mentor Request Modal */}
+        <MentorRequestModal
+          selectedMentor={selectedMentor}
+          setSelectedMentor={setSelectedMentor}
+          project={project}
+          setProject={setProject}
+          API_URL={API_URL}
+          formatPrice={formatPrice}
         />
       </div>
     </div>
