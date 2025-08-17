@@ -6,6 +6,7 @@ import GoalForm from "../../components/mentor/mentorGoal/GoalForm";
 import ReviewView from "../../components/mentor/mentorGoal/ReviewView";
 // Using fetch instead of axios for API calls
 import { Menu, Target, Star, User, TrendingUp } from "lucide-react";
+import { useSearchParams } from "react-router-dom";
 
 const motivationalQuotes = [
   "Success is not final, failure is not fatal: it is the courage to continue that counts.",
@@ -44,6 +45,7 @@ const GoalSetter = () => {
   const [totals, setTotals] = useState({}); // Add this state for totals
   const [dataLoading, setDataLoading] = useState(true);
   const [currentQuote, setCurrentQuote] = useState(0);
+  const [searchParams] = useSearchParams();
 
   // Redirect non-mentors
   useEffect(() => {
@@ -51,6 +53,13 @@ const GoalSetter = () => {
       window.location.href = "/login";
     }
   }, [loading, isAuthenticated, user]);
+
+  useEffect(() => {
+    const tabParam = searchParams.get("tab");
+    if (tabParam === "reviews") {
+      setActiveTab("reviews");
+    }
+  }, [searchParams]);
 
   // Rotate motivational quotes
   useEffect(() => {
