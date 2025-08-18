@@ -1,59 +1,11 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { User, Send, XCircle } from "lucide-react";
-// import { toast } from "../../../utils/toastNew";
+import { toast } from "../../../utils/toastNew";
 
 const RequestModal = ({ mentor, project, onClose, onRequestSent, API_URL }) => {
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-
-  const toast = {
-    show: (message, type = "info") => {
-      const colors = {
-        error: "bg-red-500",
-        info: "bg-blue-500",
-        success: "bg-green-500",
-      };
-
-      // Create wrapper container for stacking
-      let container = document.getElementById("toast-container");
-      if (!container) {
-        container = document.createElement("div");
-        container.id = "toast-container";
-        container.className = "fixed top-4 right-4 z-50 flex flex-col gap-2";
-        document.body.appendChild(container);
-      }
-
-      // Create toast element
-      const toastEl = document.createElement("div");
-      toastEl.className = `
-      ${colors[type]} text-white px-6 py-3 rounded-lg shadow-lg 
-      transform translate-x-[120%] transition-transform duration-300
-      max-w-xs w-full
-    `;
-      toastEl.textContent = message;
-      container.appendChild(toastEl);
-
-      // Animate in
-      setTimeout(() => {
-        toastEl.style.transform = "translateX(0)";
-      }, 10);
-
-      // Animate out and remove
-      setTimeout(() => {
-        toastEl.style.transform = "translateX(120%)";
-        setTimeout(() => {
-          if (toastEl.parentNode) {
-            container.removeChild(toastEl);
-          }
-        }, 300);
-      }, 3000);
-    },
-
-    error: (message) => toast.show(message, "error"),
-    info: (message) => toast.show(message, "info"),
-    success: (message) => toast.show(message, "success"),
-  };
 
   const handleSendRequest = async (e) => {
     e.preventDefault();
@@ -81,7 +33,9 @@ const RequestModal = ({ mentor, project, onClose, onRequestSent, API_URL }) => {
       if (response.data.success) {
         toast.success(`Request sent to ${mentor.userId?.name} successfully!`);
         onRequestSent(mentor._id);
-        onClose();
+        setTimeout(() => {
+          onClose();
+        }, 500);
       }
     } catch (error) {
       if (error.response?.status === 409) {

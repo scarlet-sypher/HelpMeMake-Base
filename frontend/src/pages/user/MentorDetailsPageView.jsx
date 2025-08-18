@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import { ArrowLeft, AlertCircle, Sparkles, Star } from "lucide-react";
+import { toast } from "../../utils/toastNew";
 
 // Import components
 import RequestModal from "../../components/user/userMentorView/RequestModal";
@@ -38,55 +39,6 @@ const MentorDetailsPageView = () => {
   const [checkingRequest, setCheckingRequest] = useState(false);
 
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
-
-  // Custom toast function
-  const toast = {
-    show: (message, type = "info") => {
-      const colors = {
-        error: "bg-red-500",
-        info: "bg-blue-500",
-        success: "bg-green-500",
-      };
-
-      // Create wrapper container for stacking
-      let container = document.getElementById("toast-container");
-      if (!container) {
-        container = document.createElement("div");
-        container.id = "toast-container";
-        container.className = "fixed top-4 right-4 z-50 flex flex-col gap-2";
-        document.body.appendChild(container);
-      }
-
-      // Create toast element
-      const toastEl = document.createElement("div");
-      toastEl.className = `
-      ${colors[type]} text-white px-6 py-3 rounded-lg shadow-lg 
-      transform translate-x-[120%] transition-transform duration-300
-      max-w-xs w-full
-    `;
-      toastEl.textContent = message;
-      container.appendChild(toastEl);
-
-      // Animate in
-      setTimeout(() => {
-        toastEl.style.transform = "translateX(0)";
-      }, 10);
-
-      // Animate out and remove
-      setTimeout(() => {
-        toastEl.style.transform = "translateX(120%)";
-        setTimeout(() => {
-          if (toastEl.parentNode) {
-            container.removeChild(toastEl);
-          }
-        }, 300);
-      }, 3000);
-    },
-
-    error: (message) => toast.show(message, "error"),
-    info: (message) => toast.show(message, "info"),
-    success: (message) => toast.show(message, "success"),
-  };
 
   /** ---------- DATA FETCHING ---------- **/
   const checkExistingRequest = async () => {
