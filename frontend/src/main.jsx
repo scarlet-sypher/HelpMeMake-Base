@@ -34,6 +34,7 @@ import UserSessions from "./pages/user/UserSessions";
 import MentorAnalysis from "./pages/mentor/MentorAnalysis";
 import UserAnalysis from "./pages/user/UserAnalysis";
 import GoalSetter from "./pages/mentor/GoalSetter";
+import MentorDetailsPageView from "./pages/user/MentorDetailsPageView";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
@@ -154,6 +155,10 @@ ReactDOM.createRoot(document.getElementById("root")).render(
               <ShowMentorDetails />
             </ProtectedRoute>
           }
+        />
+        <Route
+          path="/user/mentor-details/:mentorId"
+          element={<MentorDetailsPageView />}
         />
         {/* Mentor Routes */}
         <Route

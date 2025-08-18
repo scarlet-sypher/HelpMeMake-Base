@@ -15,6 +15,7 @@ import {
   MessageSquare,
 } from "lucide-react";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const MentorSelectionModal = ({
   showMentorSelection,
@@ -31,6 +32,7 @@ const MentorSelectionModal = ({
   const [requestedMentorIds, setRequestedMentorIds] = useState([]);
   const [loadingRequests, setLoadingRequests] = useState(false);
   const [requestStatuses, setRequestStatuses] = useState({});
+  const navigate = useNavigate();
 
   // Fetch available mentors
   const fetchMentors = async () => {
@@ -103,6 +105,13 @@ const MentorSelectionModal = ({
   const handleRequestSent = (mentorId) => {
     setRequestedMentorIds((prev) => [...prev, mentorId.toString()]);
     setShowMentorSelection(false);
+  };
+
+  const handleViewMentorDetails = (mentorId) => {
+    // Pass the project in the navigation state
+    navigate(`/user/mentor-details/${mentorId}`, {
+      state: { project: project },
+    });
   };
 
   // Check if mentor has been requested
@@ -355,52 +364,66 @@ const MentorSelectionModal = ({
                       </div>
                     </div>
 
-                    {/* Action Button */}
+                    {/* Action Buttons */}
                     {isRequested ? (
-                      <div
-                        className={`w-full px-4 py-3 rounded-xl font-medium flex items-center justify-center space-x-2 ${
-                          requestStatuses[mentor._id]?.status === "accepted"
-                            ? "bg-green-500/20 border border-green-500/30 text-green-300"
-                            : requestStatuses[mentor._id]?.status === "rejected"
-                            ? "bg-red-500/20 border border-red-500/30 text-red-300"
-                            : "bg-yellow-500/20 border border-yellow-500/30 text-yellow-300"
-                        }`}
-                      >
-                        {requestStatuses[mentor._id]?.status === "accepted" && (
-                          <CheckCircle size={16} />
-                        )}
-                        {requestStatuses[mentor._id]?.status === "rejected" && (
-                          <XCircle size={16} />
-                        )}
-                        {requestStatuses[mentor._id]?.status === "pending" && (
-                          <Clock size={16} />
-                        )}
-                        <span>
-                          {requestStatuses[mentor._id]?.status === "accepted" &&
-                            "Request Accepted"}
-                          {requestStatuses[mentor._id]?.status === "rejected" &&
-                            "Request Rejected"}
-                          {requestStatuses[mentor._id]?.status === "pending" &&
-                            "Request Pending"}
-                        </span>
+                      <div className="space-y-2">
+                        <div
+                          className={`w-full px-4 py-3 rounded-xl font-medium flex items-center justify-center space-x-2 ${
+                            requestStatuses[mentor._id]?.status === "accepted"
+                              ? "bg-green-500/20 border border-green-500/30 text-green-300"
+                              : requestStatuses[mentor._id]?.status ===
+                                "rejected"
+                              ? "bg-red-500/20 border border-red-500/30 text-red-300"
+                              : "bg-yellow-500/20 border border-yellow-500/30 text-yellow-300"
+                          }`}
+                        >
+                          {requestStatuses[mentor._id]?.status ===
+                            "accepted" && <CheckCircle size={16} />}
+                          {requestStatuses[mentor._id]?.status ===
+                            "rejected" && <XCircle size={16} />}
+                          {requestStatuses[mentor._id]?.status ===
+                            "pending" && <Clock size={16} />}
+                          <span>
+                            {requestStatuses[mentor._id]?.status ===
+                              "accepted" && "Request Accepted"}
+                            {requestStatuses[mentor._id]?.status ===
+                              "rejected" && "Request Rejected"}
+                            {requestStatuses[mentor._id]?.status ===
+                              "pending" && "Request Pending"}
+                          </span>
+                        </div>
+                        <button
+                          onClick={() => handleViewMentorDetails(mentor._id)}
+                          className="w-full px-4 py-2 bg-white/10 border border-white/20 text-white rounded-xl hover:bg-white/20 transition-all text-sm"
+                        >
+                          View Details
+                        </button>
                       </div>
                     ) : (
-                      <button
-                        onClick={() => setSelectedMentor(mentor)}
-                        disabled={!mentor.isAvailable}
-                        className={`w-full px-4 py-3 rounded-xl font-semibold transition-all transform hover:scale-105 shadow-lg flex items-center justify-center space-x-2 ${
-                          mentor.isAvailable
-                            ? "bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white"
-                            : "bg-gray-500/20 text-gray-400 cursor-not-allowed transform-none"
-                        }`}
-                      >
-                        <Send size={16} />
-                        <span>
-                          {mentor.isAvailable
-                            ? "Send Request"
-                            : "Not Available"}
-                        </span>
-                      </button>
+                      <div className="space-y-2">
+                        <button
+                          onClick={() => setSelectedMentor(mentor)}
+                          disabled={!mentor.isAvailable}
+                          className={`w-full px-4 py-3 rounded-xl font-semibold transition-all transform hover:scale-105 shadow-lg flex items-center justify-center space-x-2 ${
+                            mentor.isAvailable
+                              ? "bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white"
+                              : "bg-gray-500/20 text-gray-400 cursor-not-allowed transform-none"
+                          }`}
+                        >
+                          <Send size={16} />
+                          <span>
+                            {mentor.isAvailable
+                              ? "Send Request"
+                              : "Not Available"}
+                          </span>
+                        </button>
+                        <button
+                          onClick={() => handleViewMentorDetails(mentor._id)}
+                          className="w-full px-4 py-2 bg-white/10 border border-white/20 text-white rounded-xl hover:bg-white/20 transition-all text-sm"
+                        >
+                          View Details
+                        </button>
+                      </div>
                     )}
                   </div>
                 );
