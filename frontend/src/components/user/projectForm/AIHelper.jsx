@@ -1,169 +1,197 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import { 
-  Image, 
-  FileText, 
-  Wand2, 
-  Copy, 
-  Download, 
-  Loader, 
-  CheckCircle, 
+import React, { useState } from "react";
+import axios from "axios";
+import {
+  Image,
+  FileText,
+  Wand2,
+  Copy,
+  Download,
+  Loader,
+  CheckCircle,
   AlertCircle,
   Sparkles,
   Eye,
   X,
-  AlertTriangle
-} from 'lucide-react';
+  AlertTriangle,
+} from "lucide-react";
 
 const AIHelper = ({ formData, setFormData }) => {
-  const [imagePrompt, setImagePrompt] = useState('');
-  const [descriptionPrompt, setDescriptionPrompt] = useState('');
-  const [generatedImage, setGeneratedImage] = useState('');
+  const [imagePrompt, setImagePrompt] = useState("");
+  const [descriptionPrompt, setDescriptionPrompt] = useState("");
+  const [generatedImage, setGeneratedImage] = useState("");
   const [generatedDescriptions, setGeneratedDescriptions] = useState({
-    short: '',
-    long: ''
+    short: "",
+    long: "",
   });
   const [loadingImage, setLoadingImage] = useState(false);
   const [loadingDescription, setLoadingDescription] = useState(false);
   const [toast, setToast] = useState(null);
 
-  const showToast = (message, type = 'success') => {
+  const showToast = (message, type = "success") => {
     setToast({ message, type });
     setTimeout(() => setToast(null), 4000);
   };
 
   const handleImageGenerate = async () => {
     if (!imagePrompt.trim()) {
-        showToast('Please enter an image prompt', 'error');
-        return;
+      showToast("Please enter an image prompt", "error");
+      return;
     }
 
     // Clear previous image before generating new one
-    setGeneratedImage('');
+    setGeneratedImage("");
     if (formData.thumbnail) {
-      setFormData(prev => ({ ...prev, thumbnail: '' }));
+      setFormData((prev) => ({ ...prev, thumbnail: "" }));
     }
 
     setLoadingImage(true);
     try {
-        const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/ai/generate-image`, {
-        prompt: imagePrompt
-        }, {
-        withCredentials: true,
-        headers: {
-            'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/ai/generate-image`,
+        {
+          prompt: imagePrompt,
+        },
+        {
+          withCredentials: true,
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
         }
-        });
+      );
 
-        if (response.data.success) {
+      if (response.data.success) {
         // Set the generated image URL to both local state and form data
         setGeneratedImage(response.data.imageUrl);
-        setFormData(prev => ({ 
-            ...prev, 
-            thumbnail: response.data.imageUrl 
+        setFormData((prev) => ({
+          ...prev,
+          thumbnail: response.data.imageUrl,
         }));
-        
-        showToast('🎉 AI image generated successfully!');
-        }
+
+        showToast("🎉 AI image generated successfully!");
+      }
     } catch (error) {
-        console.error('Real image generation error:', error);
-        
-        // Handle specific error messages
-        if (error.response?.status === 400) {
-        showToast(error.response.data.message || 'Invalid prompt. Please try a different description.', 'error');
-        } else if (error.response?.status === 429) {
-        showToast('Daily AI image generation limit reached. Please try again tomorrow.', 'error');
-        } else if (error.response?.status === 503) {
-        showToast('AI image service temporarily unavailable. Please try again later.', 'error');
-        } else {
-        showToast('Failed to generate image. Please try again.', 'error');
-        }
+      console.error("Real image generation error:", error);
+
+      // Handle specific error messages
+      if (error.response?.status === 400) {
+        showToast(
+          error.response.data.message ||
+            "Invalid prompt. Please try a different description.",
+          "error"
+        );
+      } else if (error.response?.status === 429) {
+        showToast(
+          "Daily AI image generation limit reached. Please try again tomorrow.",
+          "error"
+        );
+      } else if (error.response?.status === 503) {
+        showToast(
+          "AI image service temporarily unavailable. Please try again later.",
+          "error"
+        );
+      } else {
+        showToast("Failed to generate image. Please try again.", "error");
+      }
     } finally {
-        setLoadingImage(false);
+      setLoadingImage(false);
     }
-    };
+  };
 
-    const handleImageDownload = async (imageUrl) => {
-      try {
-        const response = await fetch(imageUrl);
-        const blob = await response.blob();
-        const url = window.URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `ai-project-image-${Date.now()}.png`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        window.URL.revokeObjectURL(url);
-        showToast('Image downloaded successfully!');
-      } catch (error) {
-        showToast('Failed to download image', error);
-      }
-    };
-
-const handleDescriptionGenerate = async () => {
-  if (!descriptionPrompt.trim()) {
-    showToast('Please enter a description prompt', 'error');
-    return;
-  }
-
-  setLoadingDescription(true);
-  try {
-    const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/ai/generate-description`, {
-      prompt: descriptionPrompt,
-      type: 'both'
-    }, {
-      withCredentials: true,
-      headers: {
-        'Authorization': `Bearer ${localStorage.getItem('access_token')}`
-      }
-    });
-
-    if (response.data.success) {
-      setGeneratedDescriptions({
-        short: response.data.shortDescription,
-        long: response.data.longDescription
-      });
-      showToast('Descriptions generated successfully!');
+  const handleImageDownload = async (imageUrl) => {
+    try {
+      const response = await fetch(imageUrl);
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `ai-project-image-${Date.now()}.png`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+      showToast("Image downloaded successfully!");
+    } catch (error) {
+      showToast("Failed to download image", error);
     }
-  } catch (error) {
-    console.error('Description generation error:', error);
-    showToast(
-      error.response?.data?.message || 'Failed to generate descriptions',
-      'error'
-    );
-  } finally {
-    setLoadingDescription(false);
-  }
-};
+  };
+
+  const handleDescriptionGenerate = async () => {
+    if (!descriptionPrompt.trim()) {
+      showToast("Please enter a description prompt", "error");
+      return;
+    }
+
+    setLoadingDescription(true);
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/ai/generate-description`,
+        {
+          prompt: descriptionPrompt,
+          type: "both",
+        },
+        {
+          withCredentials: true,
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
+        }
+      );
+
+      if (response.data.success) {
+        setGeneratedDescriptions({
+          short: response.data.shortDescription,
+          long: response.data.longDescription,
+        });
+        showToast("Descriptions generated successfully!");
+      }
+    } catch (error) {
+      console.error("Description generation error:", error);
+      showToast(
+        error.response?.data?.message || "Failed to generate descriptions",
+        "error"
+      );
+    } finally {
+      setLoadingDescription(false);
+    }
+  };
 
   const copyToClipboard = (text) => {
     navigator.clipboard.writeText(text);
-    showToast('Copied to clipboard!');
+    showToast("Copied to clipboard!");
   };
 
   const applyToForm = (field, value) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-    showToast(`Applied to ${field === 'shortDescription' ? 'short' : 'full'} description!`);
+    setFormData((prev) => ({ ...prev, [field]: value }));
+    showToast(
+      `Applied to ${
+        field === "shortDescription" ? "short" : "full"
+      } description!`
+    );
   };
 
   const clearGeneratedImage = () => {
-    setGeneratedImage('');
-    setFormData(prev => ({ ...prev, thumbnail: '' }));
-    showToast('Image cleared');
+    setGeneratedImage("");
+    setFormData((prev) => ({ ...prev, thumbnail: "" }));
+    showToast("Image cleared");
   };
 
   return (
     <div className="space-y-6">
       {/* Toast Notification */}
       {toast && (
-        <div className={`fixed top-4 right-4 z-50 p-3 rounded-lg shadow-lg backdrop-blur-sm border ${
-          toast.type === 'success' 
-            ? 'bg-emerald-500/20 border-emerald-400/30 text-emerald-200' 
-            : 'bg-red-500/20 border-red-400/30 text-red-200'
-        }`}>
+        <div
+          className={`fixed top-4 right-4 z-50 p-3 rounded-lg shadow-lg backdrop-blur-sm border ${
+            toast.type === "success"
+              ? "bg-emerald-500/20 border-emerald-400/30 text-emerald-200"
+              : "bg-red-500/20 border-red-400/30 text-red-200"
+          }`}
+        >
           <div className="flex items-center text-sm">
-            {toast.type === 'success' ? <CheckCircle size={16} className="mr-2" /> : <AlertCircle size={16} className="mr-2" />}
+            {toast.type === "success" ? (
+              <CheckCircle size={16} className="mr-2" />
+            ) : (
+              <AlertCircle size={16} className="mr-2" />
+            )}
             {toast.message}
           </div>
         </div>
@@ -176,8 +204,12 @@ const handleDescriptionGenerate = async () => {
             <Image className="text-white" size={20} />
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-white">AI Image Generator</h3>
-            <p className="text-blue-200 text-sm">Generate a custom image for your project using AI</p>
+            <h3 className="text-lg font-semibold text-white">
+              AI Image Generator
+            </h3>
+            <p className="text-blue-200 text-sm">
+              Generate a custom image for your project using AI
+            </p>
           </div>
         </div>
 
@@ -187,8 +219,12 @@ const handleDescriptionGenerate = async () => {
             {loadingImage ? (
               <div className="text-center text-white">
                 <Loader className="animate-spin mx-auto mb-3" size={32} />
-                <p className="text-sm font-medium">Generating your AI image...</p>
-                <p className="text-xs text-white/60 mt-1">This may take 10-30 seconds</p>
+                <p className="text-sm font-medium">
+                  Generating your AI image...
+                </p>
+                <p className="text-xs text-white/60 mt-1">
+                  This may take 10-30 seconds
+                </p>
               </div>
             ) : generatedImage || formData.thumbnail ? (
               <div className="w-full">
@@ -199,17 +235,26 @@ const handleDescriptionGenerate = async () => {
                   </span>
                   <div className="flex gap-2">
                     <button
-                      onClick={() => window.open(generatedImage || formData.thumbnail, '_blank')}
+                      onClick={() =>
+                        window.open(
+                          generatedImage || formData.thumbnail,
+                          "_blank"
+                        )
+                      }
                       className="p-1 text-blue-300 hover:text-white transition-colors"
                       title="View full image"
                     >
                       <Eye size={16} />
                     </button>
                     <button
-                        onClick={() => handleImageDownload(generatedImage || formData.thumbnail)}
-                        className="p-1 text-green-300 hover:text-white transition-colors"
-                        title="Download image"
-                      >
+                      onClick={() =>
+                        handleImageDownload(
+                          generatedImage || formData.thumbnail
+                        )
+                      }
+                      className="p-1 text-green-300 hover:text-white transition-colors"
+                      title="Download image"
+                    >
                       <Download size={16} />
                     </button>
                     <button
@@ -226,21 +271,26 @@ const handleDescriptionGenerate = async () => {
                   alt="AI generated project thumbnail"
                   className="w-full h-48 object-cover rounded-lg border border-white/20"
                   onError={(e) => {
-                    e.target.src = '/uploads/public/default.jpg';
+                    e.target.src = "/uploads/public/default.jpg";
                   }}
                 />
                 <div className="mt-2 p-2 bg-green-500/20 rounded-lg border border-green-400/30">
                   <p className="text-green-200 text-xs flex items-center">
                     <CheckCircle size={12} className="mr-1" />
-                    <strong>AI image generated and applied!</strong> This image will be used as your project thumbnail.
+                    <strong>AI image generated and applied!</strong> This image
+                    will be used as your project thumbnail.
                   </p>
                 </div>
               </div>
             ) : (
               <div className="text-center text-white/60">
                 <Sparkles size={32} className="mx-auto mb-2 opacity-50" />
-                <p className="text-sm">Generate a custom AI image for your project</p>
-                <p className="text-xs text-white/40 mt-1">Powered by Google Gemini AI</p>
+                <p className="text-sm">
+                  Generate a custom AI image for your project
+                </p>
+                <p className="text-xs text-white/40 mt-1">
+                  Powered by Google Gemini AI
+                </p>
               </div>
             )}
           </div>
@@ -281,10 +331,15 @@ const handleDescriptionGenerate = async () => {
         {/* Developer Warning Note */}
         <div className="mt-4 p-3 bg-amber-500/10 rounded-lg border border-amber-400/20">
           <div className="flex items-start">
-            <AlertTriangle size={16} className="text-amber-400 mr-2 mt-0.5 flex-shrink-0" />
+            <AlertTriangle
+              size={16}
+              className="text-amber-400 mr-2 mt-0.5 flex-shrink-0"
+            />
             <div>
               <p className="text-amber-200 text-xs">
-                <strong>Message from Scarlet-Sypher (Developer):</strong> This feature uses limited AI image generations per day. Please use it responsibly and avoid excessive regeneration.
+                <strong>Message from Scarlet-Sypher (Developer):</strong> This
+                feature uses limited AI image generations per day. Please use it
+                responsibly and avoid excessive regeneration.
               </p>
             </div>
           </div>
@@ -298,8 +353,12 @@ const handleDescriptionGenerate = async () => {
             <FileText className="text-white" size={20} />
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-white">Description Generator</h3>
-            <p className="text-blue-200 text-sm">Generate project descriptions using AI</p>
+            <h3 className="text-lg font-semibold text-white">
+              Description Generator
+            </h3>
+            <p className="text-blue-200 text-sm">
+              Generate project descriptions using AI
+            </p>
           </div>
         </div>
 
@@ -309,7 +368,9 @@ const handleDescriptionGenerate = async () => {
           {generatedDescriptions.short && (
             <div className="bg-white/5 rounded-xl p-4 border border-white/20">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-white font-medium text-sm">Short Description:</span>
+                <span className="text-white font-medium text-sm">
+                  Short Description:
+                </span>
                 <div className="flex gap-2">
                   <button
                     onClick={() => copyToClipboard(generatedDescriptions.short)}
@@ -319,14 +380,21 @@ const handleDescriptionGenerate = async () => {
                     <Copy size={16} />
                   </button>
                   <button
-                    onClick={() => applyToForm('shortDescription', generatedDescriptions.short)}
+                    onClick={() =>
+                      applyToForm(
+                        "shortDescription",
+                        generatedDescriptions.short
+                      )
+                    }
                     className="px-2 py-1 text-xs bg-blue-500/20 text-blue-200 rounded border border-blue-400/30 hover:bg-blue-500/30 transition-colors"
                   >
                     Apply
                   </button>
                 </div>
               </div>
-              <p className="text-blue-200 text-sm leading-relaxed">{generatedDescriptions.short}</p>
+              <p className="text-blue-200 text-sm leading-relaxed">
+                {generatedDescriptions.short}
+              </p>
             </div>
           )}
 
@@ -334,7 +402,9 @@ const handleDescriptionGenerate = async () => {
           {generatedDescriptions.long && (
             <div className="bg-white/5 rounded-xl p-4 border border-white/20">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-white font-medium text-sm">Long Description:</span>
+                <span className="text-white font-medium text-sm">
+                  Long Description:
+                </span>
                 <div className="flex gap-2">
                   <button
                     onClick={() => copyToClipboard(generatedDescriptions.long)}
@@ -344,14 +414,18 @@ const handleDescriptionGenerate = async () => {
                     <Copy size={16} />
                   </button>
                   <button
-                    onClick={() => applyToForm('fullDescription', generatedDescriptions.long)}
+                    onClick={() =>
+                      applyToForm("fullDescription", generatedDescriptions.long)
+                    }
                     className="px-2 py-1 text-xs bg-blue-500/20 text-blue-200 rounded border border-blue-400/30 hover:bg-blue-500/30 transition-colors"
                   >
                     Apply
                   </button>
                 </div>
               </div>
-              <p className="text-blue-200 text-sm leading-relaxed">{generatedDescriptions.long}</p>
+              <p className="text-blue-200 text-sm leading-relaxed">
+                {generatedDescriptions.long}
+              </p>
             </div>
           )}
 
@@ -360,7 +434,9 @@ const handleDescriptionGenerate = async () => {
             <div className="bg-white/5 rounded-xl p-4 min-h-[80px] flex items-center justify-center border-2 border-dashed border-white/20">
               <div className="text-center text-white/60">
                 <FileText size={24} className="mx-auto mb-2 opacity-50" />
-                <p className="text-sm">Generated descriptions will appear here</p>
+                <p className="text-sm">
+                  Generated descriptions will appear here
+                </p>
               </div>
             </div>
           )}

@@ -25,10 +25,17 @@ const Toast = ({ message, type, isVisible, onClose }) => {
 
   return (
     <div className="fixed top-4 right-4 z-50 animate-slide-in">
-      <div className={`p-4 rounded-xl border backdrop-blur-sm shadow-lg max-w-sm transition-all duration-500 ${colors[type]}`}>
+      <div
+        className={`p-4 rounded-xl border backdrop-blur-sm shadow-lg max-w-sm transition-all duration-500 ${colors[type]}`}
+      >
         <div className="flex items-center gap-3">
           <span className="font-medium text-sm">{message}</span>
-          <button onClick={onClose} className="ml-auto text-current hover:opacity-70 transition-opacity">×</button>
+          <button
+            onClick={onClose}
+            className="ml-auto text-current hover:opacity-70 transition-opacity"
+          >
+            ×
+          </button>
         </div>
       </div>
     </div>
@@ -38,18 +45,22 @@ const Toast = ({ message, type, isVisible, onClose }) => {
 export default function VerifyOTP() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const email = searchParams.get('email');
-  
-  const [otp, setOtp] = useState(['', '', '', '', '', '']);
+  const email = searchParams.get("email");
+
+  const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isResending, setIsResending] = useState(false);
-  const [toast, setToast] = useState({ message: "", type: "", isVisible: false });
+  const [toast, setToast] = useState({
+    message: "",
+    type: "",
+    isVisible: false,
+  });
   const [particles, setParticles] = useState([]);
   const [countdown, setCountdown] = useState(0);
 
   useEffect(() => {
     if (!email) {
-      navigate('/signup');
+      navigate("/signup");
       return;
     }
 
@@ -85,7 +96,7 @@ export default function VerifyOTP() {
 
   const handleOtpChange = (index, value) => {
     if (value.length > 1) return;
-    
+
     const newOtp = [...otp];
     newOtp[index] = value;
     setOtp(newOtp);
@@ -98,7 +109,7 @@ export default function VerifyOTP() {
   };
 
   const handleKeyDown = (index, e) => {
-    if (e.key === 'Backspace' && !otp[index] && index > 0) {
+    if (e.key === "Backspace" && !otp[index] && index > 0) {
       const prevInput = document.getElementById(`otp-${index - 1}`);
       if (prevInput) prevInput.focus();
     }
@@ -106,8 +117,8 @@ export default function VerifyOTP() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    const otpString = otp.join('');
+
+    const otpString = otp.join("");
     if (otpString.length !== 6) {
       showToast("Please enter all 6 digits", "error");
       return;
@@ -116,23 +127,26 @@ export default function VerifyOTP() {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/verify-otp`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({
-          email,
-          otp: otpString,
-        }),
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/auth/verify-otp`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify({
+            email,
+            otp: otpString,
+          }),
+        }
+      );
 
       const data = await response.json();
 
       if (response.ok) {
         showToast("✅ Email verified successfully!", "success");
-        
+
         setTimeout(() => {
           if (data.requiresRoleSelection) {
             navigate("/select-role");
@@ -142,9 +156,8 @@ export default function VerifyOTP() {
         }, 2000);
       } else {
         showToast(data.message || "Invalid verification code", "error");
-        setOtp(['', '', '', '', '', '']);
+        setOtp(["", "", "", "", "", ""]);
       }
-
     } catch (error) {
       console.error("OTP verification error:", error);
       showToast("Something went wrong. Please try again.", "error");
@@ -155,29 +168,31 @@ export default function VerifyOTP() {
 
   const handleResendOTP = async () => {
     if (countdown > 0) return;
-    
+
     setIsResending(true);
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/resend-otp`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({ email }),
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/auth/resend-otp`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify({ email }),
+        }
+      );
 
       const data = await response.json();
 
       if (response.ok) {
         showToast("📧 New verification code sent!", "success");
         setCountdown(60); // 60 second cooldown
-        setOtp(['', '', '', '', '', '']);
+        setOtp(["", "", "", "", "", ""]);
       } else {
         showToast(data.message || "Failed to resend code", "error");
       }
-
     } catch (error) {
       console.error("Resend OTP error:", error);
       showToast("Failed to resend code. Please try again.", "error");
@@ -198,8 +213,14 @@ export default function VerifyOTP() {
       {/* Animated Background */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-10 left-10 w-32 h-32 sm:w-48 sm:h-48 lg:w-64 lg:h-64 bg-emerald-500/10 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-10 right-10 w-48 h-48 sm:w-64 sm:h-64 lg:w-80 lg:h-80 bg-purple-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "1s" }}></div>
-        <div className="absolute top-1/2 left-1/4 w-32 h-32 sm:w-48 sm:h-48 bg-cyan-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "2s" }}></div>
+        <div
+          className="absolute bottom-10 right-10 w-48 h-48 sm:w-64 sm:h-64 lg:w-80 lg:h-80 bg-purple-500/10 rounded-full blur-3xl animate-pulse"
+          style={{ animationDelay: "1s" }}
+        ></div>
+        <div
+          className="absolute top-1/2 left-1/4 w-32 h-32 sm:w-48 sm:h-48 bg-cyan-500/10 rounded-full blur-3xl animate-pulse"
+          style={{ animationDelay: "2s" }}
+        ></div>
 
         {particles.map((particle) => (
           <div
@@ -221,12 +242,13 @@ export default function VerifyOTP() {
       {/* Main Content */}
       <div className="relative z-10 min-h-screen flex items-center justify-center px-4 py-8">
         <div className="bg-slate-800/30 backdrop-blur-xl rounded-3xl shadow-2xl p-6 sm:p-8 lg:p-10 w-full max-w-lg border border-slate-700/50 hover:border-emerald-500/30 hover:shadow-emerald-500/10 transition-all duration-300">
-          
           {/* Header */}
           <div className="text-center mb-8 space-y-4">
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500/10 rounded-full border border-emerald-500/20 mb-4">
               <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
-              <span className="text-emerald-300 text-sm font-medium">Email Verification</span>
+              <span className="text-emerald-300 text-sm font-medium">
+                Email Verification
+              </span>
             </div>
 
             <div className="flex items-center justify-center gap-3 mb-4">
@@ -242,13 +264,18 @@ export default function VerifyOTP() {
                 <h1 className="text-3xl lg:text-4xl font-bold bg-gradient-to-r from-white via-emerald-200 to-cyan-300 bg-clip-text text-transparent">
                   HelpMeMake
                 </h1>
-                <p className="text-xs lg:text-sm text-slate-400">Code. Learn. Grow.</p>
+                <p className="text-xs lg:text-sm text-slate-400">
+                  Code. Learn. Grow.
+                </p>
               </div>
             </div>
 
-            <h2 className="text-2xl font-bold text-white mb-2">Verify Your Email</h2>
+            <h2 className="text-2xl font-bold text-white mb-2">
+              Verify Your Email
+            </h2>
             <p className="text-slate-300 leading-relaxed">
-              We've sent a 6-digit verification code to<br />
+              We've sent a 6-digit verification code to
+              <br />
               <span className="text-emerald-400 font-semibold">{email}</span>
             </p>
 
@@ -278,13 +305,12 @@ export default function VerifyOTP() {
           {/* OTP Form */}
           <div className="bg-slate-800/40 rounded-2xl p-6 border border-slate-700/50 backdrop-blur-sm hover:border-emerald-500/30 transition-all duration-300">
             <form onSubmit={handleSubmit} className="space-y-6">
-              
               {/* OTP Input Fields */}
               <div className="space-y-4">
                 <label className="block text-sm font-semibold text-slate-200 text-center">
                   Enter Verification Code
                 </label>
-                
+
                 <div className="flex justify-center gap-3">
                   {otp.map((digit, index) => (
                     <input
@@ -295,7 +321,12 @@ export default function VerifyOTP() {
                       pattern="[0-9]*"
                       maxLength="1"
                       value={digit}
-                      onChange={(e) => handleOtpChange(index, e.target.value.replace(/[^0-9]/g, ''))}
+                      onChange={(e) =>
+                        handleOtpChange(
+                          index,
+                          e.target.value.replace(/[^0-9]/g, "")
+                        )
+                      }
                       onKeyDown={(e) => handleKeyDown(index, e)}
                       className="w-12 h-12 sm:w-14 sm:h-14 text-center text-xl font-bold bg-slate-800/50 border border-slate-700 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300 backdrop-blur-sm hover:bg-slate-800/70"
                       disabled={isSubmitting}
@@ -307,7 +338,7 @@ export default function VerifyOTP() {
               {/* Submit Button */}
               <button
                 type="submit"
-                disabled={isSubmitting || otp.join('').length !== 6}
+                disabled={isSubmitting || otp.join("").length !== 6}
                 className="w-full bg-gradient-to-r from-emerald-600 via-green-600 to-teal-600 hover:from-emerald-700 hover:via-green-700 hover:to-teal-700 text-white font-bold py-4 px-8 rounded-xl transition-all duration-300 transform hover:scale-105 hover:shadow-2xl hover:shadow-emerald-500/25 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 relative overflow-hidden group"
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
@@ -325,7 +356,6 @@ export default function VerifyOTP() {
                   )}
                 </span>
               </button>
-
             </form>
           </div>
 
@@ -333,7 +363,9 @@ export default function VerifyOTP() {
           <div className="text-center mt-6 space-y-4">
             <div className="flex items-center">
               <div className="flex-1 border-t border-slate-700/50"></div>
-              <span className="px-4 text-slate-400 text-sm font-medium">Didn't receive the code?</span>
+              <span className="px-4 text-slate-400 text-sm font-medium">
+                Didn't receive the code?
+              </span>
               <div className="flex-1 border-t border-slate-700/50"></div>
             </div>
 
@@ -367,14 +399,13 @@ export default function VerifyOTP() {
             <p className="text-slate-400 text-sm">
               Wrong email address?{" "}
               <button
-                onClick={() => navigate('/signup')}
+                onClick={() => navigate("/signup")}
                 className="text-emerald-400 hover:text-emerald-300 font-semibold transition-all duration-300 hover:underline"
               >
                 Go back to signup
               </button>
             </p>
           </div>
-
         </div>
       </div>
 

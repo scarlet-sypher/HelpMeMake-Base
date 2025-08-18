@@ -1,5 +1,16 @@
 import { useState, useEffect } from "react";
-import {ChevronRight,Code,Users,Zap,Shield,Eye,EyeOff,CheckCircle,XCircle,AlertCircle } from "lucide-react";
+import {
+  ChevronRight,
+  Code,
+  Users,
+  Zap,
+  Shield,
+  Eye,
+  EyeOff,
+  CheckCircle,
+  XCircle,
+  AlertCircle,
+} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
@@ -55,32 +66,38 @@ const heroImages = [
   {
     id: 1,
     title: "Join Us",
-    subtitle: "Start your journey with expert mentors and build amazing projects",
-    image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=500&h=600&fit=crop&crop=faces",
+    subtitle:
+      "Start your journey with expert mentors and build amazing projects",
+    image:
+      "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=500&h=600&fit=crop&crop=faces",
   },
   {
     id: 2,
     title: "Learn",
     subtitle: "Connect with industry professionals and accelerate your growth",
-    image: "https://images.unsplash.com/photo-1531482615713-2afd69097998?w=500&h=600&fit=crop&crop=faces",
+    image:
+      "https://images.unsplash.com/photo-1531482615713-2afd69097998?w=500&h=600&fit=crop&crop=faces",
   },
   {
     id: 3,
     title: "Build",
     subtitle: "Transform your innovative ideas into reality with guidance",
-    image: "https://images.unsplash.com/photo-1552664730-d307ca884978?w=500&h=600&fit=crop&crop=center",
+    image:
+      "https://images.unsplash.com/photo-1552664730-d307ca884978?w=500&h=600&fit=crop&crop=center",
   },
   {
     id: 4,
     title: "Grow",
     subtitle: "Fast-track your career with personalized mentorship",
-    image: "https://images.unsplash.com/photo-1517180102446-f3ece451e9d8?w=500&h=600&fit=crop&crop=center",
+    image:
+      "https://images.unsplash.com/photo-1517180102446-f3ece451e9d8?w=500&h=600&fit=crop&crop=center",
   },
   {
     id: 5,
     title: "Succeed",
     subtitle: "Achieve excellence through collaborative learning",
-    image: "https://images.unsplash.com/photo-1556075798-4825dfaaf498?w=500&h=600&fit=crop&crop=faces",
+    image:
+      "https://images.unsplash.com/photo-1556075798-4825dfaaf498?w=500&h=600&fit=crop&crop=faces",
   },
 ];
 
@@ -152,17 +169,19 @@ const PasswordField = ({
   );
 };
 
-
-
 export default function Signup() {
-  const [form, setForm] = useState({ 
-    email: "", 
-    password: "", 
+  const [form, setForm] = useState({
+    email: "",
+    password: "",
     confirmPassword: "",
-    agreeToTerms: false
+    agreeToTerms: false,
   });
   const [errors, setErrors] = useState({});
-  const [toast, setToast] = useState({ message: "", type: "", isVisible: false });
+  const [toast, setToast] = useState({
+    message: "",
+    type: "",
+    isVisible: false,
+  });
   const [particles, setParticles] = useState([]);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
@@ -203,26 +222,25 @@ export default function Signup() {
     setToast({ ...toast, isVisible: false });
   };
 
-  
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
-    const error = urlParams.get('error');
-    
+    const error = urlParams.get("error");
+
     if (error) {
       switch (error) {
-        case 'authentication_failed':
+        case "authentication_failed":
           showToast("Authentication failed. Please try again.", "error");
           break;
-        case 'google_auth_failed':
+        case "google_auth_failed":
           showToast("Google authentication failed. Please try again.", "error");
           break;
-        case 'server_error':
+        case "server_error":
           showToast("Server error occurred. Please try again later.", "error");
           break;
         default:
           showToast("An error occurred during authentication.", "error");
       }
-      
+
       // Clean up URL
       window.history.replaceState({}, document.title, window.location.pathname);
     }
@@ -230,9 +248,9 @@ export default function Signup() {
 
   function handleChange(e) {
     const { name, value, type, checked } = e.target;
-    setForm({ 
-      ...form, 
-      [name]: type === "checkbox" ? checked : value 
+    setForm({
+      ...form,
+      [name]: type === "checkbox" ? checked : value,
     });
 
     // Clear errors when user starts typing
@@ -257,7 +275,8 @@ export default function Signup() {
     } else if (form.password.length < 8) {
       newErrors.password = "Password must be at least 8 characters long";
     } else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(form.password)) {
-      newErrors.password = "Password must contain at least one uppercase letter, one lowercase letter, and one number";
+      newErrors.password =
+        "Password must contain at least one uppercase letter, one lowercase letter, and one number";
     }
 
     // Confirm password validation
@@ -287,25 +306,28 @@ export default function Signup() {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/signup`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({
-          email: form.email,
-          password: form.password,
-          name: form.name || form.email.split('@')[0] // Extract name from email if not provided
-        }),
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/auth/signup`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify({
+            email: form.email,
+            password: form.password,
+            name: form.name || form.email.split("@")[0], // Extract name from email if not provided
+          }),
+        }
+      );
 
       const data = await response.json();
 
       if (response.ok) {
         if (data.requiresVerification) {
           showToast("📧 Verification code sent! Check your email.", "success");
-          
+
           // Navigate to OTP verification page
           setTimeout(() => {
             navigate(`/verify-otp?email=${encodeURIComponent(form.email)}`);
@@ -319,7 +341,6 @@ export default function Signup() {
       } else {
         showToast(data.message || "Failed to create account", "error");
       }
-
     } catch (error) {
       console.error("Signup error:", error);
       showToast("Something went wrong. Please try again.", "error");
@@ -333,7 +354,6 @@ export default function Signup() {
       // Redirect to backend Google OAuth route
       window.location.href = `${import.meta.env.VITE_API_URL}/auth/google`;
     } else if (provider === "GitHub") {
-    
       window.location.href = `${import.meta.env.VITE_API_URL}/auth/github`;
     }
   }
@@ -646,7 +666,10 @@ function SignupForm({
                   className="w-5 h-5 rounded border-2 border-slate-600 bg-slate-800/50 checked:bg-emerald-500 checked:border-emerald-500 focus:ring-2 focus:ring-emerald-500 focus:ring-offset-0 transition-all duration-200"
                 />
               </div>
-              <label htmlFor="agreeToTerms" className="text-slate-300 text-sm leading-relaxed cursor-pointer">
+              <label
+                htmlFor="agreeToTerms"
+                className="text-slate-300 text-sm leading-relaxed cursor-pointer"
+              >
                 I agree to the{" "}
                 <a
                   href="/terms"
@@ -684,7 +707,9 @@ function SignupForm({
               {isSubmitting ? (
                 <>
                   <div className="w-4 h-4 lg:w-5 lg:h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                  <span className="text-sm lg:text-base">Creating Account...</span>
+                  <span className="text-sm lg:text-base">
+                    Creating Account...
+                  </span>
                 </>
               ) : (
                 <>
@@ -723,7 +748,8 @@ function SignupForm({
           onClick={() => handleOAuth("GitHub")}
           className="flex-1 bg-slate-800/40 hover:bg-slate-800/60 text-white px-4 py-3 rounded-xl 
           transition-all duration-300 font-semibold border border-slate-700/50 hover:border-slate-600/70 
-          transform hover:scale-105 active:scale-95 flex items-center justify-center gap-3 backdrop-blur-sm group">
+          transform hover:scale-105 active:scale-95 flex items-center justify-center gap-3 backdrop-blur-sm group"
+        >
           <div className="w-4 h-4 lg:w-5 lg:h-5 bg-gradient-to-r from-gray-800 to-gray-900 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-200">
             <span className="text-white text-xs">🐙</span>
           </div>
