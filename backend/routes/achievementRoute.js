@@ -1,12 +1,13 @@
 const express = require("express");
 const router = express.Router();
-const { requireUser } = require("../middleware/roleAuth");
+const { requireUser, requireUserOrMentor } = require("../middleware/roleAuth");
 
 const {
   recalculateAchievements,
   getAchievementSummary,
   updateTestValues,
   getBadgesData,
+  getUserBadgesData,
 } = require("../controller/achievementController");
 
 // Get achievement summary for the logged-in learner
@@ -19,5 +20,7 @@ router.post("/recalculate", requireUser, recalculateAchievements);
 router.post("/test-update", requireUser, updateTestValues);
 
 router.get("/badges", requireUser, getBadgesData);
+
+router.get("/user/:userId/badges", requireUserOrMentor, getUserBadgesData);
 
 module.exports = router;
