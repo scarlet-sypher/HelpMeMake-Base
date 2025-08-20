@@ -35,11 +35,15 @@ import {
   Send,
   HandHeart,
   Loader2,
-  Mail, // NEW: For show requests button
-  BellRing, // NEW: For notification
+  Mail,
+  BellRing,
+  X,
+  CheckCircle2,
+  AlertTriangle,
+  Info,
 } from "lucide-react";
 import PitchModal from "../../components/mentor/mentorProject/PitchModal";
-import ShowRequestsModal from "../../components/mentor/mentorProject/ShowRequestsModal"; // NEW
+import ShowRequestsModal from "../../components/mentor/mentorProject/ShowRequestsModal";
 
 const MentorDetailedProjectView = () => {
   const { id } = useParams();
@@ -53,20 +57,39 @@ const MentorDetailedProjectView = () => {
     isRestricted: false,
     activeProjectId: null,
   });
+  const [toast, setToast] = useState({
+    open: false,
+    message: "",
+    status: "info",
+  });
 
   const [showAcceptConfirm, setShowAcceptConfirm] = useState(false);
   const [confirmationText, setConfirmationText] = useState("");
 
   const [hasAppliedForProject, setHasAppliedForProject] = useState(false);
 
-  // NEW: Request-related state
   const [showRequestsModal, setShowRequestsModal] = useState(false);
   const [hasRequests, setHasRequests] = useState(false);
   const [requestCount, setRequestCount] = useState(0);
 
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
-  // Category icons mapping
+  const showToast = ({ message, status = "info" }) => {
+    setToast({
+      open: true,
+      message,
+      status,
+    });
+
+    setTimeout(() => {
+      setToast((prev) => ({ ...prev, open: false }));
+    }, 4000);
+  };
+
+  const closeToast = () => {
+    setToast((prev) => ({ ...prev, open: false }));
+  };
+
   const getCategoryIcon = (category) => {
     const icons = {
       "Web Development": Monitor,
@@ -242,20 +265,27 @@ const MentorDetailedProjectView = () => {
       navigate(`/mentor/user/${project.learner.userId}`);
     } else {
       // Show user-friendly error instead of console.error
-      alert("Unable to view profile - user information not available");
+      showToast({
+        message: "Unable to view profile - user information not available",
+        status: "error",
+      });
     }
   };
 
   const handleMessageUser = () => {
-    // Dummy for now - you can implement messaging later
-    alert("Messaging feature coming soon!");
+    showToast({
+      message: "Messaging feature coming soon!",
+      status: "error",
+    });
   };
 
   const handleOpenPitchModal = () => {
     if (mentorStatus.isRestricted) {
-      alert(
-        "You already have a project in progress. Complete it before taking on new projects."
-      );
+      showToast({
+        message:
+          "You already have a project in progress. Complete it before taking on new projects.",
+        status: "error",
+      });
       return;
     }
     setShowPitchModal(true);
@@ -280,9 +310,23 @@ const MentorDetailedProjectView = () => {
 
   const handleTakeProject = async () => {
     if (mentorStatus.isRestricted) {
-      alert(
-        "You already have a project in progress. Complete it before taking on new projects."
-      );
+      showToast({
+        message:
+          "You already have a project in progress. Complete it before taking on new projects.",
+        status: "error",
+      });
+      return;
+    }
+
+    setShowAcceptConfirm(true);
+  };
+
+  const confirmTakeProject = async () => {
+    if (confirmationText !== "i m ready") {
+      showToast({
+        message: 'Please type exactly "i m ready" to confirm.',
+        status: "error",
+      });
       return;
     }
 
@@ -299,18 +343,33 @@ const MentorDetailedProjectView = () => {
       );
 
       if (response.data.success) {
-        alert("Project taken successfully!");
-        // Update mentor status
+        showToast({
+          message:
+            "Project accepted successfully! You can now start working on it.",
+          status: "success",
+        });
+
         setMentorStatus({
           hasActiveProject: true,
           isRestricted: true,
           activeProjectId: id,
         });
-        navigate("/mentor/projects");
+
+        setShowAcceptConfirm(false);
+        setConfirmationText("");
+
+        setTimeout(() => {
+          navigate("/mentor/my-apprentice");
+        }, 2000);
       }
     } catch (error) {
       console.error("Error taking project:", error);
-      alert(error.response?.data?.message || "Failed to take project");
+      showToast({
+        message:
+          error.response?.data?.message ||
+          "Failed to accept project. Please try again.",
+        status: "error",
+      });
     }
   };
 
@@ -348,6 +407,54 @@ const MentorDetailedProjectView = () => {
 
   const CategoryIcon = getCategoryIcon(project.category);
   const learner = project.learner || project.learnerId;
+
+  const Toast = () => {
+    if (!toast.open) return null;
+
+    const getToastStyles = (status) => {
+      const styles = {
+        success: "from-green-500 to-emerald-500 border-green-400/30",
+        error: "from-red-500 to-red-600 border-red-400/30",
+        info: "from-blue-500 to-cyan-500 border-blue-400/30",
+      };
+      return styles[status] || styles.info;
+    };
+
+    const getToastIcon = (status) => {
+      const icons = {
+        success: CheckCircle2,
+        error: AlertTriangle,
+        info: Info,
+      };
+      const Icon = icons[status] || Info;
+      return <Icon size={20} className="text-white flex-shrink-0" />;
+    };
+
+    return (
+      <div className="fixed top-4 right-4 z-[60] animate-in slide-in-from-right-5 fade-in duration-300">
+        <div
+          className={`bg-gradient-to-r ${getToastStyles(
+            toast.status
+          )} backdrop-blur-sm rounded-2xl shadow-2xl border p-4 min-w-[300px] max-w-md`}
+        >
+          <div className="flex items-start space-x-3">
+            {getToastIcon(toast.status)}
+            <div className="flex-1 min-w-0">
+              <p className="text-white text-sm font-medium leading-relaxed break-words">
+                {toast.message}
+              </p>
+            </div>
+            <button
+              onClick={closeToast}
+              className="text-white/70 hover:text-white transition-colors flex-shrink-0"
+            >
+              <X size={18} />
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800">
@@ -789,7 +896,7 @@ const MentorDetailedProjectView = () => {
                 {/* Take Project */}
                 <div className="relative group">
                   <button
-                    onClick={handleTakeProject}
+                    onClick={handleTakeProject} // This now shows confirmation modal
                     disabled={
                       !project.closingPrice || mentorStatus.isRestricted
                     }
@@ -854,15 +961,17 @@ const MentorDetailedProjectView = () => {
             project={project}
             onClose={() => setShowPitchModal(false)}
             API_URL={API_URL}
+            onToast={showToast}
           />
         )}
 
-        {/* NEW: Show Requests Modal */}
+        {/*Show Requests Modal */}
         {showRequestsModal && (
           <ShowRequestsModal
             project={project}
             onClose={() => setShowRequestsModal(false)}
             API_URL={API_URL}
+            showToast={showToast}
           />
         )}
 
@@ -872,16 +981,20 @@ const MentorDetailedProjectView = () => {
             <div className="relative bg-gradient-to-br from-slate-950 via-blue-950 to-indigo-950 rounded-3xl shadow-2xl border border-white/20 p-8 max-w-md w-full">
               <div className="relative z-10">
                 <h3 className="text-xl font-bold text-white mb-4">
-                  Confirm Acceptance
+                  Confirm Project Acceptance
                 </h3>
                 <p className="text-gray-300 mb-4">
-                  Type "i m ready" to confirm acceptance of this project:
+                  By accepting this project, you commit to complete it. Type{" "}
+                  <span className="text-cyan-400 font-semibold">
+                    "i m ready"
+                  </span>{" "}
+                  to confirm:
                 </p>
                 <input
                   type="text"
                   value={confirmationText}
                   onChange={(e) => setConfirmationText(e.target.value)}
-                  placeholder="Type here..."
+                  placeholder="Type exactly: i m ready"
                   className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all mb-4"
                 />
                 <div className="flex space-x-4">
@@ -906,6 +1019,7 @@ const MentorDetailedProjectView = () => {
             </div>
           </div>
         )}
+        <Toast />
       </div>
     </div>
   );

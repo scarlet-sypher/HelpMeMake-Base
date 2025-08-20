@@ -14,7 +14,7 @@ import {
   Clock,
   MessageSquare,
 } from "lucide-react";
-import { toast } from "react-toastify";
+
 import { useNavigate } from "react-router-dom";
 
 const MentorSelectionModal = ({
@@ -28,6 +28,7 @@ const MentorSelectionModal = ({
   project,
   API_URL,
   formatPrice,
+  onToast,
 }) => {
   const [requestedMentorIds, setRequestedMentorIds] = useState([]);
   const [loadingRequests, setLoadingRequests] = useState(false);
@@ -44,13 +45,13 @@ const MentorSelectionModal = ({
 
       if (response.data.success) {
         setMentors(response.data.mentors);
+        onToast({ message: "Mentors Found!!....", status: "success" });
       } else {
-        toast.error("Failed to load mentors");
+        onToast({ message: "Failed to load mentors", status: "error" });
       }
     } catch (error) {
       console.error("Error fetching mentors:", error);
-      toast.error("Error loading mentors");
-    } finally {
+      onToast({ message: "Error loading mentors", status: "error" });
       setMentorsLoading(false);
     }
   };

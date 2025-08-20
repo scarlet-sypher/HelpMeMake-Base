@@ -19,7 +19,6 @@ import {
   Clock,
   MessageCircle,
 } from "lucide-react";
-import { toast } from "react-toastify";
 
 const MentorAiSelectionModal = ({
   showAIMentorSelection,
@@ -29,6 +28,7 @@ const MentorAiSelectionModal = ({
   setSelectedMentor,
   API_URL,
   formatPrice,
+  onToast,
 }) => {
   const [aiMentors, setAiMentors] = useState([]);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -146,14 +146,23 @@ const MentorAiSelectionModal = ({
       if (response.data.success) {
         setAiMentors(response.data.mentors);
         setAnalysisComplete(true);
-        toast.success("🤖 AI has found the perfect mentors for you!");
+        onToast({
+          message: "🤖 AI has found the perfect mentors for you!",
+          status: "success",
+        });
       } else {
-        toast.error("AI analysis failed. Please try again.");
+        onToast({
+          message: "AI analysis failed. Please try again.",
+          status: "error",
+        });
         setShowAIMentorSelection(false);
       }
     } catch (error) {
       console.error("Error in AI mentor selection:", error);
-      toast.error("AI analysis failed. Please try manual selection.");
+      onToast({
+        message: "AI analysis failed. Please try manual selection.",
+        status: "error",
+      });
       setShowAIMentorSelection(false);
     } finally {
       setIsAnalyzing(false);
