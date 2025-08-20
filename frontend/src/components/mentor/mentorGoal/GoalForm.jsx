@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Target, Save, Edit3 } from "lucide-react";
 
-const GoalForm = ({ goal, onGoalUpdate }) => {
+const GoalForm = ({ goal, onGoalUpdate, showToast }) => {
   const [monthlyGoal, setMonthlyGoal] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -12,9 +12,8 @@ const GoalForm = ({ goal, onGoalUpdate }) => {
   }, [goal]);
 
   const handleSubmit = async () => {
-    
     if (!monthlyGoal || monthlyGoal <= 0) {
-      alert("Please enter a valid monthly goal amount");
+      showToast("Please enter a valid monthly goal amount", "error");
       return;
     }
 
@@ -49,17 +48,19 @@ const GoalForm = ({ goal, onGoalUpdate }) => {
               {goal && goal.monthlyGoal ? "Update Goal" : "Set Monthly Goal"}
             </h3>
             <p className="text-gray-300">
-              {goal && goal.monthlyGoal 
-                ? "Modify your current monthly earning target" 
-                : "Set your monthly earning target to start tracking progress"
-              }
+              {goal && goal.monthlyGoal
+                ? "Modify your current monthly earning target"
+                : "Set your monthly earning target to start tracking progress"}
             </p>
           </div>
         </div>
 
         <div className="space-y-6">
           <div>
-            <label htmlFor="monthlyGoal" className="block text-sm font-medium text-gray-300 mb-2">
+            <label
+              htmlFor="monthlyGoal"
+              className="block text-sm font-medium text-gray-300 mb-2"
+            >
               Monthly Goal Amount (₹)
             </label>
             <div className="relative">
@@ -85,57 +86,75 @@ const GoalForm = ({ goal, onGoalUpdate }) => {
 
           {/* Goal Suggestions */}
           <div>
-            <p className="text-sm font-medium text-gray-300 mb-3">Quick Select:</p>
+            <p className="text-sm font-medium text-gray-300 mb-3">
+              Quick Select:
+            </p>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-              {[2000, 5000, 10000, 15000, 25000, 35000, 50000, 75000].map((amount) => (
-                <button
-                  key={amount}
-                  type="button"
-                  onClick={() => setMonthlyGoal(amount.toString())}
-                  className={`p-3 rounded-lg border text-sm font-medium transition-all ${
-                    monthlyGoal === amount.toString()
-                      ? "bg-gradient-to-r from-cyan-500 to-teal-600 border-cyan-400 text-white"
-                      : "bg-slate-700/50 border-white/10 text-gray-300 hover:bg-slate-700 hover:border-white/20"
-                  }`}
-                >
-                  ₹{amount.toLocaleString()}
-                </button>
-              ))}
+              {[2000, 5000, 10000, 15000, 25000, 35000, 50000, 75000].map(
+                (amount) => (
+                  <button
+                    key={amount}
+                    type="button"
+                    onClick={() => setMonthlyGoal(amount.toString())}
+                    className={`p-3 rounded-lg border text-sm font-medium transition-all ${
+                      monthlyGoal === amount.toString()
+                        ? "bg-gradient-to-r from-cyan-500 to-teal-600 border-cyan-400 text-white"
+                        : "bg-slate-700/50 border-white/10 text-gray-300 hover:bg-slate-700 hover:border-white/20"
+                    }`}
+                  >
+                    ₹{amount.toLocaleString()}
+                  </button>
+                )
+              )}
             </div>
           </div>
 
           {/* Current vs New Goal Comparison */}
-          {goal && goal.monthlyGoal && monthlyGoal && monthlyGoal !== goal.monthlyGoal.toString() && (
-            <div className="bg-slate-700/30 rounded-xl p-4 border border-white/10">
-              <h4 className="text-sm font-medium text-gray-300 mb-3">Goal Comparison</h4>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="text-center">
-                  <div className="text-lg font-bold text-gray-300">₹{goal.monthlyGoal.toLocaleString()}</div>
-                  <div className="text-sm text-gray-400">Current Goal</div>
+          {goal &&
+            goal.monthlyGoal &&
+            monthlyGoal &&
+            monthlyGoal !== goal.monthlyGoal.toString() && (
+              <div className="bg-slate-700/30 rounded-xl p-4 border border-white/10">
+                <h4 className="text-sm font-medium text-gray-300 mb-3">
+                  Goal Comparison
+                </h4>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="text-center">
+                    <div className="text-lg font-bold text-gray-300">
+                      ₹{goal.monthlyGoal.toLocaleString()}
+                    </div>
+                    <div className="text-sm text-gray-400">Current Goal</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-lg font-bold text-cyan-400">
+                      ₹{parseInt(monthlyGoal).toLocaleString()}
+                    </div>
+                    <div className="text-sm text-cyan-300">New Goal</div>
+                  </div>
                 </div>
-                <div className="text-center">
-                  <div className="text-lg font-bold text-cyan-400">₹{parseInt(monthlyGoal).toLocaleString()}</div>
-                  <div className="text-sm text-cyan-300">New Goal</div>
+                <div className="mt-3 text-center">
+                  <span
+                    className={`text-sm font-medium ${
+                      parseInt(monthlyGoal) > goal.monthlyGoal
+                        ? "text-green-400"
+                        : parseInt(monthlyGoal) < goal.monthlyGoal
+                        ? "text-orange-400"
+                        : "text-gray-400"
+                    }`}
+                  >
+                    {parseInt(monthlyGoal) > goal.monthlyGoal
+                      ? `+₹${(
+                          parseInt(monthlyGoal) - goal.monthlyGoal
+                        ).toLocaleString()} increase`
+                      : parseInt(monthlyGoal) < goal.monthlyGoal
+                      ? `-₹${(
+                          goal.monthlyGoal - parseInt(monthlyGoal)
+                        ).toLocaleString()} decrease`
+                      : "No change"}
+                  </span>
                 </div>
               </div>
-              <div className="mt-3 text-center">
-                <span className={`text-sm font-medium ${
-                  parseInt(monthlyGoal) > goal.monthlyGoal 
-                    ? "text-green-400" 
-                    : parseInt(monthlyGoal) < goal.monthlyGoal 
-                    ? "text-orange-400" 
-                    : "text-gray-400"
-                }`}>
-                  {parseInt(monthlyGoal) > goal.monthlyGoal 
-                    ? `+₹${(parseInt(monthlyGoal) - goal.monthlyGoal).toLocaleString()} increase`
-                    : parseInt(monthlyGoal) < goal.monthlyGoal 
-                    ? `-₹${(goal.monthlyGoal - parseInt(monthlyGoal)).toLocaleString()} decrease`
-                    : "No change"
-                  }
-                </span>
-              </div>
-            </div>
-          )}
+            )}
 
           <div className="flex flex-col sm:flex-row gap-3">
             <button
@@ -152,11 +171,13 @@ const GoalForm = ({ goal, onGoalUpdate }) => {
               ) : (
                 <>
                   <Save size={20} />
-                  <span>{goal && goal.monthlyGoal ? "Update Goal" : "Set Goal"}</span>
+                  <span>
+                    {goal && goal.monthlyGoal ? "Update Goal" : "Set Goal"}
+                  </span>
                 </>
               )}
             </button>
-            
+
             {goal && goal.monthlyGoal && (
               <button
                 type="button"
@@ -173,10 +194,14 @@ const GoalForm = ({ goal, onGoalUpdate }) => {
         <div className="mt-6 p-4 bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-blue-400/20 rounded-xl">
           <h4 className="font-bold text-blue-300 mb-2">💡 Goal Setting Tips</h4>
           <ul className="text-blue-200 text-sm space-y-1">
-            <li>• Set realistic goals based on your current mentoring capacity</li>
+            <li>
+              • Set realistic goals based on your current mentoring capacity
+            </li>
             <li>• Consider seasonal variations in demand</li>
             <li>• Review and adjust your goal monthly based on performance</li>
-            <li>• Break down your goal into weekly targets for better tracking</li>
+            <li>
+              • Break down your goal into weekly targets for better tracking
+            </li>
           </ul>
         </div>
       </div>

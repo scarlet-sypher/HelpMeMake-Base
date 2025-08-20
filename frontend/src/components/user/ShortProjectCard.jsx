@@ -19,49 +19,24 @@ import {
   MessageSquare,
 } from "lucide-react";
 
-const ShortProjectCard = ({ project, onDelete }) => {
+const ShortProjectCard = ({ project, onDelete, onToast }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteConfirmText, setDeleteConfirmText] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
+
   const isProjectRestricted = () => {
     const restrictedStatuses = ["In Progress", "Completed", "Cancelled"];
     return restrictedStatuses.includes(project.status);
   };
 
-  const showToast = (message, type = "info") => {
-    // Create a simple toast notification
-    const toast = document.createElement("div");
-    toast.className = `fixed top-4 right-4 z-50 px-6 py-3 rounded-xl text-white font-medium shadow-lg transition-all duration-300 transform translate-x-full ${
-      type === "error"
-        ? "bg-gradient-to-r from-red-500 to-pink-500"
-        : "bg-gradient-to-r from-blue-500 to-cyan-500"
-    }`;
-    toast.textContent = message;
-    document.body.appendChild(toast);
-
-    // Animate in
-    setTimeout(() => {
-      toast.style.transform = "translateX(0)";
-    }, 100);
-
-    // Remove after 3 seconds
-    setTimeout(() => {
-      toast.style.transform = "translateX(100%)";
-      setTimeout(() => {
-        if (document.body.contains(toast)) {
-          document.body.removeChild(toast);
-        }
-      }, 300);
-    }, 3000);
-  };
-
   // Handle edit project
   const handleEditProject = () => {
     if (isProjectRestricted()) {
-      showToast(
-        "Can't edit in-progress project manually. Please visit My Mentor page",
-        "error"
-      );
+      onToast?.({
+        message:
+          "Can't edit in-progress project manually. Please visit My Mentor page",
+        status: "error",
+      });
       return;
     }
     window.location.href = `/projects/edit/${project._id}`;
@@ -70,10 +45,11 @@ const ShortProjectCard = ({ project, onDelete }) => {
   // Handle delete project
   const handleDeleteProject = () => {
     if (isProjectRestricted()) {
-      showToast(
-        "Can't delete in-progress project manually. Please visit My Mentor page",
-        "error"
-      );
+      onToast?.({
+        message:
+          "Can't delete in-progress project manually. Please visit My Mentor page",
+        status: "error",
+      });
       return;
     }
     setShowDeleteModal(true);
@@ -217,7 +193,11 @@ const ShortProjectCard = ({ project, onDelete }) => {
   // Handle delete
   const handleDelete = async () => {
     if (deleteConfirmText !== project.name) {
-      alert("Project name does not match. Please type the exact project name.");
+      onToast?.({
+        message:
+          "Project name does not match. Please type the exact project name.",
+        status: "error",
+      });
       return;
     }
 
@@ -237,20 +217,27 @@ const ShortProjectCard = ({ project, onDelete }) => {
       const data = await response.json();
 
       if (response.ok && data.success) {
-        showToast("Project deleted successfully!", "success");
+        onToast?.({
+          message: "Project deleted successfully!",
+          status: "success",
+        });
         if (onDelete) {
           onDelete(project._id);
         }
         setShowDeleteModal(false);
       } else {
-        showToast(
-          data.message || "Failed to delete project. Please try again.",
-          "error"
-        );
+        onToast?.({
+          message:
+            data.message || "Failed to delete project. Please try again.",
+          status: "error",
+        });
       }
     } catch (error) {
       console.error("Error deleting project:", error);
-      showToast("Failed to delete project. Please try again.", "error");
+      onToast?.({
+        message: "Failed to delete project. Please try again.",
+        status: "error",
+      });
     } finally {
       setIsDeleting(false);
     }
@@ -259,13 +246,13 @@ const ShortProjectCard = ({ project, onDelete }) => {
   return (
     <>
       {/* Project Card */}
-      <div className="group relative bg-white/10 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/20 overflow-hidden hover:shadow-3xl transition-all duration-500 hover:scale-[1.02] z-0">
+      <div className="group relative w-full max-w-full bg-white/10 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/20 overflow-hidden hover:shadow-3xl transition-all duration-500 hover:scale-[1.02] z-0">
         {/* Animated background elements */}
         <div className="absolute -top-10 -right-10 w-20 h-20 bg-blue-400/20 rounded-full blur-xl animate-pulse opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
         <div className="absolute -bottom-10 -left-10 w-16 h-16 bg-purple-400/20 rounded-full blur-xl animate-pulse opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
 
         {/* Project Thumbnail */}
-        <div className="relative h-48 overflow-hidden">
+        <div className="relative h-40 sm:h-48 md:h-52 lg:h-48 xl:h-52 w-full overflow-hidden">
           <img
             src={
               project.thumbnail ||
@@ -284,30 +271,40 @@ const ShortProjectCard = ({ project, onDelete }) => {
 
           {/* Status Badge */}
           <div
-            className={`absolute top-4 left-4 px-3 py-1 rounded-full ${statusInfo.bgColor} backdrop-blur-sm border border-white/20 flex items-center space-x-2`}
+            className={`absolute top-2 left-2 sm:top-4 sm:left-4 px-2 py-1 sm:px-3 sm:py-1 rounded-full ${statusInfo.bgColor} backdrop-blur-sm border border-white/20 flex items-center space-x-1 sm:space-x-2`}
           >
-            <StatusIcon size={14} className={statusInfo.textColor} />
-            <span className={`text-sm font-medium ${statusInfo.textColor}`}>
+            <StatusIcon
+              size={12}
+              className={`sm:w-3.5 sm:h-3.5 ${statusInfo.textColor}`}
+            />
+            <span
+              className={`text-xs sm:text-sm font-medium ${statusInfo.textColor} leading-tight`}
+            >
               {project.status}
             </span>
           </div>
 
           {/* Pitch Notification Dot */}
           {project.hasUnreadPitch && (
-            <div className="absolute top-4 right-4 flex items-center space-x-2 bg-green-500/20 backdrop-blur-sm rounded-full px-2 py-1 border border-green-400/30">
+            <div className="absolute top-2 right-2 sm:top-4 sm:right-4 flex items-center space-x-1 sm:space-x-2 bg-green-500/20 backdrop-blur-sm rounded-full px-1.5 py-1 sm:px-2 sm:py-1 border border-green-400/30">
               <div className="relative">
-                <div className="w-2 h-2 bg-green-500 rounded-full animate-ping absolute"></div>
-                <div className="w-2 h-2 bg-green-400 rounded-full relative"></div>
+                <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-green-500 rounded-full animate-ping absolute"></div>
+                <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-green-400 rounded-full relative"></div>
               </div>
-              <MessageSquare size={12} className="text-green-400" />
-              <span className="text-xs text-green-300 font-medium">New</span>
+              <MessageSquare
+                size={10}
+                className="sm:w-3 sm:h-3 text-green-400"
+              />
+              <span className="text-xs sm:text-xs text-green-300 font-medium leading-tight">
+                New
+              </span>
             </div>
           )}
 
           {/* Featured Badge */}
           {project.isFeatured && (
-            <div className="absolute top-4 right-4 p-2 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-full">
-              <Star size={14} className="text-white" />
+            <div className="absolute top-2 right-2 sm:top-4 sm:right-4 p-1.5 sm:p-2 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-full">
+              <Star size={12} className="sm:w-3.5 sm:h-3.5 text-white" />
             </div>
           )}
 
@@ -317,43 +314,48 @@ const ShortProjectCard = ({ project, onDelete }) => {
             id={`fallback-${project._id}`}
           >
             <div className="text-center">
-              <Image className="text-white/50 mx-auto mb-2" size={32} />
-              <p className="text-white/70 text-sm">No Image</p>
+              <Image className="text-white/50 mx-auto mb-2" size={24} />
+              <p className="text-white/70 text-xs sm:text-sm">No Image</p>
             </div>
           </div>
         </div>
 
         {/* Card Content */}
-        <div className="relative z-10 p-6">
+        <div className="relative z-10 p-4 sm:p-5 lg:p-6 min-w-0">
           {/* Project Name */}
-          <h3 className="text-xl font-bold text-white mb-3 line-clamp-2 group-hover:text-blue-300 transition-colors">
-            {project.name}
+          <h3 className="text-lg sm:text-xl lg:text-xl font-bold text-white mb-2 sm:mb-3 leading-tight group-hover:text-blue-300 transition-colors min-w-0 overflow-hidden text-ellipsis">
+            <span className="break-words line-clamp-2">{project.name}</span>
           </h3>
 
           {/* Short Description */}
-          <p className="text-gray-300 text-sm mb-4 line-clamp-3 leading-relaxed">
-            {project.shortDescription}
-          </p>
+          <div className="text-gray-300 text-sm sm:text-sm leading-relaxed mb-3 sm:mb-4 min-w-0">
+            <p className="break-words line-clamp-3">
+              {project.shortDescription}
+            </p>
+          </div>
 
           {/* Tech Stack */}
-          <div className="mb-4">
+          <div className="mb-3 sm:mb-4 min-w-0">
             <div className="flex items-center mb-2">
-              <Code size={16} className="text-blue-400 mr-2" />
-              <span className="text-sm font-medium text-blue-300">
+              <Code
+                size={14}
+                className="sm:w-4 sm:h-4 text-blue-400 mr-1.5 sm:mr-2 flex-shrink-0"
+              />
+              <span className="text-xs sm:text-sm font-medium text-blue-300 leading-tight">
                 Tech Stack
               </span>
             </div>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-1.5 sm:gap-2 min-w-0">
               {project.techStack.slice(0, 3).map((tech, index) => (
                 <span
                   key={index}
-                  className="px-3 py-1 bg-blue-500/20 text-blue-300 text-xs rounded-full border border-blue-400/30"
+                  className="px-2 py-1 sm:px-3 sm:py-1 bg-blue-500/20 text-blue-300 text-xs rounded-full border border-blue-400/30 leading-tight flex-shrink-0 max-w-full overflow-hidden text-ellipsis"
                 >
                   {tech}
                 </span>
               ))}
               {project.techStack.length > 3 && (
-                <span className="px-3 py-1 bg-gray-500/20 text-gray-300 text-xs rounded-full border border-gray-400/30">
+                <span className="px-2 py-1 sm:px-3 sm:py-1 bg-gray-500/20 text-gray-300 text-xs rounded-full border border-gray-400/30 leading-tight flex-shrink-0">
                   +{project.techStack.length - 3} more
                 </span>
               )}
@@ -362,11 +364,14 @@ const ShortProjectCard = ({ project, onDelete }) => {
 
           {/* Pitch Status Indicator */}
           {project.hasUnreadPitch && (
-            <div className="mb-4 p-3 bg-gradient-to-r from-green-500/10 to-emerald-500/10 rounded-xl border border-green-400/20">
-              <div className="flex items-center space-x-2">
-                <div className="w-2 h-2 bg-green-500 rounded-full animate-ping"></div>
-                <MessageSquare size={14} className="text-green-400" />
-                <span className="text-sm text-green-300 font-medium">
+            <div className="mb-3 sm:mb-4 p-2.5 sm:p-3 bg-gradient-to-r from-green-500/10 to-emerald-500/10 rounded-xl border border-green-400/20 min-w-0">
+              <div className="flex items-center space-x-1.5 sm:space-x-2 min-w-0">
+                <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-green-500 rounded-full animate-ping flex-shrink-0"></div>
+                <MessageSquare
+                  size={12}
+                  className="sm:w-3.5 sm:h-3.5 text-green-400 flex-shrink-0"
+                />
+                <span className="text-xs sm:text-sm text-green-300 font-medium leading-tight min-w-0 overflow-hidden text-ellipsis">
                   New pitches received!
                 </span>
               </div>
@@ -374,61 +379,73 @@ const ShortProjectCard = ({ project, onDelete }) => {
           )}
 
           {/* Project Details Grid */}
-          <div className="grid grid-cols-3 gap-3 mb-6">
+          <div className="grid grid-cols-3 gap-2 sm:gap-3 mb-4 sm:mb-6 min-w-0">
             {/* Duration */}
-            <div className="bg-white/5 rounded-xl p-3 border border-white/10">
+            <div className="bg-white/5 rounded-xl p-2 sm:p-3 border border-white/10 min-w-0">
               <div className="flex items-center mb-1">
-                <Clock size={14} className="text-purple-400 mr-2" />
-                <span className="text-xs text-purple-300 font-medium">
+                <Clock
+                  size={12}
+                  className="sm:w-3.5 sm:h-3.5 text-purple-400 mr-1 sm:mr-2 flex-shrink-0"
+                />
+                <span className="text-xs text-purple-300 font-medium leading-tight min-w-0 overflow-hidden text-ellipsis">
                   Duration
                 </span>
               </div>
-              <p className="text-sm text-white font-semibold">
+              <p className="text-xs sm:text-sm text-white font-semibold leading-tight min-w-0 overflow-hidden text-ellipsis">
                 {project.duration}
               </p>
             </div>
 
             {/* Difficulty */}
-            <div className="bg-white/5 rounded-xl p-3 border border-white/10">
-              <div className="flex items-center mb-1">
-                <TrendingUp size={14} className="text-orange-400 mr-2" />
-                <span className="text-xs text-orange-300 font-medium">
+            <div className="bg-white/5 rounded-xl p-2 sm:p-3 border border-white/10 min-w-0">
+              <div className="flex items-center mb-1 min-w-0">
+                <TrendingUp
+                  size={12}
+                  className="sm:w-3.5 sm:h-3.5 text-orange-400 mr-1 sm:mr-2 flex-shrink-0"
+                />
+                <span className="text-xs text-orange-300 font-medium leading-tight min-w-0 overflow-hidden text-ellipsis">
                   Level
                 </span>
               </div>
               <span
-                className={`text-sm font-semibold px-2 py-1 rounded-lg ${getDifficultyColor(
+                className={`text-xs sm:text-sm font-semibold px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-lg ${getDifficultyColor(
                   project.difficultyLevel
-                )}`}
+                )} leading-tight inline-block max-w-full overflow-hidden text-ellipsis`}
               >
                 {project.difficultyLevel}
               </span>
             </div>
 
             {/* Pitch Count */}
-            <div className="bg-white/5 rounded-xl p-3 border border-white/10">
-              <div className="flex items-center mb-1">
-                <MessageSquare size={14} className="text-cyan-400 mr-2" />
-                <span className="text-xs text-cyan-300 font-medium">
+            <div className="bg-white/5 rounded-xl p-2 sm:p-3 border border-white/10 min-w-0">
+              <div className="flex items-center mb-1 min-w-0">
+                <MessageSquare
+                  size={12}
+                  className="sm:w-3.5 sm:h-3.5 text-cyan-400 mr-1 sm:mr-2 flex-shrink-0"
+                />
+                <span className="text-xs text-cyan-300 font-medium leading-tight min-w-0 overflow-hidden text-ellipsis">
                   Pitches
                 </span>
               </div>
-              <div className="flex items-center space-x-2">
-                <p className="text-sm text-white font-semibold">
+              <div className="flex items-center space-x-2 min-w-0">
+                <p className="text-xs sm:text-sm text-white font-semibold leading-tight">
                   {project.pitches?.length || 0}
                 </p>
                 {project.hasUnreadPitch && (
-                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                  <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-green-500 rounded-full animate-pulse flex-shrink-0"></div>
                 )}
               </div>
             </div>
 
             {/* Project Status Indicator */}
             {isProjectRestricted() && (
-              <div className="col-span-3 bg-gradient-to-r from-orange-500/10 to-red-500/10 rounded-xl p-3 border border-orange-400/20">
-                <div className="flex items-center space-x-2">
-                  <AlertCircle size={14} className="text-orange-400" />
-                  <span className="text-xs text-orange-300 font-medium">
+              <div className="col-span-3 bg-gradient-to-r from-orange-500/10 to-red-500/10 rounded-xl p-2.5 sm:p-3 border border-orange-400/20 min-w-0">
+                <div className="flex items-center space-x-1.5 sm:space-x-2 min-w-0">
+                  <AlertCircle
+                    size={12}
+                    className="sm:w-3.5 sm:h-3.5 text-orange-400 flex-shrink-0"
+                  />
+                  <span className="text-xs text-orange-300 font-medium leading-tight min-w-0 overflow-hidden text-ellipsis">
                     {project.status === "In Progress"
                       ? "Project in progress - Limited editing"
                       : project.status === "Completed"
@@ -440,27 +457,33 @@ const ShortProjectCard = ({ project, onDelete }) => {
             )}
 
             {/* Category */}
-            <div className="bg-white/5 rounded-xl p-3 border border-white/10">
-              <div className="flex items-center mb-1">
-                <Tag size={14} className="text-green-400 mr-2" />
-                <span className="text-xs text-green-300 font-medium">
+            <div className="bg-white/5 rounded-xl p-2 sm:p-3 border border-white/10 min-w-0">
+              <div className="flex items-center mb-1 min-w-0">
+                <Tag
+                  size={12}
+                  className="sm:w-3.5 sm:h-3.5 text-green-400 mr-1 sm:mr-2 flex-shrink-0"
+                />
+                <span className="text-xs text-green-300 font-medium leading-tight min-w-0 overflow-hidden text-ellipsis">
                   Category
                 </span>
               </div>
-              <p className="text-sm text-white font-semibold line-clamp-1">
+              <p className="text-xs sm:text-sm text-white font-semibold leading-tight min-w-0 overflow-hidden text-ellipsis">
                 {project.category}
               </p>
             </div>
 
             {/* Price */}
-            <div className="bg-white/5 rounded-xl p-3 border border-white/10 col-span-2">
-              <div className="flex items-center mb-1">
-                <DollarSign size={14} className="text-yellow-400 mr-2" />
-                <span className="text-xs text-yellow-300 font-medium">
+            <div className="bg-white/5 rounded-xl p-2 sm:p-3 border border-white/10 col-span-2 min-w-0">
+              <div className="flex items-center mb-1 min-w-0">
+                <DollarSign
+                  size={12}
+                  className="sm:w-3.5 sm:h-3.5 text-yellow-400 mr-1 sm:mr-2 flex-shrink-0"
+                />
+                <span className="text-xs text-yellow-300 font-medium leading-tight min-w-0 overflow-hidden text-ellipsis">
                   {activePrice.type}
                 </span>
               </div>
-              <p className="text-sm text-white font-bold">
+              <p className="text-xs sm:text-sm text-white font-bold leading-tight min-w-0 overflow-hidden text-ellipsis">
                 {formatPrice(activePrice.price)}
               </p>
             </div>
@@ -468,21 +491,27 @@ const ShortProjectCard = ({ project, onDelete }) => {
 
           {/* Project Dates */}
           {(project.startDate || project.expectedEndDate) && (
-            <div className="bg-gradient-to-r from-indigo-500/10 to-purple-500/10 rounded-xl p-3 border border-white/10 mb-6">
-              <div className="flex items-center justify-between text-xs">
+            <div className="bg-gradient-to-r from-indigo-500/10 to-purple-500/10 rounded-xl p-2.5 sm:p-3 border border-white/10 mb-4 sm:mb-6 min-w-0">
+              <div className="flex items-center justify-between text-xs flex-wrap gap-2 min-w-0">
                 {project.startDate && (
-                  <div className="flex items-center">
-                    <Calendar size={12} className="text-indigo-400 mr-1" />
-                    <span className="text-indigo-300">
+                  <div className="flex items-center min-w-0">
+                    <Calendar
+                      size={10}
+                      className="sm:w-3 sm:h-3 text-indigo-400 mr-1 flex-shrink-0"
+                    />
+                    <span className="text-indigo-300 leading-tight min-w-0 overflow-hidden text-ellipsis">
                       Started:{" "}
                       {new Date(project.startDate).toLocaleDateString()}
                     </span>
                   </div>
                 )}
                 {project.expectedEndDate && (
-                  <div className="flex items-center">
-                    <Calendar size={12} className="text-purple-400 mr-1" />
-                    <span className="text-purple-300">
+                  <div className="flex items-center min-w-0">
+                    <Calendar
+                      size={10}
+                      className="sm:w-3 sm:h-3 text-purple-400 mr-1 flex-shrink-0"
+                    />
+                    <span className="text-purple-300 leading-tight min-w-0 overflow-hidden text-ellipsis">
                       Due:{" "}
                       {new Date(project.expectedEndDate).toLocaleDateString()}
                     </span>
@@ -493,13 +522,13 @@ const ShortProjectCard = ({ project, onDelete }) => {
           )}
 
           {/* Action Buttons */}
-          <div className="flex items-center justify-between pt-4 border-t border-white/10">
-            <div className="flex items-center space-x-3">
+          <div className="flex items-center justify-between pt-3 sm:pt-4 border-t border-white/10 gap-2 sm:gap-3 min-w-0">
+            <div className="flex items-center space-x-2 sm:space-x-3 min-w-0 flex-1">
               {/* Edit Button */}
               <button
                 onClick={() => handleEditProject()}
                 disabled={isProjectRestricted()}
-                className={`group/btn flex items-center space-x-2 px-4 py-2 rounded-xl font-medium transition-all transform shadow-lg ${
+                className={`group/btn flex items-center space-x-1 sm:space-x-2 px-3 py-2 sm:px-4 sm:py-2 rounded-xl font-medium transition-all transform shadow-lg text-xs sm:text-sm min-w-0 flex-shrink-0 ${
                   isProjectRestricted()
                     ? "bg-gray-600 text-gray-400 cursor-not-allowed"
                     : "bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white hover:scale-105 hover:shadow-blue-500/25"
@@ -511,31 +540,31 @@ const ShortProjectCard = ({ project, onDelete }) => {
                 }
               >
                 <Edit
-                  size={16}
-                  className={`${
+                  size={14}
+                  className={`sm:w-4 sm:h-4 ${
                     !isProjectRestricted()
                       ? "group-hover/btn:rotate-12 transition-transform"
                       : ""
-                  }`}
+                  } flex-shrink-0`}
                 />
-                <span className="text-sm">Edit</span>
+                <span className="leading-tight">Edit</span>
               </button>
 
               {/* View Button with pitch notification indicator */}
               <button
                 onClick={handleViewProject}
-                className="group/btn relative flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white rounded-xl font-medium transition-all transform hover:scale-105 shadow-lg hover:shadow-emerald-500/25"
+                className="group/btn relative flex items-center space-x-1 sm:space-x-2 px-3 py-2 sm:px-4 sm:py-2 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white rounded-xl font-medium transition-all transform hover:scale-105 shadow-lg hover:shadow-emerald-500/25 text-xs sm:text-sm min-w-0 flex-shrink-0"
               >
                 <Eye
-                  size={16}
-                  className="group-hover/btn:scale-110 transition-transform"
+                  size={14}
+                  className="sm:w-4 sm:h-4 group-hover/btn:scale-110 transition-transform flex-shrink-0"
                 />
-                <span className="text-sm">View</span>
+                <span className="leading-tight">View</span>
                 {project.hasUnreadPitch && (
                   <>
                     {/* Animated notification dot */}
-                    <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full animate-ping"></div>
-                    <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full"></div>
+                    <div className="absolute -top-0.5 -right-0.5 sm:-top-1 sm:-right-1 w-2.5 h-2.5 sm:w-3 sm:h-3 bg-green-500 rounded-full animate-ping"></div>
+                    <div className="absolute -top-0.5 -right-0.5 sm:-top-1 sm:-right-1 w-2.5 h-2.5 sm:w-3 sm:h-3 bg-green-400 rounded-full"></div>
                   </>
                 )}
               </button>
@@ -545,7 +574,7 @@ const ShortProjectCard = ({ project, onDelete }) => {
             <button
               onClick={() => handleDeleteProject()}
               disabled={isProjectRestricted()}
-              className={`group/btn flex items-center space-x-2 px-4 py-2 rounded-xl font-medium transition-all transform shadow-lg ${
+              className={`group/btn flex items-center space-x-1 sm:space-x-2 px-3 py-2 sm:px-4 sm:py-2 rounded-xl font-medium transition-all transform shadow-lg text-xs sm:text-sm min-w-0 flex-shrink-0 ${
                 isProjectRestricted()
                   ? "bg-gray-600 text-gray-400 cursor-not-allowed"
                   : "bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white hover:scale-105 hover:shadow-red-500/25"
@@ -557,12 +586,12 @@ const ShortProjectCard = ({ project, onDelete }) => {
               }
             >
               <Trash2
-                size={16}
-                className={`${
+                size={14}
+                className={`sm:w-4 sm:h-4 ${
                   !isProjectRestricted() ? "group-hover/btn:animate-bounce" : ""
-                }`}
+                } flex-shrink-0`}
               />
-              <span className="text-sm">Delete</span>
+              <span className="leading-tight">Delete</span>
             </button>
           </div>
         </div>
@@ -574,40 +603,42 @@ const ShortProjectCard = ({ project, onDelete }) => {
       {/* Delete Confirmation Modal */}
       {showDeleteModal && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="relative bg-gradient-to-br from-slate-950 via-blue-950 to-indigo-950 rounded-3xl shadow-2xl border border-white/20 p-8 max-w-md w-full">
+          <div className="relative hide-scrollbar-general bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 rounded-3xl shadow-2xl border border-white/20 p-6 sm:p-8 max-w-sm sm:max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto hide-sc">
             {/* Animated background elements */}
             <div className="absolute -top-10 -right-10 w-20 h-20 bg-red-400/20 rounded-full blur-xl animate-pulse"></div>
             <div className="absolute -bottom-10 -left-10 w-16 h-16 bg-pink-400/20 rounded-full blur-xl animate-pulse"></div>
 
-            <div className="relative z-10">
+            <div className="relative z-10 min-w-0">
               {/* Header */}
-              <div className="flex items-center mb-6">
-                <div className="p-3 bg-gradient-to-r from-red-500 to-pink-500 rounded-xl mr-4">
-                  <Trash2 className="text-white" size={24} />
+              <div className="flex items-start mb-4 sm:mb-6 min-w-0">
+                <div className="p-2.5 sm:p-3 bg-gradient-to-r from-red-500 to-pink-500 rounded-xl mr-3 sm:mr-4 flex-shrink-0">
+                  <Trash2 className="text-white" size={20} />
                 </div>
-                <div>
-                  <h3 className="text-xl font-bold text-white">
+                <div className="min-w-0 flex-1">
+                  <h3 className="text-lg sm:text-xl font-bold text-white leading-tight">
                     Delete Project
                   </h3>
-                  <p className="text-red-300 text-sm">
+                  <p className="text-red-300 text-sm leading-tight">
                     This action cannot be undone
                   </p>
                 </div>
               </div>
 
               {/* Warning Message */}
-              <div className="bg-red-500/20 border border-red-400/30 rounded-xl p-4 mb-6">
-                <p className="text-red-200 text-sm leading-relaxed">
+              <div className="bg-red-500/20 border border-red-400/30 rounded-xl p-3 sm:p-4 mb-4 sm:mb-6 min-w-0">
+                <p className="text-red-200 text-sm leading-relaxed break-words">
                   You are about to permanently delete{" "}
-                  <span className="font-bold text-white">"{project.name}"</span>
+                  <span className="font-bold text-white break-words">
+                    "{project.name}"
+                  </span>
                   . This will remove all associated data, messages, and
                   progress.
                 </p>
               </div>
 
               {/* Confirmation Input */}
-              <div className="mb-6">
-                <label className="block text-sm font-medium text-white mb-2">
+              <div className="mb-4 sm:mb-6 min-w-0">
+                <label className="block text-sm font-medium text-white mb-2 leading-tight">
                   Type the project name to confirm deletion:
                 </label>
                 <input
@@ -615,18 +646,18 @@ const ShortProjectCard = ({ project, onDelete }) => {
                   value={deleteConfirmText}
                   onChange={(e) => setDeleteConfirmText(e.target.value)}
                   placeholder={project.name}
-                  className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-red-400 focus:ring-2 focus:ring-red-400/20 transition-all"
+                  className="w-full px-3 py-2.5 sm:px-4 sm:py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-red-400 focus:ring-2 focus:ring-red-400/20 transition-all text-sm leading-tight min-w-0"
                 />
               </div>
 
               {/* Action Buttons */}
-              <div className="flex space-x-4">
+              <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4 min-w-0">
                 <button
                   onClick={() => {
                     setShowDeleteModal(false);
                     setDeleteConfirmText("");
                   }}
-                  className="flex-1 px-6 py-3 bg-white/10 hover:bg-white/20 text-white rounded-xl font-medium transition-all border border-white/20"
+                  className="flex-1 px-4 py-2.5 sm:px-6 sm:py-3 bg-white/10 hover:bg-white/20 text-white rounded-xl font-medium transition-all border border-white/20 text-sm leading-tight min-w-0"
                   disabled={isDeleting}
                 >
                   Cancel
@@ -634,7 +665,7 @@ const ShortProjectCard = ({ project, onDelete }) => {
                 <button
                   onClick={handleDelete}
                   disabled={deleteConfirmText !== project.name || isDeleting}
-                  className="flex-1 px-6 py-3 bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 disabled:from-gray-500 disabled:to-gray-600 disabled:cursor-not-allowed text-white rounded-xl font-medium transition-all transform hover:scale-105 shadow-lg"
+                  className="flex-1 px-4 py-2.5 sm:px-6 sm:py-3 bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 disabled:from-gray-500 disabled:to-gray-600 disabled:cursor-not-allowed text-white rounded-xl font-medium transition-all transform hover:scale-105 shadow-lg text-sm leading-tight min-w-0"
                 >
                   {isDeleting ? "Deleting..." : "Delete Project"}
                 </button>

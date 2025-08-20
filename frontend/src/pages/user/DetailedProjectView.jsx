@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { showToast } from "../../utils/toast";
 import {
   ArrowLeft,
   Calendar,
@@ -8,13 +7,14 @@ import {
   Users,
   AlertCircle,
   Loader2,
+  X,
 } from "lucide-react";
 
 // Import the new components
 import ProjectOverview from "../../components/user/userProject/ProjectOverview";
 import ProjectActions from "../../components/user/userProject/ProjectActions";
 import AssignedMentorSection from "../../components/user/userProject/AssignedMentorSection";
-import SetClosingPriceModal from "../../components/user/userProject/SetClosingPriceModal";
+import SetClosingPriceModal from "../../components/user/userProject/SetClosingPriceModal"; //toar error
 import ViewPitchesModal from "../../components/user/userProject/ViewPitchesModal";
 
 // Request system components
@@ -43,8 +43,56 @@ const DetailedProjectView = () => {
   const [selectedMentor, setSelectedMentor] = useState(null);
   const [showMentorSelection, setShowMentorSelection] = useState(false);
   const [showAIMentorSelection, setShowAIMentorSelection] = useState(false);
+  const [toast, setToast] = useState({
+    open: false,
+    message: "",
+    status: "info",
+  });
 
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+
+  const showToast = ({ message, status = "info" }) => {
+    setToast({ open: true, message, status });
+    // Auto-hide after 4 seconds
+    setTimeout(() => {
+      setToast((prev) => ({ ...prev, open: false }));
+    }, 4000);
+  };
+
+  const hideToast = () => {
+    setToast((prev) => ({ ...prev, open: false }));
+  };
+
+  // Inline Toast component
+  const Toast = () => {
+    if (!toast.open) return null;
+
+    const statusStyles = {
+      success: "bg-green-500/90 border-green-400/50 text-green-50",
+      error: "bg-red-500/90 border-red-400/50 text-red-50",
+      info: "bg-blue-500/90 border-blue-400/50 text-blue-50",
+    };
+
+    return (
+      <div className="fixed top-4 right-4 z-[9999] animate-in slide-in-from-top-2 duration-300">
+        <div
+          className={`${
+            statusStyles[toast.status]
+          } backdrop-blur-sm border rounded-xl p-4 pr-10 shadow-2xl max-w-sm min-w-[280px] transition-all transform hover:scale-105`}
+        >
+          <div className="font-medium text-sm leading-relaxed pr-2">
+            {toast.message}
+          </div>
+          <button
+            onClick={hideToast}
+            className="absolute top-2 right-2 p-1 text-white/80 hover:text-white hover:bg-white/10 rounded-md transition-all duration-200"
+          >
+            <X size={14} />
+          </button>
+        </div>
+      </div>
+    );
+  };
 
   useEffect(() => {
     if (project && project._id) {
@@ -302,10 +350,10 @@ const DetailedProjectView = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-indigo-950 flex items-center justify-center">
-        <div className="text-white text-lg flex items-center space-x-3">
-          <Loader2 className="animate-spin" size={24} />
-          <span>Loading project details...</span>
+      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-indigo-950 flex items-center justify-center p-4">
+        <div className="text-white text-base sm:text-lg flex items-center space-x-3 bg-white/5 backdrop-blur-sm rounded-2xl px-6 py-4 border border-white/10">
+          <Loader2 className="animate-spin text-blue-400" size={20} />
+          <span className="font-medium">Loading project details...</span>
         </div>
       </div>
     );
@@ -313,20 +361,24 @@ const DetailedProjectView = () => {
 
   if (error || !project) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-indigo-950 flex items-center justify-center">
-        <div className="text-center text-white">
-          <AlertCircle size={48} className="mx-auto mb-4 text-red-400" />
-          <h2 className="text-2xl font-bold mb-2">Project Not Found</h2>
-          <p className="text-gray-300 mb-6">
-            {error ||
-              "The project you're looking for doesn't exist or has been removed."}
-          </p>
-          <button
-            onClick={() => navigate("/user/projects")}
-            className="px-6 py-3 bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-xl hover:from-blue-600 hover:to-cyan-600 transition-all"
-          >
-            Return to Dashboard
-          </button>
+      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-indigo-950 flex items-center justify-center p-4">
+        <div className="text-center text-white max-w-md mx-auto">
+          <div className="bg-white/5 backdrop-blur-sm rounded-3xl p-8 border border-white/10">
+            <AlertCircle size={48} className="mx-auto mb-6 text-red-400" />
+            <h2 className="text-2xl font-bold mb-4 leading-tight">
+              Project Not Found
+            </h2>
+            <p className="text-gray-300 mb-8 leading-relaxed">
+              {error ||
+                "The project you're looking for doesn't exist or has been removed."}
+            </p>
+            <button
+              onClick={() => navigate("/user/projects")}
+              className="px-8 py-3 bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-medium rounded-xl hover:from-blue-600 hover:to-cyan-600 transition-all duration-300 transform hover:scale-105 hover:shadow-lg"
+            >
+              Return to Dashboard
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -338,39 +390,47 @@ const DetailedProjectView = () => {
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-500/20 rounded-full blur-3xl animate-pulse"></div>
         <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-500/20 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
       </div>
 
-      <div className="relative z-10 p-4 lg:p-6">
+      <div className="relative z-10 p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-6">
+        <div className="mb-8">
           <button
             onClick={() => navigate("/user/projects")}
-            className="group flex items-center space-x-2 text-white hover:text-blue-300 transition-colors mb-4"
+            className="group flex items-center space-x-2 text-white/80 hover:text-white transition-all duration-300 mb-6 bg-white/5 backdrop-blur-sm rounded-xl px-4 py-2 border border-white/10 hover:bg-white/10 hover:border-white/20"
           >
             <ArrowLeft
-              size={20}
-              className="group-hover:-translate-x-1 transition-transform"
+              size={18}
+              className="group-hover:-translate-x-1 transition-transform duration-300"
             />
-            <span>Return to Projects</span>
+            <span className="font-medium">Return to Projects</span>
           </button>
 
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-            <div className="flex-1">
-              <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2 break-words">
+          <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
+            <div className="flex-1 min-w-0">
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4 leading-tight break-words">
                 {project.name}
               </h1>
-              <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-gray-300 text-sm sm:text-base">
-                <div className="flex items-center space-x-1">
-                  <Eye size={14} className="sm:w-4 sm:h-4" />
-                  <span>{project.viewCount} views</span>
+              <div className="flex flex-wrap items-center gap-4 sm:gap-6">
+                <div className="flex items-center space-x-2 text-gray-300 hover:text-white transition-colors duration-200 bg-white/5 backdrop-blur-sm rounded-lg px-3 py-2 border border-white/10">
+                  <Eye size={16} className="text-blue-400 flex-shrink-0" />
+                  <span className="text-sm font-medium whitespace-nowrap">
+                    {project.viewCount} views
+                  </span>
                 </div>
-                <div className="flex items-center space-x-1">
-                  <Users size={14} className="sm:w-4 sm:h-4" />
-                  <span>{project.applicationsCount} applications</span>
+                <div className="flex items-center space-x-2 text-gray-300 hover:text-white transition-colors duration-200 bg-white/5 backdrop-blur-sm rounded-lg px-3 py-2 border border-white/10">
+                  <Users size={16} className="text-green-400 flex-shrink-0" />
+                  <span className="text-sm font-medium whitespace-nowrap">
+                    {project.applicationsCount} applications
+                  </span>
                 </div>
-                <div className="flex items-center space-x-1">
-                  <Calendar size={14} className="sm:w-4 sm:h-4" />
-                  <span className="whitespace-nowrap">
+                <div className="flex items-center space-x-2 text-gray-300 hover:text-white transition-colors duration-200 bg-white/5 backdrop-blur-sm rounded-lg px-3 py-2 border border-white/10">
+                  <Calendar
+                    size={16}
+                    className="text-purple-400 flex-shrink-0"
+                  />
+                  <span className="text-sm font-medium whitespace-nowrap">
                     Created {formatDate(project.createdAt)}
                   </span>
                 </div>
@@ -380,9 +440,15 @@ const DetailedProjectView = () => {
         </div>
 
         {/* Main Content */}
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 lg:gap-8">
           {/* Left Column - Project Details */}
-          <ProjectOverview project={project} API_URL={API_URL} />
+          <div className="xl:col-span-2">
+            <ProjectOverview
+              project={project}
+              API_URL={API_URL}
+              onToast={showToast}
+            />
+          </div>
 
           {/* Right Column - Actions */}
           <div className="space-y-6">
@@ -445,6 +511,7 @@ const DetailedProjectView = () => {
           project={project}
           API_URL={API_URL}
           formatPrice={formatPrice}
+          onToast={showToast}
         />
 
         {/* Mentor Selection Modal By AI */}
@@ -456,6 +523,7 @@ const DetailedProjectView = () => {
           setSelectedMentor={setSelectedMentor}
           API_URL={API_URL}
           formatPrice={formatPrice}
+          onToast={showToast}
         />
 
         {/* Mentor Request Modal */}
@@ -467,6 +535,8 @@ const DetailedProjectView = () => {
           API_URL={API_URL}
           formatPrice={formatPrice}
         />
+
+        <Toast />
       </div>
     </div>
   );

@@ -268,7 +268,7 @@ const MentorAiSelectionModal = ({
 
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-md z-50 flex items-center justify-center p-2 sm:p-4">
-      <div className=" bg-gradient-to-br from-slate-950 via-blue-950 to-indigo-950 backdrop-blur-xl rounded-3xl border border-white/20 shadow-2xl max-w-7xl w-full max-h-[95vh] overflow-y-auto hide-scrollbar-general">
+      <div className=" bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 backdrop-blur-xl rounded-3xl border border-white/20 shadow-2xl max-w-7xl w-full max-h-[95vh] overflow-y-auto hide-scrollbar-general">
         <div className="flex flex-col h-full">
           {/* Header */}
           <div className="flex-shrink-0 p-4 sm:p-6 border-b border-white/10">

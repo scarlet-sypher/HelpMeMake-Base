@@ -446,7 +446,7 @@ const UserSessionItem = ({ session, isLast, onSessionUpdate }) => {
         {/* Reason Submission Modal */}
         {showReasonBox && (
           <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in">
-            <div className="bg-gradient-to-br from-slate-950 via-blue-950 to-indigo-950 rounded-2xl p-6 border border-white/20 max-w-md w-full shadow-2xl relative overflow-hidden animate-scale-in">
+            <div className="bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 rounded-2xl p-6 border border-white/20 max-w-md w-full shadow-2xl relative overflow-hidden animate-scale-in">
               {/* Modal background effects */}
               <div className="absolute inset-0 bg-gradient-to-br from-orange-500/10 via-transparent to-red-500/10 rounded-2xl"></div>
               <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-white/5 to-transparent rounded-full blur-xl"></div>

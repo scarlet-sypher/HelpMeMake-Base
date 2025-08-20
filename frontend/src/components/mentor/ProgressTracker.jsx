@@ -81,9 +81,7 @@ const ProgressTracker = ({ userImg }) => {
           name: "No Active Student",
           project: "No Active Project",
           progress: 0,
-          image:
-            userImg?.["default.jpg"] ||
-            "https://via.placeholder.com/64x64?text=No+Student",
+          image: "/default-avatar.jpg",
         },
         milestones: Array(5)
           .fill(null)
@@ -109,15 +107,16 @@ const ProgressTracker = ({ userImg }) => {
       });
     }
 
+    const avatar = learnerData.avatar;
+    // 👇 Console the avatar here
+    console.log("Student Avatar:", avatar);
+
     return {
       studentData: {
         name: learnerData.name,
         project: projectData.name,
         progress: statistics.progressPercentage,
-        image:
-          learnerData.avatar ||
-          userImg?.["default.jpg"] ||
-          "https://via.placeholder.com/64x64?text=Student",
+        image: avatar,
       },
       milestones: displayMilestones.slice(0, 5),
     };
@@ -402,8 +401,8 @@ const ProgressTracker = ({ userImg }) => {
             <div className="flex items-center space-x-4">
               <div className="relative">
                 <img
-                  src={statistics?.avatar || "/default-avatar.jpg"}
-                  alt={statistics?.name || "Mentor Avatar"}
+                  src={studentData.image || "/default-avatar.jpg"}
+                  alt={studentData.name || "Student Avatar"}
                   className="w-12 h-12 rounded-full object-cover"
                 />
 

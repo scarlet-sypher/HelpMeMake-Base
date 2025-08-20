@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import axios from "axios";
 
-const ShowRequestsModal = ({ project, onClose, API_URL }) => {
+const ShowRequestsModal = ({ project, onClose, API_URL, showToast }) => {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -23,7 +23,7 @@ const ShowRequestsModal = ({ project, onClose, API_URL }) => {
   const [responseText, setResponseText] = useState("");
   const [showResponseModal, setShowResponseModal] = useState(false);
   const [currentRequest, setCurrentRequest] = useState(null);
-  const [responseAction, setResponseAction] = useState(null); // 'accept' or 'reject'
+  const [responseAction, setResponseAction] = useState(null);
 
   useEffect(() => {
     fetchProjectRequests();
@@ -103,11 +103,18 @@ const ShowRequestsModal = ({ project, onClose, API_URL }) => {
         setResponseAction(null);
         setResponseText("");
 
-        alert(`Request ${responseAction} successfully!`);
+        showToast({
+          message: `Request ${responseAction} successfully!`,
+          status: "success",
+        });
       }
     } catch (error) {
       console.error("Error responding to request:", error);
-      alert(error.response?.data?.message || "Failed to respond to request");
+
+      showToast({
+        message: `Failed to respond to request`,
+        status: "error",
+      });
     } finally {
       setRespondingId(null);
     }
@@ -149,9 +156,18 @@ const ShowRequestsModal = ({ project, onClose, API_URL }) => {
 
   return (
     <>
-      {/* Main Modal */}
+      {/* Main Modal  */}
       <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div className="relative bg-gradient-to-br from-slate-950 via-blue-950 to-indigo-950 rounded-3xl shadow-2xl border border-white/20 p-6 max-w-4xl w-full max-h-[90vh] overflow-hidden">
+        <div
+          className="relative bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950
+
+
+
+
+
+
+ rounded-3xl shadow-2xl border border-white/20 p-6 max-w-4xl w-full max-h-[90vh] overflow-hidden"
+        >
           {/* Animated background elements */}
           <div className="absolute -top-10 -right-10 w-20 h-20 bg-cyan-400/20 rounded-full blur-xl animate-pulse"></div>
           <div className="absolute -bottom-10 -left-10 w-16 h-16 bg-teal-400/20 rounded-full blur-xl animate-pulse"></div>
@@ -365,7 +381,7 @@ const ShowRequestsModal = ({ project, onClose, API_URL }) => {
       {/* Response Modal */}
       {showResponseModal && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[60] flex items-center justify-center p-4">
-          <div className="relative bg-gradient-to-br from-slate-950 via-blue-950 to-indigo-950 rounded-3xl shadow-2xl border border-white/20 p-8 max-w-md w-full">
+          <div className="relative bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 rounded-3xl shadow-2xl border border-white/20 p-8 max-w-md w-full">
             <div className="relative z-10">
               {/* Response Header */}
               <div className="flex items-center mb-6">

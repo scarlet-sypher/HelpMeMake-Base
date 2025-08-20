@@ -1,18 +1,38 @@
-import React, { useState } from 'react';
-import { GraduationCap, Plus, Trash2 } from 'lucide-react';
+import React, { useState } from "react";
+import { GraduationCap, Plus, Trash2 } from "lucide-react";
 
-const Prerequisites = ({ formData, setFormData }) => {
-  const [newPrereq, setNewPrereq] = useState('');
+const Prerequisites = ({ formData, setFormData, onToast }) => {
+  const [newPrereq, setNewPrereq] = useState("");
 
   const addPrereq = () => {
-    if (newPrereq.trim() && !formData.prerequisites.includes(newPrereq.trim())) {
-      setFormData({ ...formData, prerequisites: [...formData.prerequisites, newPrereq.trim()] });
-      setNewPrereq('');
+    if (
+      newPrereq.trim() &&
+      !formData.prerequisites.includes(newPrereq.trim())
+    ) {
+      setFormData({
+        ...formData,
+        prerequisites: [...formData.prerequisites, newPrereq.trim()],
+      });
+      setNewPrereq("");
+      onToast?.({
+        message: "Prerequisite added successfully!",
+        status: "success",
+      });
+    } else if (formData.prerequisites.includes(newPrereq.trim())) {
+      onToast?.({
+        message: "This prerequisite already exists",
+        status: "info",
+      });
     }
   };
 
   const removePrereq = (index) => {
-    setFormData({ ...formData, prerequisites: formData.prerequisites.filter((_, i) => i !== index) });
+    const removedPrereq = formData.prerequisites[index];
+    setFormData({
+      ...formData,
+      prerequisites: formData.prerequisites.filter((_, i) => i !== index),
+    });
+    onToast?.({ message: `Removed "${removedPrereq}"`, status: "info" });
   };
 
   return (
@@ -21,14 +41,21 @@ const Prerequisites = ({ formData, setFormData }) => {
         <div className="p-3 bg-gradient-to-r from-orange-500 to-red-500 rounded-xl mr-4">
           <GraduationCap className="text-white" size={24} />
         </div>
-        <h2 className="text-xl font-bold text-white">Prerequisites & Requirements</h2>
+        <h2 className="text-xl font-bold text-white">
+          Prerequisites & Requirements
+        </h2>
       </div>
 
       <div>
-        <label className="block text-white font-medium mb-2">Prerequisites</label>
+        <label className="block text-white font-medium mb-2">
+          Prerequisites
+        </label>
         <div className="space-y-2 mb-4">
           {formData.prerequisites.map((prereq, index) => (
-            <div key={index} className="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/10">
+            <div
+              key={index}
+              className="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/10"
+            >
               <span className="text-white flex-1 mr-3">{prereq}</span>
               <button
                 type="button"
@@ -45,7 +72,9 @@ const Prerequisites = ({ formData, setFormData }) => {
             type="text"
             value={newPrereq}
             onChange={(e) => setNewPrereq(e.target.value)}
-            onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addPrereq())}
+            onKeyPress={(e) =>
+              e.key === "Enter" && (e.preventDefault(), addPrereq())
+            }
             className="flex-1 px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-orange-400 backdrop-blur-sm"
             placeholder="Add prerequisite (e.g., Basic JavaScript knowledge)"
           />

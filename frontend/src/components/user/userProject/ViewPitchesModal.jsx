@@ -12,6 +12,7 @@ const ViewPitchesModal = ({
   onViewMentorProfile,
   showToast,
 }) => {
+  console.log(pitches);
   if (!show) return null;
 
   return (
@@ -39,7 +40,7 @@ const ViewPitchesModal = ({
           ) : pitches.length === 0 ? (
             <div className="text-center py-8">
               <MessageSquare className="mx-auto mb-4 text-gray-400" size={48} />
-              <p className="text-gray-300 text-lg">No pitches yet</p>
+              <p className="text-gray-300 text-lg">No pitches</p>
               <p className="text-gray-400 text-sm">
                 Mentors will appear here when they show interest in your project
               </p>

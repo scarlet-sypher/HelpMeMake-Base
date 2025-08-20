@@ -13,7 +13,7 @@ import {
   Send,
 } from "lucide-react";
 
-const CompleteCancelBox = ({ projectData, onUpdate }) => {
+const CompleteCancelBox = ({ projectData, onUpdate, showToast }) => {
   const [showModal, setShowModal] = useState(false);
   const [modalType, setModalType] = useState(null);
   const [confirmText, setConfirmText] = useState("");
@@ -27,6 +27,7 @@ const CompleteCancelBox = ({ projectData, onUpdate }) => {
     overallExperience: 5,
     comment: "",
   });
+  const [reviewSubmitted, setReviewSubmitted] = useState(false);
 
   const isCompleteDisabled =
     projectData?.completionRequest?.type === "cancel" &&
@@ -52,7 +53,10 @@ const CompleteCancelBox = ({ projectData, onUpdate }) => {
       modalType === "complete" ? "I want to complete" : "I want to cancel";
 
     if (confirmText !== expectedText) {
-      alert(`Please type exactly: "${expectedText}"`);
+      showToast({
+        message: `Please type exactly: "${expectedText}"`,
+        status: "error",
+      });
       return;
     }
 
@@ -77,12 +81,24 @@ const CompleteCancelBox = ({ projectData, onUpdate }) => {
       if (response.data.success) {
         setShowModal(false);
         onUpdate();
+        showToast({
+          message: `${
+            modalType === "complete" ? "Completion" : "Cancellation"
+          } request sent successfully`,
+          status: "success",
+        });
       } else {
-        alert(response.data.message);
+        showToast({
+          message: response.data.message,
+          status: "error",
+        });
       }
     } catch (error) {
       console.error("Error sending completion request:", error);
-      alert("Failed to send request");
+      showToast({
+        message: "Failed to send request",
+        status: "error",
+      });
     } finally {
       setLoading(false);
     }
@@ -109,14 +125,23 @@ const CompleteCancelBox = ({ projectData, onUpdate }) => {
 
       if (response.data.success) {
         setShowReviewModal(false);
-        onUpdate();
-        alert("Review submitted successfully!");
+        setReviewSubmitted(true);
+        showToast({
+          message: "Review submitted successfully!",
+          status: "success",
+        });
       } else {
-        alert(response.data.message);
+        showToast({
+          message: response.data.message,
+          status: "error",
+        });
       }
     } catch (error) {
       console.error("Error submitting review:", error);
-      alert("Failed to submit review");
+      showToast({
+        message: "Failed to submit review",
+        status: "error",
+      });
     } finally {
       setLoading(false);
     }
@@ -180,14 +205,23 @@ const CompleteCancelBox = ({ projectData, onUpdate }) => {
       );
 
       if (apiResponse.data.success) {
-        alert(`Request ${response}d successfully`);
+        showToast({
+          message: `Request ${response}d successfully`,
+          status: "success",
+        });
         onUpdate();
       } else {
-        alert(apiResponse.data.message || `Failed to ${response} request`);
+        showToast({
+          message: apiResponse.data.message || `Failed to ${response} request`,
+          status: "error",
+        });
       }
     } catch (error) {
       console.error(`Error ${response}ing request:`, error);
-      alert(`Failed to ${response} request`);
+      showToast({
+        message: `Failed to ${response} request`,
+        status: "error",
+      });
     } finally {
       setLoading(false);
     }
@@ -208,11 +242,11 @@ const CompleteCancelBox = ({ projectData, onUpdate }) => {
             <p className="text-green-200 mb-6">
               Please rate your mentor to help future learners
             </p>
-            {projectData?.learnerReview?.rating ? (
+            {projectData?.learnerReview?.rating || reviewSubmitted ? (
               <div className="bg-green-900/20 rounded-lg p-4 border border-green-600/30 text-center">
                 <p className="text-green-300 font-medium">✓ Review Submitted</p>
                 <p className="text-green-200 text-sm mt-1">
-                  Thank you for your feedback!
+                  Review submitted successfully. Waiting for mentor to review.
                 </p>
               </div>
             ) : (

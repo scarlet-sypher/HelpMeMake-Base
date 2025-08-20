@@ -10,7 +10,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 
-const EditSessionModal = ({ session, onClose, onSuccess }) => {
+const EditSessionModal = ({ session, onClose, onSuccess, onToast }) => {
   const [formData, setFormData] = useState({
     title: session.title || "",
     topic: session.topic || "",
@@ -93,14 +93,18 @@ const EditSessionModal = ({ session, onClose, onSuccess }) => {
       );
 
       if (response.data.success) {
+        onToast({ message: "Session updated successfully", status: "success" });
         onSuccess();
       }
     } catch (error) {
       console.error("Error updating session:", error);
       if (error.response?.data?.message) {
-        alert(error.response.data.message);
+        onToast({ message: error.response.data.message, status: "error" });
       } else {
-        alert("Failed to update session. Please try again.");
+        onToast({
+          message: "Failed to update session. Please try again.",
+          status: "error",
+        });
       }
     } finally {
       setLoading(false);

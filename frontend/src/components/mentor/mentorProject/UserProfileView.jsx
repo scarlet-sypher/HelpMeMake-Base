@@ -294,11 +294,6 @@ const UserProfileView = () => {
     // You can add additional logic here if needed
   };
 
-  const handleMessageUser = () => {
-    // Placeholder for messaging functionality
-    alert("Messaging feature coming soon!");
-  };
-
   const getSocialIcon = (platform) => {
     switch (platform) {
       case "github":
@@ -753,15 +748,6 @@ const UserProfileView = () => {
 
                   {/* Enhanced Action Buttons */}
                   <div className="space-y-3">
-                    <button
-                      onClick={handleMessageUser}
-                      className="w-full flex items-center justify-center space-x-2 bg-gradient-to-r from-cyan-500 to-teal-500 hover:from-cyan-600 hover:to-teal-600 text-white px-4 py-3 rounded-xl font-medium transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-cyan-500/25"
-                    >
-                      <MessageSquare size={18} />
-                      <span>Message User</span>
-                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full hover:translate-x-full transition-transform duration-700 rounded-xl"></div>
-                    </button>
-
                     {user.email && (
                       <a
                         href={`mailto:${user.email}`}

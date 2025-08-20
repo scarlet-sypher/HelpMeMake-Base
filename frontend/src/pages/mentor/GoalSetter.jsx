@@ -277,7 +277,11 @@ const GoalSetter = () => {
           {activeTab === "goals" && (
             <div className="space-y-6">
               <GoalView goal={goalData} />
-              <GoalForm goal={goalData} onGoalUpdate={handleGoalUpdate} />
+              <GoalForm
+                goal={goalData}
+                onGoalUpdate={handleGoalUpdate}
+                showToast={showToast}
+              />
             </div>
           )}
 

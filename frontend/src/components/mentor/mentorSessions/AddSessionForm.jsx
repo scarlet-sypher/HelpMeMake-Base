@@ -12,7 +12,7 @@ import {
   Plus,
 } from "lucide-react";
 
-const AddSessionForm = ({ activeProject, onClose, onSuccess }) => {
+const AddSessionForm = ({ activeProject, onClose, onSuccess, onToast }) => {
   const [formData, setFormData] = useState({
     title: "",
     topic: "",
@@ -116,14 +116,21 @@ const AddSessionForm = ({ activeProject, onClose, onSuccess }) => {
       );
 
       if (response.data.success) {
+        onToast({
+          message: "Session scheduled successfully",
+          status: "success",
+        });
         onSuccess();
       }
     } catch (error) {
       console.error("Error creating session:", error);
       if (error.response?.data?.message) {
-        alert(error.response.data.message);
+        onToast({ message: error.response.data.message, status: "error" });
       } else {
-        alert("Failed to create session. Please try again.");
+        onToast({
+          message: "Failed to create session. Please try again.",
+          status: "error",
+        });
       }
     } finally {
       setLoading(false);

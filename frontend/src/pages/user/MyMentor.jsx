@@ -6,7 +6,7 @@ import ExpectedEndDateViewer from "../../components/user/userMentorPage/Expected
 import ProjectProgressViewer from "../../components/user/userMentorPage/ProjectProgressViewer";
 import MentorProjectCard from "../../components/user/userMentorPage/MentorProjectCard";
 import CompleteCancelBox from "../../components/user/userMentorPage/CompleteCancelBox";
-import { Menu, Calendar, User, Activity, AlertCircle } from "lucide-react";
+import { Menu, Calendar, User, Activity, AlertCircle, X } from "lucide-react";
 
 const MyMentor = () => {
   const { user, loading, isAuthenticated } = useAuth();
@@ -16,6 +16,51 @@ const MyMentor = () => {
   const [mentorData, setMentorData] = useState(null);
   const [loadingData, setLoadingData] = useState(true);
   const [error, setError] = useState(null);
+  const [toast, setToast] = useState({
+    open: false,
+    message: "",
+    status: "info",
+  });
+
+  const Toast = ({ open, message, status, onClose }) => {
+    useEffect(() => {
+      if (open) {
+        const timer = setTimeout(() => onClose(), 4000);
+        const handleEsc = (e) => e.key === "Escape" && onClose();
+        document.addEventListener("keydown", handleEsc);
+        return () => {
+          clearTimeout(timer);
+          document.removeEventListener("keydown", handleEsc);
+        };
+      }
+    }, [open, onClose]);
+
+    if (!open) return null;
+
+    const statusStyles = {
+      success: "from-green-500/90 to-emerald-600/90 border-green-400/50",
+      error: "from-red-500/90 to-pink-600/90 border-red-400/50",
+      info: "from-blue-500/90 to-purple-600/90 border-blue-400/50",
+    };
+
+    return (
+      <div className="fixed top-4 right-4 z-[60] animate-in slide-in-from-top-2">
+        <div
+          className={`bg-gradient-to-r ${statusStyles[status]} backdrop-blur-sm rounded-2xl p-4 border shadow-2xl max-w-sm`}
+        >
+          <div className="flex items-start justify-between">
+            <p className="text-white text-sm font-medium pr-2">{message}</p>
+            <button
+              onClick={onClose}
+              className="text-white/80 hover:text-white transition-colors"
+            >
+              <X size={16} />
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
 
   useEffect(() => {
     if (!loading && !isAuthenticated) {
@@ -71,6 +116,14 @@ const MyMentor = () => {
   const handleProjectUpdate = () => {
     // Refresh project data after updates
     window.location.reload();
+  };
+
+  const showToast = ({ message, status = "info" }) => {
+    setToast({ open: true, message, status });
+  };
+
+  const hideToast = () => {
+    setToast({ open: false, message: "", status: "info" });
   };
 
   if (loading || loadingData) {
@@ -181,6 +234,7 @@ const MyMentor = () => {
                   <CompleteCancelBox
                     projectData={projectData}
                     onUpdate={handleProjectUpdate}
+                    showToast={showToast}
                   />
                 </div>
 
@@ -195,6 +249,12 @@ const MyMentor = () => {
             </>
           )}
         </div>
+        <Toast
+          open={toast.open}
+          message={toast.message}
+          status={toast.status}
+          onClose={hideToast}
+        />
       </div>
     </div>
   );

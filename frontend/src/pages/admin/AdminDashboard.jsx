@@ -58,7 +58,7 @@ export default function AdminDashboard() {
   const mentors = ["Mentor1", "Mentor2", "Mentor3", "Mentor4"];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-indigo-950 flex relative">
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 flex relative">
       {/* Mobile Sidebar Toggle Button */}
       {!isSidebarOpen && (
         <button

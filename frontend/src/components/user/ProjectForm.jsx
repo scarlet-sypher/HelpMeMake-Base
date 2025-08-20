@@ -14,6 +14,7 @@ import {
   Target,
   Image,
   Sparkles,
+  Info,
 } from "lucide-react";
 
 // Import modular components
@@ -107,16 +108,16 @@ const ProjectForm = ({
         });
       }
     } catch (error) {
-      showToast("Failed to load project data", "error");
+      showToast({ message: "Failed to load project data", status: "error" });
       console.error("Error loading project:", error);
     } finally {
       setLoadingProject(false);
     }
   };
 
-  const showToast = (message, type = "success") => {
-    setToast({ message, type });
-    setTimeout(() => setToast(null), 5000);
+  const showToast = ({ message, status = "success" }) => {
+    setToast({ message, status });
+    setTimeout(() => setToast(null), 4000);
   };
 
   const validateForm = () => {
@@ -150,7 +151,10 @@ const ProjectForm = ({
     e.preventDefault();
 
     if (!validateForm()) {
-      showToast("Please fix the errors in the form", "error");
+      showToast({
+        message: "Please fix the errors in the form",
+        status: "error",
+      });
       return;
     }
 
@@ -190,12 +194,13 @@ const ProjectForm = ({
       }
 
       if (response.data.success) {
-        showToast(
-          mode === "edit"
-            ? "Project updated successfully!"
-            : "Project created successfully!",
-          "success"
-        );
+        showToast({
+          message:
+            mode === "edit"
+              ? "Project updated successfully!"
+              : "Project created successfully!",
+          status: "success",
+        });
 
         if (onSubmit) {
           onSubmit(response.data.project);
@@ -227,7 +232,7 @@ const ProjectForm = ({
 
   if (loadingProject) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-indigo-950 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 flex items-center justify-center">
         <div className="text-white text-lg flex items-center">
           <Loader className="animate-spin mr-2" size={20} />
           Loading project data...
@@ -236,27 +241,61 @@ const ProjectForm = ({
     );
   }
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-indigo-950">
-      {/* Toast Notification */}
-      {toast && (
-        <div
-          className={`fixed top-4 right-4 z-50 p-4 rounded-xl shadow-2xl backdrop-blur-sm border ${
-            toast.type === "success"
-              ? "bg-emerald-500/20 border-emerald-400/30 text-emerald-200"
-              : "bg-red-500/20 border-red-400/30 text-red-200"
-          }`}
-        >
-          <div className="flex items-center">
-            {toast.type === "success" ? (
-              <CheckCircle size={20} className="mr-2" />
-            ) : (
-              <AlertCircle size={20} className="mr-2" />
-            )}
-            {toast.message}
+  const Toast = ({ toast, onClose }) => {
+    if (!toast) return null;
+
+    const getToastStyles = (status) => {
+      switch (status) {
+        case "success":
+          return "bg-emerald-500/20 border-emerald-400/30 text-emerald-200";
+        case "error":
+          return "bg-red-500/20 border-red-400/30 text-red-200";
+        case "info":
+          return "bg-blue-500/20 border-blue-400/30 text-blue-200";
+        default:
+          return "bg-gray-500/20 border-gray-400/30 text-gray-200";
+      }
+    };
+
+    const getIcon = (status) => {
+      switch (status) {
+        case "success":
+          return <CheckCircle size={20} className="mr-2" />;
+        case "error":
+          return <AlertCircle size={20} className="mr-2" />;
+        case "info":
+          return <Info size={20} className="mr-2" />;
+        default:
+          return <AlertCircle size={20} className="mr-2" />;
+      }
+    };
+
+    return (
+      <div
+        className={`fixed top-4 right-4 z-50 p-4 rounded-xl shadow-2xl backdrop-blur-sm border ${getToastStyles(
+          toast.status
+        )} max-w-sm`}
+      >
+        <div className="flex items-center justify-between">
+          <div className="flex items-center flex-1">
+            {getIcon(toast.status)}
+            <span className="text-sm">{toast.message}</span>
           </div>
+          <button
+            onClick={onClose}
+            className="ml-3 text-white/60 hover:text-white transition-colors"
+          >
+            <X size={16} />
+          </button>
         </div>
-      )}
+      </div>
+    );
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950">
+      {/* Toast Notification */}
+      {toast && <Toast toast={toast} onClose={() => setToast(null)} />}
 
       {/* Animated background elements */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
@@ -428,6 +467,7 @@ const ProjectForm = ({
                     formData={formData}
                     setFormData={setFormData}
                     errors={errors}
+                    onToast={showToast}
                   />
 
                   {/* Technical Details */}
@@ -435,6 +475,7 @@ const ProjectForm = ({
                     formData={formData}
                     setFormData={setFormData}
                     errors={errors}
+                    onToast={showToast}
                   />
 
                   {/* Project Details */}
@@ -442,22 +483,29 @@ const ProjectForm = ({
                     formData={formData}
                     setFormData={setFormData}
                     errors={errors}
+                    onToast={showToast}
                   />
 
                   {/* Prerequisites */}
                   <Prerequisites
                     formData={formData}
                     setFormData={setFormData}
+                    onToast={showToast}
                   />
 
                   {/* References */}
-                  <References formData={formData} setFormData={setFormData} />
+                  <References
+                    formData={formData}
+                    setFormData={setFormData}
+                    onToast={showToast}
+                  />
 
                   {/* Pricing */}
                   <Pricing
                     formData={formData}
                     setFormData={setFormData}
                     errors={errors}
+                    onToast={showToast}
                   />
 
                   {/* Form Actions */}
@@ -507,7 +555,11 @@ const ProjectForm = ({
                       project
                     </p>
                   </div>
-                  <AIHelper formData={formData} setFormData={setFormData} />
+                  <AIHelper
+                    formData={formData}
+                    setFormData={setFormData}
+                    onToast={showToast}
+                  />
                 </div>
               </div>
             )}

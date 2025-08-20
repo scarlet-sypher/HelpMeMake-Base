@@ -15,7 +15,7 @@ import {
   AlertTriangle,
 } from "lucide-react";
 
-const AIHelper = ({ formData, setFormData }) => {
+const AIHelper = ({ formData, setFormData, onToast }) => {
   const [imagePrompt, setImagePrompt] = useState("");
   const [descriptionPrompt, setDescriptionPrompt] = useState("");
   const [generatedImage, setGeneratedImage] = useState("");
@@ -27,14 +27,9 @@ const AIHelper = ({ formData, setFormData }) => {
   const [loadingDescription, setLoadingDescription] = useState(false);
   const [toast, setToast] = useState(null);
 
-  const showToast = (message, type = "success") => {
-    setToast({ message, type });
-    setTimeout(() => setToast(null), 4000);
-  };
-
   const handleImageGenerate = async () => {
     if (!imagePrompt.trim()) {
-      showToast("Please enter an image prompt", "error");
+      onToast?.({ message: "Please enter an image prompt", status: "error" });
       return;
     }
 
@@ -67,30 +62,37 @@ const AIHelper = ({ formData, setFormData }) => {
           thumbnail: response.data.imageUrl,
         }));
 
-        showToast("🎉 AI image generated successfully!");
+        onToast?.({
+          message: "🎉 AI image generated successfully!",
+          status: "success",
+        });
       }
     } catch (error) {
       console.error("Real image generation error:", error);
 
       // Handle specific error messages
       if (error.response?.status === 400) {
-        showToast(
-          error.response.data.message ||
-            "Invalid prompt. Please try a different description.",
-          "error"
-        );
+        onToast?.({
+          message: "Invalid prompt. Please try a different description.",
+          status: "error",
+        });
       } else if (error.response?.status === 429) {
-        showToast(
-          "Daily AI image generation limit reached. Please try again tomorrow.",
-          "error"
-        );
+        onToast?.({
+          message:
+            "Daily AI image generation limit reached. Please try again tomorrow.",
+          status: "error",
+        });
       } else if (error.response?.status === 503) {
-        showToast(
-          "AI image service temporarily unavailable. Please try again later.",
-          "error"
-        );
+        onToast?.({
+          message:
+            "AI image service temporarily unavailable. Please try again later.",
+          status: "error",
+        });
       } else {
-        showToast("Failed to generate image. Please try again.", "error");
+        onToast?.({
+          message: "Failed to generate image. Please try again.",
+          status: "error",
+        });
       }
     } finally {
       setLoadingImage(false);
@@ -109,15 +111,21 @@ const AIHelper = ({ formData, setFormData }) => {
       link.click();
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
-      showToast("Image downloaded successfully!");
+      onToast?.({
+        message: "Image downloaded successfully!",
+        status: "success",
+      });
     } catch (error) {
-      showToast("Failed to download image", error);
+      onToast?.({ message: "Failed to download image", status: "error" });
     }
   };
 
   const handleDescriptionGenerate = async () => {
     if (!descriptionPrompt.trim()) {
-      showToast("Please enter a description prompt", "error");
+      onToast?.({
+        message: "Please enter a description prompt",
+        status: "error",
+      });
       return;
     }
 
@@ -142,14 +150,18 @@ const AIHelper = ({ formData, setFormData }) => {
           short: response.data.shortDescription,
           long: response.data.longDescription,
         });
-        showToast("Descriptions generated successfully!");
+        onToast?.({
+          message: "Descriptions generated successfully!",
+          status: "success",
+        });
       }
     } catch (error) {
       console.error("Description generation error:", error);
-      showToast(
-        error.response?.data?.message || "Failed to generate descriptions",
-        "error"
-      );
+      onToast?.({
+        message:
+          error.response?.data?.message || "Failed to generate descriptions",
+        status: "error",
+      });
     } finally {
       setLoadingDescription(false);
     }
@@ -157,46 +169,27 @@ const AIHelper = ({ formData, setFormData }) => {
 
   const copyToClipboard = (text) => {
     navigator.clipboard.writeText(text);
-    showToast("Copied to clipboard!");
+    onToast?.({ message: "Copied to clipboard!", status: "success" });
   };
 
   const applyToForm = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
-    showToast(
-      `Applied to ${
+    onToast?.({
+      message: `Applied to ${
         field === "shortDescription" ? "short" : "full"
-      } description!`
-    );
+      } description!`,
+      status: "success",
+    });
   };
 
   const clearGeneratedImage = () => {
     setGeneratedImage("");
     setFormData((prev) => ({ ...prev, thumbnail: "" }));
-    showToast("Image cleared");
+    onToast?.({ message: "Image cleared", status: "info" });
   };
 
   return (
     <div className="space-y-6">
-      {/* Toast Notification */}
-      {toast && (
-        <div
-          className={`fixed top-4 right-4 z-50 p-3 rounded-lg shadow-lg backdrop-blur-sm border ${
-            toast.type === "success"
-              ? "bg-emerald-500/20 border-emerald-400/30 text-emerald-200"
-              : "bg-red-500/20 border-red-400/30 text-red-200"
-          }`}
-        >
-          <div className="flex items-center text-sm">
-            {toast.type === "success" ? (
-              <CheckCircle size={16} className="mr-2" />
-            ) : (
-              <AlertCircle size={16} className="mr-2" />
-            )}
-            {toast.message}
-          </div>
-        </div>
-      )}
-
       {/* Image Generator Block */}
       <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 sm:p-6 border border-white/20">
         <div className="flex items-center mb-4">

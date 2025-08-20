@@ -7,7 +7,13 @@ import {
   MessageSquare,
 } from "lucide-react";
 
-const PitchModal = ({ project, onClose, API_URL, onPitchSubmitted }) => {
+const PitchModal = ({
+  project,
+  onClose,
+  API_URL,
+  onPitchSubmitted,
+  onToast,
+}) => {
   const [formData, setFormData] = useState({
     price: "",
     note: "",
@@ -55,9 +61,12 @@ const PitchModal = ({ project, onClose, API_URL, onPitchSubmitted }) => {
       const data = await response.json();
 
       if (response.ok && data.success) {
-        alert("Pitch submitted successfully!");
+        onToast({
+          message:
+            "Pitch submitted successfully! The project owner will review your proposal.",
+          status: "success",
+        });
 
-        // Update the project with new pitch data if callback provided
         if (onPitchSubmitted) {
           onPitchSubmitted(data.pitch);
         }
@@ -76,7 +85,7 @@ const PitchModal = ({ project, onClose, API_URL, onPitchSubmitted }) => {
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-      <div className="bg-white/10 backdrop-blur-sm rounded-3xl shadow-2xl p-6 border border-white/20 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+      <div className="bg-white/10 backdrop-blur-sm rounded-3xl shadow-2xl p-6 border border-white/20 w-full max-w-2xl max-h-[90vh] overflow-y-auto hide-scrollbar-general">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold text-white flex items-center">
             <Send className="mr-2 text-cyan-400" size={24} />
@@ -111,7 +120,7 @@ const PitchModal = ({ project, onClose, API_URL, onPitchSubmitted }) => {
               <span className="text-purple-400 font-semibold">
                 {calculateNegotiatedPrice(project) > 0
                   ? `₹${calculateNegotiatedPrice(project).toLocaleString()}`
-                  : "No pitches yet"}
+                  : "No pitches"}
               </span>
             </div>
             <div className="flex items-center justify-between sm:col-span-2">

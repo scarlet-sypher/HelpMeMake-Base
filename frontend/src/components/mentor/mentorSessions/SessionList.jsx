@@ -31,6 +31,7 @@ const SessionCard = ({
   onEdit,
   onReschedule,
   onCancel,
+  onToast,
 }) => {
   const [actionLoading, setActionLoading] = useState(false);
   const [showRecordingModal, setShowRecordingModal] = useState(false);
@@ -108,7 +109,10 @@ const SessionCard = ({
   // Handle join session
   const handleJoinSession = async () => {
     if (!session.meetingLink) {
-      alert("No meeting link provided for this session");
+      onToast({
+        message: "No meeting link provided for this session",
+        status: "error",
+      });
       return;
     }
 
@@ -131,11 +135,12 @@ const SessionCard = ({
       );
 
       // Open meeting link in new tab
+      onToast({ message: "Joining session...", status: "success" });
       window.open(session.meetingLink, "_blank");
       onRefresh();
     } catch (error) {
       console.error("Error joining session:", error);
-      alert("Failed to join session");
+      onToast({ message: "Failed to join session", status: "error" });
     } finally {
       setActionLoading(false);
     }
@@ -183,9 +188,10 @@ const SessionCard = ({
       });
 
       onRefresh();
+      onToast({ message: "Session deleted successfully", status: "success" });
     } catch (error) {
       console.error("Error deleting session:", error);
-      alert("Failed to delete session");
+      onToast({ message: "Failed to delete session", status: "error" });
     } finally {
       setActionLoading(false);
     }
@@ -215,7 +221,10 @@ const SessionCard = ({
   // Handle mentor reason submission
   const handleMentorReasonSubmit = async () => {
     if (!mentorReason.trim()) {
-      alert("Please provide a reason for your absence");
+      onToast({
+        message: "Please provide a reason for your absence",
+        status: "error",
+      });
       return;
     }
 
@@ -235,12 +244,14 @@ const SessionCard = ({
         }
       );
 
+      onToast({ message: "Reason submitted successfully", status: "success" });
+
       setShowMentorReasonModal(false);
       setMentorReason("");
       onRefresh();
     } catch (error) {
       console.error("Error submitting mentor reason:", error);
-      alert("Failed to submit reason");
+      onToast({ message: "Failed to submit reason", status: "error" });
     } finally {
       setActionLoading(false);
     }
@@ -264,11 +275,16 @@ const SessionCard = ({
         }
       );
 
+      onToast({
+        message: "Recording link updated successfully",
+        status: "success",
+      });
+
       setShowRecordingModal(false);
       onRefresh();
     } catch (error) {
       console.error("Error updating recording link:", error);
-      alert("Failed to update recording link");
+      onToast({ message: "Failed to update recording link", status: "error" });
     } finally {
       setActionLoading(false);
     }
@@ -548,7 +564,7 @@ const SessionCard = ({
         {/* Recording Link Modal */}
         {showRecordingModal && (
           <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-            <div className="bg-gradient-to-br from-slate-950 via-blue-950 to-indigo-950 rounded-2xl p-6 border border-white/20 max-w-md w-full shadow-2xl">
+            <div className="bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 rounded-2xl p-6 border border-white/20 max-w-md w-full shadow-2xl">
               <div className="text-center mb-5">
                 <div className="w-14 h-14 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-full flex items-center justify-center mx-auto mb-3 border border-blue-400/30">
                   <Play className="text-blue-400" size={24} />
@@ -598,7 +614,7 @@ const SessionCard = ({
         {/* Mentor Reason Modal */}
         {showMentorReasonModal && (
           <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-            <div className="bg-gradient-to-br from-slate-950 via-blue-950 to-indigo-950 rounded-2xl p-6 border border-white/20 max-w-md w-full shadow-2xl">
+            <div className="bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 rounded-2xl p-6 border border-white/20 max-w-md w-full shadow-2xl">
               <div className="text-center mb-5">
                 <div className="w-14 h-14 bg-gradient-to-br from-orange-500/20 to-red-500/20 rounded-full flex items-center justify-center mx-auto mb-3 border border-orange-400/30">
                   <MessageSquare className="text-orange-400" size={24} />
@@ -648,7 +664,7 @@ const SessionCard = ({
   );
 };
 
-const SessionList = ({ sessions, onRefresh, isPastOnly }) => {
+const SessionList = ({ sessions, onRefresh, isPastOnly, onToast }) => {
   const [editingSession, setEditingSession] = useState(null);
   const [reschedulingSession, setReschedulingSession] = useState(null);
   const [cancellingSession, setCancellingSession] = useState(null);
@@ -704,6 +720,7 @@ const SessionList = ({ sessions, onRefresh, isPastOnly }) => {
             onEdit={(session) => setEditingSession(session)}
             onReschedule={(session) => setReschedulingSession(session)}
             onCancel={(session) => setCancellingSession(session)}
+            onToast={onToast}
           />
         ))}
       </div>
@@ -717,6 +734,7 @@ const SessionList = ({ sessions, onRefresh, isPastOnly }) => {
             setEditingSession(null);
             onRefresh();
           }}
+          onToast={onToast}
         />
       )}
 

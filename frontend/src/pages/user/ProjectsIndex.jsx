@@ -19,6 +19,7 @@ import {
   XCircle,
   Play,
   Pause,
+  X,
 } from "lucide-react";
 
 const ProjectsIndex = () => {
@@ -48,7 +49,69 @@ const ProjectsIndex = () => {
   const [filterDropdownOpen, setFilterDropdownOpen] = useState(false);
 
   // Toast state
-  const [toast, setToast] = useState({ show: false, message: "", type: "" });
+  const [toastState, setToastState] = useState({
+    isOpen: false,
+    message: "",
+    status: "info",
+  });
+
+  const Toast = ({ isOpen, message, status, onClose }) => {
+    useEffect(() => {
+      if (isOpen) {
+        const timer = setTimeout(() => {
+          onClose();
+        }, 4000);
+        return () => clearTimeout(timer);
+      }
+    }, [isOpen, onClose]);
+
+    if (!isOpen) return null;
+
+    const getToastStyles = () => {
+      switch (status) {
+        case "success":
+          return "bg-emerald-500/20 border-emerald-500/30 text-emerald-300";
+        case "error":
+          return "bg-red-500/20 border-red-500/30 text-red-300";
+        case "info":
+        default:
+          return "bg-blue-500/20 border-blue-500/30 text-blue-300";
+      }
+    };
+
+    const getIcon = () => {
+      switch (status) {
+        case "success":
+          return <CheckCircle2 size={18} className="flex-shrink-0" />;
+        case "error":
+          return <AlertCircle size={18} className="flex-shrink-0" />;
+        case "info":
+        default:
+          return <AlertCircle size={18} className="flex-shrink-0" />;
+      }
+    };
+
+    return (
+      <div className="fixed top-6 right-6 z-50 max-w-sm w-full mx-4">
+        <div
+          className={`p-4 rounded-2xl shadow-2xl backdrop-blur-sm border transition-all duration-300 transform ${getToastStyles()}`}
+        >
+          <div className="flex items-start space-x-3 min-w-0">
+            {getIcon()}
+            <p className="flex-1 font-medium text-sm leading-relaxed break-words min-w-0">
+              {message}
+            </p>
+            <button
+              onClick={onClose}
+              className="flex-shrink-0 text-current hover:opacity-70 transition-opacity p-0.5"
+            >
+              <X size={16} />
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
 
   useEffect(() => {
     if (!loading && !isAuthenticated) {
@@ -200,11 +263,19 @@ const ProjectsIndex = () => {
     window.location.href = "/user/projects/create";
   };
 
-  const showToast = (message, type = "success") => {
-    setToast({ show: true, message, type });
-    setTimeout(() => {
-      setToast({ show: false, message: "", type: "" });
-    }, 3000);
+  const showToast = ({ message, status = "info" }) => {
+    setToastState({
+      isOpen: true,
+      message,
+      status,
+    });
+  };
+
+  const closeToast = () => {
+    setToastState((prev) => ({
+      ...prev,
+      isOpen: false,
+    }));
   };
 
   const getStatusIcon = (status) => {
@@ -448,6 +519,7 @@ const ProjectsIndex = () => {
                   <ShortProjectCard
                     key={project._id}
                     project={project}
+                    onToast={showToast}
                     onUpdate={() => {
                       // Refresh projects after update
                       window.location.reload();
@@ -479,24 +551,12 @@ const ProjectsIndex = () => {
       </button>
 
       {/* Toast Notification */}
-      {toast.show && (
-        <div
-          className={`fixed top-6 right-6 z-50 p-4 rounded-2xl shadow-2xl backdrop-blur-sm border transition-all duration-300 transform ${
-            toast.type === "success"
-              ? "bg-emerald-500/20 border-emerald-500/30 text-emerald-300"
-              : "bg-red-500/20 border-red-500/30 text-red-300"
-          }`}
-        >
-          <div className="flex items-center space-x-2">
-            {toast.type === "success" ? (
-              <CheckCircle2 size={20} />
-            ) : (
-              <AlertCircle size={20} />
-            )}
-            <span className="font-medium">{toast.message}</span>
-          </div>
-        </div>
-      )}
+      <Toast
+        isOpen={toastState.isOpen}
+        message={toastState.message}
+        status={toastState.status}
+        onClose={closeToast}
+      />
     </div>
   );
 };

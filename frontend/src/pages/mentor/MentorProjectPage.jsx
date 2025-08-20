@@ -23,6 +23,7 @@ import {
   Award,
   Eye,
   MessageSquare,
+  X,
 } from "lucide-react";
 import ShortProjectView from "../../components/mentor/mentorProject/ShortProjectView";
 
@@ -58,7 +59,83 @@ const MentorProjectPage = () => {
   const [priceRange, setPriceRange] = useState({ min: "", max: "" });
 
   // Toast state
-  const [toast, setToast] = useState({ show: false, message: "", type: "" });
+
+  const [toast, setToast] = useState({
+    open: false,
+    message: "",
+    status: "success",
+  });
+
+  // Toast component (add before main component return)
+  const Toast = ({ open, message, status, onClose }) => {
+    useEffect(() => {
+      if (open) {
+        const timer = setTimeout(() => {
+          onClose();
+        }, 4000);
+        return () => clearTimeout(timer);
+      }
+    }, [open, onClose]);
+
+    if (!open) return null;
+
+    const getStatusStyles = () => {
+      switch (status) {
+        case "success":
+          return "bg-emerald-500/20 border-emerald-500/30 text-emerald-300";
+        case "error":
+          return "bg-red-500/20 border-red-500/30 text-red-300";
+        case "info":
+          return "bg-cyan-500/20 border-cyan-500/30 text-cyan-300";
+        default:
+          return "bg-cyan-500/20 border-cyan-500/30 text-cyan-300";
+      }
+    };
+
+    const getStatusIcon = () => {
+      switch (status) {
+        case "success":
+          return <CheckCircle2 size={20} className="flex-shrink-0" />;
+        case "error":
+          return <XCircle size={20} className="flex-shrink-0" />;
+        case "info":
+          return <MessageSquare size={20} className="flex-shrink-0" />;
+        default:
+          return <MessageSquare size={20} className="flex-shrink-0" />;
+      }
+    };
+
+    return (
+      <div
+        className={`fixed top-6 right-6 z-50 p-4 rounded-2xl shadow-2xl backdrop-blur-sm border transition-all duration-300 transform max-w-sm ${getStatusStyles()}`}
+      >
+        <div className="flex items-start space-x-3 min-w-0">
+          {getStatusIcon()}
+          <span className="font-medium text-sm break-words flex-1 leading-relaxed">
+            {message}
+          </span>
+          <button
+            onClick={onClose}
+            className="flex-shrink-0 p-1 hover:bg-white/10 rounded-lg transition-colors"
+          >
+            <X size={16} />
+          </button>
+        </div>
+      </div>
+    );
+  };
+
+  const showToast = (toastData) => {
+    setToast({
+      open: true,
+      message: toastData.message,
+      status: toastData.status || "success",
+    });
+  };
+
+  const closeToast = () => {
+    setToast({ open: false, message: "", status: "success" });
+  };
 
   useEffect(() => {
     if (!loading && !isAuthenticated) {
@@ -248,13 +325,6 @@ const MentorProjectPage = () => {
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
-  };
-
-  const showToast = (message, type = "success") => {
-    setToast({ show: true, message, type });
-    setTimeout(() => {
-      setToast({ show: false, message: "", type: "" });
-    }, 3000);
   };
 
   const categories = [
@@ -605,6 +675,7 @@ const MentorProjectPage = () => {
                   <ShortProjectView
                     key={project._id}
                     project={project}
+                    onToast={showToast}
                     onApply={(projectId) => {
                       // Refresh the projects list or update the specific project
                       setFilteredProjects((prev) =>
@@ -619,10 +690,6 @@ const MentorProjectPage = () => {
                             : p
                         )
                       );
-                      showToast(
-                        "Application submitted successfully!",
-                        "success"
-                      );
                     }}
                   />
                 ))}
@@ -633,28 +700,12 @@ const MentorProjectPage = () => {
       </div>
 
       {/* Toast Notification */}
-      {toast.show && (
-        <div
-          className={`fixed top-6 right-6 z-50 p-4 rounded-2xl shadow-2xl backdrop-blur-sm border transition-all duration-300 transform ${
-            toast.type === "success"
-              ? "bg-emerald-500/20 border-emerald-500/30 text-emerald-300"
-              : toast.type === "info"
-              ? "bg-cyan-500/20 border-cyan-500/30 text-cyan-300"
-              : "bg-red-500/20 border-red-500/30 text-red-300"
-          }`}
-        >
-          <div className="flex items-center space-x-2">
-            {toast.type === "success" ? (
-              <CheckCircle2 size={20} />
-            ) : toast.type === "info" ? (
-              <MessageSquare size={20} />
-            ) : (
-              <AlertCircle size={20} />
-            )}
-            <span className="font-medium">{toast.message}</span>
-          </div>
-        </div>
-      )}
+      <Toast
+        open={toast.open}
+        message={toast.message}
+        status={toast.status}
+        onClose={closeToast}
+      />
     </div>
   );
 };

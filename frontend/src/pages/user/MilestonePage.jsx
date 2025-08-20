@@ -46,12 +46,73 @@ const MilestonePage = () => {
       );
 
       const data = await response.json();
+      console.log("Project API Response:", data); // debug
+      console.log("API success:", data.success); // debug
+      console.log("API message:", data.message); // debug
 
-      if (data.success && data.project) {
-        setProjectData(data.project);
-        await fetchMilestones(data.project._id);
+      if (data.success) {
+        if (data.project) {
+          console.log("Project found in API response"); // debug
+          console.log("Project details:", data.project); // debug
+          console.log("Project status:", data.project.status); // debug
+          console.log("Project name:", data.project.name); // debug
+          console.log("Learner ID:", data.project.learnerId); // debug
+          console.log("Mentor ID object:", data.project.mentorId); // debug
+
+          // Log mentor details if available
+          if (
+            data.project.mentorId &&
+            typeof data.project.mentorId === "object"
+          ) {
+            console.log("=== MENTOR DETAILS DEBUG ==="); // debug
+            console.log("Mentor _id:", data.project.mentorId._id); // debug
+            console.log("Mentor name:", data.project.mentorId.name); // debug
+            console.log("Mentor email:", data.project.mentorId.email); // debug
+            console.log("Mentor avatar:", data.project.mentorId.avatar); // debug
+            console.log("Mentor title:", data.project.mentorId.title); // debug
+            console.log(
+              "Mentor description:",
+              data.project.mentorId.description
+            ); // debug
+            console.log("Mentor location:", data.project.mentorId.location); // debug
+            console.log("=== END MENTOR DETAILS ==="); // debug
+          } else {
+            console.log("Mentor data not properly populated or missing"); // debug
+          }
+
+          // Since backend now only returns projects with "In Progress" status
+          console.log("Setting project data for In Progress project"); // debug
+          setProjectData(data.project);
+          await fetchMilestones(data.project._id);
+        } else {
+          console.log(
+            "No project in response - either no project exists or not In Progress"
+          ); // debug
+          console.log("Debug info from backend:", data.debug); // debug
+
+          // Check if there was a project but wrong status
+          if (
+            data.debug &&
+            data.debug.projectExists &&
+            data.debug.projectStatus
+          ) {
+            console.log(
+              `Project exists but status is: ${data.debug.projectStatus}`
+            ); // debug
+            console.log(`Project name: ${data.debug.projectName}`); // debug
+          } else {
+            console.log("No project found for this learner"); // debug
+          }
+
+          setProjectData(null);
+        }
       } else {
+        console.log("API returned success: false"); // debug
+        console.log("Error message:", data.message); // debug
         setProjectData(null);
+        if (data.message) {
+          setError(data.message);
+        }
       }
     } catch (error) {
       console.error("Error fetching project data:", error);
@@ -64,6 +125,9 @@ const MilestonePage = () => {
 
   const fetchMilestones = async (projectId) => {
     try {
+      console.log("=== FETCH MILESTONES DEBUG ==="); // debug
+      console.log("Fetching milestones for project ID:", projectId); // debug
+
       const response = await fetch(
         `${API_URL}/api/milestone/project/${projectId}`,
         {
@@ -76,12 +140,100 @@ const MilestonePage = () => {
       );
 
       const data = await response.json();
+      console.log("Milestones API response:", data); // debug
+      console.log("Milestones API success:", data.success); // debug
 
       if (data.success) {
-        setMilestones(data.milestones || []);
+        const milestonesData = data.milestones || [];
+        console.log("Number of milestones fetched:", milestonesData.length); // debug
+
+        if (milestonesData.length > 0) {
+          console.log("Milestone details:"); // debug
+          milestonesData.forEach((milestone, index) => {
+            console.log(
+              `  ${index + 1}. ${milestone.title} - Status: ${
+                milestone.status
+              } - Progress: ${milestone.progressPercentage || 0}%`
+            ); // debug
+          });
+        }
+
+        // Process milestones based on current project status
+        let processedMilestones = milestonesData;
+
+        if (projectData && projectData.status) {
+          console.log(
+            "Processing milestones based on project status:",
+            projectData.status
+          ); // debug
+
+          processedMilestones = milestonesData.map((milestone) => {
+            let updatedMilestone = { ...milestone };
+            const progressPercentage = milestone.progressPercentage || 0;
+
+            console.log(`Processing milestone: ${milestone.title}`); // debug
+            console.log(`  Current status: ${milestone.status}`); // debug
+            console.log(`  Progress percentage: ${progressPercentage}%`); // debug
+            console.log(
+              `  Learner verified: ${
+                milestone.learnerVerification?.isVerified || false
+              }`
+            ); // debug
+            console.log(
+              `  Mentor verified: ${
+                milestone.mentorVerification?.isVerified || false
+              }`
+            ); // debug
+
+            // Update status based on verification and project status
+            if (projectData.status === "In Progress") {
+              if (
+                milestone.learnerVerification?.isVerified &&
+                milestone.mentorVerification?.isVerified
+              ) {
+                updatedMilestone.status = "Completed";
+                console.log(`  Updated status to: Completed (both verified)`); // debug
+              } else if (
+                milestone.learnerVerification?.isVerified ||
+                milestone.mentorVerification?.isVerified
+              ) {
+                updatedMilestone.status = "Pending Review";
+                console.log(
+                  `  Updated status to: Pending Review (partially verified)`
+                ); // debug
+              } else if (progressPercentage > 0) {
+                updatedMilestone.status = "In Progress";
+                console.log(`  Updated status to: In Progress (has progress)`); // debug
+              } else {
+                updatedMilestone.status = "Not Started";
+                console.log(`  Updated status to: Not Started (no progress)`); // debug
+              }
+            } else if (projectData.status === "Completed") {
+              updatedMilestone.status = "Completed";
+              console.log(`  Updated status to: Completed (project completed)`); // debug
+            } else if (projectData.status === "Cancelled") {
+              updatedMilestone.status = "Cancelled";
+              console.log(`  Updated status to: Cancelled (project cancelled)`); // debug
+            }
+
+            return updatedMilestone;
+          });
+        }
+
+        console.log(
+          "Final processed milestones count:",
+          processedMilestones.length
+        ); // debug
+        console.log("=== END FETCH MILESTONES DEBUG ==="); // debug
+
+        setMilestones(processedMilestones);
+      } else {
+        console.log("Failed to fetch milestones:", data.message); // debug
+        setMilestones([]);
       }
     } catch (error) {
       console.error("Error fetching milestones:", error);
+      setMilestones([]);
     }
   };
 
@@ -90,6 +242,12 @@ const MilestonePage = () => {
 
     try {
       setSaving(true);
+      console.log("Adding milestone for project:", projectData); // debug
+      console.log(
+        "Project status during milestone creation:",
+        projectData.status
+      ); // debug
+
       const response = await fetch(`${API_URL}/api/milestone/create`, {
         method: "POST",
         credentials: "include",
@@ -108,9 +266,40 @@ const MilestonePage = () => {
       });
 
       const data = await response.json();
+      console.log("Milestone creation response:", data); // debug
 
       if (data.success) {
-        setMilestones([...milestones, data.milestone]);
+        console.log("New milestone created:", data.milestone); // debug
+        console.log("Milestone status:", data.milestone.status); // debug
+
+        // Update milestone status based on project status
+        let updatedMilestone = { ...data.milestone };
+
+        if (projectData.status === "Completed") {
+          updatedMilestone.status = "Completed";
+          console.log(
+            "Setting milestone status to Completed due to project status"
+          ); // debug
+        } else if (projectData.status === "Cancelled") {
+          updatedMilestone.status = "Cancelled";
+          console.log(
+            "Setting milestone status to Cancelled due to project status"
+          ); // debug
+        } else if (projectData.status === "In Progress") {
+          // Check milestone progress percentage
+          const progressPercentage = updatedMilestone.progressPercentage || 0;
+          if (progressPercentage >= 100) {
+            updatedMilestone.status = "Completed";
+            console.log(
+              "Setting milestone status to Completed due to 100% progress"
+            ); // debug
+          } else {
+            updatedMilestone.status = "In Progress";
+            console.log("Setting milestone status to In Progress"); // debug
+          }
+        }
+
+        setMilestones([...milestones, updatedMilestone]);
         setNewMilestone("");
       }
     } catch (error) {
@@ -365,12 +554,12 @@ const MilestonePage = () => {
                 </div>
                 <div className="space-y-4">
                   <h3 className="text-2xl font-bold text-white">
-                    No Active Project Found
+                    No Project In Progress
                   </h3>
                   <p className="text-orange-200 max-w-md">
-                    To create milestones, you need to have an active project
-                    with a mentor. Let's get you started with finding the
-                    perfect project!
+                    To create milestones, you need to have a project that is
+                    currently "In Progress" with a mentor. Projects that are
+                    completed or cancelled cannot have new milestones.
                   </p>
                 </div>
                 <button

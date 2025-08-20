@@ -35,6 +35,76 @@ const MentorSessions = () => {
   const [sessionsLoading, setSessionsLoading] = useState(true);
   const [showAddSession, setShowAddSession] = useState(false);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const [toast, setToast] = useState({
+    open: false,
+    message: "",
+    status: "info",
+  });
+
+  const Toast = ({ toast, onClose }) => {
+    useEffect(() => {
+      if (toast.open) {
+        const timer = setTimeout(() => {
+          onClose();
+        }, 4000);
+        return () => clearTimeout(timer);
+      }
+    }, [toast.open, onClose]);
+
+    if (!toast.open) return null;
+
+    const getToastStyles = (status) => {
+      switch (status) {
+        case "success":
+          return "bg-gradient-to-r from-green-500/90 to-emerald-600/90 border-green-400/50 text-white";
+        case "error":
+          return "bg-gradient-to-r from-red-500/90 to-red-600/90 border-red-400/50 text-white";
+        case "info":
+        default:
+          return "bg-gradient-to-r from-blue-500/90 to-cyan-600/90 border-blue-400/50 text-white";
+      }
+    };
+
+    const getIcon = (status) => {
+      switch (status) {
+        case "success":
+          return <CheckCircle size={20} />;
+        case "error":
+          return <XCircle size={20} />;
+        case "info":
+        default:
+          return <AlertTriangle size={20} />;
+      }
+    };
+
+    return (
+      <div className="fixed top-4 right-4 z-[70] animate-in slide-in-from-top-2 duration-300">
+        <div
+          className={`flex items-center space-x-3 px-4 py-3 rounded-xl backdrop-blur-sm border shadow-lg max-w-sm ${getToastStyles(
+            toast.status
+          )}`}
+        >
+          {getIcon(toast.status)}
+          <p className="text-sm font-medium flex-1">{toast.message}</p>
+          <button
+            onClick={onClose}
+            className="p-1 hover:bg-white/20 rounded-lg transition-colors"
+          >
+            <X size={16} />
+          </button>
+        </div>
+      </div>
+    );
+  };
+
+  // Toast functions - add before the main component return
+  const showToast = ({ message, status = "info" }) => {
+    setToast({ open: true, message, status });
+  };
+
+  const hideToast = () => {
+    setToast({ open: false, message: "", status: "info" });
+  };
 
   // Redirect non-mentors
   useEffect(() => {
@@ -157,6 +227,7 @@ const MentorSessions = () => {
           sessions={sessionsData?.sessions || []}
           onRefresh={refreshData}
           isPastOnly={true}
+          onToast={showToast}
         />
       </div>
     </div>
@@ -248,6 +319,7 @@ const MentorSessions = () => {
                   sessions={sessionsData?.sessions || []}
                   onRefresh={refreshData}
                   isPastOnly={false}
+                  onToast={showToast}
                 />
               </div>
             </div>
@@ -262,10 +334,13 @@ const MentorSessions = () => {
                 setShowAddSession(false);
                 refreshData();
               }}
+              onToast={showToast}
             />
           )}
         </div>
       </div>
+
+      <Toast toast={toast} onClose={hideToast} />
     </div>
   );
 };
