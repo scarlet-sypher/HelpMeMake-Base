@@ -21,15 +21,13 @@ const messageChatSchema = new mongoose.Schema(
       required: true,
     },
 
-    // Message content
-    message: {
+    // Message content and type
+    messageType: {
       type: String,
-      required: true,
-      trim: true,
-      maxlength: 2000,
+      enum: ["text", "image"],
+      default: "text",
     },
 
-    // Message metadata
     message: {
       type: String,
       required: function () {
@@ -39,6 +37,7 @@ const messageChatSchema = new mongoose.Schema(
       maxlength: 2000,
     },
 
+    // Image message fields
     imageUrl: {
       type: String,
       default: null,
@@ -56,7 +55,6 @@ const messageChatSchema = new mongoose.Schema(
       default: null,
     },
 
-    // Timestamp for ordering (using 'time' as requested)
     time: {
       type: Date,
       default: Date.now,

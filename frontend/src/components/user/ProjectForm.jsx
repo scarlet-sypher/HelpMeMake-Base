@@ -232,7 +232,7 @@ const ProjectForm = ({
 
   if (loadingProject) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-indigo-950 flex items-center justify-center">
         <div className="text-white text-lg flex items-center">
           <Loader className="animate-spin mr-2" size={20} />
           Loading project data...
@@ -293,7 +293,7 @@ const ProjectForm = ({
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950">
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-indigo-950">
       {/* Toast Notification */}
       {toast && <Toast toast={toast} onClose={() => setToast(null)} />}
 

@@ -35,7 +35,8 @@ import MentorAnalysis from "./pages/mentor/MentorAnalysis";
 import UserAnalysis from "./pages/user/UserAnalysis";
 import GoalSetter from "./pages/mentor/GoalSetter";
 import MentorDetailsPageView from "./pages/user/MentorDetailsPageView";
-
+import MentorMessages from "./pages/mentor/MentorMessages";
+import LearnerMessagesPage from "./pages/user/LearnerMessagesPage";
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <BrowserRouter>
@@ -94,14 +95,6 @@ ReactDOM.createRoot(document.getElementById("root")).render(
           element={
             <ProtectedRoute requiredRole="user">
               <UserSessions />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/user/messages"
-          element={
-            <ProtectedRoute requiredRole="user">
-              <div>Messages Page - Coming Soon</div>
             </ProtectedRoute>
           }
         />
@@ -258,6 +251,8 @@ ReactDOM.createRoot(document.getElementById("root")).render(
             </ProtectedRoute>
           }
         />
+        <Route path="/mentor/messages" element={<MentorMessages />} />
+        <Route path="/user/messages" element={<LearnerMessagesPage />} />
       </Routes>
     </BrowserRouter>
 

@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Milestone = require("./Milestone");
+const MessageRoom = require("./MessageRoom");
 
 const projectSchema = new mongoose.Schema(
   {
@@ -1005,19 +1006,66 @@ projectSchema.pre("save", function (next) {
 
 projectSchema.post("save", async function (doc, next) {
   try {
-    // Check if status changed to "In Progress"
-    if (
-      this.isModified("status") &&
-      doc.status === "In Progress" &&
-      doc.mentorId
-    ) {
-      // Check if milestones already exist for this project
+    console.log(`[MESSAGE_DEBUG] Post-save triggered for project: ${doc.name}`);
+    console.log(`[MESSAGE_DEBUG] Project status: ${doc.status}`);
+    console.log(`[MESSAGE_DEBUG] Modified paths:`, this.modifiedPaths());
+
+    // ✅ If project status changed to "In Progress"
+    if (doc.status === "In Progress" && doc.mentorId && doc.learnerId) {
+      console.log(`[MESSAGE_DEBUG] Project meets criteria for room creation`);
+      console.log(
+        `[MESSAGE_DEBUG] LearnerId: ${doc.learnerId}, MentorId: ${doc.mentorId}`
+      );
+
+      // 🔹 Check if message room already exists
+      const MessageRoom = require("./MessageRoom");
+      const existingRoom = await MessageRoom.findOne({ projectId: doc._id });
+
+      if (existingRoom) {
+        console.log(
+          `[MESSAGE_DEBUG] Room already exists: ${existingRoom.roomId}`
+        );
+      } else {
+        console.log(
+          `[MESSAGE_DEBUG] No existing room found, creating new room`
+        );
+
+        try {
+          // 🔹 Create message room directly here instead of calling controller
+          const newRoom = new MessageRoom({
+            learnerId: doc.learnerId,
+            mentorId: doc.mentorId,
+            projectId: doc._id,
+            roomName: `Chat - ${doc.name}`,
+            status: "open",
+          });
+
+          const savedRoom = await newRoom.save();
+          console.log(
+            `[MESSAGE_DEBUG] ✅ Message room created successfully: ${savedRoom.roomId}`
+          );
+          console.log(`[MESSAGE_DEBUG] Room details:`, {
+            roomId: savedRoom._id,
+            learnerId: savedRoom.learnerId,
+            mentorId: savedRoom.mentorId,
+            projectId: savedRoom.projectId,
+            status: savedRoom.status,
+          });
+        } catch (roomError) {
+          console.error(
+            `[MESSAGE_DEBUG] ❌ Failed to create message room:`,
+            roomError
+          );
+        }
+      }
+
+      // 🔹 Create initial milestone if none exist
+      const Milestone = require("./Milestone");
       const existingMilestones = await Milestone.countDocuments({
         projectId: doc._id,
       });
 
       if (existingMilestones === 0) {
-        // Create initial milestone entry
         const initialMilestone = new Milestone({
           title: "Project Kickoff & Setup",
           description:
@@ -1027,23 +1075,64 @@ projectSchema.post("save", async function (doc, next) {
           mentorId: doc.mentorId,
           dueDate:
             doc.expectedEndDate ||
-            new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days from now
+            new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
           order: 1,
           status: "Not Started",
           priority: "High",
         });
 
         await initialMilestone.save();
-        console.log(`Initial milestone created for project: ${doc.name}`);
+        console.log(
+          `[MESSAGE_DEBUG] ✅ Initial milestone created for project: ${doc.name}`
+        );
+      }
+    } else {
+      console.log(
+        `[MESSAGE_DEBUG] Project doesn't meet room creation criteria:`
+      );
+      console.log(
+        `[MESSAGE_DEBUG] Status: ${doc.status} (needs: "In Progress")`
+      );
+      v;
+      console.log(`[MESSAGE_DEBUG] Has mentorId: ${!!doc.mentorId}`);
+      console.log(`[MESSAGE_DEBUG] Has learnerId: ${!!doc.learnerId}`);
+    }
+
+    // -------------------------------
+    // 2. When status = "Completed" or "Cancelled"
+    // -------------------------------
+    if (doc.status === "Completed" || doc.status === "Cancelled") {
+      console.log(
+        `[MESSAGE_DEBUG] Closing room for project status: ${doc.status}`
+      );
+      try {
+        const MessageRoom = require("./MessageRoom");
+        const room = await MessageRoom.findOne({ projectId: doc._id });
+
+        if (room && room.status === "open") {
+          room.status = "close";
+          await room.save();
+          console.log(`[MESSAGE_DEBUG] ✅ Message room closed: ${room.roomId}`);
+        } else {
+          console.log(`[MESSAGE_DEBUG] No active room found to close`);
+        }
+      } catch (roomError) {
+        console.error(
+          `[MESSAGE_DEBUG] ❌ Failed to close message room:`,
+          roomError
+        );
       }
     }
+
     next();
   } catch (error) {
-    console.error("Error in project post-save middleware:", error);
+    console.error(
+      "[MESSAGE_DEBUG] ❌ Error in project post-save middleware:",
+      error
+    );
     next(error);
   }
 });
-
 // Also add this pre-save middleware to update milestone project references if needed
 projectSchema.pre("save", function (next) {
   // Update lastUpdated timestamp
