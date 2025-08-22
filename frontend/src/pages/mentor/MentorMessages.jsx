@@ -1,32 +1,64 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import Sidebar from "../../components/user/Sidebar";
-import {
-  MessageCircle,
-  Send,
-  Image as ImageIcon,
-  Settings,
-  Clock,
-  CheckCircle2,
-  Users,
-  Search,
-  RefreshCw,
-  Lock,
-  Menu,
-  X,
-  ArrowLeft,
-  MoreVertical,
-  Camera,
-  Upload,
-  Download,
-  Paperclip,
-  CloudUpload,
-} from "lucide-react";
+import RoomListSidebar from "../../components/mentor/mentorMessage/RoomListSidebar";
+import ChatHeader from "../../components/mentor/mentorMessage/ChatHeader";
+import ChatMessages from "../../components/mentor/mentorMessage/ChatMessages";
+import ChatInput from "../../components/mentor/mentorMessage/ChatInput";
+import WallpaperSettingsModal from "../../components/mentor/mentorMessage/WallpaperSettingsModal";
+import { MessageCircle, AlignJustify, X } from "lucide-react";
+
+// Toast Component
+const Toast = ({ toast, onClose }) => {
+  useEffect(() => {
+    if (toast.open) {
+      const timer = setTimeout(() => {
+        onClose();
+      }, 3500);
+
+      return () => clearTimeout(timer);
+    }
+  }, [toast.open, onClose]);
+
+  if (!toast.open) return null;
+
+  const bgColor =
+    {
+      success: "bg-green-500",
+      error: "bg-red-500",
+      info: "bg-blue-500",
+    }[toast.status] || "bg-gray-500";
+
+  return (
+    <div
+      className={`fixed top-4 right-4 z-50 ${bgColor} text-white px-4 py-3 rounded-xl shadow-2xl max-w-sm flex items-center justify-between backdrop-blur-sm border border-white/10 transition-all duration-300 transform`}
+      role="alert"
+    >
+      <span className="text-sm font-medium leading-relaxed">
+        {toast.message}
+      </span>
+      <button
+        onClick={onClose}
+        className="ml-3 text-white/80 hover:text-white transition-colors duration-200 p-1 rounded-md hover:bg-white/10"
+        aria-label="Close notification"
+      >
+        <X size={16} />
+      </button>
+    </div>
+  );
+};
 
 const MentorMessages = () => {
   const { user, loading, isAuthenticated } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeItem, setActiveItem] = useState("messages");
+
+  // Toast state
+  const [toast, setToast] = useState({
+    open: false,
+    message: "",
+    status: "info",
+  });
 
   // Message state
   const [rooms, setRooms] = useState([]);
@@ -44,13 +76,23 @@ const MentorMessages = () => {
   const lastSentMessageRef = useRef(null);
   const [uploadingImage, setUploadingImage] = useState(false);
 
-  // Mobile state
+  // Mobile and responsive state
   const [showRoomList, setShowRoomList] = useState(true);
+  const [roomListCollapsed, setRoomListCollapsed] = useState(false);
 
   // Refs
   const messagesEndRef = useRef(null);
   const pollingInterval = useRef(null);
   const lastMessageTimeRef = useRef(null);
+
+  // Toast function
+  const showToast = ({ message, status = "info" }) => {
+    setToast({ open: true, message, status });
+  };
+
+  const closeToast = () => {
+    setToast({ open: false, message: "", status: "info" });
+  };
 
   // Redirect non-mentors
   useEffect(() => {
@@ -88,8 +130,15 @@ const MentorMessages = () => {
       if (window.innerWidth >= 768) {
         setShowRoomList(true);
       }
+      // Auto-collapse room list on large screens if screen gets too narrow
+      if (window.innerWidth >= 1024 && window.innerWidth < 1280) {
+        setRoomListCollapsed(true);
+      } else if (window.innerWidth >= 1280) {
+        setRoomListCollapsed(false);
+      }
     };
 
+    handleResize(); // Initial check
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
@@ -363,14 +412,20 @@ const MentorMessages = () => {
 
     // Validate file size (10MB max)
     if (file.size > 10 * 1024 * 1024) {
-      alert("File size must be less than 10MB");
+      showToast({
+        message: "File size must be less than 10MB",
+        status: "error",
+      });
       return;
     }
 
     // Validate file type
     const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
     if (!allowedTypes.includes(file.type)) {
-      alert("Please select a JPEG, PNG, or WebP image");
+      showToast({
+        message: "Please select a JPEG, PNG, or WebP image",
+        status: "error",
+      });
       return;
     }
 
@@ -398,33 +453,43 @@ const MentorMessages = () => {
         // Automatically update the room wallpaper with the uploaded URL
         await updateWallpaper(data.wallpaperUrl);
 
-        alert("Wallpaper uploaded successfully!");
+        showToast({
+          message: "Wallpaper uploaded successfully!",
+          status: "success",
+        });
       } else {
         const errorData = await response.json();
-        alert(errorData.message || "Failed to upload wallpaper");
+        showToast({
+          message: errorData.message || "Failed to upload wallpaper",
+          status: "error",
+        });
       }
     } catch (error) {
       console.error("Error uploading wallpaper:", error);
-      alert("Failed to upload wallpaper");
+      showToast({ message: "Failed to upload wallpaper", status: "error" });
     } finally {
       setUploadingWallpaper(false);
       // Reset the input
       event.target.value = "";
     }
   };
+
   const handleImageUpload = async (event) => {
     const file = event.target.files[0];
     if (!file) return;
 
     // Validate file size (10MB max)
     if (file.size > 10 * 1024 * 1024) {
-      alert("File size must be less than 10MB");
+      showToast({
+        message: "File size must be less than 10MB",
+        status: "error",
+      });
       return;
     }
 
     // Validate file type
     if (!file.type.startsWith("image/")) {
-      alert("Please select an image file");
+      showToast({ message: "Please select an image file", status: "error" });
       return;
     }
 
@@ -451,11 +516,14 @@ const MentorMessages = () => {
         await sendImageMessage(data.data);
       } else {
         const errorData = await response.json();
-        alert(errorData.message || "Failed to upload image");
+        showToast({
+          message: errorData.message || "Failed to upload image",
+          status: "error",
+        });
       }
     } catch (error) {
       console.error("Error uploading image:", error);
-      alert("Failed to upload image");
+      showToast({ message: "Failed to upload image", status: "error" });
     } finally {
       setUploadingImage(false);
       event.target.value = "";
@@ -497,7 +565,7 @@ const MentorMessages = () => {
       }
     } catch (error) {
       console.error("Error sending image message:", error);
-      alert("Failed to send image message");
+      showToast({ message: "Failed to send image message", status: "error" });
     }
   };
 
@@ -526,13 +594,19 @@ const MentorMessages = () => {
     if (!file) return;
 
     if (file.size > 10 * 1024 * 1024) {
-      alert("File size must be less than 10MB");
+      showToast({
+        message: "File size must be less than 10MB",
+        status: "error",
+      });
       return;
     }
 
     const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
     if (!allowedTypes.includes(file.type)) {
-      alert("Please select a JPEG, PNG, or WebP image");
+      showToast({
+        message: "Please select a JPEG, PNG, or WebP image",
+        status: "error",
+      });
       return;
     }
 
@@ -558,14 +632,21 @@ const MentorMessages = () => {
         const data = await response.json();
         // Automatically update the room wallpaper with the uploaded URL
         await updateWallpaper(data.wallpaperUrl);
-        alert("Wallpaper uploaded and applied successfully!");
+        showToast({
+          message: "Wallpaper uploaded and applied successfully!",
+          status: "success",
+        });
+        return { success: true };
       } else {
         const errorData = await response.json();
-        alert(errorData.message || "Failed to upload wallpaper");
+        showToast({
+          message: errorData.message || "Failed to upload wallpaper",
+          status: "error",
+        });
       }
     } catch (error) {
       console.error("Error uploading wallpaper:", error);
-      alert("Failed to upload wallpaper");
+      showToast({ message: "Failed to upload wallpaper", status: "error" });
     } finally {
       setUploadingWallpaper(false);
       event.target.value = "";
@@ -599,12 +680,6 @@ const MentorMessages = () => {
     return date.toLocaleDateString();
   };
 
-  const filteredRooms = rooms.filter(
-    (room) =>
-      room.learner?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      room.roomName?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
   const wallpaperPresets = [
     `${import.meta.env.VITE_API_URL}/uploads/wallpapers/default-mentor.jpg`,
     "https://images.unsplash.com/photo-1557683316-973673baf926?w=1920&h=1080&fit=crop&crop=center",
@@ -618,10 +693,16 @@ const MentorMessages = () => {
   if (loading || isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 flex items-center justify-center">
-        <div className="flex flex-col items-center space-y-4">
-          <div className="w-12 h-12 border-4 border-cyan-500 border-t-transparent rounded-full animate-spin"></div>
-          <div className="text-white text-lg font-medium">
+        <div className="flex flex-col items-center space-y-6">
+          <div className="relative">
+            <div className="w-16 h-16 border-4 border-cyan-500/30 border-t-cyan-500 rounded-full animate-spin"></div>
+            <div className="absolute inset-0 w-16 h-16 border-4 border-transparent border-t-cyan-400 rounded-full animate-spin animation-delay-150"></div>
+          </div>
+          <div className="text-white text-lg font-medium tracking-wide">
             Loading Messages...
+          </div>
+          <div className="text-gray-400 text-sm">
+            Please wait while we prepare your conversations
           </div>
         </div>
       </div>
@@ -631,7 +712,32 @@ const MentorMessages = () => {
   if (!isAuthenticated) return null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 flex">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 flex overflow-hidden">
+      {/* Toast */}
+      <Toast toast={toast} onClose={closeToast} />
+
+      {/* Hamburger toggle for main sidebar (larger screens) */}
+      <div className="hidden lg:block fixed top-4 left-4 z-30">
+        <button
+          onClick={() => setSidebarOpen(!sidebarOpen)}
+          className="p-3 rounded-xl bg-slate-800/60 backdrop-blur-sm text-white hover:bg-slate-700/60 transition-all duration-200 shadow-lg border border-white/10 hover:border-white/20"
+          aria-label="Toggle navigation"
+        >
+          <AlignJustify size={20} />
+        </button>
+      </div>
+
+      {/* Room List Toggle for large screens */}
+      <div className="hidden lg:block fixed top-4 left-20 z-30">
+        <button
+          onClick={() => setRoomListCollapsed(!roomListCollapsed)}
+          className="p-3 rounded-xl bg-cyan-500/20 backdrop-blur-sm text-cyan-300 hover:bg-cyan-500/30 transition-all duration-200 shadow-lg border border-cyan-500/20 hover:border-cyan-500/40"
+          aria-label="Toggle room list"
+        >
+          <MessageCircle size={20} />
+        </button>
+      </div>
+
       <Sidebar
         isOpen={sidebarOpen}
         toggleSidebar={() => setSidebarOpen(!sidebarOpen)}
@@ -640,131 +746,26 @@ const MentorMessages = () => {
         userRole="mentor"
       />
 
-      <div className="flex-1 lg:ml-64 flex h-screen">
+      <div
+        className={`flex-1 flex h-screen transition-all duration-300 ${
+          sidebarOpen ? "lg:ml-64" : "lg:ml-0"
+        }`}
+      >
         {/* Room List Sidebar */}
-        <div
-          className={`${
-            showRoomList ? "flex" : "hidden"
-          } md:flex flex-col w-full md:w-80 bg-slate-800/50 backdrop-blur-sm border-r border-white/10`}
-        >
-          {/* Mobile Header */}
-          <div className="md:hidden bg-gradient-to-r from-slate-900/80 to-gray-900/80 backdrop-blur-sm border-b border-white/10 p-4">
-            <div className="flex items-center justify-between">
-              <button
-                onClick={() => setSidebarOpen(true)}
-                className="text-white hover:text-gray-300 transition-colors"
-              >
-                <Menu size={24} />
-              </button>
-              <h1 className="text-xl font-bold text-white">Messages</h1>
-              <div className="w-6"></div>
-            </div>
-          </div>
-
-          {/* Header */}
-          <div className="p-4 border-b border-white/10">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold text-white">Messages</h2>
-              <button
-                onClick={loadRooms}
-                className={`p-2 rounded-lg bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 transition-colors ${
-                  isLoading ? "animate-spin" : ""
-                }`}
-              >
-                <RefreshCw size={18} />
-              </button>
-            </div>
-
-            {/* Search */}
-            <div className="relative">
-              <Search
-                className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-                size={16}
-              />
-              <input
-                type="text"
-                placeholder="Search conversations..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 bg-slate-700/50 border border-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-cyan-500/50"
-              />
-            </div>
-          </div>
-
-          {/* Room List */}
-          <div className="flex-1 overflow-y-auto">
-            {filteredRooms.length === 0 ? (
-              <div className="p-6 text-center text-gray-400">
-                <MessageCircle className="mx-auto mb-3" size={48} />
-                <p>No conversations yet</p>
-              </div>
-            ) : (
-              filteredRooms.map((room) => (
-                <div
-                  key={room._id}
-                  onClick={() => selectRoom(room)}
-                  className={`p-4 border-b border-white/5 cursor-pointer transition-colors hover:bg-white/5 ${
-                    selectedRoom?._id === room._id
-                      ? "bg-cyan-500/20 border-l-4 border-l-cyan-500"
-                      : ""
-                  }`}
-                >
-                  <div className="flex items-center space-x-3">
-                    <div className="relative">
-                      <img
-                        src={room.learner?.avatar || "/default-avatar.png"}
-                        alt={room.learner?.name || "Learner"}
-                        className="w-12 h-12 rounded-full object-cover"
-                      />
-                      {room.status === "close" && (
-                        <div className="absolute -bottom-1 -right-1 p-1 bg-red-500 rounded-full">
-                          <Lock size={10} className="text-white" />
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between mb-1">
-                        <h3 className="font-semibold text-white truncate">
-                          {room.learner?.name || "Unknown Learner"}
-                        </h3>
-                        {room.lastMessage?.timestamp && (
-                          <span className="text-xs text-gray-400">
-                            {formatTime(room.lastMessage.timestamp)}
-                          </span>
-                        )}
-                      </div>
-
-                      <p className="text-sm text-gray-400 truncate">
-                        {room.lastMessage?.content ||
-                          room.roomName ||
-                          "No messages yet"}
-                      </p>
-
-                      <div className="flex items-center justify-between mt-1">
-                        <span
-                          className={`text-xs px-2 py-1 rounded-full ${
-                            room.status === "open"
-                              ? "bg-green-500/20 text-green-300"
-                              : "bg-red-500/20 text-red-300"
-                          }`}
-                        >
-                          {room.status === "open" ? "Active" : "Closed"}
-                        </span>
-
-                        {room.unreadCount > 0 && (
-                          <div className="bg-cyan-500 text-white text-xs rounded-full px-2 py-1 min-w-[20px] text-center">
-                            {room.unreadCount > 99 ? "99+" : room.unreadCount}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
-        </div>
+        <RoomListSidebar
+          showRoomList={showRoomList}
+          rooms={rooms}
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          selectedRoom={selectedRoom}
+          selectRoom={selectRoom}
+          loadRooms={loadRooms}
+          isLoading={isLoading}
+          setSidebarOpen={setSidebarOpen}
+          formatTime={formatTime}
+          roomListCollapsed={roomListCollapsed}
+          setRoomListCollapsed={setRoomListCollapsed}
+        />
 
         {/* Chat Area */}
         <div
@@ -772,493 +773,77 @@ const MentorMessages = () => {
             showRoomList ? "hidden" : "flex"
           } md:flex flex-1 flex-col ${
             !selectedRoom ? "justify-center items-center" : ""
-          }`}
+          } transition-all duration-300`}
         >
           {!selectedRoom ? (
-            <div className="text-center text-gray-400 p-8">
-              <MessageCircle className="mx-auto mb-4" size={64} />
-              <h3 className="text-xl font-semibold mb-2">
+            <div className="text-center text-gray-400 p-8 max-w-md mx-auto">
+              <div className="relative mb-6">
+                <MessageCircle className="mx-auto text-gray-600" size={80} />
+                <div className="absolute -top-2 -right-2 w-6 h-6 bg-cyan-500 rounded-full animate-pulse"></div>
+              </div>
+              <h3 className="text-2xl font-bold text-white mb-3 tracking-wide">
                 Select a conversation
               </h3>
-              <p>Choose a conversation from the sidebar to start messaging</p>
+              <p className="text-gray-400 leading-relaxed">
+                Choose a conversation from the sidebar to start messaging with
+                your learners
+              </p>
+              <div className="mt-6 text-sm text-gray-500">
+                💬 All your active conversations are listed in the sidebar
+              </div>
             </div>
           ) : (
             <>
               {/* Chat Header */}
-              <div className="bg-slate-800/50 backdrop-blur-sm border-b border-white/10 p-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                    {/* Mobile back button */}
-                    <button
-                      onClick={() => setShowRoomList(true)}
-                      className="md:hidden text-white hover:text-gray-300 transition-colors mr-2"
-                    >
-                      <ArrowLeft size={20} />
-                    </button>
-
-                    <img
-                      src={
-                        selectedRoom.learner?.avatar || "/default-avatar.png"
-                      }
-                      alt={selectedRoom.learner?.name || "Learner"}
-                      className="w-10 h-10 rounded-full object-cover"
-                    />
-
-                    <div>
-                      <h3 className="font-semibold text-white">
-                        {selectedRoom.learner?.name || "Unknown Learner"}
-                      </h3>
-                      <p className="text-sm text-gray-400">
-                        {selectedRoom.status === "open"
-                          ? "Online"
-                          : "Chat closed"}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center space-x-2">
-                    <button
-                      onClick={checkNewMessages}
-                      disabled={isPolling}
-                      className={`p-2 rounded-lg bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 transition-colors ${
-                        isPolling ? "animate-pulse" : ""
-                      }`}
-                    >
-                      <RefreshCw
-                        size={16}
-                        className={isPolling ? "animate-spin" : ""}
-                      />
-                    </button>
-
-                    <button
-                      onClick={() => setShowWallpaperSettings(true)}
-                      className="p-2 rounded-lg bg-slate-700/50 hover:bg-slate-600/50 text-gray-300 transition-colors"
-                    >
-                      <Settings size={16} />
-                    </button>
-                  </div>
-                </div>
-              </div>
+              <ChatHeader
+                selectedRoom={selectedRoom}
+                setShowRoomList={setShowRoomList}
+                checkNewMessages={checkNewMessages}
+                isPolling={isPolling}
+                setShowWallpaperSettings={setShowWallpaperSettings}
+              />
 
               {/* Chat Messages */}
-              <div className="flex-1 relative overflow-hidden">
-                {/* Fixed background wallpaper */}
-                <div
-                  className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-                  style={{
-                    backgroundImage: `url(${
-                      selectedRoom.mentorWallpaper || wallpaperPresets[0]
-                    })`,
-                  }}
-                />
-
-                {/* Overlay for better text readability */}
-                <div className="absolute inset-0 bg-slate-900/70 backdrop-blur-[1px]"></div>
-
-                {/* Messages container */}
-                <div className="relative z-10 h-full overflow-y-auto p-4 space-y-4 hide-scrollbar-general">
-                  {messages.length === 0 ? (
-                    <div className="text-center text-gray-400 py-8">
-                      <MessageCircle className="mx-auto mb-3" size={48} />
-                      <p>No messages yet. Start the conversation!</p>
-                    </div>
-                  ) : (
-                    messages.map((message, index) => {
-                      // Fix the message alignment logic for mentor
-                      // console.log("🔹 Message index:", index);
-                      // console.log("🔹 Message object:", message);
-                      // console.log("====================================");
-                      // console.log("🔹 Sender ID:", message.senderId._id);
-                      // console.log("🔹 Current user ID:", user.userId);
-                      // console.log("🔹 Current user Role:", user.role);
-                      // console.log("====================================");
-
-                      const isCurrentUserMessage =
-                        message.senderId._id === user.userId;
-                      // console.log(isCurrentUserMessage);
-                      const showAvatar =
-                        index === 0 ||
-                        messages[index - 1]?.senderId._id !==
-                          message.senderId._id;
-
-                      // Create a unique key using message ID + timestamp + index
-                      const uniqueKey = `${message._id}-${message.time}-${index}`;
-
-                      return (
-                        <div
-                          key={uniqueKey}
-                          className={`flex ${
-                            isCurrentUserMessage
-                              ? "justify-end"
-                              : "justify-start"
-                          } mb-3`}
-                        >
-                          <div
-                            className={`flex items-end space-x-2 max-w-xs lg:max-w-md ${
-                              isCurrentUserMessage
-                                ? "flex-row-reverse space-x-reverse"
-                                : ""
-                            }`}
-                          >
-                            {/* Avatar - Show avatar for non-current user (learner) */}
-                            {!isCurrentUserMessage && showAvatar && (
-                              <img
-                                src={
-                                  message.senderId.avatar ||
-                                  "/default-avatar.png"
-                                }
-                                alt={message.senderId.name}
-                                className="w-8 h-8 rounded-full object-cover border border-white/20 flex-shrink-0"
-                              />
-                            )}
-                            {!isCurrentUserMessage && !showAvatar && (
-                              <div className="w-8 flex-shrink-0"></div>
-                            )}
-
-                            {/* Message Bubble */}
-                            <div
-                              className={`px-4 py-2 rounded-2xl max-w-full ${
-                                isCurrentUserMessage
-                                  ? "bg-gradient-to-r from-cyan-500 to-teal-500 text-white rounded-br-md shadow-lg"
-                                  : "bg-slate-700/80 backdrop-blur-sm text-white rounded-bl-md border border-white/10 shadow-lg"
-                              }`}
-                            >
-                              {/* Image Message with Preview and Buttons */}
-                              {message.messageType === "image" &&
-                                message.imageUrl && (
-                                  <div className="mb-2">
-                                    <div className="relative group">
-                                      <img
-                                        src={message.imageUrl}
-                                        alt={
-                                          message.imageName || "Shared image"
-                                        }
-                                        className="max-w-full h-auto rounded-lg"
-                                        style={{
-                                          maxHeight: "200px",
-                                          maxWidth: "200px",
-                                        }}
-                                      />
-
-                                      {/* Image Action Buttons - Always show for both sender and receiver */}
-                                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-lg flex items-center justify-center space-x-2">
-                                        {/* View Button */}
-                                        <button
-                                          onClick={() =>
-                                            window.open(
-                                              message.imageUrl,
-                                              "_blank"
-                                            )
-                                          }
-                                          className="p-2 bg-white/20 hover:bg-white/30 rounded-full backdrop-blur-sm transition-colors"
-                                          title="View Image"
-                                        >
-                                          <svg
-                                            className="w-4 h-4 text-white"
-                                            fill="none"
-                                            stroke="currentColor"
-                                            viewBox="0 0 24 24"
-                                          >
-                                            <path
-                                              strokeLinecap="round"
-                                              strokeLinejoin="round"
-                                              strokeWidth={2}
-                                              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                                            />
-                                            <path
-                                              strokeLinecap="round"
-                                              strokeLinejoin="round"
-                                              strokeWidth={2}
-                                              d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                                            />
-                                          </svg>
-                                        </button>
-
-                                        {/* Download Button */}
-                                        <button
-                                          onClick={() => {
-                                            const link =
-                                              document.createElement("a");
-                                            link.href = message.imageUrl;
-                                            link.download =
-                                              message.imageName || "image";
-                                            link.target = "_blank";
-                                            document.body.appendChild(link);
-                                            link.click();
-                                            document.body.removeChild(link);
-                                          }}
-                                          className="p-2 bg-white/20 hover:bg-white/30 rounded-full backdrop-blur-sm transition-colors"
-                                          title="Download Image"
-                                        >
-                                          <svg
-                                            className="w-4 h-4 text-white"
-                                            fill="none"
-                                            stroke="currentColor"
-                                            viewBox="0 0 24 24"
-                                          >
-                                            <path
-                                              strokeLinecap="round"
-                                              strokeLinejoin="round"
-                                              strokeWidth={2}
-                                              d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-                                            />
-                                          </svg>
-                                        </button>
-                                      </div>
-                                    </div>
-
-                                    {/* Image Info */}
-                                    <div className="mt-1 text-xs opacity-70">
-                                      {message.imageName && (
-                                        <div className="truncate">
-                                          {message.imageName}
-                                        </div>
-                                      )}
-                                    </div>
-                                  </div>
-                                )}
-
-                              {/* Text Message Content or Image Caption */}
-                              {message.message && message.message.trim() && (
-                                <p className="text-sm leading-relaxed break-words whitespace-pre-wrap">
-                                  {message.message}
-                                </p>
-                              )}
-
-                              {/* Time + Status */}
-                              <div
-                                className={`flex items-center justify-end mt-1 space-x-1 ${
-                                  isCurrentUserMessage
-                                    ? "text-cyan-100"
-                                    : "text-gray-400"
-                                }`}
-                              >
-                                <span className="text-xs">
-                                  {formatTime(message.time)}
-                                </span>
-                                {isCurrentUserMessage && (
-                                  <CheckCircle2
-                                    size={12}
-                                    className={
-                                      message.isRead
-                                        ? "text-cyan-200"
-                                        : "text-cyan-300"
-                                    }
-                                  />
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })
-                  )}
-                  <div ref={messagesEndRef} />
-                </div>
-              </div>
+              <ChatMessages
+                messages={messages}
+                selectedRoom={selectedRoom}
+                wallpaperPresets={wallpaperPresets}
+                user={user}
+                formatTime={formatTime}
+                messagesEndRef={messagesEndRef}
+                isLoading={false}
+              />
 
               {/* Chat Input */}
-              <div className="bg-slate-800/50 backdrop-blur-sm border-t border-white/10 p-4">
-                {selectedRoom.status === "close" ? (
-                  <div className="text-center p-4">
-                    <div className="inline-flex items-center space-x-2 text-red-300 bg-red-500/20 px-4 py-2 rounded-lg">
-                      <Lock size={16} />
-                      <span>This chat is readonly - Project has ended</span>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="flex items-center space-x-3">
-                    {/* Image Upload Button */}
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleImageUpload}
-                      className="hidden"
-                      id="image-upload"
-                      disabled={uploadingImage}
-                    />
-                    <label
-                      htmlFor="image-upload"
-                      className={`p-2 rounded-lg transition-colors cursor-pointer ${
-                        uploadingImage
-                          ? "bg-slate-700/50 cursor-not-allowed"
-                          : "bg-slate-700/50 hover:bg-slate-600/50 text-gray-300 hover:text-cyan-300"
-                      }`}
-                      title="Upload Image"
-                    >
-                      {uploadingImage ? (
-                        <div className="w-[18px] h-[18px] border-2 border-cyan-300 border-t-transparent rounded-full animate-spin"></div>
-                      ) : (
-                        <ImageIcon size={18} />
-                      )}
-                    </label>
-
-                    <div className="flex-1">
-                      <input
-                        type="text"
-                        value={newMessage}
-                        onChange={(e) => setNewMessage(e.target.value)}
-                        onKeyPress={(e) => {
-                          if (e.key === "Enter" && !e.shiftKey) {
-                            e.preventDefault();
-                            sendMessage();
-                          }
-                        }}
-                        onPaste={handlePasteImage}
-                        placeholder="Type a message or paste an image..."
-                        className="w-full px-4 py-3 bg-slate-700/50 border border-white/10 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-cyan-500/50"
-                        disabled={
-                          sendingRef.current || isSending || uploadingImage
-                        }
-                      />
-                    </div>
-
-                    <button
-                      onClick={sendMessage}
-                      disabled={
-                        !newMessage.trim() ||
-                        sendingRef.current ||
-                        isSending ||
-                        uploadingImage
-                      }
-                      className="p-3 bg-gradient-to-r from-cyan-500 to-teal-500 hover:from-cyan-600 hover:to-teal-600 rounded-xl text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      <Send size={18} />
-                    </button>
-                  </div>
-                )}
-              </div>
+              <ChatInput
+                selectedRoom={selectedRoom}
+                newMessage={newMessage}
+                setNewMessage={setNewMessage}
+                sendMessage={sendMessage}
+                handleImageUpload={handleImageUpload}
+                handlePasteImage={handlePasteImage}
+                sendingRef={sendingRef}
+                isSending={isSending}
+                uploadingImage={uploadingImage}
+              />
             </>
           )}
         </div>
       </div>
 
       {/* Wallpaper Settings Modal */}
-      {showWallpaperSettings && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-slate-800 rounded-2xl p-6 w-full max-w-md">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-xl font-bold text-white">Chat Wallpaper</h3>
-              <button
-                onClick={() => setShowWallpaperSettings(false)}
-                className="text-gray-400 hover:text-white transition-colors"
-              >
-                <X size={20} />
-              </button>
-            </div>
-
-            <div className="space-y-4">
-              {/* Preset Wallpapers */}
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-3">
-                  Preset Wallpapers
-                </label>
-                <div className="grid grid-cols-2 gap-3 pr-2">
-                  {wallpaperPresets.map((wallpaper, index) => (
-                    <div key={index} className="relative">
-                      {wallpaper === "upload-slot" ? (
-                        <>
-                          <input
-                            type="file"
-                            accept="image/jpeg,image/jpg,image/png,image/webp"
-                            onChange={handleCustomWallpaperUpload}
-                            disabled={uploadingWallpaper}
-                            className="hidden"
-                            id={`wallpaper-upload-${index}`}
-                          />
-                          <label
-                            htmlFor={`wallpaper-upload-${index}`}
-                            className={`relative h-20 rounded-lg border-2 border-dashed border-white/30 hover:border-cyan-500 transition-all duration-200 flex flex-col items-center justify-center cursor-pointer group ${
-                              uploadingWallpaper
-                                ? "opacity-50 cursor-not-allowed"
-                                : "hover:bg-cyan-500/10 hover:scale-105"
-                            }`}
-                            title="Upload custom wallpaper"
-                          >
-                            {uploadingWallpaper ? (
-                              <div className="w-6 h-6 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin"></div>
-                            ) : (
-                              <>
-                                <Upload
-                                  size={18}
-                                  className="text-gray-400 group-hover:text-cyan-400 mb-1 transition-colors"
-                                />
-                                <span className="text-xs text-gray-400 group-hover:text-cyan-400 text-center transition-colors">
-                                  Upload
-                                </span>
-                              </>
-                            )}
-                          </label>
-                        </>
-                      ) : (
-                        <button
-                          onClick={() => updateWallpaper(wallpaper)}
-                          className={`relative h-20 w-full rounded-lg overflow-hidden border-2 transition-all duration-200 hover:scale-105 group ${
-                            selectedRoom?.mentorWallpaper === wallpaper
-                              ? "border-cyan-500 ring-2 ring-cyan-500/50"
-                              : "border-white/20 hover:border-cyan-400"
-                          }`}
-                          title={`Wallpaper ${index + 1}`}
-                        >
-                          <img
-                            src={wallpaper}
-                            alt={`Wallpaper ${index + 1}`}
-                            className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-110"
-                            onError={(e) => {
-                              e.target.src =
-                                "/uploads/wallpapers/default-mentor.jpg";
-                            }}
-                          />
-
-                          {/* Overlay for better visibility */}
-                          <div className="absolute inset-0 bg-slate-900/30 group-hover:bg-slate-900/20 transition-colors"></div>
-
-                          {/* Selected indicator */}
-                          {selectedRoom?.mentorWallpaper === wallpaper && (
-                            <div className="absolute top-1 right-1 p-1 bg-cyan-500 rounded-full">
-                              <CheckCircle2 size={12} className="text-white" />
-                            </div>
-                          )}
-
-                          {/* Hover overlay */}
-                          <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                            <div className="bg-black/60 px-2 py-1 rounded text-xs text-white">
-                              Select
-                            </div>
-                          </div>
-                        </button>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Custom URL Input */}
-              <div className="mt-6">
-                <label className="block text-sm font-medium text-gray-300 mb-2">
-                  Or Enter Custom Wallpaper URL
-                </label>
-                <div className="flex space-x-2">
-                  <input
-                    type="text"
-                    value={customWallpaper}
-                    onChange={(e) => setCustomWallpaper(e.target.value)}
-                    placeholder="https://example.com/wallpaper.jpg"
-                    className="flex-1 px-3 py-2 bg-slate-700/50 border border-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-cyan-500/50"
-                  />
-                  <button
-                    onClick={() => updateWallpaper(customWallpaper)}
-                    disabled={!customWallpaper.trim() || uploadingWallpaper}
-                    className="px-4 py-2 bg-gradient-to-r from-cyan-500 to-teal-500 text-white rounded-lg hover:from-cyan-600 hover:to-teal-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    Set
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      <WallpaperSettingsModal
+        showWallpaperSettings={showWallpaperSettings}
+        setShowWallpaperSettings={setShowWallpaperSettings}
+        wallpaperPresets={wallpaperPresets}
+        selectedRoom={selectedRoom}
+        updateWallpaper={updateWallpaper}
+        handleCustomWallpaperUpload={handleCustomWallpaperUpload}
+        customWallpaper={customWallpaper}
+        setCustomWallpaper={setCustomWallpaper}
+        uploadingWallpaper={uploadingWallpaper}
+        onToast={showToast}
+      />
     </div>
   );
 };
