@@ -716,28 +716,6 @@ const MentorMessages = () => {
       {/* Toast */}
       <Toast toast={toast} onClose={closeToast} />
 
-      {/* Hamburger toggle for main sidebar (larger screens) */}
-      <div className="hidden lg:block fixed top-4 left-4 z-30">
-        <button
-          onClick={() => setSidebarOpen(!sidebarOpen)}
-          className="p-3 rounded-xl bg-slate-800/60 backdrop-blur-sm text-white hover:bg-slate-700/60 transition-all duration-200 shadow-lg border border-white/10 hover:border-white/20"
-          aria-label="Toggle navigation"
-        >
-          <AlignJustify size={20} />
-        </button>
-      </div>
-
-      {/* Room List Toggle for large screens */}
-      <div className="hidden lg:block fixed top-4 left-20 z-30">
-        <button
-          onClick={() => setRoomListCollapsed(!roomListCollapsed)}
-          className="p-3 rounded-xl bg-cyan-500/20 backdrop-blur-sm text-cyan-300 hover:bg-cyan-500/30 transition-all duration-200 shadow-lg border border-cyan-500/20 hover:border-cyan-500/40"
-          aria-label="Toggle room list"
-        >
-          <MessageCircle size={20} />
-        </button>
-      </div>
-
       <Sidebar
         isOpen={sidebarOpen}
         toggleSidebar={() => setSidebarOpen(!sidebarOpen)}
@@ -747,9 +725,7 @@ const MentorMessages = () => {
       />
 
       <div
-        className={`flex-1 flex h-screen transition-all duration-300 ${
-          sidebarOpen ? "lg:ml-64" : "lg:ml-0"
-        }`}
+        className={`flex-1 flex h-screen transition-all duration-300 lg:ml-64`}
       >
         {/* Room List Sidebar */}
         <RoomListSidebar
@@ -771,7 +747,7 @@ const MentorMessages = () => {
         <div
           className={`${
             showRoomList ? "hidden" : "flex"
-          } md:flex flex-1 flex-col ${
+          } md:flex flex-1 min-w-0 flex-col ${
             !selectedRoom ? "justify-center items-center" : ""
           } transition-all duration-300`}
         >

@@ -32,8 +32,8 @@ const RoomListSidebar = ({
   // Determine sidebar width based on collapsed state and screen size
   const getSidebarWidth = () => {
     if (window.innerWidth < 768) return "w-full"; // Full width on mobile
-    if (roomListCollapsed) return "md:w-20 lg:w-16"; // Collapsed width
-    return "md:w-80 lg:w-96"; // Expanded width
+    if (roomListCollapsed) return "w-20"; // Collapsed width
+    return "w-80"; // Fixed expanded width
   };
 
   return (
