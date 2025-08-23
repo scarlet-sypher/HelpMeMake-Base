@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 import StatCard from "../../components/user/StatCard";
 import SessionCard from "../../components/user/SessionCard";
@@ -341,39 +342,6 @@ const UserDashboard = () => {
       ]
     : [];
 
-  const recentMessages = [
-    {
-      id: 1,
-      senderName: "Boa Hancock",
-      senderImage: userImg["hancock.jpg"],
-      message: "Great progress on your project! The design looks amazing.",
-      timestamp: "2 mins ago",
-      isOnline: true,
-      isUnread: true,
-      messageType: "text",
-    },
-    {
-      id: 2,
-      senderName: "Marco the Phoenix",
-      senderImage: userImg["marco.jpg"],
-      message: "Ready for tomorrow's healing techniques session?",
-      timestamp: "1 hour ago",
-      isOnline: false,
-      isUnread: false,
-      messageType: "text",
-    },
-    {
-      id: 3,
-      senderName: "Portgas D. Ace",
-      senderImage: userImg["ace.jpg"],
-      message: "Don't forget to bring your fire safety equipment!",
-      timestamp: "3 hours ago",
-      isOnline: true,
-      isUnread: true,
-      messageType: "text",
-    },
-  ];
-
   const timelineItems = [
     {
       id: 1,
@@ -688,9 +656,7 @@ const UserDashboard = () => {
                   <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
                 </div>
                 <div className="space-y-4">
-                  {recentMessages.map((message) => (
-                    <MessageCard key={message.id} {...message} />
-                  ))}
+                  <MessageCard />
                 </div>
               </div>
 

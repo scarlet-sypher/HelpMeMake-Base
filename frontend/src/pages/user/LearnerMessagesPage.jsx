@@ -779,7 +779,7 @@ const LearnerMessagesPage = () => {
         >
           {!selectedRoom ? (
             /* No Room Selected */
-            <div className="flex-1 flex items-center justify-center bg-gradient-to-br from-slate-900/50 to-blue-900/30">
+            <div className="flex-1 flex items-center justify-center">
               <div className="text-center">
                 <Users className="text-gray-400 mb-4 mx-auto" size={64} />
                 <h2 className="text-2xl font-bold text-white mb-2">

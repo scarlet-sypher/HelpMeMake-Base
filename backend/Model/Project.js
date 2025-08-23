@@ -1093,7 +1093,6 @@ projectSchema.post("save", async function (doc, next) {
       console.log(
         `[MESSAGE_DEBUG] Status: ${doc.status} (needs: "In Progress")`
       );
-      v;
       console.log(`[MESSAGE_DEBUG] Has mentorId: ${!!doc.mentorId}`);
       console.log(`[MESSAGE_DEBUG] Has learnerId: ${!!doc.learnerId}`);
     }
@@ -1113,8 +1112,10 @@ projectSchema.post("save", async function (doc, next) {
           room.status = "close";
           await room.save();
           console.log(`[MESSAGE_DEBUG] ✅ Message room closed: ${room.roomId}`);
+        } else if (room) {
+          console.log(`[MESSAGE_DEBUG] Room already closed: ${room.roomId}`);
         } else {
-          console.log(`[MESSAGE_DEBUG] No active room found to close`);
+          console.log(`[MESSAGE_DEBUG] No room found for project: ${doc.name}`);
         }
       } catch (roomError) {
         console.error(

@@ -251,8 +251,22 @@ ReactDOM.createRoot(document.getElementById("root")).render(
             </ProtectedRoute>
           }
         />
-        <Route path="/mentor/messages" element={<MentorMessages />} />
-        <Route path="/user/messages" element={<LearnerMessagesPage />} />
+        <Route
+          path="/mentor/messages"
+          element={
+            <ProtectedRoute requiredRole="mentor">
+              <MentorMessages />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/user/messages"
+          element={
+            <ProtectedRoute requiredRole="user">
+              <LearnerMessagesPage />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </BrowserRouter>
 

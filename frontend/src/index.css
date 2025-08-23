@@ -29,3 +29,11 @@ html::-webkit-scrollbar {
   scrollbar-width: none;
   -ms-overflow-style: none; /* IE/Edge */
 }
+
+.hide-scrollbar-general {
+  scroll-behavior: smooth;
+}
+
+.animation-delay-150 {
+  animation-delay: 150ms;
+}

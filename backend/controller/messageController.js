@@ -699,10 +699,13 @@ const closeRoomForProject = async (projectId) => {
     }
 
     room.status = "close";
-    await room.save();
+    const savedRoom = await room.save();
 
-    debugLog("Room closed successfully", { roomId: room.roomId });
-    return room;
+    debugLog("Room closed successfully", {
+      roomId: savedRoom.roomId,
+      projectId: projectId,
+    });
+    return savedRoom;
   } catch (error) {
     debugLog("Error closing room", { error: error.message });
     console.error("Close room error:", error);
@@ -1412,11 +1415,111 @@ const sendImageMessage = async (req, res) => {
   }
 };
 
+const getRecentMessages = async (req, res) => {
+  debugLog("Get recent messages request", {
+    userId: req.user._id,
+  });
+
+  try {
+    const userId = req.user._id;
+
+    // Get recent 2 messages where current user is the receiver
+    const recentMessages = await MessageChat.find({
+      receiverId: userId,
+      isDeleted: false,
+    })
+      .populate("senderId", "name avatar email")
+      .populate("receiverId", "name avatar email")
+      .populate({
+        path: "roomId",
+        select: "roomName status",
+      })
+      .sort({ time: -1 })
+      .limit(2) // Changed from 3 to 2 as requested
+      .lean();
+
+    debugLog("Recent messages fetched", {
+      count: recentMessages.length,
+      userId,
+    });
+
+    // Transform messages to include additional info
+    const transformedMessages = recentMessages.map((message) => {
+      // Calculate time ago
+      const timeAgo = getTimeAgo(message.time);
+
+      // Determine if sender is online (you can implement this logic based on your needs)
+      const isOnline = Math.random() > 0.5; // Placeholder logic
+
+      return {
+        id: message._id,
+        senderName: message.senderId.name,
+        senderImage: message.senderId.avatar
+          ? message.senderId.avatar.startsWith("/uploads/")
+            ? `${process.env.API_BASE_URL || "http://localhost:5000"}${
+                message.senderId.avatar
+              }`
+            : message.senderId.avatar
+          : null,
+        message:
+          message.messageType === "image"
+            ? message.message
+              ? message.message
+              : "📷 Image"
+            : message.message,
+        timestamp: timeAgo,
+        isOnline,
+        isUnread: !message.isRead,
+        messageType: message.messageType,
+        roomName: message.roomId?.roomName,
+        time: message.time,
+      };
+    });
+
+    res.json({
+      success: true,
+      data: transformedMessages,
+      count: transformedMessages.length,
+    });
+  } catch (error) {
+    debugLog("Error fetching recent messages", { error: error.message });
+    console.error("Get recent messages error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch recent messages",
+      error: process.env.NODE_ENV === "development" ? error.message : undefined,
+    });
+  }
+};
+
+// Helper function to calculate time ago
+const getTimeAgo = (date) => {
+  const now = new Date();
+  const messageTime = new Date(date);
+  const diffInSeconds = Math.floor((now - messageTime) / 1000);
+
+  if (diffInSeconds < 60) {
+    return `${diffInSeconds} seconds ago`;
+  } else if (diffInSeconds < 3600) {
+    const minutes = Math.floor(diffInSeconds / 60);
+    return `${minutes} ${minutes === 1 ? "minute" : "minutes"} ago`;
+  } else if (diffInSeconds < 86400) {
+    const hours = Math.floor(diffInSeconds / 3600);
+    return `${hours} ${hours === 1 ? "hour" : "hours"} ago`;
+  } else if (diffInSeconds < 604800) {
+    const days = Math.floor(diffInSeconds / 86400);
+    return `${days} ${days === 1 ? "day" : "days"} ago`;
+  } else {
+    return messageTime.toLocaleDateString();
+  }
+};
+
 module.exports = {
   // Room management
   createRoomForProject,
   closeRoomForProject,
   getRoomDetails,
+  getRecentMessages,
 
   // Message operations
   sendMessage,

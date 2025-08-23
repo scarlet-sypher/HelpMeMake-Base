@@ -7,6 +7,15 @@ import {
   Menu,
   ChevronLeft,
   ChevronRight,
+  Clock,
+  User,
+  Zap,
+  Star,
+  MessageSquare,
+  Users,
+  Sparkles,
+  GraduationCap,
+  BookOpen,
 } from "lucide-react";
 
 const RoomListSidebar = ({
@@ -40,129 +49,187 @@ const RoomListSidebar = ({
     <div
       className={`${
         showRoomList ? "flex" : "hidden"
-      } md:flex flex-col ${getSidebarWidth()} bg-slate-800/60 backdrop-blur-md border-r border-white/10 transition-all duration-300 shadow-2xl`}
+      } md:flex flex-col ${getSidebarWidth()} bg-gradient-to-b from-slate-900/95 via-slate-900/90 to-gray-900/95 backdrop-blur-xl border-r border-slate-700/50 transition-all duration-500 shadow-2xl relative overflow-hidden`}
     >
+      {/* Ambient Background Effects */}
+      <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 via-transparent to-blue-500/5 pointer-events-none" />
+      <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-radial from-cyan-400/10 to-transparent rounded-full blur-xl" />
+      <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-radial from-blue-400/10 to-transparent rounded-full blur-xl" />
+
       {/* Mobile Header */}
-      <div className="md:hidden bg-gradient-to-r from-slate-900/90 to-gray-900/90 backdrop-blur-sm border-b border-white/10 p-4 sticky top-0 z-10">
+      <div className="md:hidden relative z-10 bg-gradient-to-r from-slate-900/95 to-gray-900/95 backdrop-blur-sm border-b border-slate-700/50 p-4 sticky top-0">
         <div className="flex items-center justify-between">
           <button
             onClick={() => setSidebarOpen(true)}
-            className="text-white hover:text-cyan-300 transition-colors duration-200 p-2 rounded-lg hover:bg-white/10"
+            className="group relative p-3 rounded-xl bg-gradient-to-r from-slate-800/80 to-slate-700/80 hover:from-cyan-600/80 hover:to-blue-600/80 text-slate-300 hover:text-white transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 active:scale-95"
             aria-label="Open navigation menu"
           >
-            <Menu size={22} />
+            <Menu
+              size={20}
+              className="transition-transform duration-200 group-hover:rotate-3"
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
           </button>
-          <h1 className="text-xl font-bold text-white tracking-wide">
-            Messages
-          </h1>
-          <div className="w-10"></div>
+
+          <div className="flex items-center space-x-2">
+            <div className="p-2 rounded-lg bg-gradient-to-r from-cyan-500/20 to-blue-500/20">
+              <GraduationCap size={18} className="text-cyan-400" />
+            </div>
+            <h1 className="text-xl font-bold bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent tracking-wide">
+              Messages
+            </h1>
+          </div>
+
+          <div className="w-11 flex justify-center">
+            <div className="w-2 h-2 bg-gradient-to-r from-cyan-400 to-blue-400 rounded-full animate-pulse" />
+          </div>
         </div>
       </div>
 
       {/* Desktop Collapse Toggle */}
       {setRoomListCollapsed && (
-        <div className="hidden lg:flex justify-end p-2 border-b border-white/5">
+        <div className="hidden lg:flex justify-end p-3 border-b border-slate-700/30 relative z-10">
           <button
             onClick={() => setRoomListCollapsed(!roomListCollapsed)}
-            className="p-2 rounded-lg bg-slate-700/40 hover:bg-slate-600/40 text-gray-300 hover:text-white transition-all duration-200 shadow-sm"
+            className="group relative p-2.5 rounded-xl bg-gradient-to-r from-slate-800/60 to-slate-700/60 hover:from-cyan-600/60 hover:to-blue-600/60 text-slate-400 hover:text-white transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-110 active:scale-95"
             aria-label={
               roomListCollapsed ? "Expand room list" : "Collapse room list"
             }
           >
             {roomListCollapsed ? (
-              <ChevronRight size={16} />
+              <ChevronRight
+                size={16}
+                className="transition-transform duration-200 group-hover:translate-x-0.5"
+              />
             ) : (
-              <ChevronLeft size={16} />
+              <ChevronLeft
+                size={16}
+                className="transition-transform duration-200 group-hover:-translate-x-0.5"
+              />
             )}
+            <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
           </button>
         </div>
       )}
 
       {/* Header - Hidden when collapsed on large screens */}
       <div
-        className={`p-4 border-b border-white/10 ${
+        className={`p-4 border-b border-slate-700/30 relative z-10 ${
           roomListCollapsed ? "hidden lg:hidden" : "block"
         }`}
       >
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-bold text-white tracking-wide">
-            Messages
-          </h2>
+          <div className="flex items-center space-x-3">
+            <div className="p-2 rounded-xl bg-gradient-to-r from-cyan-500/20 to-blue-500/20 border border-cyan-500/30">
+              <MessageSquare size={18} className="text-cyan-400" />
+            </div>
+            <h2 className="text-xl font-bold bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent tracking-wide">
+              Mentoring
+            </h2>
+          </div>
           <button
             onClick={loadRooms}
-            className={`p-2.5 rounded-xl bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 hover:text-cyan-200 transition-all duration-200 shadow-lg border border-cyan-500/20 hover:border-cyan-500/40 ${
+            className={`group relative p-2.5 rounded-xl bg-gradient-to-r from-cyan-500/20 to-blue-500/20 hover:from-cyan-500/30 hover:to-blue-500/30 text-cyan-300 hover:text-cyan-200 transition-all duration-300 shadow-lg border border-cyan-500/20 hover:border-cyan-500/40 hover:scale-110 active:scale-95 ${
               isLoading ? "animate-spin" : ""
             }`}
             aria-label="Refresh conversations"
           >
-            <RefreshCw size={18} />
+            <RefreshCw
+              size={18}
+              className={
+                isLoading
+                  ? ""
+                  : "group-hover:rotate-180 transition-transform duration-500"
+              }
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-cyan-400/10 to-blue-400/10 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
           </button>
         </div>
 
         {/* Search */}
         <div className="relative group">
+          <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 to-blue-500/10 rounded-2xl opacity-0 group-focus-within:opacity-100 transition-opacity duration-300" />
           <Search
-            className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 group-focus-within:text-cyan-400 transition-colors duration-200"
-            size={16}
+            className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 group-focus-within:text-cyan-400 transition-colors duration-300 z-10"
+            size={18}
           />
           <input
             type="text"
-            placeholder="Search conversations..."
+            placeholder="Search learners..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-3 bg-slate-700/50 border border-white/10 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-cyan-500/50 focus:bg-slate-700/70 transition-all duration-200 text-sm"
+            className="relative w-full pl-12 pr-4 py-3.5 bg-gradient-to-r from-slate-800/60 to-slate-700/60 border border-slate-600/40 rounded-2xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500/50 transition-all duration-300 text-sm font-medium backdrop-blur-sm shadow-inner"
           />
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-cyan-500/5 to-transparent rounded-2xl opacity-0 group-focus-within:opacity-100 transition-opacity duration-500" />
         </div>
       </div>
 
       {/* Collapsed State - Show only icons */}
       {roomListCollapsed && (
-        <div className="hidden lg:flex flex-col items-center py-4 space-y-3">
+        <div className="hidden lg:flex flex-col items-center py-6 space-y-4 relative z-10">
           <button
             onClick={loadRooms}
-            className={`p-3 rounded-xl bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 hover:text-cyan-200 transition-all duration-200 ${
+            className={`group relative p-3 rounded-2xl bg-gradient-to-r from-cyan-500/20 to-blue-500/20 hover:from-cyan-500/30 hover:to-blue-500/30 text-cyan-300 hover:text-cyan-200 transition-all duration-300 border border-cyan-500/20 hover:border-cyan-500/40 hover:scale-110 active:scale-95 ${
               isLoading ? "animate-spin" : ""
             }`}
             aria-label="Refresh conversations"
           >
-            <RefreshCw size={18} />
+            <RefreshCw
+              size={18}
+              className={
+                isLoading
+                  ? ""
+                  : "group-hover:rotate-180 transition-transform duration-500"
+              }
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-cyan-400/10 to-blue-400/10 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
           </button>
 
           {/* Show first few room avatars */}
-          {filteredRooms.slice(0, 4).map((room) => (
+          {filteredRooms.slice(0, 4).map((room, index) => (
             <button
               key={room._id}
               onClick={() => selectRoom(room)}
-              className={`relative p-1 rounded-xl transition-all duration-200 ${
+              className={`group relative p-1.5 rounded-2xl transition-all duration-300 hover:scale-110 active:scale-95 ${
                 selectedRoom?._id === room._id
-                  ? "bg-cyan-500/20 border-2 border-cyan-500/50"
-                  : "hover:bg-white/10"
+                  ? "bg-gradient-to-r from-cyan-500/30 to-blue-500/30 border-2 border-cyan-400/60 shadow-lg shadow-cyan-500/20"
+                  : "hover:bg-gradient-to-r hover:from-slate-700/60 hover:to-slate-600/60 border border-slate-600/30"
               }`}
+              style={{ animationDelay: `${index * 100}ms` }}
               aria-label={`Chat with ${
                 room.learner?.name || "Unknown Learner"
               }`}
             >
-              <img
-                src={room.learner?.avatar || "/default-avatar.png"}
-                alt={room.learner?.name || "Learner"}
-                className="w-10 h-10 rounded-lg object-cover"
-              />
-              {room.status === "close" && (
-                <div className="absolute -bottom-1 -right-1 p-0.5 bg-red-500 rounded-full">
-                  <Lock size={8} className="text-white" />
-                </div>
-              )}
-              {room.unreadCount > 0 && (
-                <div className="absolute -top-1 -right-1 bg-cyan-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-medium">
-                  {room.unreadCount > 9 ? "9+" : room.unreadCount}
-                </div>
-              )}
+              <div className="relative">
+                <img
+                  src={room.learner?.avatar || "/default-avatar.png"}
+                  alt={room.learner?.name || "Learner"}
+                  className="w-11 h-11 rounded-xl object-cover shadow-md transition-all duration-300 group-hover:shadow-lg"
+                />
+                <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-transparent to-white/10 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+                {room.status === "close" && (
+                  <div className="absolute -top-1 -right-1 p-0.5 bg-gradient-to-r from-red-500 to-red-600 rounded-full border border-slate-800 shadow-lg">
+                    <Lock size={8} className="text-white" />
+                  </div>
+                )}
+                {room.unreadCount > 0 && (
+                  <div className="absolute -top-1 -right-1 bg-gradient-to-r from-cyan-500 to-blue-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold shadow-lg border border-slate-800 animate-bounce">
+                    {room.unreadCount > 9 ? "9+" : room.unreadCount}
+                  </div>
+                )}
+              </div>
             </button>
           ))}
 
           {filteredRooms.length > 4 && (
-            <div className="text-gray-400 text-xs font-medium">
-              +{filteredRooms.length - 4}
+            <div className="mt-4 px-3 py-2 rounded-xl bg-gradient-to-r from-slate-800/60 to-slate-700/60 border border-slate-600/30">
+              <div className="text-slate-300 text-xs font-bold text-center">
+                +{filteredRooms.length - 4}
+              </div>
+              <div className="text-slate-400 text-xs text-center mt-0.5">
+                more
+              </div>
             </div>
           )}
         </div>
@@ -170,89 +237,142 @@ const RoomListSidebar = ({
 
       {/* Room List - Hidden when collapsed */}
       <div
-        className={`flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-600 scrollbar-track-transparent ${
+        className={`flex-1 overflow-y-auto custom-scrollbar relative z-10 ${
           roomListCollapsed ? "hidden lg:hidden" : "block"
         }`}
       >
         {filteredRooms.length === 0 ? (
-          <div className="p-8 text-center text-gray-400">
-            <div className="relative mb-4">
-              <MessageCircle className="mx-auto text-gray-600" size={48} />
-              <div className="absolute -top-1 -right-1 w-3 h-3 bg-cyan-500/20 rounded-full animate-ping"></div>
+          <div className="flex flex-col items-center justify-center h-64 text-center px-6">
+            <div className="relative mb-6">
+              <div className="p-4 rounded-3xl bg-gradient-to-r from-slate-800/60 to-slate-700/60 border border-slate-600/30">
+                <GraduationCap className="text-slate-400" size={48} />
+              </div>
+              <div className="absolute -top-2 -right-2 w-6 h-6 bg-gradient-to-r from-cyan-500/30 to-blue-500/30 rounded-full animate-ping" />
+              <BookOpen
+                className="absolute -bottom-1 -left-1 text-cyan-400 animate-pulse"
+                size={16}
+              />
             </div>
-            <p className="font-medium">No conversations yet</p>
-            <p className="text-sm text-gray-500 mt-1">
-              Your active conversations will appear here
+            <h3 className="text-white font-bold text-lg mb-2 bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">
+              No Active Students
+            </h3>
+            <p className="text-slate-400 text-sm leading-relaxed max-w-xs">
+              Your mentoring conversations will appear here when students start
+              projects
             </p>
+            <div className="mt-4 flex items-center space-x-2 text-xs text-slate-500">
+              <Sparkles size={12} />
+              <span>Ready to guide and inspire</span>
+            </div>
           </div>
         ) : (
           <div className="space-y-1 p-2">
-            {filteredRooms.map((room) => (
+            {filteredRooms.map((room, index) => (
               <div
                 key={room._id}
                 onClick={() => selectRoom(room)}
-                className={`p-4 rounded-xl cursor-pointer transition-all duration-200 hover:bg-white/5 group ${
+                className={`group relative p-4 rounded-2xl cursor-pointer transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] ${
                   selectedRoom?._id === room._id
-                    ? "bg-gradient-to-r from-cyan-500/20 to-blue-500/20 border-l-4 border-l-cyan-500 shadow-lg"
-                    : "hover:shadow-md"
-                }`}
+                    ? "bg-gradient-to-r from-cyan-500/20 via-blue-500/15 to-cyan-500/20 border-l-4 border-l-cyan-400 shadow-xl shadow-cyan-500/10"
+                    : "hover:bg-gradient-to-r hover:from-slate-800/60 hover:to-slate-700/40 hover:shadow-lg"
+                } border border-transparent hover:border-slate-600/30`}
+                style={{ animationDelay: `${index * 50}ms` }}
               >
-                <div className="flex items-center space-x-3">
+                {/* Ambient glow effect for selected room */}
+                {selectedRoom?._id === room._id && (
+                  <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/5 via-blue-500/5 to-cyan-500/5 rounded-2xl" />
+                )}
+
+                <div className="flex items-center space-x-4 relative z-10">
                   <div className="relative flex-shrink-0">
-                    <img
-                      src={room.learner?.avatar || "/default-avatar.png"}
-                      alt={room.learner?.name || "Learner"}
-                      className="w-12 h-12 rounded-xl object-cover shadow-md group-hover:shadow-lg transition-shadow duration-200"
+                    <div className="relative">
+                      <img
+                        src={room.learner?.avatar || "/default-avatar.png"}
+                        alt={room.learner?.name || "Learner"}
+                        className="w-14 h-14 rounded-2xl object-cover border-2 border-slate-600/30 shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:border-slate-500/50"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-transparent to-white/10 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    </div>
+
+                    {/* Status indicators */}
+                    <div
+                      className={`absolute -top-1 -left-1 w-4 h-4 rounded-full border-2 border-slate-800 shadow-lg ${
+                        room.status === "open"
+                          ? "bg-gradient-to-r from-green-400 to-emerald-400 animate-pulse"
+                          : "bg-gradient-to-r from-gray-400 to-gray-500"
+                      }`}
                     />
+
                     {room.status === "close" && (
-                      <div className="absolute -bottom-1 -right-1 p-1 bg-red-500 rounded-full shadow-md">
+                      <div className="absolute -bottom-1 -right-1 p-1 bg-gradient-to-r from-red-500 to-red-600 rounded-full shadow-lg border border-slate-800">
                         <Lock size={10} className="text-white" />
                       </div>
                     )}
-                    <div
-                      className={`absolute -top-1 -left-1 w-4 h-4 rounded-full border-2 border-slate-800 ${
-                        room.status === "open" ? "bg-green-400" : "bg-gray-400"
-                      }`}
-                    ></div>
                   </div>
 
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between mb-1">
-                      <h3 className="font-semibold text-white truncate text-sm group-hover:text-cyan-100 transition-colors duration-200">
-                        {room.learner?.name || "Unknown Learner"}
-                      </h3>
+                    {/* Header with name and time */}
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center space-x-2">
+                        <h3 className="text-white font-bold truncate text-sm group-hover:text-cyan-100 transition-colors duration-300">
+                          {room.learner?.name || "Unknown Learner"}
+                        </h3>
+                        <User size={12} className="text-cyan-400 opacity-80" />
+                      </div>
                       {room.lastMessage?.timestamp && (
-                        <span className="text-xs text-gray-400 font-medium">
-                          {formatTime(room.lastMessage.timestamp)}
-                        </span>
-                      )}
-                    </div>
-
-                    <p className="text-sm text-gray-400 truncate mb-2 leading-relaxed">
-                      {room.lastMessage?.content ||
-                        room.roomName ||
-                        "No messages yet"}
-                    </p>
-
-                    <div className="flex items-center justify-between">
-                      <span
-                        className={`text-xs px-2.5 py-1 rounded-full font-medium transition-all duration-200 ${
-                          room.status === "open"
-                            ? "bg-green-500/20 text-green-300 border border-green-500/20"
-                            : "bg-red-500/20 text-red-300 border border-red-500/20"
-                        }`}
-                      >
-                        {room.status === "open" ? "Active" : "Closed"}
-                      </span>
-
-                      {room.unreadCount > 0 && (
-                        <div className="bg-gradient-to-r from-cyan-500 to-blue-500 text-white text-xs rounded-full px-2.5 py-1 min-w-[24px] text-center font-bold shadow-lg">
-                          {room.unreadCount > 99 ? "99+" : room.unreadCount}
+                        <div className="flex items-center space-x-1 text-xs text-slate-400 font-medium">
+                          <Clock size={10} />
+                          <span>{formatTime(room.lastMessage.timestamp)}</span>
                         </div>
                       )}
                     </div>
+
+                    {/* Message preview and unread count */}
+                    <div className="flex items-center justify-between mb-2">
+                      <p className="text-sm text-slate-300 truncate leading-relaxed flex-1 group-hover:text-slate-200 transition-colors duration-300">
+                        {room.lastMessage?.content || room.roomName || (
+                          <span className="italic text-slate-400">
+                            No messages yet - be the first to reach out!
+                          </span>
+                        )}
+                      </p>
+                      {room.unreadCount > 0 && (
+                        <div className="ml-3">
+                          <span className="inline-flex items-center justify-center bg-gradient-to-r from-cyan-500 to-blue-500 text-white text-xs rounded-full px-2.5 py-1 min-w-[28px] font-bold shadow-lg border border-cyan-400/30 animate-pulse">
+                            {room.unreadCount > 99 ? "99+" : room.unreadCount}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Status and project info */}
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-2">
+                        <span
+                          className={`text-xs px-2.5 py-1 rounded-full font-medium border transition-all duration-200 ${
+                            room.status === "open"
+                              ? "bg-gradient-to-r from-green-500/20 to-emerald-500/20 text-green-300 border-green-500/30 shadow-sm"
+                              : "bg-gradient-to-r from-red-500/20 to-red-600/20 text-red-300 border-red-500/30 shadow-sm"
+                          }`}
+                        >
+                          {room.status === "open" ? "Active" : "Closed"}
+                        </span>
+
+                        {room.projectId?.name && (
+                          <div className="flex items-center space-x-1 text-xs text-slate-400">
+                            <BookOpen size={10} />
+                            <span className="truncate max-w-[100px]">
+                              {room.projectId.name}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 </div>
+
+                {/* Hover effect overlay */}
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-cyan-500/5 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
               </div>
             ))}
           </div>
@@ -261,13 +381,40 @@ const RoomListSidebar = ({
 
       {/* Bottom indicator when collapsed */}
       {roomListCollapsed && (
-        <div className="hidden lg:flex flex-col items-center py-3 border-t border-white/10">
-          <div className="w-2 h-2 bg-cyan-500 rounded-full animate-pulse"></div>
-          <div className="text-xs text-gray-400 mt-1 font-medium">
+        <div className="hidden lg:flex flex-col items-center py-4 border-t border-slate-700/30 relative z-10">
+          <div className="flex items-center justify-center w-8 h-8 rounded-2xl bg-gradient-to-r from-slate-800/60 to-slate-700/60 border border-slate-600/30 mb-2">
+            <div className="w-2 h-2 bg-gradient-to-r from-cyan-400 to-blue-400 rounded-full animate-pulse" />
+          </div>
+          <div className="text-xs text-slate-400 font-bold">
             {filteredRooms.length}
           </div>
+          <div className="text-xs text-slate-500 mt-0.5">students</div>
         </div>
       )}
+
+      <style>{`
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: linear-gradient(
+            to bottom,
+            rgb(6 182 212 / 0.3),
+            rgb(59 130 246 / 0.3)
+          );
+          border-radius: 3px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: linear-gradient(
+            to bottom,
+            rgb(6 182 212 / 0.5),
+            rgb(59 130 246 / 0.5)
+          );
+        }
+      `}</style>
     </div>
   );
 };

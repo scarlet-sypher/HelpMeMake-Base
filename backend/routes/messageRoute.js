@@ -18,7 +18,10 @@ const {
   uploadWallpaper,
   uploadMessageImage,
   sendImageMessage,
+  getRecentMessages,
 } = require("../controller/messageController");
+
+router.get("/messages/recent", requireUserOrMentor, getRecentMessages);
 
 // Get user's active rooms (works for both mentor and learner)
 router.get("/rooms/my-active", requireUserOrMentor, getUserActiveRooms);
