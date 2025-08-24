@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
-
+import AdminProtectedRoute from "./components/AdminProtectedRoute";
 import App from "./App";
 import Login from "./pages/auth/Login";
 import Signup from "./pages/auth/Signup";
@@ -120,9 +120,9 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         <Route
           path="/admindashboard"
           element={
-            <ProtectedRoute requiredRole="admin">
+            <AdminProtectedRoute>
               <AdminDashboard />
-            </ProtectedRoute>
+            </AdminProtectedRoute>
           }
         />
         <Route

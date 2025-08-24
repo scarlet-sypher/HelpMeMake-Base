@@ -143,3 +143,6 @@ vite.config.ts.timestamp-*
 
 uploads/userUploads/avatar-*
 !uploads/userUploads/.gitkeep
+
+
+scripts/change id password.md

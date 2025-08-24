@@ -120,6 +120,7 @@ app.use("/api/goals", goalRoutes);
 app.use("/requests", requestRoutes);
 app.use("/api/mentor-details", mentorDetailsRoutes);
 app.use("/api/messages", messageRoutes);
+app.use("/admin", require("./routes/adminAuthRoute"));
 // Health check endpoint
 app.get("/health", (req, res) => {
   res.json({

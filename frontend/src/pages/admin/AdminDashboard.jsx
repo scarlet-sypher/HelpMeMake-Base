@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import Sidebar from "../../components/user/Sidebar";
+import { useNavigate } from "react-router-dom";
+
 import {
   Users,
   UserCheck,
@@ -52,6 +54,29 @@ export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState("dashboard");
   const [showUserList, setShowUserList] = useState(false);
   const [showMentorList, setShowMentorList] = useState(false);
+  const navigate = useNavigate();
+
+  const handleAdminLogout = async () => {
+    try {
+      const adminToken = localStorage.getItem("admin_token");
+      if (adminToken) {
+        await fetch(`${import.meta.env.VITE_API_URL}/admin/logout`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${adminToken}`,
+            "Content-Type": "application/json",
+          },
+        });
+      }
+
+      localStorage.removeItem("admin_token");
+      navigate("/login");
+    } catch (error) {
+      console.error("Admin logout error:", error);
+      localStorage.removeItem("admin_token");
+      navigate("/login");
+    }
+  };
 
   // Dummy data for lists
   const users = ["Alice", "Bob", "Charlie", "David", "Eva"];
@@ -92,6 +117,13 @@ export default function AdminDashboard() {
         setActiveItem={setActiveTab}
         menuItems={adminMenuItems}
       />
+
+      <button
+        onClick={handleAdminLogout}
+        className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors"
+      >
+        Admin Logout
+      </button>
 
       {/* Main Content */}
       <div className="flex-1 p-4 md:p-8 lg:ml-64 transition-all duration-300">

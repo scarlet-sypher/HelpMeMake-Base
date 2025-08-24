@@ -1,5 +1,13 @@
 import { useState, useEffect } from "react";
-import { ChevronRight,Code, Users, Zap,Shield,Eye,EyeOff} from "lucide-react";
+import {
+  ChevronRight,
+  Code,
+  Users,
+  Zap,
+  Shield,
+  Eye,
+  EyeOff,
+} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import baka from "../../assets/LoginImages/baka.jpg";
@@ -15,7 +23,8 @@ const heroImages = [
   {
     id: 1,
     title: "Mentorship",
-    subtitle:"Connect with industry experts and accelerate your learning journey",
+    subtitle:
+      "Connect with industry experts and accelerate your learning journey",
     image: baka,
   },
   {
@@ -176,7 +185,7 @@ export default function Login() {
     return Object.keys(newErrors).length === 0;
   };
 
-async function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
 
     if (!validateForm()) {
@@ -188,16 +197,26 @@ async function handleSubmit(e) {
     setMessageType("");
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/login`, {
+      // Check if this is an admin login attempt
+      const adminId = import.meta.env.VITE_ADMIN_ID;
+
+      const isAdminLogin = form.username === adminId;
+
+      const endpoint = isAdminLogin
+        ? `${import.meta.env.VITE_API_URL}/admin/login`
+        : `${import.meta.env.VITE_API_URL}/auth/login`;
+
+      const response = await fetch(endpoint, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         credentials: "include",
-        body: JSON.stringify({
-          email: form.username, // Your form uses 'username' but send as 'email'
-          password: form.password,
-        }),
+        body: JSON.stringify(
+          isAdminLogin
+            ? { username: form.username, password: form.password }
+            : { email: form.username, password: form.password }
+        ),
       });
 
       const data = await response.json();
@@ -206,39 +225,49 @@ async function handleSubmit(e) {
         setFeedbackMessage("🎉 Login successful! Redirecting...");
         setMessageType("success");
 
-        // Store token if provided (similar to OAuth flow)
-        if (data.token) {
-          localStorage.setItem('access_token', data.token);
-        }
-
-        setTimeout(() => {
-          if (data.requiresRoleSelection) {
-            navigate("/select-role");
-          } else {
-            // Navigate based on user role (same logic as OAuth)
-            const dashboardMap = {
-              admin: "/admindashboard",
-              mentor: "/mentordashboard", 
-              user: "/userdashboard"
-            };
-            const targetRoute = dashboardMap[data.user.role] || "/userdashboard";
-            navigate(targetRoute);
+        if (isAdminLogin) {
+          // Admin login
+          localStorage.setItem("admin_token", data.token);
+          setTimeout(() => {
+            navigate("/admindashboard");
+          }, 2000);
+        } else {
+          // Regular user login
+          if (data.token) {
+            localStorage.setItem("access_token", data.token);
           }
-        }, 2000);
 
+          setTimeout(() => {
+            if (data.requiresRoleSelection) {
+              navigate("/select-role");
+            } else {
+              const dashboardMap = {
+                admin: "/admindashboard",
+                mentor: "/mentordashboard",
+                user: "/userdashboard",
+              };
+              const targetRoute =
+                dashboardMap[data.user.role] || "/userdashboard";
+              navigate(targetRoute);
+            }
+          }, 2000);
+        }
       } else {
         if (data.requiresVerification) {
-          setFeedbackMessage("📧 Please verify your email first. Check your inbox.");
+          setFeedbackMessage(
+            "📧 Please verify your email first. Check your inbox."
+          );
           setMessageType("error");
           setTimeout(() => {
             navigate(`/verify-otp?email=${encodeURIComponent(form.username)}`);
           }, 3000);
         } else {
-          setFeedbackMessage(data.message || "❌ Login failed. Please try again.");
+          setFeedbackMessage(
+            data.message || "❌ Login failed. Please try again."
+          );
           setMessageType("error");
         }
       }
-
     } catch (error) {
       console.error("Login error:", error);
       setFeedbackMessage("⚠️ Something went wrong. Please try again.");
@@ -253,7 +282,6 @@ async function handleSubmit(e) {
       // Redirect to backend Google OAuth route
       window.location.href = `${import.meta.env.VITE_API_URL}/auth/google`;
     } else if (provider === "GitHub") {
-    
       window.location.href = `${import.meta.env.VITE_API_URL}/auth/github`;
     }
   }
@@ -589,9 +617,10 @@ function LoginForm({
                 Remember me
               </span>
             </label>
-            <button 
-              onClick={() => window.location.href = "/forgot-password"}
-              className="text-emerald-400 hover:text-emerald-300 transition-colors duration-200 hover:underline text-left sm:text-right">
+            <button
+              onClick={() => (window.location.href = "/forgot-password")}
+              className="text-emerald-400 hover:text-emerald-300 transition-colors duration-200 hover:underline text-left sm:text-right"
+            >
               Forgot password?
             </button>
           </div>
