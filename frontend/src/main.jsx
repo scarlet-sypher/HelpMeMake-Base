@@ -40,6 +40,8 @@ import LearnerMessagesPage from "./pages/user/LearnerMessagesPage";
 import AdminUserDashboard from "./pages/admin/AdminUserDashboard";
 import AdminLearnerDashboard from "./pages/admin/AdminLearnerDashboard";
 import LearnerForm from "./components/admin/learner/LearnerForm";
+import AdminMentorDashboard from "./pages/admin/AdminMentorDashboard";
+import MentorForm from "./components/admin/mentor/MentorForm";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
@@ -157,11 +159,23 @@ ReactDOM.createRoot(document.getElementById("root")).render(
           path="/admin/mentors"
           element={
             <AdminProtectedRoute>
-              <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 flex items-center justify-center">
-                <div className="text-white text-2xl">
-                  Mentors Management - Coming Soon
-                </div>
-              </div>
+              <AdminMentorDashboard />
+            </AdminProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/mentors/create"
+          element={
+            <AdminProtectedRoute>
+              <MentorForm />
+            </AdminProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/mentors/edit/:mentorId"
+          element={
+            <AdminProtectedRoute>
+              <MentorForm />
             </AdminProtectedRoute>
           }
         />

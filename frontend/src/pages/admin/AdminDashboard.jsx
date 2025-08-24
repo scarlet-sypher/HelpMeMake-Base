@@ -90,6 +90,8 @@ export default function AdminDashboard() {
       setCurrentPage("users");
     } else if (page === "learners") {
       navigate("/admin/learners");
+    } else if (page === "mentors") {
+      navigate("/admin/mentors");
     } else {
       navigate(`/admin/${page}`);
     }
