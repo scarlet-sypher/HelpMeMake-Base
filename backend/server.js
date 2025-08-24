@@ -25,6 +25,9 @@ const goalRoutes = require("./routes/goalRoute");
 const requestRoutes = require("./routes/requestRoute");
 const mentorDetailsRoutes = require("./routes/mentorDetailsRoute");
 const messageRoutes = require("./routes/messageRoute");
+const adminLoginRoutes = require("./routes/adminAuthRoute");
+const adminDashbaordRoutes = require("./routes/admin/adminDashboardRoutes");
+const adminUserRoutes = require("./routes/admin/userRoutes");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -120,7 +123,10 @@ app.use("/api/goals", goalRoutes);
 app.use("/requests", requestRoutes);
 app.use("/api/mentor-details", mentorDetailsRoutes);
 app.use("/api/messages", messageRoutes);
-app.use("/admin", require("./routes/adminAuthRoute"));
+app.use("/admin", adminLoginRoutes);
+app.use("/admin/dashboard", adminDashbaordRoutes);
+app.use("/admin/users", adminUserRoutes);
+
 // Health check endpoint
 app.get("/health", (req, res) => {
   res.json({

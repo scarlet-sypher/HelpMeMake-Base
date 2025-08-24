@@ -37,6 +37,8 @@ import GoalSetter from "./pages/mentor/GoalSetter";
 import MentorDetailsPageView from "./pages/user/MentorDetailsPageView";
 import MentorMessages from "./pages/mentor/MentorMessages";
 import LearnerMessagesPage from "./pages/user/LearnerMessagesPage";
+import AdminUserDashboard from "./pages/admin/AdminUserDashboard";
+
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <BrowserRouter>
@@ -122,6 +124,74 @@ ReactDOM.createRoot(document.getElementById("root")).render(
           element={
             <AdminProtectedRoute>
               <AdminDashboard />
+            </AdminProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/users"
+          element={
+            <AdminProtectedRoute>
+              <AdminUserDashboard />
+            </AdminProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/learners"
+          element={
+            <AdminProtectedRoute>
+              <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 flex items-center justify-center">
+                <div className="text-white text-2xl">
+                  Learners Management - Coming Soon
+                </div>
+              </div>
+            </AdminProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/mentors"
+          element={
+            <AdminProtectedRoute>
+              <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 flex items-center justify-center">
+                <div className="text-white text-2xl">
+                  Mentors Management - Coming Soon
+                </div>
+              </div>
+            </AdminProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/projects"
+          element={
+            <AdminProtectedRoute>
+              <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 flex items-center justify-center">
+                <div className="text-white text-2xl">
+                  Projects Overview - Coming Soon
+                </div>
+              </div>
+            </AdminProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/sessions"
+          element={
+            <AdminProtectedRoute>
+              <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 flex items-center justify-center">
+                <div className="text-white text-2xl">
+                  Sessions Management - Coming Soon
+                </div>
+              </div>
+            </AdminProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/message-rooms"
+          element={
+            <AdminProtectedRoute>
+              <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 flex items-center justify-center">
+                <div className="text-white text-2xl">
+                  Message Rooms - Coming Soon
+                </div>
+              </div>
             </AdminProtectedRoute>
           }
         />

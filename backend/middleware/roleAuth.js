@@ -235,9 +235,9 @@ module.exports = {
   requireRole,
   requireUser,
   requireMentor,
-  requireAdmin, // Works for both admin tokens and regular users with admin role
+  requireAdmin,
   requireUserOrMentor,
   requireAuth,
   requireRoleSelection,
-  requireSuperAdmin, // NEW: Explicitly for admin token authentication only
+  requireSuperAdmin,
 };
