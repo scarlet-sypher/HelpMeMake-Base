@@ -88,6 +88,8 @@ export default function AdminDashboard() {
   const navigateToPage = (page) => {
     if (page === "users") {
       setCurrentPage("users");
+    } else if (page === "learners") {
+      navigate("/admin/learners");
     } else {
       navigate(`/admin/${page}`);
     }

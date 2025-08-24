@@ -28,6 +28,7 @@ const messageRoutes = require("./routes/messageRoute");
 const adminLoginRoutes = require("./routes/adminAuthRoute");
 const adminDashbaordRoutes = require("./routes/admin/adminDashboardRoutes");
 const adminUserRoutes = require("./routes/admin/userRoutes");
+const adminLearnerRoutes = require("./routes/admin/learnerRoutes");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -126,6 +127,7 @@ app.use("/api/messages", messageRoutes);
 app.use("/admin", adminLoginRoutes);
 app.use("/admin/dashboard", adminDashbaordRoutes);
 app.use("/admin/users", adminUserRoutes);
+app.use("/admin/learners", adminLearnerRoutes);
 
 // Health check endpoint
 app.get("/health", (req, res) => {

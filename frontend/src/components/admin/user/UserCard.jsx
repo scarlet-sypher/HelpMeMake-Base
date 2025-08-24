@@ -84,12 +84,12 @@ const UserCard = ({ user, onDelete, onEdit }) => {
           <div className="flex items-center space-x-4">
             <div className="relative">
               <img
-                src={user.avatar || "/uploads/public/default.jpg"}
+                src={user.avatar || "/default-avatar.jpg"}
                 alt={user.name || "User Avatar"}
                 className="w-16 h-16 rounded-full border-4 border-white object-cover"
                 onError={(e) => {
                   e.target.onerror = null;
-                  e.target.src = "/uploads/public/default.jpg";
+                  e.target.src = "/default-avatar.jpg";
                 }}
               />
               <div className="absolute -bottom-1 -right-1">
@@ -130,7 +130,7 @@ const UserCard = ({ user, onDelete, onEdit }) => {
             <div className="flex items-center space-x-2 text-gray-600">
               <User size={16} />
               <span className="text-sm font-medium">ID:</span>
-              <span className="text-sm font-mono bg-gray-100 px-2 py-1 rounded text-xs">
+              <span className="font-mono bg-gray-100 px-2 py-1 rounded text-xs">
                 {user._id}
               </span>
             </div>
