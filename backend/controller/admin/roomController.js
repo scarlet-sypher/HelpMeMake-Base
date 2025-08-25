@@ -267,6 +267,53 @@ const roomController = {
       });
     }
   },
+
+  // Update room status
+  updateRoomStatus: async (req, res) => {
+    try {
+      const { roomId } = req.params;
+      const { status } = req.body;
+
+      // Validate status
+      if (!status || !["open", "close"].includes(status)) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid status. Must be 'open' or 'close'",
+        });
+      }
+
+      // Find and update the room
+      const room = await MessageRoom.findById(roomId);
+
+      if (!room) {
+        return res.status(404).json({
+          success: false,
+          message: "Chat room not found",
+        });
+      }
+
+      // Update the status
+      room.status = status;
+      await room.save();
+
+      res.json({
+        success: true,
+        message: `Room status updated to ${status} successfully`,
+        data: {
+          roomId: room._id,
+          status: room.status,
+          updatedAt: room.updatedAt,
+        },
+      });
+    } catch (error) {
+      console.error("Update room status error:", error);
+      res.status(500).json({
+        success: false,
+        message: "Failed to update room status",
+        error: error.message,
+      });
+    }
+  },
 };
 
 module.exports = roomController;

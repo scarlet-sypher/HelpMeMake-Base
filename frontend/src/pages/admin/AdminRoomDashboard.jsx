@@ -102,6 +102,27 @@ export default function AdminRoomDashboard({ onReturn }) {
     }
   };
 
+  const handleRoomUpdate = (roomId, updatedData) => {
+    // Update the room in your rooms state
+    setRooms((prevRooms) =>
+      prevRooms.map((room) =>
+        room._id === roomId ? { ...room, ...updatedData } : room
+      )
+    );
+
+    // Also update filteredRooms to reflect changes immediately
+    setFilteredRooms((prevFilteredRooms) =>
+      prevFilteredRooms.map((room) =>
+        room._id === roomId ? { ...room, ...updatedData } : room
+      )
+    );
+
+    // Update stats if status changed
+    if (updatedData.status) {
+      fetchRoomStats();
+    }
+  };
+
   const filterRooms = () => {
     let filtered = rooms;
 
@@ -339,7 +360,11 @@ export default function AdminRoomDashboard({ onReturn }) {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
             {filteredRooms.map((room) => (
-              <RoomCard key={room._id} room={room} />
+              <RoomCard
+                key={room._id}
+                room={room}
+                onRoomUpdate={handleRoomUpdate}
+              />
             ))}
           </div>
         )}
