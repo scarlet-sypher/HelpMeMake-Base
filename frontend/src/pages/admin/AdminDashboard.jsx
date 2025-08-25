@@ -92,6 +92,8 @@ export default function AdminDashboard() {
       navigate("/admin/learners");
     } else if (page === "mentors") {
       navigate("/admin/mentors");
+    } else if (page === "projects") {
+      navigate("/admin/projects");
     } else if (page === "message-rooms") {
       navigate("/admin/rooms");
     } else {

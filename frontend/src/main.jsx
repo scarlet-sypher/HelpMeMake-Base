@@ -44,6 +44,9 @@ import AdminMentorDashboard from "./pages/admin/AdminMentorDashboard";
 import MentorForm from "./components/admin/mentor/MentorForm";
 import AdminRoomDashboard from "./pages/admin/AdminRoomDashboard";
 import RoomView from "./components/admin/room/RoomView";
+import AdminProjectDashboard from "./pages/admin/AdminProjectDashboard";
+import ProjectView from "./components/admin/project/ProjectView";
+import ProjectEdit from "./components/admin/project/ProjectEdit";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
@@ -185,11 +188,23 @@ ReactDOM.createRoot(document.getElementById("root")).render(
           path="/admin/projects"
           element={
             <AdminProtectedRoute>
-              <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 flex items-center justify-center">
-                <div className="text-white text-2xl">
-                  Projects Overview - Coming Soon
-                </div>
-              </div>
+              <AdminProjectDashboard />
+            </AdminProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/projects/:projectId/view"
+          element={
+            <AdminProtectedRoute>
+              <ProjectView />
+            </AdminProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/projects/:projectId/edit"
+          element={
+            <AdminProtectedRoute>
+              <ProjectEdit />
             </AdminProtectedRoute>
           }
         />
