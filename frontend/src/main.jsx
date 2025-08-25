@@ -47,6 +47,7 @@ import RoomView from "./components/admin/room/RoomView";
 import AdminProjectDashboard from "./pages/admin/AdminProjectDashboard";
 import ProjectView from "./components/admin/project/ProjectView";
 import ProjectEdit from "./components/admin/project/ProjectEdit";
+import AdminSessionsDashboard from "./pages/admin/AdminSessionsDashboard";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
@@ -212,11 +213,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
           path="/admin/sessions"
           element={
             <AdminProtectedRoute>
-              <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 flex items-center justify-center">
-                <div className="text-white text-2xl">
-                  Sessions Management - Coming Soon
-                </div>
-              </div>
+              <AdminSessionsDashboard />
             </AdminProtectedRoute>
           }
         />

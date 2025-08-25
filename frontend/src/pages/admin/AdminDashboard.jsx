@@ -94,6 +94,8 @@ export default function AdminDashboard() {
       navigate("/admin/mentors");
     } else if (page === "projects") {
       navigate("/admin/projects");
+    } else if (page === "sessions") {
+      navigate("/admin/sessions");
     } else if (page === "message-rooms") {
       navigate("/admin/rooms");
     } else {
