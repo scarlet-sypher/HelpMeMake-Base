@@ -214,7 +214,7 @@ const ProjectCard = ({ project, onView, onEdit, onDelete }) => {
           {/* Action Buttons */}
           <div className="flex gap-2">
             <button
-              onClick={() => onView(project)}
+              onClick={() => onView(project._id)} // Make sure this passes project._id, not project
               className="flex-1 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center"
             >
               <Eye size={16} className="mr-1" />

@@ -29,10 +29,6 @@ const AdminProjectDashboard = ({ onReturn }) => {
   const [totalProjects, setTotalProjects] = useState(0);
   const [stats, setStats] = useState(null);
 
-  // View states
-  const [currentView, setCurrentView] = useState("dashboard"); // dashboard, view, edit
-  const [selectedProject, setSelectedProject] = useState(null);
-
   const statusOptions = ["", "Open", "In Progress", "Completed", "Cancelled"];
   const itemsPerPage = 8; // 4x2 grid
 
@@ -109,14 +105,16 @@ const AdminProjectDashboard = ({ onReturn }) => {
     setCurrentPage(1); // Reset to first page when filtering
   };
 
-  const handleViewProject = (project) => {
-    setSelectedProject(project);
-    setCurrentView("view");
+  const handleViewProject = (projectId) => {
+    if (projectId && projectId !== "undefined") {
+      navigate(`/admin/projects/${projectId}/view`);
+    } else {
+      toast.error("Invalid project ID");
+    }
   };
 
   const handleEditProject = (project) => {
-    setSelectedProject(project);
-    setCurrentView("edit");
+    navigate(`/admin/projects/${project._id}/edit`);
   };
 
   const handleDeleteProject = async (projectId) => {
@@ -167,34 +165,26 @@ const AdminProjectDashboard = ({ onReturn }) => {
   };
 
   // Render different views
-  if (currentView === "view" && selectedProject) {
-    return (
-      <ProjectView
-        onReturn={() => {
-          setCurrentView("dashboard");
-          setSelectedProject(null);
-        }}
-        onEdit={(project) => {
-          setSelectedProject(project);
-          setCurrentView("edit");
-        }}
-        onDelete={handleDeleteProject}
-      />
-    );
-  }
 
-  if (currentView === "edit" && selectedProject) {
-    return (
-      <ProjectEdit
-        onReturn={() => {
-          setCurrentView("dashboard");
-          setSelectedProject(null);
-          fetchProjects(); // Refresh list after edit
-          fetchStats(); // Refresh stats after edit
-        }}
-      />
-    );
-  }
+  <ProjectView
+    onReturn={() => {
+      setCurrentView("dashboard");
+      setSelectedProject(null);
+    }}
+    onEdit={(project) => {
+      navigate(`/admin/projects/${project._id}/edit`);
+    }}
+    onDelete={handleDeleteProject}
+  />;
+
+  <ProjectEdit
+    onReturn={() => {
+      setCurrentView("dashboard");
+      setSelectedProject(null);
+      fetchProjects();
+      fetchStats();
+    }}
+  />;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 p-4 md:p-8">

@@ -38,7 +38,25 @@ const ProjectView = ({ onReturn, onEdit, onDelete }) => {
 
   const fetchProjectDetails = async () => {
     try {
+      // Validate projectId before making request
+      if (!projectId || projectId === "undefined" || projectId === "null") {
+        console.error("Invalid project ID:", projectId);
+        toast.error("Invalid project ID");
+        if (onReturn) {
+          onReturn();
+        } else {
+          navigate("/admin/projects");
+        }
+        return;
+      }
+
       const adminToken = localStorage.getItem("admin_token");
+      if (!adminToken) {
+        toast.error("Admin token not found. Please login again.");
+        navigate("/admin/login");
+        return;
+      }
+
       const response = await fetch(
         `${import.meta.env.VITE_API_URL}/admin/projects/${projectId}`,
         {
@@ -49,14 +67,22 @@ const ProjectView = ({ onReturn, onEdit, onDelete }) => {
       );
 
       if (!response.ok) {
-        throw new Error("Failed to fetch project details");
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to fetch project details");
       }
 
       const data = await response.json();
       setProject(data.data);
     } catch (error) {
       console.error("Fetch project error:", error);
-      toast.error("Failed to load project details");
+      toast.error(error.message || "Failed to load project details");
+
+      // Navigate back if project not found or invalid
+      if (onReturn) {
+        onReturn();
+      } else {
+        navigate("/admin/projects");
+      }
     } finally {
       setLoading(false);
     }
@@ -183,7 +209,13 @@ const ProjectView = ({ onReturn, onEdit, onDelete }) => {
             </div>
             <div className="flex space-x-3">
               <button
-                onClick={() => onEdit && onEdit(project)}
+                onClick={() => {
+                  if (onEdit) {
+                    onEdit(project);
+                  } else {
+                    navigate(`/admin/projects/${project._id}/edit`);
+                  }
+                }}
                 className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-lg font-medium flex items-center space-x-2 transition-colors"
               >
                 <Edit size={20} />

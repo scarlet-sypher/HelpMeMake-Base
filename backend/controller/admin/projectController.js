@@ -50,11 +50,17 @@ const getAllProjects = async (req, res) => {
     const projects = await Project.find(searchQuery)
       .populate({
         path: "learnerId",
-        select: "name email avatar",
+        populate: {
+          path: "userId",
+          select: "name email avatar",
+        },
       })
       .populate({
         path: "mentorId",
-        select: "name email avatar",
+        populate: {
+          path: "userId",
+          select: "name email avatar",
+        },
       })
       .sort({ createdAt: -1 })
       .skip(skip)
@@ -68,22 +74,24 @@ const getAllProjects = async (req, res) => {
     // Format the response data
     const formattedProjects = projects.map((project) => ({
       ...project,
-      learner: project.learnerId
-        ? {
-            _id: project.learnerId._id,
-            name: project.learnerId.name,
-            email: project.learnerId.email,
-            avatar: project.learnerId.avatar,
-          }
-        : null,
-      mentor: project.mentorId
-        ? {
-            _id: project.mentorId._id,
-            name: project.mentorId.name,
-            email: project.mentorId.email,
-            avatar: project.mentorId.avatar,
-          }
-        : null,
+      learner:
+        project.learnerId && project.learnerId.userId
+          ? {
+              _id: project.learnerId.userId._id,
+              name: project.learnerId.userId.name,
+              email: project.learnerId.userId.email,
+              avatar: project.learnerId.userId.avatar,
+            }
+          : null,
+      mentor:
+        project.mentorId && project.mentorId.userId
+          ? {
+              _id: project.mentorId.userId._id,
+              name: project.mentorId.userId.name,
+              email: project.mentorId.userId.email,
+              avatar: project.mentorId.userId.avatar,
+            }
+          : null,
     }));
 
     res.json({
@@ -114,14 +122,28 @@ const getProjectById = async (req, res) => {
   try {
     const { projectId } = req.params;
 
+    // Validate projectId
+    if (!projectId || projectId === "undefined" || projectId === "null") {
+      return res.status(400).json({
+        success: false,
+        message: "Valid project ID is required",
+      });
+    }
+
     const project = await Project.findById(projectId)
       .populate({
         path: "learnerId",
-        select: "name email avatar",
+        populate: {
+          path: "userId",
+          select: "name email avatar",
+        },
       })
       .populate({
         path: "mentorId",
-        select: "name email avatar",
+        populate: {
+          path: "userId",
+          select: "name email avatar",
+        },
       })
       .populate({
         path: "milestones",
@@ -139,22 +161,24 @@ const getProjectById = async (req, res) => {
     // Format the response data
     const formattedProject = {
       ...project,
-      learner: project.learnerId
-        ? {
-            _id: project.learnerId._id,
-            name: project.learnerId.name,
-            email: project.learnerId.email,
-            avatar: project.learnerId.avatar,
-          }
-        : null,
-      mentor: project.mentorId
-        ? {
-            _id: project.mentorId._id,
-            name: project.mentorId.name,
-            email: project.mentorId.email,
-            avatar: project.mentorId.avatar,
-          }
-        : null,
+      learner:
+        project.learnerId && project.learnerId.userId
+          ? {
+              _id: project.learnerId.userId._id,
+              name: project.learnerId.userId.name,
+              email: project.learnerId.userId.email,
+              avatar: project.learnerId.userId.avatar,
+            }
+          : null,
+      mentor:
+        project.mentorId && project.mentorId.userId
+          ? {
+              _id: project.mentorId.userId._id,
+              name: project.mentorId.userId.name,
+              email: project.mentorId.userId.email,
+              avatar: project.mentorId.userId.avatar,
+            }
+          : null,
     };
 
     res.json({
