@@ -92,6 +92,8 @@ export default function AdminDashboard() {
       navigate("/admin/learners");
     } else if (page === "mentors") {
       navigate("/admin/mentors");
+    } else if (page === "message-rooms") {
+      navigate("/admin/rooms");
     } else {
       navigate(`/admin/${page}`);
     }
@@ -196,7 +198,7 @@ export default function AdminDashboard() {
       icon: MessageSquare,
       color: "bg-teal-600 hover:bg-teal-700",
       page: "message-rooms",
-      description: "Monitor communication channels",
+      description: "Monitor chat rooms and conversations",
     },
   ];
 

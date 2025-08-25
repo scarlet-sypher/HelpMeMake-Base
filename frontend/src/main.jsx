@@ -42,6 +42,8 @@ import AdminLearnerDashboard from "./pages/admin/AdminLearnerDashboard";
 import LearnerForm from "./components/admin/learner/LearnerForm";
 import AdminMentorDashboard from "./pages/admin/AdminMentorDashboard";
 import MentorForm from "./components/admin/mentor/MentorForm";
+import AdminRoomDashboard from "./pages/admin/AdminRoomDashboard";
+import RoomView from "./components/admin/room/RoomView";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
@@ -204,14 +206,26 @@ ReactDOM.createRoot(document.getElementById("root")).render(
           }
         />
         <Route
+          path="/admin/rooms/:roomId/view"
+          element={
+            <AdminProtectedRoute>
+              <RoomView />
+            </AdminProtectedRoute>
+          }
+        />
+        <Route
           path="/admin/message-rooms"
           element={
             <AdminProtectedRoute>
-              <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 flex items-center justify-center">
-                <div className="text-white text-2xl">
-                  Message Rooms - Coming Soon
-                </div>
-              </div>
+              <AdminRoomDashboard />
+            </AdminProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/rooms"
+          element={
+            <AdminProtectedRoute>
+              <AdminRoomDashboard />
             </AdminProtectedRoute>
           }
         />

@@ -30,6 +30,7 @@ const adminDashbaordRoutes = require("./routes/admin/adminDashboardRoutes");
 const adminUserRoutes = require("./routes/admin/userRoutes");
 const adminLearnerRoutes = require("./routes/admin/learnerRoutes");
 const adminMentorRoutes = require("./routes/admin/mentorRoutes");
+const adminRoomRoutes = require("./routes/admin/roomRoutes");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -130,6 +131,7 @@ app.use("/admin/dashboard", adminDashbaordRoutes);
 app.use("/admin/users", adminUserRoutes);
 app.use("/admin/learners", adminLearnerRoutes);
 app.use("/admin/mentors", adminMentorRoutes);
+app.use("/admin/rooms", adminRoomRoutes);
 
 // Health check endpoint
 app.get("/health", (req, res) => {
