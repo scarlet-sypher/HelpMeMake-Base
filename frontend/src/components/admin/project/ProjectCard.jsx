@@ -50,6 +50,35 @@ const ProjectCard = ({ project, onView, onEdit, onDelete }) => {
     }
   };
 
+  const defaultLearnerAvatar = "/uploads/public/default.jpg";
+  const defaultMentorAvatar = "/uploads/public/default.jpg";
+  const defaultProjectThumbnail = "/uploads/public/default-project.jpg";
+
+  // Utility functions
+  const getLearnerAvatarUrl = (avatar) => {
+    if (!avatar) return defaultLearnerAvatar;
+    if (avatar.startsWith("/uploads")) {
+      return `${import.meta.env.VITE_API_URL}${avatar}`;
+    }
+    return avatar;
+  };
+
+  const getMentorAvatarUrl = (avatar) => {
+    if (!avatar) return defaultMentorAvatar;
+    if (avatar.startsWith("/uploads")) {
+      return `${import.meta.env.VITE_API_URL}${avatar}`;
+    }
+    return avatar;
+  };
+
+  const getProjectThumbnailUrl = (thumbnail) => {
+    if (!thumbnail) return defaultProjectThumbnail;
+    if (thumbnail.startsWith("/uploads")) {
+      return `${import.meta.env.VITE_API_URL}${thumbnail}`;
+    }
+    return thumbnail;
+  };
+
   const getDifficultyColor = (difficulty) => {
     switch (difficulty) {
       case "Beginner":
@@ -77,9 +106,13 @@ const ProjectCard = ({ project, onView, onEdit, onDelete }) => {
         <div className="relative h-48 bg-gradient-to-r from-blue-500 to-purple-600">
           {project.thumbnail ? (
             <img
-              src={project.thumbnail}
-              alt={project.name}
+              src={getProjectThumbnailUrl(project?.thumbnail)}
+              alt={project?.name || "Project"}
               className="w-full h-full object-cover"
+              onError={(e) => {
+                e.currentTarget.onerror = null;
+                e.currentTarget.src = defaultProjectThumbnail;
+              }}
             />
           ) : (
             <div className="flex items-center justify-center h-full">
@@ -166,9 +199,13 @@ const ProjectCard = ({ project, onView, onEdit, onDelete }) => {
               </div>
               {project.learner?.avatar && (
                 <img
-                  src={project.learner.avatar}
-                  alt={project.learner.name}
+                  src={getLearnerAvatarUrl(project?.learner?.avatar)}
+                  alt={project?.learner?.name || "Learner"}
                   className="w-8 h-8 rounded-full object-cover"
+                  onError={(e) => {
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.src = defaultLearnerAvatar;
+                  }}
                 />
               )}
             </div>
@@ -189,9 +226,13 @@ const ProjectCard = ({ project, onView, onEdit, onDelete }) => {
               </div>
               {project.mentor?.avatar && (
                 <img
-                  src={project.mentor.avatar}
-                  alt={project.mentor.name}
+                  src={getMentorAvatarUrl(project?.mentor?.avatar)}
+                  alt={project?.mentor?.name || "Mentor"}
                   className="w-8 h-8 rounded-full object-cover"
+                  onError={(e) => {
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.src = defaultMentorAvatar;
+                  }}
                 />
               )}
             </div>
