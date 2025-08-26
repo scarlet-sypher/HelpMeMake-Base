@@ -1,20 +1,32 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { ChevronRight, Users, Code, Video, Shield, Star, ArrowRight, Menu, X, Zap, Sparkles } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  ChevronRight,
+  Users,
+  Code,
+  Video,
+  Shield,
+  Star,
+  ArrowRight,
+  Menu,
+  X,
+  Zap,
+  Sparkles,
+} from "lucide-react";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [activeSection, setActiveSection] = useState('hero');
+  const [activeSection, setActiveSection] = useState("hero");
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const navigate = useNavigate();
 
   // Navigation items mapping
   const navItems = [
-    { name: 'How it Works', sectionId: 'how-it-works' },
-    { name: 'Find Mentors', sectionId: 'mentors' },
-    { name: 'Projects', sectionId: 'live-collab' },
-    { name: 'Pricing', sectionId: 'safe-payments' }
+    { name: "How it Works", sectionId: "how-it-works" },
+    { name: "Find Mentors", sectionId: "mentors" },
+    { name: "Projects", sectionId: "live-collab" },
+    { name: "Pricing", sectionId: "safe-payments" },
   ];
 
   useEffect(() => {
@@ -22,70 +34,85 @@ const Navbar = () => {
       setScrolled(window.scrollY > 20);
 
       // Update active section based on scroll position
-      const sections = ['hero', 'how-it-works', 'mentors', 'live-collab', 'safe-payments', 'use-cases', 'final-cta'];
-      const currentSection = sections.find(sectionId => {
-        const element = document.getElementById(sectionId);
+      const sections = [
+        "hero",
+        "how-it-works",
+        "mentors",
+        "live-collab",
+        "safe-payments",
+        "use-cases",
+        "final-cta",
+      ];
+      let currentSection = "hero";
+
+      for (let i = sections.length - 1; i >= 0; i--) {
+        const element = document.getElementById(sections[i]);
         if (element) {
           const rect = element.getBoundingClientRect();
-          return rect.top <= 100 && rect.bottom >= 100;
+          if (rect.top <= 150) {
+            currentSection = sections[i];
+            break;
+          }
         }
-        return false;
-      });
-      
-      if (currentSection) {
-        setActiveSection(currentSection);
       }
+
+      setActiveSection(currentSection);
     };
 
     const handleMouseMove = (e) => {
       setMousePosition({
         x: (e.clientX / window.innerWidth) * 100,
-        y: (e.clientY / window.innerHeight) * 100
+        y: (e.clientY / window.innerHeight) * 100,
       });
     };
 
-    window.addEventListener('scroll', handleScroll);
-    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("mousemove", handleMouseMove);
+
+    // Initial call
+    handleScroll();
 
     return () => {
-      window.removeEventListener('scroll', handleScroll);
-      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("mousemove", handleMouseMove);
     };
   }, []);
 
-  // Smooth scroll function
+  // Simplified scroll function - CSS scroll-margin-top handles navbar offset
   const scrollToSection = (sectionId) => {
     const element = document.getElementById(sectionId);
-    if (element) {
-      const navbarHeight = 100; // Adjust based on your navbar height
-      const elementPosition = element.offsetTop - navbarHeight;
 
-      window.scrollTo({
-        top: elementPosition,
-        behavior: 'smooth'
+    if (element) {
+      // Simple scrollIntoView - CSS scroll-margin-top will handle the navbar offset
+      element.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
       });
     }
-    setIsMenuOpen(false); // Close mobile menu after clicking
+
+    setIsMenuOpen(false);
   };
 
   // Handle logo click - scroll to top
   const scrollToTop = () => {
     window.scrollTo({
       top: 0,
-      behavior: 'smooth'
+      behavior: "smooth",
     });
+    setActiveSection("hero");
     setIsMenuOpen(false);
   };
 
   return (
     <>
       <nav className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-6xl px-4">
-        <div className={`relative transition-all duration-500 ${
-          scrolled
-            ? 'bg-slate-900/95 backdrop-blur-xl shadow-2xl border border-purple-500/30'
-            : 'bg-slate-900/90 backdrop-blur-md shadow-xl border border-emerald-500/20'
-        } rounded-full overflow-hidden`}>
-
+        <div
+          className={`relative transition-all duration-500 ${
+            scrolled
+              ? "bg-slate-900/95 backdrop-blur-xl shadow-2xl border border-purple-500/30"
+              : "bg-slate-900/90 backdrop-blur-md shadow-xl border border-emerald-500/20"
+          } rounded-full overflow-hidden`}
+        >
           {/* Dynamic gradient overlay based on mouse position */}
           <div
             className="absolute inset-0 opacity-30 transition-all duration-1000"
@@ -94,7 +121,7 @@ const Navbar = () => {
                 rgba(139, 92, 246, 0.4) 0%,
                 rgba(59, 130, 246, 0.3) 30%,
                 rgba(16, 185, 129, 0.2) 60%,
-                transparent 100%)`
+                transparent 100%)`,
             }}
           />
 
@@ -107,8 +134,10 @@ const Navbar = () => {
                 style={{
                   left: `${Math.random() * 100}%`,
                   top: `${Math.random() * 100}%`,
-                  animation: `navFloat ${2 + Math.random() * 2}s ease-in-out infinite`,
-                  animationDelay: `${Math.random() * 2}s`
+                  animation: `navFloat ${
+                    2 + Math.random() * 2
+                  }s ease-in-out infinite`,
+                  animationDelay: `${Math.random() * 2}s`,
                 }}
               />
             ))}
@@ -139,26 +168,35 @@ const Navbar = () => {
               {navItems.map((item, index) => (
                 <button
                   key={item.name}
-                  onClick={() => scrollToSection(item.sectionId)}
-                  className={`relative px-4 py-2 text-sm font-medium transition-all duration-300 rounded-full group overflow-hidden ${
+                  onClick={() => {
+                    // Debug log
+                    scrollToSection(item.sectionId);
+                  }}
+                  className={`relative px-4 py-2 text-sm font-medium transition-all duration-300 rounded-full group overflow-hidden cursor-pointer ${
                     activeSection === item.sectionId
-                      ? 'text-emerald-300'
-                      : 'text-white/90 hover:text-emerald-300'
+                      ? "text-emerald-300"
+                      : "text-white/90 hover:text-emerald-300"
                   }`}
                   style={{ animationDelay: `${index * 100}ms` }}
                 >
-                  <div className={`absolute inset-0 bg-gradient-to-r from-emerald-500/20 to-blue-500/20 rounded-full transition-all duration-300 ${
-                    activeSection === item.sectionId
-                      ? 'opacity-100 scale-100'
-                      : 'opacity-0 scale-0 group-hover:opacity-100 group-hover:scale-100'
-                  }`}></div>
+                  <div
+                    className={`absolute inset-0 bg-gradient-to-r from-emerald-500/20 to-blue-500/20 rounded-full transition-all duration-300 ${
+                      activeSection === item.sectionId
+                        ? "opacity-100 scale-100"
+                        : "opacity-0 scale-0 group-hover:opacity-100 group-hover:scale-100"
+                    }`}
+                  ></div>
                   <div className="absolute inset-0 bg-white/5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                  <span className="relative z-10 group-hover:scale-105 transition-transform duration-300 inline-block">{item.name}</span>
-                  <div className={`absolute bottom-0 left-1/2 transform -translate-x-1/2 h-0.5 bg-gradient-to-r from-emerald-400 to-blue-400 transition-all duration-300 ${
-                    activeSection === item.sectionId
-                      ? 'w-full'
-                      : 'w-0 group-hover:w-full'
-                  }`}></div>
+                  <span className="relative z-10 group-hover:scale-105 transition-transform duration-300 inline-block">
+                    {item.name}
+                  </span>
+                  <div
+                    className={`absolute bottom-0 left-1/2 transform -translate-x-1/2 h-0.5 bg-gradient-to-r from-emerald-400 to-blue-400 transition-all duration-300 ${
+                      activeSection === item.sectionId
+                        ? "w-full"
+                        : "w-0 group-hover:w-full"
+                    }`}
+                  ></div>
                 </button>
               ))}
             </div>
@@ -166,14 +204,14 @@ const Navbar = () => {
             {/* Enhanced CTA Buttons */}
             <div className="hidden md:flex items-center space-x-3">
               <button
-                onClick={() => navigate('/login')}
+                onClick={() => navigate("/login")}
                 className="relative px-4 py-2 text-white/90 hover:text-emerald-300 text-sm font-medium transition-all duration-300 rounded-full hover:bg-white/10 group overflow-hidden"
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/10 to-blue-500/10 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 <span className="relative z-10">Login</span>
               </button>
               <button
-                onClick={() => navigate('/signup')}
+                onClick={() => navigate("/signup")}
                 className="relative flex items-center px-6 py-2 bg-gradient-to-r from-emerald-500 to-blue-500 text-white text-sm font-semibold rounded-full hover:from-emerald-600 hover:to-blue-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 group overflow-hidden"
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-emerald-400 to-blue-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -206,11 +244,13 @@ const Navbar = () => {
         </div>
 
         {/* Enhanced Mobile Navigation */}
-        <div className={`md:hidden mt-4 transition-all duration-500 ease-out ${
-          isMenuOpen
-            ? 'opacity-100 translate-y-0 pointer-events-auto scale-100'
-            : 'opacity-0 -translate-y-8 pointer-events-none scale-95'
-        }`}>
+        <div
+          className={`md:hidden mt-4 transition-all duration-500 ease-out ${
+            isMenuOpen
+              ? "opacity-100 translate-y-0 pointer-events-auto scale-100"
+              : "opacity-0 -translate-y-8 pointer-events-none scale-95"
+          }`}
+        >
           <div className="relative bg-slate-900/95 backdrop-blur-xl shadow-2xl border border-purple-500/30 rounded-3xl p-6 overflow-hidden">
             {/* Background effects */}
             <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 via-blue-500/10 to-purple-500/10"></div>
@@ -224,8 +264,10 @@ const Navbar = () => {
                   style={{
                     left: `${Math.random() * 100}%`,
                     top: `${Math.random() * 100}%`,
-                    animation: `navFloat ${3 + Math.random() * 2}s ease-in-out infinite`,
-                    animationDelay: `${Math.random() * 2}s`
+                    animation: `navFloat ${
+                      3 + Math.random() * 2
+                    }s ease-in-out infinite`,
+                    animationDelay: `${Math.random() * 2}s`,
                   }}
                 />
               ))}
@@ -235,45 +277,57 @@ const Navbar = () => {
               {navItems.map((item, index) => (
                 <button
                   key={item.name}
-                  onClick={() => scrollToSection(item.sectionId)}
-                  className={`block w-full text-left px-4 py-3 text-sm font-medium transition-all duration-300 rounded-xl hover:bg-white/10 group relative overflow-hidden ${
+                  onClick={() => {
+                    scrollToSection(item.sectionId);
+                  }}
+                  className={`block w-full text-left px-4 py-3 text-sm font-medium transition-all duration-300 rounded-xl hover:bg-white/10 group relative overflow-hidden cursor-pointer ${
                     activeSection === item.sectionId
-                      ? 'text-emerald-300 bg-white/5'
-                      : 'text-white/90 hover:text-emerald-300'
+                      ? "text-emerald-300 bg-white/5"
+                      : "text-white/90 hover:text-emerald-300"
                   }`}
                   style={{
                     animationDelay: `${index * 100}ms`,
-                    animation: isMenuOpen ? 'slideInFromLeft 0.5s ease-out forwards' : 'none'
+                    animation: isMenuOpen
+                      ? "slideInFromLeft 0.5s ease-out forwards"
+                      : "none",
                   }}
                 >
                   <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/20 to-blue-500/20 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 scale-0 group-hover:scale-100"></div>
-                  <div className={`absolute left-0 top-1/2 transform -translate-y-1/2 h-6 bg-gradient-to-r from-emerald-400 to-blue-400 transition-all duration-300 rounded-r ${
-                    activeSection === item.sectionId
-                      ? 'w-1'
-                      : 'w-0 group-hover:w-1'
-                  }`}></div>
-                  <span className="relative z-10 transform group-hover:translate-x-2 transition-transform duration-300">{item.name}</span>
+                  <div
+                    className={`absolute left-0 top-1/2 transform -translate-y-1/2 h-6 bg-gradient-to-r from-emerald-400 to-blue-400 transition-all duration-300 rounded-r ${
+                      activeSection === item.sectionId
+                        ? "w-1"
+                        : "w-0 group-hover:w-1"
+                    }`}
+                  ></div>
+                  <span className="relative z-10 transform group-hover:translate-x-2 transition-transform duration-300">
+                    {item.name}
+                  </span>
                 </button>
               ))}
 
               <div className="pt-4 border-t border-white/20 space-y-3">
                 <button
-                  onClick={() => navigate('/login')}
+                  onClick={() => navigate("/login")}
                   className="block w-full text-center px-4 py-3 text-white/90 hover:text-emerald-300 text-sm font-medium transition-all duration-300 rounded-xl hover:bg-white/10 group relative overflow-hidden"
                   style={{
-                    animationDelay: '400ms',
-                    animation: isMenuOpen ? 'slideInFromLeft 0.5s ease-out forwards' : 'none'
+                    animationDelay: "400ms",
+                    animation: isMenuOpen
+                      ? "slideInFromLeft 0.5s ease-out forwards"
+                      : "none",
                   }}
                 >
                   <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/20 to-blue-500/20 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 scale-0 group-hover:scale-100"></div>
                   <span className="relative z-10">Login</span>
                 </button>
                 <button
-                  onClick={() => navigate('/signup')}
+                  onClick={() => navigate("/signup")}
                   className="block w-full text-center px-6 py-3 bg-gradient-to-r from-emerald-500 to-blue-500 text-white text-sm font-semibold rounded-xl hover:from-emerald-600 hover:to-blue-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 group relative overflow-hidden"
                   style={{
-                    animationDelay: '500ms',
-                    animation: isMenuOpen ? 'slideInFromLeft 0.5s ease-out forwards' : 'none'
+                    animationDelay: "500ms",
+                    animation: isMenuOpen
+                      ? "slideInFromLeft 0.5s ease-out forwards"
+                      : "none",
                   }}
                 >
                   <div className="absolute inset-0 bg-gradient-to-r from-emerald-400 to-blue-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>

@@ -318,7 +318,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
               <UserProfileView />
             </ProtectedRoute>
           }
-        />{" "}
+        />
         <Route
           path="/user/mentor"
           element={

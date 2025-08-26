@@ -1,15 +1,15 @@
-import React from 'react';
-import './main.css';
+import React from "react";
+import "./main.css";
 
-import Hero from './pages/Hero';
-import HowItWorks from './pages/HowItWorks';
-import MentorPage from './pages/MentorPage';
-import LiveCollabPage from './pages/LiveCollabPage';
-import SafePayments from './pages/SafePayments';
-import UseCases from './pages/UseCases';
-import FinalCTA from './pages/FinalCTA';
-import Footer from './pages/Footer';
-import Navbar from './components/Navbar';
+import Hero from "./pages/Hero";
+import HowItWorks from "./pages/HowItWorks";
+import MentorPage from "./pages/MentorPage";
+import LiveCollabPage from "./pages/LiveCollabPage";
+import SafePayments from "./pages/SafePayments";
+import UseCases from "./pages/UseCases";
+import FinalCTA from "./pages/FinalCTA";
+import Footer from "./pages/Footer";
+import Navbar from "./components/Navbar";
 
 const App = () => {
   return (
