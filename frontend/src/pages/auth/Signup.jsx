@@ -18,7 +18,6 @@ import naruto from "../../assets/SignupImages/naruto.jpg";
 import nezuko from "../../assets/SignupImages/nezuko.jpg";
 import grimjow from "../../assets/SignupImages/grimmjow.jpg";
 import hancock from "../../assets/SignupImages/hancock.jpg";
-import tora from "../../assets/SignupImages/tora.jpg";
 import jk from "../../assets/SignupImages/jujutsu.jpg";
 
 const NUM_PARTICLES = 25;
