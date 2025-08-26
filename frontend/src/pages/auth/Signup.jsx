@@ -14,6 +14,13 @@ import {
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
+import naruto from "../../assets/SignupImages/naruto.jpg";
+import nezuko from "../../assets/SignupImages/nezuko.jpg";
+import grimjow from "../../assets/SignupImages/grimmjow.jpg";
+import hancock from "../../assets/SignupImages/hancock.jpg";
+import tora from "../../assets/SignupImages/tora.jpg";
+import jk from "../../assets/SignupImages/jujutsu.jpg";
+
 const NUM_PARTICLES = 25;
 
 // Toast notification component
@@ -68,36 +75,31 @@ const heroImages = [
     title: "Join Us",
     subtitle:
       "Start your journey with expert mentors and build amazing projects",
-    image:
-      "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=500&h=600&fit=crop&crop=faces",
+    image: jk,
   },
   {
     id: 2,
     title: "Learn",
     subtitle: "Connect with industry professionals and accelerate your growth",
-    image:
-      "https://images.unsplash.com/photo-1531482615713-2afd69097998?w=500&h=600&fit=crop&crop=faces",
+    image: grimjow,
   },
   {
     id: 3,
     title: "Build",
     subtitle: "Transform your innovative ideas into reality with guidance",
-    image:
-      "https://images.unsplash.com/photo-1552664730-d307ca884978?w=500&h=600&fit=crop&crop=center",
+    image: hancock,
   },
   {
     id: 4,
     title: "Grow",
     subtitle: "Fast-track your career with personalized mentorship",
-    image:
-      "https://images.unsplash.com/photo-1517180102446-f3ece451e9d8?w=500&h=600&fit=crop&crop=center",
+    image: nezuko,
   },
   {
     id: 5,
     title: "Succeed",
     subtitle: "Achieve excellence through collaborative learning",
-    image:
-      "https://images.unsplash.com/photo-1556075798-4825dfaaf498?w=500&h=600&fit=crop&crop=faces",
+    image: naruto,
   },
 ];
 

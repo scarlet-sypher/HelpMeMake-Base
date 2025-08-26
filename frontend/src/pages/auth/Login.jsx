@@ -375,8 +375,8 @@ export default function Login() {
                     </div>
 
                     {/* Floating Animation Elements */}
-                    <div className="absolute top-6 right-6 w-3 h-3 bg-emerald-400/60 rounded-full animate-pulse"></div>
-                    <div className="absolute top-20 right-12 w-2 h-2 bg-purple-400/60 rounded-full animate-ping"></div>
+                    {/* <div className="absolute top-6 right-6 w-3 h-3 bg-emerald-400/60 rounded-full animate-pulse"></div> */}
+                    {/* <div className="absolute top-20 right-12 w-2 h-2 bg-purple-400/60 rounded-full animate-ping"></div> */}
                     <div
                       className="absolute bottom-20 right-8 w-4 h-4 bg-cyan-400/40 rounded-full animate-bounce"
                       style={{ animationDelay: "0.5s" }}
