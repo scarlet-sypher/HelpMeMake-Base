@@ -5,7 +5,7 @@ html {
   margin: 0;
   padding: 0;
   height: 100%;
-  overflow-y: scroll; /* Keeps layout stable */
+  /* overflow-y: scroll; Keeps layout stable */
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
 }

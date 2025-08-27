@@ -12,6 +12,7 @@ import {
   Menu,
   X,
   Sparkles,
+  BookOpen,
   Zap,
 } from "lucide-react";
 
@@ -153,7 +154,7 @@ const HeroSection = () => {
                   : "translate-y-10 opacity-0"
               }`}
             >
-              <div className="mb-4 sm:mb-6 mt-10">
+              <div className="mb-4 sm:mb-4 mt-5">
                 <span className="inline-flex items-center px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-xs sm:text-sm font-medium bg-gradient-to-r from-emerald-500/20 to-blue-500/20 text-emerald-300 border border-emerald-500/30 backdrop-blur-sm">
                   <Sparkles className="w-3 h-3 sm:w-4 sm:h-4 mr-1.5 sm:mr-2" />
                   <span className="hidden xs:inline">Now Live - </span>
@@ -162,11 +163,11 @@ const HeroSection = () => {
               </div>
 
               {/* Responsive Typography */}
-              <h1 className="text-3xl xs:text-4xl sm:text-5xl md:text-6xl lg:text-6xl xl:text-7xl font-bold mb-6 sm:mb-8 leading-tight sm:leading-tight tracking-tight">
+              <h1 className="text-3xl xs:text-6xl sm:text-5xl md:text-6xl lg:text-6xl xl:text-7xl font-bold mb-6 sm:mb-8 leading-snug sm:leading-snug tracking-tight">
                 <span className="bg-gradient-to-r from-white via-emerald-200 to-blue-200 bg-clip-text text-transparent animate-gradient block">
                   Build your dream
                 </span>
-                <span className="bg-gradient-to-r from-emerald-400 via-blue-400 to-purple-400 bg-clip-text text-transparent animate-gradient animation-delay-500 block mt-1 sm:mt-2">
+                <span className="bg-gradient-to-r from-emerald-400 via-blue-400 to-purple-400 bg-clip-text text-transparent animate-gradient animation-delay-500 block mt-1 sm:mt-1">
                   project today
                 </span>
               </h1>
@@ -181,7 +182,7 @@ const HeroSection = () => {
               </p>
 
               {/* Enhanced Responsive CTA Buttons */}
-              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 md:gap-6 justify-center lg:justify-start mb-8 sm:mb-12">
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 md:gap-6 justify-end lg:justify-start mb-8 sm:mb-12">
                 <button
                   onClick={() => navigate("/signup")}
                   className="group relative bg-gradient-to-r from-emerald-500 to-blue-500 text-white px-6 sm:px-8 md:px-10 py-3 sm:py-4 md:py-5 rounded-full font-semibold text-sm sm:text-base hover:from-emerald-600 hover:to-blue-600 transition-all duration-300 transform hover:scale-105 hover:shadow-2xl flex items-center justify-center overflow-hidden w-full sm:w-auto touch-manipulation"
@@ -193,9 +194,12 @@ const HeroSection = () => {
                   </span>
                 </button>
 
-                <button className="group border-2 border-white/30 text-white px-6 sm:px-8 md:px-10 py-3 sm:py-4 md:py-5 rounded-full font-semibold text-sm sm:text-base hover:bg-white/10 hover:border-white/50 transition-all duration-300 flex items-center justify-center backdrop-blur-sm w-full sm:w-auto">
-                  <Video className="mr-2 sm:mr-3 w-4 h-4 sm:w-5 sm:h-5 group-hover:scale-110 transition-transform" />
-                  Watch Demo
+                <button
+                  onClick={() => navigate("/signup")}
+                  className="group border-2 border-white/30 text-white px-6 sm:px-8 md:px-10 py-3 sm:py-4 md:py-5 rounded-full font-semibold text-sm sm:text-base hover:bg-white/10 hover:border-white/50 transition-all duration-300 flex items-center justify-center backdrop-blur-sm w-full sm:w-auto"
+                >
+                  <BookOpen className="mr-2 sm:mr-3 w-4 h-4 sm:w-5 sm:h-5 group-hover:scale-110 transition-transform" />
+                  Read Docs
                 </button>
               </div>
 

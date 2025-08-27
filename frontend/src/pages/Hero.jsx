@@ -4,7 +4,7 @@ import Navbar from "../components/Navbar";
 const Hero = () => {
   return (
     <div className="min-h-screen">
-      <Navbar />
+      {/* <Navbar /> */}
 
       <HeroSection />
     </div>

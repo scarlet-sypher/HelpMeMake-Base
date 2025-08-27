@@ -23,10 +23,12 @@ const Navbar = () => {
 
   // Navigation items mapping
   const navItems = [
-    { name: "How it Works", sectionId: "how-it-works" },
-    { name: "Find Mentors", sectionId: "mentors" },
-    { name: "Projects", sectionId: "live-collab" },
-    { name: "Pricing", sectionId: "safe-payments" },
+    { name: "Process", sectionId: "how-it-works" },
+    { name: "Mentors", sectionId: "mentors" },
+    { name: "Features", sectionId: "live-collab" },
+    { name: "SafePay", sectionId: "safe-payments" },
+    { name: "Network", sectionId: "use-cases" },
+    { name: "Ignite", sectionId: "final-cta" },
   ];
 
   useEffect(() => {
@@ -245,10 +247,10 @@ const Navbar = () => {
 
         {/* Enhanced Mobile Navigation */}
         <div
-          className={`md:hidden mt-4 transition-all duration-500 ease-out ${
+          className={`md:hidden transition-all duration-500 ease-out ${
             isMenuOpen
-              ? "opacity-100 translate-y-0 pointer-events-auto scale-100"
-              : "opacity-0 -translate-y-8 pointer-events-none scale-95"
+              ? "relative mt-4 opacity-100 translate-y-0 pointer-events-auto scale-100"
+              : "absolute top-full left-0 right-0 mt-4 opacity-0 -translate-y-8 pointer-events-none scale-95"
           }`}
         >
           <div className="relative bg-slate-900/95 backdrop-blur-xl shadow-2xl border border-purple-500/30 rounded-3xl p-6 overflow-hidden">
