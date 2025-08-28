@@ -20,6 +20,8 @@ import {
   Zap,
 } from "lucide-react";
 
+import momo from "../assets/VideoConf/xyz.jpg";
+
 const LiveCollabPage = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [isScreenSharing, setIsScreenSharing] = useState(true);
@@ -40,7 +42,7 @@ const LiveCollabPage = () => {
       name: "You",
       message: "Thanks! I was struggling with the loop logic.",
       timestamp: "2:35 PM",
-      avatar: "/src/assets/MentorImages/sindo.jpg",
+      avatar: momo,
     },
     {
       id: 3,

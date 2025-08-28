@@ -79,7 +79,7 @@ const MentorPage = () => {
       techStack: ["React", "Node.js", "Python"],
       testimonial:
         "Sarah helped me build my first full-stack app in just 3 sessions!",
-      colorScheme: "red",
+      colorScheme: "blue",
     },
     {
       id: 2,
@@ -116,7 +116,7 @@ const MentorPage = () => {
       techStack: ["AWS", "Docker", "Kubernetes"],
       testimonial:
         "David taught me DevOps best practices that transformed my workflow.",
-      colorScheme: "blue",
+      colorScheme: "red",
     },
     {
       id: 5,
