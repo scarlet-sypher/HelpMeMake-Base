@@ -189,7 +189,7 @@ const MentorSessions = () => {
         have a project in progress, you can schedule mentoring sessions here.
       </p>
       <button
-        onClick={() => (window.location.href = "/mentor/dashboard")}
+        onClick={() => (window.location.href = "/mentordashboard")}
         className="px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-cyan-500 to-teal-600 hover:from-cyan-600 hover:to-teal-700 text-white rounded-xl font-semibold transition-all transform hover:scale-105 text-sm sm:text-base"
       >
         Go to Dashboard

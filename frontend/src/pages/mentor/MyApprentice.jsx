@@ -180,7 +180,7 @@ const MyApprentice = () => {
                 </h3>
                 <p className="text-red-200 mb-6">{error}</p>
                 <button
-                  onClick={() => (window.location.href = "/mentor/dashboard")}
+                  onClick={() => (window.location.href = "/mentordashboard")}
                   className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-teal-600 hover:from-cyan-600 hover:to-teal-700 text-white rounded-xl font-semibold transition-all transform hover:scale-105 shadow-lg flex items-center mx-auto"
                 >
                   <ArrowLeft size={20} className="mr-2" />
