@@ -1034,9 +1034,10 @@ const getActiveProjectWithMentor = async (req, res) => {
       });
     }
 
-    // Find the most recent project regardless of status first
-    const anyProject = await Project.findOne({
+    // Find the most recent "In Progress" project (prefer updatedAt, fallback to createdAt)
+    const inProgressProject = await Project.findOne({
       learnerId: learner._id,
+      status: "In Progress",
     })
       .populate({
         path: "mentorId",
@@ -1046,97 +1047,85 @@ const getActiveProjectWithMentor = async (req, res) => {
           select: "name email avatar",
         },
       })
-      .sort({ createdAt: -1 }); // Get most recent project
+      .sort({ updatedAt: -1, createdAt: -1 }); // Most recently updated "In Progress" project
 
-    console.log("Any project found:", anyProject ? "YES" : "NO"); // debug
+    console.log("In Progress project found:", inProgressProject ? "YES" : "NO"); // debug
 
-    if (!anyProject) {
+    if (!inProgressProject) {
       return res.json({
         success: true,
         project: null,
-        message: "No project found for this learner",
+        message: "No project with 'In Progress' status found for this learner",
         debug: {
           learnerId: learner._id,
-          totalProjects: 0,
+          totalProjects: allProjects.length,
+          inProgressProjectExists: false,
         },
       });
     }
 
     // Log the found project details
-    console.log("Found project details:"); // debug
-    console.log("  Project ID:", anyProject._id); // debug
-    console.log("  Project name:", anyProject.name); // debug
-    console.log("  Project status:", anyProject.status); // debug
-    console.log("  Project learnerId:", anyProject.learnerId); // debug
-    console.log("  Project mentorId:", anyProject.mentorId); // debug
+    console.log("Found In Progress project details:"); // debug
+    console.log("  Project ID:", inProgressProject._id); // debug
+    console.log("  Project name:", inProgressProject.name); // debug
+    console.log("  Project status:", inProgressProject.status); // debug
+    console.log("  Project learnerId:", inProgressProject.learnerId); // debug
+    console.log("  Project mentorId:", inProgressProject.mentorId); // debug
 
     // Log mentor details if populated
-    if (anyProject.mentorId) {
+    if (inProgressProject.mentorId) {
       console.log("Mentor profile details:"); // debug
-      console.log("  Mentor _id:", anyProject.mentorId._id); // debug
-      console.log("  Mentor title:", anyProject.mentorId.title); // debug
-      console.log("  Mentor description:", anyProject.mentorId.description); // debug
-      console.log("  Mentor location:", anyProject.mentorId.location); // debug
+      console.log("  Mentor _id:", inProgressProject.mentorId._id); // debug
+      console.log("  Mentor title:", inProgressProject.mentorId.title); // debug
+      console.log(
+        "  Mentor description:",
+        inProgressProject.mentorId.description
+      ); // debug
+      console.log("  Mentor location:", inProgressProject.mentorId.location); // debug
 
-      if (anyProject.mentorId.userId) {
+      if (inProgressProject.mentorId.userId) {
         console.log("Mentor user details:"); // debug
-        console.log("    User name:", anyProject.mentorId.userId.name); // debug
-        console.log("    User email:", anyProject.mentorId.userId.email); // debug
-        console.log("    User avatar:", anyProject.mentorId.userId.avatar); // debug
+        console.log("    User name:", inProgressProject.mentorId.userId.name); // debug
+        console.log("    User email:", inProgressProject.mentorId.userId.email); // debug
+        console.log(
+          "    User avatar:",
+          inProgressProject.mentorId.userId.avatar
+        ); // debug
       }
     }
 
-    // Check project status and respond accordingly
-    if (anyProject.status === "In Progress") {
-      console.log("Project is In Progress - returning project data"); // debug
+    // Since we only get here if project is "In Progress", we can directly return it
+    console.log("Project is In Progress - returning project data"); // debug
 
-      // Format project for frontend with proper mentor data
-      const formattedProject = {
-        ...anyProject.toObject(),
-        mentorId: anyProject.mentorId
-          ? {
-              _id: anyProject.mentorId._id,
-              name: anyProject.mentorId.userId?.name || "Unknown Mentor",
-              email: anyProject.mentorId.userId?.email || "",
-              avatar:
-                anyProject.mentorId.userId?.avatar ||
-                "/uploads/public/default.jpg",
-              title: anyProject.mentorId.title || "Mentor",
-              description: anyProject.mentorId.description || "",
-              location: anyProject.mentorId.location || "",
-            }
-          : {
-              name: "No Mentor Assigned",
-              title: "Pending Assignment",
-              avatar: "/uploads/public/default.jpg",
-            },
-      };
+    // Format project for frontend with proper mentor data
+    const formattedProject = {
+      ...inProgressProject.toObject(),
+      mentorId: inProgressProject.mentorId
+        ? {
+            _id: inProgressProject.mentorId._id,
+            name: inProgressProject.mentorId.userId?.name || "Unknown Mentor",
+            email: inProgressProject.mentorId.userId?.email || "",
+            avatar:
+              inProgressProject.mentorId.userId?.avatar ||
+              "/uploads/public/default.jpg",
+            title: inProgressProject.mentorId.title || "Mentor",
+            description: inProgressProject.mentorId.description || "",
+            location: inProgressProject.mentorId.location || "",
+          }
+        : {
+            name: "No Mentor Assigned",
+            title: "Pending Assignment",
+            avatar: "/uploads/public/default.jpg",
+          },
+    };
 
-      console.log("Formatted project mentor data:", formattedProject.mentorId); // debug
-      console.log("=== END DEBUG ===");
+    console.log("Formatted project mentor data:", formattedProject.mentorId); // debug
+    console.log("=== END DEBUG ===");
 
-      return res.json({
-        success: true,
-        project: formattedProject,
-      });
-    } else {
-      // Project exists but not "In Progress"
-      console.log(
-        `Project found but status is: ${anyProject.status} - not returning for milestones`
-      ); // debug
-
-      return res.json({
-        success: true,
-        project: null, // Don't return project data for non-"In Progress" projects
-        message: `Project found but status is: ${anyProject.status}`,
-        debug: {
-          learnerId: learner._id,
-          projectExists: true,
-          projectStatus: anyProject.status,
-          projectName: anyProject.name,
-        },
-      });
-    }
+    return res.json({
+      success: true,
+      project: formattedProject,
+    });
   } catch (error) {
     console.error("Error in getActiveProjectWithMentor:", error);
     res.status(500).json({
