@@ -90,7 +90,7 @@ const HowItWorks = () => {
       color: "from-emerald-500 to-blue-500",
       bgColor: "from-emerald-500/20 to-blue-500/20",
       features: [
-        "Project scope",
+        "Project scope definition",
         "Tech stack selection",
         "Timeline planning",
         "Mentor preferences",
@@ -129,7 +129,7 @@ const HowItWorks = () => {
         "AI-powered matching",
         "Skill compatibility",
         "Availability sync",
-        "Trusted Reviews",
+        "Review-based selection",
       ],
       processDetails: [
         {
@@ -454,11 +454,11 @@ const HowItWorks = () => {
           {/* Enhanced Current Step Display */}
           <div className="max-w-7xl mx-auto px-2 sm:px-0">
             <div
-              className={`bg-gradient-to-r ${steps[activeStep].bgColor} backdrop-blur-xl rounded-3xl sm:rounded-4xl p-4 sm:p-6 md:p-8 lg:p-10 border border-white/20 shadow-2xl min-h-[700px] sm:min-h-[800px] md:min-h-[900px] lg:min-h-[1000px] transition-all duration-500`}
+              className={`bg-gradient-to-r ${steps[activeStep].bgColor} backdrop-blur-xl rounded-3xl sm:rounded-4xl p-6 sm:p-8 md:p-12 lg:p-16 border border-white/20 shadow-2xl min-h-[600px] sm:min-h-[650px] md:min-h-[700px] lg:min-h-[750px] transition-all duration-500`}
             >
-              <div className="flex flex-col lg:grid lg:grid-cols-2 lg:grid-rows-2 gap-6 sm:gap-8 md:gap-10 h-full">
-                {/* Enhanced Step Content - Header Section */}
-                <div className="order-1 lg:order-1 lg:col-start-1 lg:col-end-2 lg:row-start-1 lg:row-end-3 space-y-4 sm:space-y-6 flex flex-col justify-start">
+              <div className="grid lg:grid-cols-2 gap-8 sm:gap-12 md:gap-16 items-center h-full">
+                {/* Enhanced Step Content */}
+                <div className="order-2 lg:order-1 space-y-6 sm:space-y-8 flex flex-col justify-center h-full">
                   <div
                     className={`inline-flex items-center px-4 py-2 sm:px-5 sm:py-3 rounded-full text-sm sm:text-base font-medium bg-gradient-to-r ${steps[activeStep].bgColor} text-white border border-white/20 backdrop-blur-sm shadow-lg`}
                   >
@@ -468,8 +468,8 @@ const HowItWorks = () => {
                     Step {steps[activeStep].id} of 5
                   </div>
 
-                  <div className="space-y-3 sm:space-y-4">
-                    <h3 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white leading-tight">
+                  <div className="space-y-4 sm:space-y-6">
+                    <h3 className="text-3xl sm:text-4xl md:text-3xl lg:text-4xl font-bold text-white ">
                       {steps[activeStep].title}
                     </h3>
 
@@ -477,24 +477,24 @@ const HowItWorks = () => {
                       {steps[activeStep].subtitle}
                     </p>
 
-                    <p className="text-white/90 text-sm sm:text-base md:text-lg leading-relaxed">
+                    <p className="text-white/90 text-md sm:text-lg md:text-xl leading-relaxed font-mono">
                       {steps[activeStep].description}
                     </p>
 
-                    <p className="text-white/70 italic text-sm sm:text-base md:text-lg">
+                    <p className="text-white/70 italic text-base sm:text-lg md:text-xl">
                       {steps[activeStep].subtext}
                     </p>
                   </div>
 
                   {/* Enhanced Process Details */}
-                  <div className="space-y-3 sm:space-y-4">
+                  <div className="space-y-4 sm:space-y-5">
                     {steps[activeStep].processDetails.map((detail, index) => (
                       <div
                         key={index}
-                        className={`flex items-center space-x-3 text-white/90 text-sm sm:text-base md:text-lg p-3 rounded-xl backdrop-blur-sm border border-white/10 hover:border-white/20 transition-all duration-300 transform hover:translate-x-2`}
+                        className={`flex items-center space-x-4 text-white/90 text-base sm:text-lg md:text-xl p-3 sm:p-4 rounded-xl backdrop-blur-sm border border-white/10 hover:border-white/20 transition-all duration-300 transform hover:translate-x-2`}
                       >
                         <div
-                          className={`p-2 rounded-xl bg-gradient-to-r ${steps[activeStep].bgColor} flex-shrink-0 shadow-lg`}
+                          className={`p-2 sm:p-3 rounded-xl bg-gradient-to-r ${steps[activeStep].bgColor} flex-shrink-0 shadow-lg`}
                         >
                           {detail.icon}
                         </div>
@@ -504,14 +504,28 @@ const HowItWorks = () => {
                       </div>
                     ))}
                   </div>
+
+                  {/* Enhanced Features */}
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                    {steps[activeStep].features.map((feature, index) => (
+                      <div
+                        key={index}
+                        className="flex items-center space-x-3 text-white/80 text-base sm:text-lg p-3 rounded-lg backdrop-blur-sm border border-white/10 hover:bg-white/5 transition-all duration-300"
+                      >
+                        <CheckCircle className="w-5 h-5 sm:w-6 sm:h-6 text-emerald-400 flex-shrink-0" />
+                        <span className="flex-1 font-medium">{feature}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
 
                 {/* Enhanced Visual Representation */}
-                <div className="order-2 lg:order-2 lg:col-start-2 lg:col-end-3 lg:row-start-1 lg:row-end-2 flex items-start justify-center pt-4 lg:pt-8">
-                  <div className="relative w-full max-w-sm sm:max-w-md lg:max-w-lg">
+                <div className="order-1 lg:order-2 flex items-center justify-center h-full">
+                  <div className="relative">
                     {/* Enhanced Main Visual Container */}
                     <div
-                      className={`relative bg-gradient-to-r from-white/20 to-white/10 backdrop-blur-xl rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 border border-white/20 shadow-2xl transform transition-all duration-500 hover:scale-105 hover:shadow-3xl min-h-[300px] sm:min-h-[350px] md:min-h-[400px] flex flex-col w-full`}
+                      className={`relative bg-gradient-to-r from-white/20 to-white/10 backdrop-blur-xl rounded-2xl sm:rounded-3xl p-6 sm:p-8 lg:p-12 border border-white/20 shadow-2xl transform transition-all duration-500 hover:scale-105 hover:shadow-3xl w-full max-w-md mx-auto min-h-[400px] sm:min-h-[450px] md:min-h-[500px] flex flex-col`}
                     >
                       {/* Enhanced Icon Display */}
                       <div
@@ -523,6 +537,18 @@ const HowItWorks = () => {
                       {/* Enhanced Step-specific Visual Content */}
                       {activeStep === 0 && (
                         <div className="space-y-4 sm:space-y-6">
+                          <div className="bg-white/10 rounded-xl p-4 sm:p-6 border border-white/20 backdrop-blur-sm">
+                            <div className="flex items-center space-x-3 mb-3 sm:mb-4">
+                              <div className="w-3 h-3 sm:w-4 sm:h-4 bg-emerald-400 rounded-full animate-pulse"></div>
+                              <span className="text-white text-sm sm:text-base font-medium">
+                                Project Details
+                              </span>
+                            </div>
+                            <div className="space-y-2 sm:space-y-3">
+                              <div className="h-2 sm:h-3 bg-white/20 rounded-full w-3/4 animate-pulse"></div>
+                              <div className="h-2 sm:h-3 bg-white/20 rounded-full w-1/2 animate-pulse animation-delay-500"></div>
+                            </div>
+                          </div>
                           <div className="bg-white/10 rounded-xl p-4 sm:p-6 border border-white/20 backdrop-blur-sm">
                             <div className="flex items-center space-x-3 mb-3 sm:mb-4">
                               <div className="w-3 h-3 sm:w-4 sm:h-4 bg-blue-400 rounded-full animate-pulse"></div>
@@ -642,32 +668,34 @@ const HowItWorks = () => {
                       {activeStep === 4 && (
                         <div className="space-y-6">
                           <div className="grid grid-cols-2 gap-3 sm:gap-4">
-                            <div className="bg-white/10 rounded-lg p-2.5 sm:p-3 text-center border border-white/20 backdrop-blur-sm hover:bg-white/20 transition-all duration-300 transform hover:scale-105">
-                              <Briefcase className="w-5 h-5 sm:w-6 sm:h-6 text-white mx-auto mb-1.5" />
-                              <div className="text-[11px] sm:text-xs text-white font-medium">
+                            <div className="bg-white/10 rounded-lg p-3 sm:p-4 text-center border border-white/20 backdrop-blur-sm hover:bg-white/20 transition-all duration-300 transform hover:scale-105">
+                              <Briefcase className="w-6 h-6 sm:w-8 sm:h-8 text-white mx-auto mb-2" />
+                              <div className="text-xs sm:text-sm text-white font-medium">
                                 Portfolio
                               </div>
                             </div>
-
-                            <div className="bg-white/10 rounded-lg p-2.5 sm:p-3 text-center border border-white/20 backdrop-blur-sm hover:bg-white/20 transition-all duration-300 transform hover:scale-105">
-                              <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6 text-white mx-auto mb-1.5" />
-                              <div className="text-[11px] sm:text-xs text-white font-medium">
+                            <div className="bg-white/10 rounded-lg p-3 sm:p-4 text-center border border-white/20 backdrop-blur-sm hover:bg-white/20 transition-all duration-300 transform hover:scale-105">
+                              <TrendingUp className="w-6 h-6 sm:w-8 sm:h-8 text-white mx-auto mb-2" />
+                              <div className="text-xs sm:text-sm text-white font-medium">
                                 Skills
                               </div>
                             </div>
-
-                            <div className="bg-white/10 rounded-lg p-2.5 sm:p-3 text-center border border-white/20 backdrop-blur-sm hover:bg-white/20 transition-all duration-300 transform hover:scale-105">
-                              <Users className="w-5 h-5 sm:w-6 sm:h-6 text-white mx-auto mb-1.5" />
-                              <div className="text-[11px] sm:text-xs text-white font-medium">
+                            <div className="bg-white/10 rounded-lg p-3 sm:p-4 text-center border border-white/20 backdrop-blur-sm hover:bg-white/20 transition-all duration-300 transform hover:scale-105">
+                              <Users className="w-6 h-6 sm:w-8 sm:h-8 text-white mx-auto mb-2" />
+                              <div className="text-xs sm:text-sm text-white font-medium">
                                 Network
                               </div>
                             </div>
-
-                            <div className="bg-white/10 rounded-lg p-2.5 sm:p-3 text-center border border-white/20 backdrop-blur-sm hover:bg-white/20 transition-all duration-300 transform hover:scale-105">
-                              <Rocket className="w-5 h-5 sm:w-6 sm:h-6 text-white mx-auto mb-1.5" />
-                              <div className="text-[11px] sm:text-xs text-white font-medium">
+                            <div className="bg-white/10 rounded-lg p-3 sm:p-4 text-center border border-white/20 backdrop-blur-sm hover:bg-white/20 transition-all duration-300 transform hover:scale-105">
+                              <Rocket className="w-6 h-6 sm:w-8 sm:h-8 text-white mx-auto mb-2" />
+                              <div className="text-xs sm:text-sm text-white font-medium">
                                 Growth
                               </div>
+                            </div>
+                          </div>
+                          <div className="text-center">
+                            <div className="text-emerald-300 text-sm sm:text-base font-medium">
+                              Building your future, one project at a time
                             </div>
                           </div>
                         </div>
@@ -680,22 +708,6 @@ const HowItWorks = () => {
                     >
                       <ArrowRight className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
                     </div>
-                  </div>
-                </div>
-
-                <div className="order-3 lg:order-3 lg:col-start-2 lg:col-end-3 lg:row-start-2">
-                  <div className="grid grid-cols-2 gap-2 sm:gap-3 lg:gap-4 mt-4 lg:mt-6">
-                    {steps[activeStep].features.map((feature, index) => (
-                      <div
-                        key={index}
-                        className="flex items-center space-x-2 sm:space-x-3 text-white/80 text-xs sm:text-sm lg:text-base p-2 sm:p-3 rounded-lg backdrop-blur-sm border border-white/10 hover:bg-white/5 transition-all duration-300"
-                      >
-                        <CheckCircle className="w-3 h-3 sm:w-4 sm:h-4 lg:w-5 lg:h-5 text-emerald-400 flex-shrink-0" />
-                        <span className="flex-1 font-medium leading-tight">
-                          {feature}
-                        </span>
-                      </div>
-                    ))}
                   </div>
                 </div>
               </div>

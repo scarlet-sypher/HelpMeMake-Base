@@ -12,6 +12,12 @@ import {
   X,
   Zap,
   Sparkles,
+  Workflow,
+  UserCheck,
+  Layers,
+  CreditCard,
+  Network,
+  Rocket,
 } from "lucide-react";
 
 const Navbar = () => {
@@ -21,14 +27,14 @@ const Navbar = () => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const navigate = useNavigate();
 
-  // Navigation items mapping
+  // Navigation items mapping with their corresponding icons
   const navItems = [
-    { name: "Process", sectionId: "how-it-works" },
-    { name: "Mentors", sectionId: "mentors" },
-    { name: "Features", sectionId: "live-collab" },
-    { name: "SafePay", sectionId: "safe-payments" },
-    { name: "Network", sectionId: "use-cases" },
-    { name: "Ignite", sectionId: "final-cta" },
+    { name: "Process", sectionId: "how-it-works", icon: Workflow },
+    { name: "Mentors", sectionId: "mentors", icon: UserCheck },
+    { name: "Features", sectionId: "live-collab", icon: Layers },
+    { name: "SafePay", sectionId: "safe-payments", icon: CreditCard },
+    { name: "Network", sectionId: "use-cases", icon: Network },
+    { name: "Ignite", sectionId: "final-cta", icon: Rocket },
   ];
 
   useEffect(() => {
@@ -165,42 +171,60 @@ const Navbar = () => {
               </div>
             </div>
 
-            {/* Desktop Navigation */}
+            {/* Desktop Navigation with 3D Flip Animation */}
             <div className="hidden lg:flex items-center space-x-1">
-              {navItems.map((item, index) => (
-                <button
-                  key={item.name}
-                  onClick={() => {
-                    // Debug log
-                    scrollToSection(item.sectionId);
-                  }}
-                  className={`relative px-4 py-2 text-sm font-medium transition-all duration-300 rounded-full group overflow-hidden cursor-pointer ${
-                    activeSection === item.sectionId
-                      ? "text-emerald-300"
-                      : "text-white/90 hover:text-emerald-300"
-                  }`}
-                  style={{ animationDelay: `${index * 100}ms` }}
-                >
-                  <div
-                    className={`absolute inset-0 bg-gradient-to-r from-emerald-500/20 to-blue-500/20 rounded-full transition-all duration-300 ${
+              {navItems.map((item, index) => {
+                const IconComponent = item.icon;
+                return (
+                  <button
+                    key={item.name}
+                    onClick={() => {
+                      scrollToSection(item.sectionId);
+                    }}
+                    className={`relative px-4 py-2 text-sm font-medium transition-all duration-300 rounded-full group overflow-hidden cursor-pointer ${
                       activeSection === item.sectionId
-                        ? "opacity-100 scale-100"
-                        : "opacity-0 scale-0 group-hover:opacity-100 group-hover:scale-100"
+                        ? "text-emerald-300"
+                        : "text-white/90 hover:text-emerald-300"
                     }`}
-                  ></div>
-                  <div className="absolute inset-0 bg-white/5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                  <span className="relative z-10 group-hover:scale-105 transition-transform duration-300 inline-block">
-                    {item.name}
-                  </span>
-                  <div
-                    className={`absolute bottom-0 left-1/2 transform -translate-x-1/2 h-0.5 bg-gradient-to-r from-emerald-400 to-blue-400 transition-all duration-300 ${
-                      activeSection === item.sectionId
-                        ? "w-full"
-                        : "w-0 group-hover:w-full"
-                    }`}
-                  ></div>
-                </button>
-              ))}
+                    style={{ animationDelay: `${index * 100}ms` }}
+                  >
+                    <div
+                      className={`absolute inset-0 bg-gradient-to-r from-emerald-500/20 to-blue-500/20 rounded-full transition-all duration-300 ${
+                        activeSection === item.sectionId
+                          ? "opacity-100 scale-100"
+                          : "opacity-0 scale-0 group-hover:opacity-100 group-hover:scale-100"
+                      }`}
+                    ></div>
+                    <div className="absolute inset-0 bg-white/5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+
+                    {/* 3D Flip Container */}
+                    <div className="relative z-10">
+                      <div className="flip-container inline-block">
+                        <div className="flipper transition-transform duration-500 group-hover:rotate-y-180 preserve-3d">
+                          {/* Front Side - Text */}
+                          <div className="flip-front backface-hidden">
+                            <span className="whitespace-nowrap inline-block">
+                              {item.name}
+                            </span>
+                          </div>
+                          {/* Back Side - Icon */}
+                          <div className="flip-back backface-hidden rotate-y-180 absolute inset-0 flex items-center justify-center">
+                            <IconComponent className="w-4 h-4" />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div
+                      className={`absolute bottom-0 left-1/2 transform -translate-x-1/2 h-0.5 bg-gradient-to-r from-emerald-400 to-blue-400 transition-all duration-300 ${
+                        activeSection === item.sectionId
+                          ? "w-full"
+                          : "w-0 group-hover:w-full"
+                      }`}
+                    ></div>
+                  </button>
+                );
+              })}
             </div>
 
             {/* Enhanced CTA Buttons */}
@@ -276,37 +300,56 @@ const Navbar = () => {
             </div>
 
             <div className="relative space-y-2">
-              {navItems.map((item, index) => (
-                <button
-                  key={item.name}
-                  onClick={() => {
-                    scrollToSection(item.sectionId);
-                  }}
-                  className={`block w-full text-left px-4 py-3 text-sm font-medium transition-all duration-300 rounded-xl hover:bg-white/10 group relative overflow-hidden cursor-pointer ${
-                    activeSection === item.sectionId
-                      ? "text-emerald-300 bg-white/5"
-                      : "text-white/90 hover:text-emerald-300"
-                  }`}
-                  style={{
-                    animationDelay: `${index * 100}ms`,
-                    animation: isMenuOpen
-                      ? "slideInFromLeft 0.5s ease-out forwards"
-                      : "none",
-                  }}
-                >
-                  <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/20 to-blue-500/20 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 scale-0 group-hover:scale-100"></div>
-                  <div
-                    className={`absolute left-0 top-1/2 transform -translate-y-1/2 h-6 bg-gradient-to-r from-emerald-400 to-blue-400 transition-all duration-300 rounded-r ${
+              {navItems.map((item, index) => {
+                const IconComponent = item.icon;
+                return (
+                  <button
+                    key={item.name}
+                    onClick={() => {
+                      scrollToSection(item.sectionId);
+                    }}
+                    className={`block w-full text-left px-4 py-3 text-sm font-medium transition-all duration-300 rounded-xl hover:bg-white/10 group relative overflow-hidden cursor-pointer ${
                       activeSection === item.sectionId
-                        ? "w-1"
-                        : "w-0 group-hover:w-1"
+                        ? "text-emerald-300 bg-white/5"
+                        : "text-white/90 hover:text-emerald-300"
                     }`}
-                  ></div>
-                  <span className="relative z-10 transform group-hover:translate-x-2 transition-transform duration-300">
-                    {item.name}
-                  </span>
-                </button>
-              ))}
+                    style={{
+                      animationDelay: `${index * 100}ms`,
+                      animation: isMenuOpen
+                        ? "slideInFromLeft 0.5s ease-out forwards"
+                        : "none",
+                    }}
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/20 to-blue-500/20 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 scale-0 group-hover:scale-100"></div>
+                    <div
+                      className={`absolute left-0 top-1/2 transform -translate-y-1/2 h-6 bg-gradient-to-r from-emerald-400 to-blue-400 transition-all duration-300 rounded-r ${
+                        activeSection === item.sectionId
+                          ? "w-1"
+                          : "w-0 group-hover:w-1"
+                      }`}
+                    ></div>
+
+                    {/* Mobile 3D Flip Container */}
+                    <div className="relative z-10 flex items-center">
+                      <div className="flip-container h-5 flex items-center mr-3">
+                        <div className="flipper transition-transform duration-500 group-hover:rotate-y-180 preserve-3d">
+                          {/* Front Side - Icon */}
+                          <div className="flip-front absolute inset-0 backface-hidden flex items-center justify-center">
+                            <IconComponent className="w-4 h-4" />
+                          </div>
+                          {/* Back Side - Icon (same for mobile) */}
+                          <div className="flip-back absolute inset-0 backface-hidden rotate-y-180 flex items-center justify-center">
+                            <IconComponent className="w-4 h-4" />
+                          </div>
+                        </div>
+                      </div>
+                      <span className="transform group-hover:translate-x-2 transition-transform duration-300">
+                        {item.name}
+                      </span>
+                    </div>
+                  </button>
+                );
+              })}
 
               <div className="pt-4 border-t border-white/20 space-y-3">
                 <button
@@ -373,6 +416,42 @@ const Navbar = () => {
           animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
         }
 
+        /* 3D Flip Animation Styles */
+        .flip-container {
+          perspective: 1000px;
+          width: auto;
+          min-width: fit-content;
+        }
+
+        .flipper {
+          position: relative;
+          transform-style: preserve-3d;
+          width: 100%;
+          height: 100%;
+        }
+
+        .flip-front, .flip-back {
+          backface-visibility: hidden;
+          width: 100%;
+          height: 100%;
+        }
+
+        .flip-back {
+          transform: rotateY(180deg);
+        }
+
+        .rotate-y-180 {
+          transform: rotateY(180deg);
+        }
+
+        .preserve-3d {
+          transform-style: preserve-3d;
+        }
+
+        .backface-hidden {
+          backface-visibility: hidden;
+        }
+
         /* Enhanced responsive design */
         @media (max-width: 768px) {
           .max-w-6xl {
@@ -427,6 +506,10 @@ const Navbar = () => {
             animation-duration: 0.01ms !important;
             animation-iteration-count: 1 !important;
             transition-duration: 0.01ms !important;
+          }
+          
+          .flipper {
+            transition: none !important;
           }
         }
 
