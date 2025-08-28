@@ -301,41 +301,6 @@ const MentorDashboard = () => {
           {/* Hero Profile Section - Using new MentorHeroProfile */}
           <MentorHeroProfile mentor={mentorProfileData} />
 
-          {/* Profile Completion Banner */}
-          {mentorData && !mentorData.onboardingCompleted && (
-            <div className="relative group mb-6">
-              <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-500 to-teal-600 rounded-2xl blur opacity-20 group-hover:opacity-30 transition duration-500"></div>
-              <div className="relative bg-gradient-to-r from-cyan-500/20 to-teal-600/20 backdrop-blur-sm rounded-2xl p-6 border border-cyan-400/30">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-4">
-                    <div className="p-3 bg-gradient-to-r from-cyan-500 to-teal-600 rounded-xl">
-                      <GraduationCap className="text-white" size={24} />
-                    </div>
-                    <div>
-                      <h3 className="text-xl font-bold text-white mb-1">
-                        Complete Your Mentor Profile
-                      </h3>
-                      <p className="text-cyan-200">
-                        Set up your expertise, pricing, and availability to
-                        start mentoring!
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-center space-x-4">
-                    <button
-                      onClick={() =>
-                        (window.location.href = "/mentor/settings")
-                      }
-                      className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-teal-600 hover:from-cyan-600 hover:to-teal-700 text-white rounded-xl font-semibold transition-all transform hover:scale-105 shadow-lg"
-                    >
-                      Setup Profile
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
           {/* Stats Grid Component */}
           <StatsGrid
             mentorData={{

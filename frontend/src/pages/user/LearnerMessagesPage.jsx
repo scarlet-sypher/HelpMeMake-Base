@@ -725,12 +725,13 @@ const LearnerMessagesPage = () => {
 
   // Predefined wallpapers
   const predefinedWallpapers = [
-    "/uploads/wallpapers/default-learner.jpg",
-    "https://images.unsplash.com/photo-1557683316-973673baf926?w=1920&h=1080&fit=crop&crop=center",
-    "https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=1920&h=1080&fit=crop&crop=center",
-    "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=1920&h=1080&fit=crop&crop=center",
-    "https://images.unsplash.com/photo-1574144611937-0df059b5ef3e?w=1920&h=1080&fit=crop&crop=center",
-    "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&h=1080&fit=crop&crop=center",
+    `${import.meta.env.VITE_API_URL}/uploads/wallpapers/levi.jpg`,
+    `${import.meta.env.VITE_API_URL}/uploads/wallpapers/strawhat.jpg`,
+    `${import.meta.env.VITE_API_URL}/uploads/wallpapers/shanks.jpg`,
+    `${import.meta.env.VITE_API_URL}/uploads/wallpapers/sasuke.jpg`,
+    `${import.meta.env.VITE_API_URL}/uploads/wallpapers/futuristic.jpg`,
+    `${import.meta.env.VITE_API_URL}/uploads/wallpapers/minato.jpg`,
+
     "upload-slot",
   ];
 

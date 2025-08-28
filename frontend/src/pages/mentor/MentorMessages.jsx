@@ -681,12 +681,13 @@ const MentorMessages = () => {
   };
 
   const wallpaperPresets = [
-    `${import.meta.env.VITE_API_URL}/uploads/wallpapers/default-mentor.jpg`,
-    "https://images.unsplash.com/photo-1557683316-973673baf926?w=1920&h=1080&fit=crop&crop=center",
-    "https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=1920&h=1080&fit=crop&crop=center",
-    "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=1920&h=1080&fit=crop&crop=center",
-    "https://images.unsplash.com/photo-1574144611937-0df059b5ef3e?w=1920&h=1080&fit=crop&crop=center",
-    "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&h=1080&fit=crop&crop=center",
+    `${import.meta.env.VITE_API_URL}/uploads/wallpapers/batman.jpg`,
+    `${import.meta.env.VITE_API_URL}/uploads/wallpapers/cyberpunk.jpg`,
+    `${import.meta.env.VITE_API_URL}/uploads/wallpapers/dragon.jpg`,
+    `${import.meta.env.VITE_API_URL}/uploads/wallpapers/ichigo.jpg`,
+    `${import.meta.env.VITE_API_URL}/uploads/wallpapers/naruto.jpg`,
+    `${import.meta.env.VITE_API_URL}/uploads/wallpapers/pikachu.jpg`,
+
     "upload-slot",
   ];
 
