@@ -20,7 +20,12 @@ import {
   Zap,
 } from "lucide-react";
 
-import momo from "../assets/VideoConf/xyz.jpg";
+import luffy from "../assets/VideoConf/op.gif";
+import levi from "../assets/VideoConf/levi.gif";
+import rengoku from "../assets/VideoConf/rengoku.gif";
+import itachi from "../assets/VideoConf/itachi.gif";
+import rayleigh from "../assets/VideoConf/rayleigh.jpg";
+import cluffy from "../assets/VideoConf/cluffy.jpg";
 
 const LiveCollabPage = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -30,11 +35,11 @@ const LiveCollabPage = () => {
     {
       id: 1,
       sender: "mentor",
-      name: "Jiraiya",
+      name: "Rayleigh",
       message:
         "Great work on that function! Let me show you a more efficient approach.",
       timestamp: "2:34 PM",
-      avatar: "/src/assets/MentorImages/jiraiya.jpg",
+      avatar: rayleigh,
     },
     {
       id: 2,
@@ -42,47 +47,47 @@ const LiveCollabPage = () => {
       name: "You",
       message: "Thanks! I was struggling with the loop logic.",
       timestamp: "2:35 PM",
-      avatar: momo,
+      avatar: cluffy,
     },
     {
       id: 3,
       sender: "mentor",
-      name: "Jiraiya",
+      name: "Rayleigh",
       message: "No problem! The key is to think about it step by step.",
       timestamp: "2:36 PM",
-      avatar: "/src/assets/MentorImages/jiraiya.jpg",
+      avatar: rayleigh,
     },
   ]);
 
   const [participants] = useState([
     {
       id: 1,
-      name: "Jiraiya",
-      avatar: "/src/assets/MentorImages/jiraiya.jpg",
-      isMuted: false,
+      name: "Uchiha Itachi",
+      avatar: itachi,
+      isMuted: true,
       isVideoOn: true,
       role: "mentor",
     },
     {
-      id: 2,
-      name: "You",
-      avatar: "/src/assets/MentorImages/sindo.jpg",
+      id: 3,
+      name: "Urahara Kisuke",
+      avatar: levi,
       isMuted: false,
       isVideoOn: true,
       role: "user",
     },
     {
-      id: 3,
-      name: "L",
-      avatar: "/src/assets/MentorImages/L.jpg",
-      isMuted: true,
-      isVideoOn: false,
+      id: 4,
+      name: "Kyōjurō Rengoku",
+      avatar: rengoku,
+      isMuted: false,
+      isVideoOn: true,
       role: "user",
     },
     {
-      id: 4,
-      name: "Rangoku",
-      avatar: "/src/assets/MentorImages/rengoku.jpg",
+      id: 2,
+      name: "You",
+      avatar: luffy,
       isMuted: false,
       isVideoOn: true,
       role: "user",
@@ -181,7 +186,7 @@ const LiveCollabPage = () => {
           hour: "2-digit",
           minute: "2-digit",
         }),
-        avatar: "/src/assets/MentorImages/deku.jpg",
+        avatar: cluffy,
       };
       setMessages([...messages, message]);
       setNewMessage("");
