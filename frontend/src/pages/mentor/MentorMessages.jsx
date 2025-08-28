@@ -686,7 +686,7 @@ const MentorMessages = () => {
     `${import.meta.env.VITE_API_URL}/uploads/wallpapers/dragon.jpg`,
     `${import.meta.env.VITE_API_URL}/uploads/wallpapers/ichigo.jpg`,
     `${import.meta.env.VITE_API_URL}/uploads/wallpapers/naruto.jpg`,
-    `${import.meta.env.VITE_API_URL}/uploads/wallpapers/pikachu.jpg`,
+    `${import.meta.env.VITE_API_URL}/uploads/wallpapers/pikachu.png`,
 
     "upload-slot",
   ];

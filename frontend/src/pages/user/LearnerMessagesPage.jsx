@@ -726,9 +726,9 @@ const LearnerMessagesPage = () => {
   // Predefined wallpapers
   const predefinedWallpapers = [
     `${import.meta.env.VITE_API_URL}/uploads/wallpapers/levi.jpg`,
-    `${import.meta.env.VITE_API_URL}/uploads/wallpapers/strawhat.jpg`,
-    `${import.meta.env.VITE_API_URL}/uploads/wallpapers/shanks.jpg`,
-    `${import.meta.env.VITE_API_URL}/uploads/wallpapers/sasuke.jpg`,
+    `${import.meta.env.VITE_API_URL}/uploads/wallpapers/strawhat.png`,
+    `${import.meta.env.VITE_API_URL}/uploads/wallpapers/shanks.png`,
+    `${import.meta.env.VITE_API_URL}/uploads/wallpapers/sasuke.png`,
     `${import.meta.env.VITE_API_URL}/uploads/wallpapers/futuristic.jpg`,
     `${import.meta.env.VITE_API_URL}/uploads/wallpapers/minato.jpg`,
 
