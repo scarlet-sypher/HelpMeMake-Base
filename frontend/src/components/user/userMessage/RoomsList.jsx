@@ -338,7 +338,7 @@ const RoomsList = ({
         </div>
       )}
 
-      <style jsx>{`
+      <style>{`
         .custom-scrollbar::-webkit-scrollbar {
           width: 6px;
         }

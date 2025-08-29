@@ -241,7 +241,7 @@ const UserSessionBox = ({ projectData, onSessionUpdate }) => {
         )}
       </div>
 
-      <style jsx>{`
+      <style>{`
         @keyframes fade-in-up {
           from {
             opacity: 0;
