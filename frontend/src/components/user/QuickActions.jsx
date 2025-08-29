@@ -15,7 +15,6 @@ import {
   X,
   Save,
   RotateCcw,
-  BookOpen,
 } from "lucide-react";
 
 const QuickActions = () => {
@@ -40,12 +39,11 @@ const QuickActions = () => {
     Award,
     Users,
     Target,
-    BookOpen,
   };
 
   // Debug function to log with prefix
   const debugLog = (message, data = null) => {
-    console.log(`[DEBUG MentorQuickActions] ${message}`, data); // debug
+    console.log(`[DEBUG QuickActions] ${message}`, data); // debug
   };
 
   // Get logged-in user ID from localStorage token
@@ -56,7 +54,6 @@ const QuickActions = () => {
 
       const payload = JSON.parse(atob(token.split(".")[1]));
       debugLog("Extracted userId from token:", payload.userId); // debug
-      debugLog("User role from token:", payload.role); // debug
       return payload.userId;
     } catch (error) {
       debugLog("Error extracting userId from token:", error); // debug
@@ -64,16 +61,16 @@ const QuickActions = () => {
     }
   };
 
-  // Fetch mentor's quick actions on component mount
+  // Fetch user's quick actions on component mount
   useEffect(() => {
-    fetchMentorQuickActions();
+    fetchUserQuickActions();
   }, []);
 
-  const fetchMentorQuickActions = async () => {
+  const fetchUserQuickActions = async () => {
     try {
       setLoading(true);
       const userId = getUserIdFromToken();
-      debugLog("Fetching quick actions for mentor userId:", userId); // debug
+      debugLog("Fetching quick actions for userId:", userId); // debug
 
       const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
       const token = localStorage.getItem("access_token");
@@ -94,9 +91,7 @@ const QuickActions = () => {
         setAvailableActions(data.availableActions);
         setIsCustomized(data.isCustomized);
         debugLog("Current selected quick actions:", data.quickActions); // debug
-        debugLog("Available actions:", data.availableActions); // debug
         debugLog("Is customized:", data.isCustomized); // debug
-        debugLog("User role:", data.userRole); // debug
       } else {
         console.error("Failed to fetch quick actions:", data.message);
       }
@@ -160,7 +155,7 @@ const QuickActions = () => {
     try {
       setSaving(true);
       const userId = getUserIdFromToken();
-      debugLog("Saving customization for mentor userId:", userId); // debug
+      debugLog("Saving customization for userId:", userId); // debug
       debugLog("Saving selected actions:", selectedActions); // debug
 
       if (selectedActions.length === 0 || selectedActions.length > 4) {
@@ -207,7 +202,7 @@ const QuickActions = () => {
     try {
       setSaving(true);
       const userId = getUserIdFromToken();
-      debugLog("Resetting to default for mentor userId:", userId); // debug
+      debugLog("Resetting to default for userId:", userId); // debug
 
       const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
       const token = localStorage.getItem("access_token");
@@ -254,29 +249,26 @@ const QuickActions = () => {
   return (
     <div className="bg-white/10 backdrop-blur-sm rounded-3xl shadow-2xl p-4 sm:p-6 border border-white/20 relative overflow-hidden">
       {/* Animated background elements */}
-      <div className="absolute -top-10 -right-10 w-20 h-20 bg-cyan-400/20 rounded-full blur-xl animate-pulse"></div>
-      <div className="absolute -bottom-10 -left-10 w-16 h-16 bg-teal-400/20 rounded-full blur-xl animate-pulse"></div>
-      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-12 h-12 bg-emerald-400/10 rounded-full blur-xl animate-pulse delay-500"></div>
+      <div className="absolute -top-10 -right-10 w-20 h-20 bg-yellow-400/20 rounded-full blur-xl animate-pulse"></div>
+      <div className="absolute -bottom-10 -left-10 w-16 h-16 bg-blue-400/20 rounded-full blur-xl animate-pulse"></div>
 
       <div className="relative z-10">
         {/* Header */}
         <div className="flex items-center justify-between mb-4 sm:mb-6">
           <h2 className="text-lg sm:text-xl font-bold text-white flex items-center">
-            <Zap className="mr-2 text-cyan-400" size={20} />
+            <Zap className="mr-2 text-yellow-400" size={20} />
             Quick Actions
           </h2>
 
           <div className="flex items-center space-x-2">
             {!isEditMode && (
-              <>
-                <button
-                  onClick={handleEditClick}
-                  className="flex items-center space-x-2 px-3 py-1.5 bg-white/10 hover:bg-white/20 rounded-lg text-white text-sm transition-colors ml-2"
-                >
-                  <Edit3 size={14} />
-                  <span className="hidden sm:inline">Select</span>
-                </button>
-              </>
+              <button
+                onClick={handleEditClick}
+                className="flex items-center space-x-2 px-3 py-1.5 bg-white/10 hover:bg-white/20 rounded-lg text-white text-sm transition-colors"
+              >
+                <Edit3 size={14} />
+                <span className="hidden sm:inline">Select</span>
+              </button>
             )}
 
             {isEditMode && (
@@ -364,7 +356,7 @@ const QuickActions = () => {
                         : canSelect
                         ? `bg-white/10 hover:bg-white/20 hover:scale-105`
                         : `bg-white/5 opacity-50 cursor-not-allowed`
-                      : `bg-gradient-to-r ${action.color} hover:shadow-2xl transform hover:scale-105 focus:scale-105 border border-white/10 hover:border-white/20`
+                      : `bg-gradient-to-r ${action.color} hover:shadow-2xl transform hover:scale-105 focus:scale-105`
                   }`}
                 >
                   {/* Selected indicator */}
@@ -382,7 +374,7 @@ const QuickActions = () => {
                   {/* Content */}
                   <div className="relative z-10 flex flex-col items-center">
                     <div
-                      className={`w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 rounded-lg sm:rounded-xl flex items-center justify-center mb-2 sm:mb-3 transition-colors backdrop-blur-sm border border-white/10 ${
+                      className={`w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 rounded-lg sm:rounded-xl flex items-center justify-center mb-2 sm:mb-3 transition-colors ${
                         isEditMode && isSelected
                           ? "bg-white/30"
                           : "bg-white/20 group-hover:bg-white/30"
@@ -403,9 +395,9 @@ const QuickActions = () => {
                     )}
                   </div>
 
-                  {/* Hover glow effect */}
+                  {/* Hover glow */}
                   {!isEditMode && (
-                    <div className="absolute inset-0 rounded-xl sm:rounded-2xl bg-gradient-to-r from-white/5 to-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <div className="absolute inset-0 rounded-xl sm:rounded-2xl opacity-0 group-hover:opacity-100 group-focus:opacity-100 transition-opacity duration-300 shadow-lg"></div>
                   )}
                 </button>
               );

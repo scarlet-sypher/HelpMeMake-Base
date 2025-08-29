@@ -1,0 +1,427 @@
+const QuickAction = require("../Model/QuickAction");
+
+// Default quick action options for users
+const DEFAULT_USER_ACTIONS = [
+  {
+    icon: "Calendar",
+    label: "Schedule Session",
+    color: "from-blue-500 to-cyan-500",
+    path: "/user/sessions",
+    ariaLabel: "Navigate to schedule a new mentoring session",
+  },
+  {
+    icon: "PlayCircle",
+    label: "Start Adventure",
+    color: "from-purple-500 to-pink-500",
+    path: "/user/projects",
+    ariaLabel: "Navigate to start a new project adventure",
+  },
+  {
+    icon: "Send",
+    label: "Send Message",
+    color: "from-emerald-500 to-teal-500",
+    path: "/user/messages",
+    ariaLabel: "Navigate to send a message to mentors",
+  },
+  {
+    icon: "BarChart3",
+    label: "View Analytics",
+    color: "from-orange-500 to-red-500",
+    path: "/user/analytics",
+    ariaLabel: "Navigate to view your progress analytics",
+  },
+];
+
+// Default quick action options for mentors
+const DEFAULT_MENTOR_ACTIONS = [
+  {
+    icon: "Calendar",
+    label: "Schedule Session",
+    color: "from-rose-500 to-pink-600",
+    path: "/mentor/sessions",
+    ariaLabel: "Navigate to schedule mentoring sessions",
+  },
+  {
+    icon: "Users",
+    label: "My Apprentices",
+    color: "from-indigo-500 to-violet-600",
+    path: "/mentor/my-apprentice",
+    ariaLabel: "Navigate to manage your apprentices",
+  },
+  {
+    icon: "Send",
+    label: "Send Message",
+    color: "from-amber-500 to-orange-600",
+    path: "/mentor/messages",
+    ariaLabel: "Navigate to send messages to students",
+  },
+  {
+    icon: "BarChart3",
+    label: "View Analytics",
+    color: "from-green-500 to-lime-600",
+    path: "/mentor/analysis",
+    ariaLabel: "Navigate to view mentoring analytics",
+  },
+];
+
+// All available quick action options for users
+const ALL_AVAILABLE_USER_ACTIONS = [
+  {
+    icon: "Calendar",
+    label: "Schedule Session",
+    color: "from-blue-500 to-cyan-500",
+    path: "/user/sessions",
+    ariaLabel: "Navigate to schedule a new mentoring session",
+  },
+  {
+    icon: "PlayCircle",
+    label: "Start Adventure",
+    color: "from-purple-500 to-pink-500",
+    path: "/user/projects",
+    ariaLabel: "Navigate to start a new project adventure",
+  },
+  {
+    icon: "Send",
+    label: "Send Message",
+    color: "from-emerald-500 to-teal-500",
+    path: "/user/messages",
+    ariaLabel: "Navigate to send a message to mentors",
+  },
+  {
+    icon: "BarChart3",
+    label: "View Analytics",
+    color: "from-orange-500 to-red-500",
+    path: "/user/analytics",
+    ariaLabel: "Navigate to view your progress analytics",
+  },
+  {
+    icon: "Settings",
+    label: "Settings",
+    color: "from-slate-500 to-gray-500",
+    path: "/user/settings",
+    ariaLabel: "Navigate to user settings",
+  },
+  {
+    icon: "Award",
+    label: "Achievements",
+    color: "from-yellow-500 to-amber-500",
+    path: "/user/achievements",
+    ariaLabel: "Navigate to view your achievements",
+  },
+  {
+    icon: "Users",
+    label: "Find Mentor",
+    color: "from-indigo-500 to-blue-500",
+    path: "/user/mentor",
+    ariaLabel: "Navigate to find a mentor",
+  },
+  {
+    icon: "Target",
+    label: "Milestones",
+    color: "from-pink-500 to-rose-500",
+    path: "/milestone-page",
+    ariaLabel: "Navigate to milestone page",
+  },
+];
+
+// All available quick action options for mentors
+// All available quick action options for mentors (colors synced with user actions)
+const ALL_AVAILABLE_MENTOR_ACTIONS = [
+  {
+    icon: "Calendar",
+    label: "Schedule Session",
+    color: "from-blue-500 to-cyan-500", // same as user "Schedule Session"
+    path: "/mentor/sessions",
+    ariaLabel: "Navigate to schedule mentoring sessions",
+  },
+  {
+    icon: "Users",
+    label: "My Apprentices",
+    color: "from-indigo-500 to-blue-500", // same as user "Find Mentor"
+    path: "/mentor/my-apprentice",
+    ariaLabel: "Navigate to manage your apprentices",
+  },
+  {
+    icon: "Send",
+    label: "Messages",
+    color: "from-emerald-500 to-teal-500", // same as user "Send Message"
+    path: "/mentor/messages",
+    ariaLabel: "Navigate to send messages to students",
+  },
+  {
+    icon: "BarChart3",
+    label: "Analytics",
+    color: "from-orange-500 to-red-500", // same as user "View Analytics"
+    path: "/mentor/analysis",
+    ariaLabel: "Navigate to view mentoring analytics",
+  },
+  {
+    icon: "BookOpen",
+    label: "Projects",
+    color: "from-purple-500 to-pink-500", // same as user "Start Adventure"
+    path: "/mentor/projects",
+    ariaLabel: "Navigate to mentor projects",
+  },
+  {
+    icon: "Target",
+    label: "Milestones",
+    color: "from-pink-500 to-rose-500", // same as user "Milestones"
+    path: "/mentor/mileStone",
+    ariaLabel: "Navigate to milestone management",
+  },
+  {
+    icon: "Target",
+    label: "Goals",
+    color: "from-yellow-500 to-amber-500", // mapped to user "Achievements"
+    path: "/mentor/goals",
+    ariaLabel: "Navigate to goal management",
+  },
+  {
+    icon: "Settings",
+    label: "Settings",
+    color: "from-slate-500 to-gray-500", // same as user "Settings"
+    path: "/mentor/settings",
+    ariaLabel: "Navigate to mentor settings",
+  },
+];
+
+// Helper function to get role-based defaults and available actions
+const getRoleBasedActions = (userRole) => {
+  console.log(`[DEBUG] Getting role-based actions for role: ${userRole}`); // debug
+
+  if (userRole === "mentor") {
+    return {
+      defaultActions: DEFAULT_MENTOR_ACTIONS,
+      availableActions: ALL_AVAILABLE_MENTOR_ACTIONS,
+    };
+  } else {
+    return {
+      defaultActions: DEFAULT_USER_ACTIONS,
+      availableActions: ALL_AVAILABLE_USER_ACTIONS,
+    };
+  }
+};
+
+// Get user's quick actions (or default if not customized)
+const getUserQuickActions = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const userRole = req.user.role;
+
+    console.log(
+      `[DEBUG] Getting quick actions for user: ${userId}, role: ${userRole}`
+    ); // debug
+
+    // Get role-based actions
+    const { defaultActions, availableActions } = getRoleBasedActions(userRole);
+
+    // Find user's quick action configuration
+    const userQuickActions = await QuickAction.findOne({ userId });
+
+    if (!userQuickActions || !userQuickActions.isCustomized) {
+      // User hasn't customized, return default actions based on role
+      console.log(
+        `[DEBUG] User hasn't customized, returning defaults for ${userRole}`
+      ); // debug
+
+      return res.json({
+        success: true,
+        message: "Default quick actions retrieved",
+        quickActions: defaultActions,
+        isCustomized: false,
+        availableActions: availableActions,
+        userRole: userRole,
+      });
+    }
+
+    console.log(
+      `[DEBUG] User has ${userQuickActions.selectedActions.length} customized actions`
+    ); // debug
+
+    res.json({
+      success: true,
+      message: "User quick actions retrieved successfully",
+      quickActions: userQuickActions.selectedActions,
+      isCustomized: true,
+      availableActions: availableActions,
+      userRole: userRole,
+    });
+  } catch (error) {
+    console.error("Get user quick actions error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to retrieve quick actions",
+    });
+  }
+};
+
+// Get all available quick action options based on user role
+const getAvailableActions = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const userRole = req.user.role;
+
+    console.log(
+      `[DEBUG] Getting available actions for user: ${userId}, role: ${userRole}`
+    ); // debug
+
+    const { availableActions } = getRoleBasedActions(userRole);
+
+    res.json({
+      success: true,
+      message: "Available quick actions retrieved",
+      availableActions: availableActions,
+      userRole: userRole,
+    });
+  } catch (error) {
+    console.error("Get available actions error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to retrieve available actions",
+    });
+  }
+};
+
+// Save/Update user's customized quick actions
+const saveUserQuickActions = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const userRole = req.user.role;
+    const { selectedActions } = req.body;
+
+    console.log(
+      `[DEBUG] Saving quick actions for user: ${userId}, role: ${userRole}`
+    ); // debug
+    console.log(`[DEBUG] Selected actions:`, selectedActions); // debug
+
+    // Validation
+    if (!selectedActions || !Array.isArray(selectedActions)) {
+      return res.status(400).json({
+        success: false,
+        message: "Selected actions must be provided as an array",
+      });
+    }
+
+    if (selectedActions.length === 0 || selectedActions.length > 4) {
+      return res.status(400).json({
+        success: false,
+        message: "You must select between 1 and 4 quick actions",
+      });
+    }
+
+    // Get role-based available actions for validation
+    const { availableActions } = getRoleBasedActions(userRole);
+    const validPaths = availableActions.map((action) => action.path);
+
+    // Validate each selected action against available actions for the user's role
+    const invalidActions = selectedActions.filter(
+      (action) => !validPaths.includes(action.path)
+    );
+
+    if (invalidActions.length > 0) {
+      console.log(`[DEBUG] Invalid actions found:`, invalidActions); // debug
+      return res.status(400).json({
+        success: false,
+        message: `Some selected actions are invalid for ${userRole} role`,
+        invalidActions: invalidActions.map((action) => action.path),
+      });
+    }
+
+    // Update or create user's quick action configuration
+    const updatedQuickActions = await QuickAction.findOneAndUpdate(
+      { userId },
+      {
+        userId,
+        selectedActions,
+        isCustomized: true,
+      },
+      {
+        new: true,
+        upsert: true, // Create if doesn't exist
+      }
+    );
+
+    console.log(
+      `[DEBUG] Successfully saved/updated quick actions for user: ${userId}, role: ${userRole}`
+    ); // debug
+
+    res.json({
+      success: true,
+      message: "Quick actions saved successfully!",
+      quickActions: updatedQuickActions.selectedActions,
+      isCustomized: true,
+      userRole: userRole,
+    });
+  } catch (error) {
+    console.error("Save user quick actions error:", error);
+
+    // Handle validation errors
+    if (error.name === "ValidationError") {
+      const errorMessages = Object.values(error.errors).map(
+        (err) => err.message
+      );
+      return res.status(400).json({
+        success: false,
+        message: errorMessages.join(", "),
+      });
+    }
+
+    res.status(500).json({
+      success: false,
+      message: "Failed to save quick actions. Please try again.",
+    });
+  }
+};
+
+// Reset user's quick actions to default based on their role
+const resetToDefault = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const userRole = req.user.role;
+
+    console.log(
+      `[DEBUG] Resetting quick actions to default for user: ${userId}, role: ${userRole}`
+    ); // debug
+
+    // Get role-based default actions
+    const { defaultActions } = getRoleBasedActions(userRole);
+
+    // Update or create user's quick action configuration with default values
+    await QuickAction.findOneAndUpdate(
+      { userId },
+      {
+        userId,
+        selectedActions: defaultActions,
+        isCustomized: false,
+      },
+      {
+        upsert: true, // Create if doesn't exist
+      }
+    );
+
+    console.log(
+      `[DEBUG] Successfully reset to default for user: ${userId}, role: ${userRole}`
+    ); // debug
+
+    res.json({
+      success: true,
+      message: "Quick actions reset to default successfully!",
+      quickActions: defaultActions,
+      isCustomized: false,
+      userRole: userRole,
+    });
+  } catch (error) {
+    console.error("Reset quick actions error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to reset quick actions. Please try again.",
+    });
+  }
+};
+
+module.exports = {
+  getUserQuickActions,
+  getAvailableActions,
+  saveUserQuickActions,
+  resetToDefault,
+};
