@@ -343,37 +343,6 @@ const UserDashboard = () => {
       ]
     : [];
 
-  const timelineItems = [
-    {
-      id: 1,
-      icon: Award,
-      title: "Achievement Unlocked: Devil Fruit Master",
-      subtitle: "2 hours ago",
-      color: "text-yellow-400",
-    },
-    {
-      id: 2,
-      icon: Calendar,
-      title: "New session scheduled with Admiral Kizaru",
-      subtitle: "5 hours ago",
-      color: "text-blue-400",
-    },
-    {
-      id: 3,
-      icon: TrendingUp,
-      title: 'Project "Grand Line Navigation" updated',
-      subtitle: "1 day ago",
-      color: "text-emerald-400",
-    },
-    {
-      id: 4,
-      icon: Users,
-      title: "Session completed with Trafalgar Law",
-      subtitle: "2 days ago",
-      color: "text-purple-400",
-    },
-  ];
-
   // User profile data from API
   const userProfileData = {
     name: userData.name || userData.displayName || "User",
@@ -594,15 +563,7 @@ const UserDashboard = () => {
                   <TrendingUp className="mr-2 text-yellow-400" size={20} />
                   Activity Timeline
                 </h2>
-                <div className="space-y-2">
-                  {timelineItems.map((item, index) => (
-                    <TimelineItem
-                      key={item.id}
-                      {...item}
-                      isLast={index === timelineItems.length - 1}
-                    />
-                  ))}
-                </div>
+                <TimelineItem />
               </div>
 
               <div className="sticky top-6">
