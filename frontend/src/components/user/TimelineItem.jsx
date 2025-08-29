@@ -203,9 +203,6 @@ const Timeline = () => {
       const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
       const token = localStorage.getItem("access_token");
 
-      //debug - Print update timeline request
-      // console.log("//debug - Updating timeline data");
-
       const response = await fetch(`${apiUrl}/api/timeline/update`, {
         method: "POST",
         headers: {
@@ -220,23 +217,9 @@ const Timeline = () => {
 
       const data = await response.json();
 
-      //debug - Print update response
-      // console.log("//debug - Timeline update response:", data);
-
       if (data.success) {
-        // Only refetch if there were actual changes
-        const currentCount = timelineEvents.length;
-        const newCount = data.data?.eventsCount || currentCount;
-
-        if (newCount !== currentCount) {
-          //debug - Print refetch reason
-          // console.log("//debug - Timeline changed, refetching data");
-          await fetchTimelineData();
-        } else {
-          // console.log(
-          //   "//debug - No timeline changes detected, skipping refetch"
-          // );
-        }
+        // Always refetch after update to ensure we have latest data
+        await fetchTimelineData();
       }
     } catch (err) {
       console.error("Error updating timeline:", err);
@@ -245,9 +228,12 @@ const Timeline = () => {
     }
   };
 
-  // Fetch timeline data on component mount
   useEffect(() => {
-    fetchTimelineData();
+    const loadTimeline = async () => {
+      await updateTimeline(); // This will update and then fetch
+    };
+
+    loadTimeline();
   }, []);
 
   // Auto-update timeline every 30 seconds
@@ -257,10 +243,10 @@ const Timeline = () => {
         // Only update if not already refreshing
         updateTimeline();
       }
-    }, 10000); // 30 seconds
+    }, 10000); // 10 seconds - now matches mentor timeline
 
     return () => clearInterval(interval);
-  }, [refreshing]); // Add refreshing as dependency
+  }, [refreshing, timelineEvents.length]);
 
   //debug - Print any state updates
   useEffect(() => {
