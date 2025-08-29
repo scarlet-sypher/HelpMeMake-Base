@@ -9,6 +9,7 @@ import {
   EyeOff,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import Toast from "./Toast";
 import axios from "axios";
 import baka from "../../assets/LoginImages/baka.jpg";
 import kakashi from "../../assets/LoginImages/kakashi.jpg";
@@ -131,6 +132,11 @@ export default function Login() {
   const [isVisible, setIsVisible] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [toast, setToast] = useState({
+    message: "",
+    type: "success",
+    isVisible: false,
+  });
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -170,6 +176,10 @@ export default function Login() {
       setMessageType("");
     }
   }
+
+  const hideToast = () => {
+    setToast({ ...toast, isVisible: false });
+  };
 
   const validateForm = () => {
     const newErrors = {};
@@ -277,6 +287,18 @@ export default function Login() {
     }
   }
 
+  useEffect(() => {
+    if (location.state?.toastMessage) {
+      setToast({
+        message: location.state.toastMessage,
+        type: location.state.toastType || "success",
+        isVisible: true,
+      });
+
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }, [location.state]);
+
   function handleOAuth(provider) {
     if (provider === "Google") {
       // Redirect to backend Google OAuth route
@@ -288,6 +310,12 @@ export default function Login() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">
+      <Toast
+        message={toast.message}
+        type={toast.type}
+        isVisible={toast.isVisible}
+        onClose={hideToast}
+      />
       {/* Animated Background */}
       <div className="absolute inset-0 pointer-events-none">
         {/* Gradient Orbs */}

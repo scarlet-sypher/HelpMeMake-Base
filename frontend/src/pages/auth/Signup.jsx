@@ -336,8 +336,15 @@ export default function Signup() {
           }, 2000);
         } else {
           showToast("🎉 Account created successfully!", "success");
+          console.log("this is sign up now going to login");
           setTimeout(() => {
-            navigate("/login");
+            navigate("/login", {
+              state: {
+                toastMessage:
+                  "Account created successfully! Please login to continue.",
+                toastType: "success",
+              },
+            });
           }, 2000);
         }
       } else {
@@ -512,7 +519,7 @@ export default function Signup() {
         </div>
       </div>
 
-      <style jsx>{`
+      <style>{`
         @keyframes fade-in {
           0% {
             opacity: 0;

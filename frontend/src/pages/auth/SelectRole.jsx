@@ -1,6 +1,14 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Users, BookOpen, ArrowRight, CheckCircle, Sparkles, Code, Zap } from "lucide-react";
+import {
+  Users,
+  BookOpen,
+  ArrowRight,
+  CheckCircle,
+  Sparkles,
+  Code,
+  Zap,
+} from "lucide-react";
 
 const SelectRole = () => {
   const [selectedRole, setSelectedRole] = useState("");
@@ -13,34 +21,52 @@ const SelectRole = () => {
     // Verify user is authenticated and get user info
     const fetchUserInfo = async () => {
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/user`, {
-          method: "GET",
-          credentials: "include", // Include cookies
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+        const response = await fetch(
+          `${import.meta.env.VITE_API_URL}/auth/user`,
+          {
+            method: "GET",
+            credentials: "include", // Include cookies
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
 
         if (response.ok) {
           const data = await response.json();
           setUser(data.user);
-          
+
           // If user already has a role, redirect them
           if (data.user.role) {
-            const dashboardUrl = data.user.role === 'mentor' ? '/mentordashboard' : '/userdashboard';
+            const dashboardUrl =
+              data.user.role === "mentor"
+                ? "/mentordashboard"
+                : "/userdashboard";
             navigate(dashboardUrl, { replace: true });
             return;
           }
         } else {
           // User not authenticated, redirect to login
-          navigate("/login", { replace: true });
+          navigate("/login", {
+            replace: true,
+            state: {
+              toastMessage: "Please login to continue.",
+              toastType: "warning",
+            },
+          });
           return;
         }
       } catch (error) {
         console.error("Error fetching user info:", error);
         console.error("Response status:", error.response?.status);
         console.error("Response data:", error.response?.data);
-        navigate("/login", { replace: true });
+        navigate("/login", {
+          replace: true,
+          state: {
+            toastMessage: "Session expired. Please login again.",
+            toastType: "warning",
+          },
+        });
       } finally {
         setIsLoading(false);
       }
@@ -50,62 +76,79 @@ const SelectRole = () => {
   }, [navigate]);
 
   useEffect(() => {
-  const urlParams = new URLSearchParams(window.location.search);
-  const newPassword = urlParams.get('newPassword');
-  
-  if (newPassword) {
-    // Store in sessionStorage to persist across navigation
-    sessionStorage.setItem('newPassword', newPassword);
-    
-    // Clear URL params
-    window.history.replaceState({}, document.title, window.location.pathname);
-  }
-}, []);
+    const urlParams = new URLSearchParams(window.location.search);
+    const newPassword = urlParams.get("newPassword");
 
-// When user selects role and navigates to dashboard
-const handleRoleSelection = (role) => {
-  const storedPassword = sessionStorage.getItem('newPassword');
-  let redirectUrl = role === 'user' ? '/userdashboard' : '/mentordashboard';
-  
-  if (storedPassword) {
-    redirectUrl += `?newPassword=${encodeURIComponent(storedPassword)}`;
-    sessionStorage.removeItem('newPassword'); // Clean up
-  }
-  
-  window.location.href = redirectUrl;
-};
+    if (newPassword) {
+      // Store in sessionStorage to persist across navigation
+      sessionStorage.setItem("newPassword", newPassword);
+
+      // Clear URL params
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }, []);
+
+  // When user selects role and navigates to dashboard
+  const handleRoleSelection = (role) => {
+    const storedPassword = sessionStorage.getItem("newPassword");
+    let redirectUrl = role === "user" ? "/userdashboard" : "/mentordashboard";
+
+    if (storedPassword) {
+      redirectUrl += `?newPassword=${encodeURIComponent(storedPassword)}`;
+      sessionStorage.removeItem("newPassword");
+    }
+
+    window.location.href = redirectUrl;
+  };
 
   const handleRoleSubmit = async () => {
-  if (!selectedRole) return;
+    if (!selectedRole) return;
 
-  setIsSubmitting(true);
+    setIsSubmitting(true);
 
-  try {
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/set-role`, {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ role: selectedRole }),
-    });
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/auth/set-role`,
+        {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ role: selectedRole }),
+        }
+      );
 
-    const data = await response.json();
+      const data = await response.json();
 
-    if (response.ok) {
-      // SUCCESS! Use the custom function that preserves password
-      handleRoleSelection(selectedRole); // This will handle the redirect with password
-    } else {
-      console.error("Error setting role:", data.message);
-      alert(data.message || "Failed to set role. Please try again.");
+      if (response.ok) {
+        // Check if there's a stored password (OAuth flow)
+        const storedPassword = sessionStorage.getItem("newPassword");
+
+        if (storedPassword) {
+          // OAuth flow - redirect to dashboard with password
+          handleRoleSelection(selectedRole);
+        } else {
+          // Regular signup flow - redirect to login with toast
+          navigate("/login", {
+            state: {
+              toastMessage:
+                "Role selected successfully! Please login to continue.",
+              toastType: "success",
+            },
+          });
+        }
+      } else {
+        console.error("Error setting role:", data.message);
+        alert(data.message || "Failed to set role. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error setting role:", error);
+      alert("Something went wrong. Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
-  } catch (error) {
-    console.error("Error setting role:", error);
-    alert("Something went wrong. Please try again.");
-  } finally {
-    setIsSubmitting(false);
-  }
-};
+  };
 
   if (isLoading) {
     return (
@@ -123,14 +166,19 @@ const handleRoleSelection = (role) => {
       {/* Animated Background */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-10 left-10 w-32 h-32 sm:w-48 sm:h-48 lg:w-64 lg:h-64 bg-emerald-500/10 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-10 right-10 w-48 h-48 sm:w-64 sm:h-64 lg:w-80 lg:h-80 bg-purple-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "1s" }}></div>
-        <div className="absolute top-1/2 left-1/4 w-32 h-32 sm:w-48 sm:h-48 bg-cyan-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "2s" }}></div>
+        <div
+          className="absolute bottom-10 right-10 w-48 h-48 sm:w-64 sm:h-64 lg:w-80 lg:h-80 bg-purple-500/10 rounded-full blur-3xl animate-pulse"
+          style={{ animationDelay: "1s" }}
+        ></div>
+        <div
+          className="absolute top-1/2 left-1/4 w-32 h-32 sm:w-48 sm:h-48 bg-cyan-500/10 rounded-full blur-3xl animate-pulse"
+          style={{ animationDelay: "2s" }}
+        ></div>
       </div>
 
       {/* Main Content */}
       <div className="relative z-10 min-h-screen flex items-center justify-center px-4 py-8">
         <div className="bg-slate-800/30 backdrop-blur-xl rounded-3xl shadow-2xl p-8 lg:p-12 w-full max-w-4xl border border-slate-700/50">
-          
           {/* Header */}
           <div className="text-center mb-12">
             <div className="flex items-center justify-center gap-3 mb-6">
@@ -152,17 +200,17 @@ const handleRoleSelection = (role) => {
 
             <div className="space-y-4">
               <h2 className="text-2xl lg:text-3xl font-bold text-white">
-                Welcome, {user?.name || user?.email?.split('@')[0]}! 👋
+                Welcome, {user?.name || user?.email?.split("@")[0]}! 👋
               </h2>
               <p className="text-lg text-slate-300 max-w-2xl mx-auto leading-relaxed">
-                To get started, please select your role. This will customize your experience and connect you with the right community.
+                To get started, please select your role. This will customize
+                your experience and connect you with the right community.
               </p>
             </div>
           </div>
 
           {/* Role Cards */}
           <div className="grid md:grid-cols-2 gap-8 mb-12">
-            
             {/* User Role Card */}
             <div
               onClick={() => setSelectedRole("user")}
@@ -185,9 +233,12 @@ const handleRoleSelection = (role) => {
                 </div>
 
                 <div>
-                  <h3 className="text-2xl font-bold text-white mb-3">I'm a Learner</h3>
+                  <h3 className="text-2xl font-bold text-white mb-3">
+                    I'm a Learner
+                  </h3>
                   <p className="text-slate-300 leading-relaxed mb-6">
-                    I want to learn new skills, get mentorship, and build amazing projects with guidance from experienced developers.
+                    I want to learn new skills, get mentorship, and build
+                    amazing projects with guidance from experienced developers.
                   </p>
                 </div>
 
@@ -234,9 +285,12 @@ const handleRoleSelection = (role) => {
                 </div>
 
                 <div>
-                  <h3 className="text-2xl font-bold text-white mb-3">I'm a Mentor</h3>
+                  <h3 className="text-2xl font-bold text-white mb-3">
+                    I'm a Mentor
+                  </h3>
                   <p className="text-slate-300 leading-relaxed mb-6">
-                    I want to share my knowledge, guide aspiring developers, and help others grow in their coding journey.
+                    I want to share my knowledge, guide aspiring developers, and
+                    help others grow in their coding journey.
                   </p>
                 </div>
 
@@ -296,8 +350,12 @@ const handleRoleSelection = (role) => {
           {/* Role Comparison */}
           <div className="mt-12 pt-8 border-t border-slate-700/50">
             <div className="text-center mb-6">
-              <h3 className="text-xl font-semibold text-white mb-2">Not sure which role fits you?</h3>
-              <p className="text-slate-400">Here's a quick comparison to help you decide</p>
+              <h3 className="text-xl font-semibold text-white mb-2">
+                Not sure which role fits you?
+              </h3>
+              <p className="text-slate-400">
+                Here's a quick comparison to help you decide
+              </p>
             </div>
 
             <div className="grid md:grid-cols-2 gap-6 text-sm">
@@ -307,7 +365,9 @@ const handleRoleSelection = (role) => {
                   Choose Learner if you:
                 </h4>
                 <ul className="space-y-2 text-slate-300">
-                  <li>• Are new to programming or want to learn new technologies</li>
+                  <li>
+                    • Are new to programming or want to learn new technologies
+                  </li>
                   <li>• Need guidance and mentorship</li>
                   <li>• Want to participate in guided projects</li>
                   <li>• Are looking to build your first portfolio</li>
@@ -330,7 +390,8 @@ const handleRoleSelection = (role) => {
 
             <div className="text-center mt-6">
               <p className="text-slate-400 text-sm">
-                💡 Don't worry! You can always change your role later in your profile settings.
+                💡 Don't worry! You can always change your role later in your
+                profile settings.
               </p>
             </div>
           </div>
