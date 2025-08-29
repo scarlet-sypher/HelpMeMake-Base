@@ -28,25 +28,26 @@ const TimelineItem = ({
   isLast = false,
 }) => {
   return (
-    <div className="relative flex items-start space-x-4 group">
+    <div className="relative flex items-start space-x-3 group">
       {/* Timeline Line */}
       {!isLast && (
-        <div className="absolute left-6 top-12 w-0.5 h-8 bg-gradient-to-b from-white/20 to-white/5"></div>
+        <div className="absolute left-4 top-10 w-0.5 h-6 bg-gradient-to-b from-white/20 to-white/5"></div>
       )}
 
-      {/* Icon Container */}
-      <div className="relative z-10">
+      {/* Icon Container - matching attached file sizing */}
+      <div className="relative z-10 flex-shrink-0">
         <div
-          className={`p-3 rounded-xl bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-sm border border-white/20 shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-110`}
+          className={`p-2 rounded-lg bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-sm border border-white/20 shadow-lg group-hover:shadow-xl transition-all duration-300`}
         >
           <Icon
-            size={18}
-            className={`${color} group-hover:scale-110 transition-transform duration-300`}
+            size={16}
+            className={`${color} transition-transform duration-300`}
           />
         </div>
-        {/* Glowing effect */}
+
+        {/* Subtle glow effect */}
         <div
-          className={`absolute inset-0 rounded-xl bg-gradient-to-br ${color
+          className={`absolute inset-0 rounded-lg bg-gradient-to-br ${color
             .replace("text-", "from-")
             .replace(
               "-400",
@@ -55,18 +56,18 @@ const TimelineItem = ({
         ></div>
       </div>
 
-      {/* Content */}
-      <div className="flex-1 min-w-0 pb-6">
-        <div className="bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/10 shadow-lg hover:shadow-xl transition-all duration-300 group-hover:bg-white/10 group-hover:border-white/20">
-          <p className="text-sm font-semibold text-white group-hover:text-cyan-200 transition-colors duration-300">
+      {/* Content - matching attached file styling */}
+      <div className="flex-1 min-w-0 pb-4">
+        <div className="bg-white/5 backdrop-blur-sm rounded-lg p-3 border border-white/10 shadow-lg hover:shadow-xl transition-all duration-300 group-hover:bg-white/10 group-hover:border-white/20">
+          <p className="text-sm font-medium text-white group-hover:text-cyan-200 transition-colors duration-300">
             {title}
           </p>
-          <p className="text-xs text-cyan-300 mt-1 group-hover:text-cyan-200 transition-colors duration-300">
+          <p className="text-xs text-cyan-300/80 mt-1 group-hover:text-cyan-200 transition-colors duration-300">
             {subtitle}
           </p>
 
           {/* Animated accent line */}
-          <div className="mt-3 h-0.5 bg-gradient-to-r from-transparent via-cyan-400/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+          <div className="mt-2 h-0.5 bg-gradient-to-r from-transparent via-cyan-400/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
         </div>
       </div>
     </div>
@@ -127,12 +128,6 @@ const ActivityTimeline = () => {
       const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
       const token = localStorage.getItem("access_token");
 
-      //debug - Print API call details
-      // console.log(
-      //   "//debug - Fetching mentor timeline from:",
-      //   `${apiUrl}/api/mentor-timeline`
-      // );
-
       const response = await fetch(`${apiUrl}/api/mentor-timeline`, {
         method: "GET",
         headers: {
@@ -148,16 +143,6 @@ const ActivityTimeline = () => {
       const data = await response.json();
 
       if (data.success) {
-        //debug - Print fetched timeline events
-        // console.log(
-        //   "//debug - Mentor Timeline events fetched:",
-        //   data.data.events.length
-        // );
-        // console.log(
-        //   "//debug - Mentor Timeline events:",
-        //   data.data.events.slice(0, 3)
-        // );
-
         setTimelineData(data.data.events);
       } else {
         throw new Error(data.message || "Failed to fetch timeline");
@@ -165,7 +150,6 @@ const ActivityTimeline = () => {
     } catch (error) {
       console.error("Error fetching mentor timeline:", error);
       setError(error.message);
-      // Fallback to empty array on error
       setTimelineData([]);
     } finally {
       setLoading(false);
@@ -178,9 +162,6 @@ const ActivityTimeline = () => {
       const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
       const token = localStorage.getItem("access_token");
 
-      //debug - Print update call
-      // console.log("//debug - Updating mentor timeline");
-
       await fetch(`${apiUrl}/api/mentor-timeline/update`, {
         method: "POST",
         headers: {
@@ -189,7 +170,6 @@ const ActivityTimeline = () => {
         },
       });
 
-      // Fetch updated data
       await fetchMentorTimeline();
     } catch (error) {
       console.error("Error updating mentor timeline:", error);
@@ -199,12 +179,11 @@ const ActivityTimeline = () => {
   // Initial load and auto-refresh
   useEffect(() => {
     const loadTimeline = async () => {
-      await updateMentorTimeline(); // This will update and then fetch
+      await updateMentorTimeline();
     };
 
     loadTimeline();
 
-    // Auto-refresh every 30 seconds
     const interval = setInterval(() => {
       updateMentorTimeline();
     }, 10000);
@@ -263,17 +242,29 @@ const ActivityTimeline = () => {
 
         {/* Empty State */}
         {!error && timelineData.length === 0 && !loading && (
-          <div className="text-center py-8">
-            <div className="text-gray-400 text-sm mb-2">No recent activity</div>
-            <div className="text-gray-500 text-xs">
-              Your mentoring activities will appear here
+          <div className="text-center py-12">
+            <div className="text-6xl mb-4">🎯</div>
+            <div className="text-white text-lg font-semibold mb-2">
+              Your Journey Awaits!
+            </div>
+            <div className="text-gray-400 text-sm">
+              Start your learning adventure and your timeline will come alive
+              with achievements and progress.
             </div>
           </div>
         )}
 
         {/* Timeline Events */}
         {!error && timelineData.length > 0 && (
-          <div className="hide-scrollbar-general space-y-2 max-h-96 overflow-y-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
+          <div
+            className="space-y-1 timeline-scroll"
+            style={{
+              maxHeight: "320px",
+              overflowY: "auto",
+              overflowX: "hidden",
+              paddingRight: "8px",
+            }}
+          >
             {timelineData.map((item, index) => {
               const IconComponent = getIconComponent(item.icon);
               return (
@@ -290,6 +281,42 @@ const ActivityTimeline = () => {
           </div>
         )}
       </div>
+
+      {/* Custom Scrollbar Styles */}
+      <style>{`
+        .timeline-scroll::-webkit-scrollbar {
+          width: 4px;
+        }
+
+        .timeline-scroll::-webkit-scrollbar-track {
+          background: rgba(255, 255, 255, 0.05);
+          border-radius: 4px;
+        }
+
+        .timeline-scroll::-webkit-scrollbar-thumb {
+          background: linear-gradient(
+            135deg,
+            rgba(20, 184, 166, 0.6) 0%,
+            rgba(6, 182, 212, 0.6) 100%
+          );
+          border-radius: 4px;
+          transition: all 0.3s ease;
+        }
+
+        .timeline-scroll::-webkit-scrollbar-thumb:hover {
+          background: linear-gradient(
+            135deg,
+            rgba(20, 184, 166, 0.8) 0%,
+            rgba(6, 182, 212, 0.8) 100%
+          );
+        }
+
+        /* Firefox scrollbar */
+        .timeline-scroll {
+          scrollbar-width: thin;
+          scrollbar-color: rgba(20, 184, 166, 0.6) rgba(255, 255, 255, 0.05);
+        }
+      `}</style>
     </div>
   );
 };
