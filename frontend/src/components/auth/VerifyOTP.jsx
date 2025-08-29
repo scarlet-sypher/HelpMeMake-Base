@@ -24,15 +24,15 @@ const Toast = ({ message, type, isVisible, onClose }) => {
   };
 
   return (
-    <div className="fixed top-4 right-4 z-50 animate-slide-in max-w-[calc(100vw-2rem)] sm:max-w-sm">
+    <div className="fixed top-2 right-2 z-50 animate-slide-in max-w-[calc(100vw-1rem)] sm:max-w-sm">
       <div
-        className={`p-3 sm:p-4 rounded-xl border backdrop-blur-sm shadow-lg transition-all duration-500 ${colors[type]}`}
+        className={`p-2 sm:p-3 rounded-lg border backdrop-blur-sm shadow-lg transition-all duration-500 ${colors[type]}`}
       >
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <span className="font-medium text-xs sm:text-sm">{message}</span>
           <button
             onClick={onClose}
-            className="ml-auto text-current hover:opacity-70 transition-opacity text-lg"
+            className="ml-auto text-current hover:opacity-70 transition-opacity text-sm sm:text-lg"
           >
             ×
           </button>
@@ -236,7 +236,7 @@ export default function VerifyOTP() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">
+    <div className="h-screen overflow-hidden bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative flex">
       <Toast
         message={toast.message}
         type={toast.type}
@@ -246,13 +246,13 @@ export default function VerifyOTP() {
 
       {/* Animated Background */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-6 left-6 w-16 h-16 sm:w-24 sm:h-24 md:w-32 md:h-32 lg:w-48 lg:h-48 xl:w-64 xl:h-64 bg-emerald-500/10 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute top-2 left-2 w-8 h-8 sm:w-16 sm:h-16 md:w-24 md:h-24 lg:w-32 lg:h-32 bg-emerald-500/10 rounded-full blur-2xl animate-pulse"></div>
         <div
-          className="absolute bottom-6 right-6 w-24 h-24 sm:w-32 sm:h-32 md:w-48 md:h-48 lg:w-64 lg:h-64 xl:w-80 xl:h-80 bg-purple-500/10 rounded-full blur-3xl animate-pulse"
+          className="absolute bottom-2 right-2 w-12 h-12 sm:w-24 sm:h-24 md:w-32 md:h-32 lg:w-48 lg:h-48 bg-purple-500/10 rounded-full blur-2xl animate-pulse"
           style={{ animationDelay: "1s" }}
         ></div>
         <div
-          className="absolute top-1/2 left-1/4 w-16 h-16 sm:w-24 sm:h-24 md:w-32 md:h-32 lg:w-48 lg:h-48 bg-cyan-500/10 rounded-full blur-3xl animate-pulse"
+          className="absolute top-1/2 left-1/4 w-8 h-8 sm:w-16 sm:h-16 md:w-24 md:h-24 bg-cyan-500/10 rounded-full blur-2xl animate-pulse"
           style={{ animationDelay: "2s" }}
         ></div>
 
@@ -274,92 +274,91 @@ export default function VerifyOTP() {
       </div>
 
       {/* Main Content */}
-      <div className="relative z-10 min-h-screen flex items-center justify-center px-3 sm:px-4 md:px-6 lg:px-8 py-4 sm:py-6 md:py-8">
-        <div className="bg-slate-800/30 backdrop-blur-xl rounded-2xl sm:rounded-3xl shadow-2xl p-4 sm:p-6 md:p-8 lg:p-10 w-full max-w-[90vw] sm:max-w-md md:max-w-lg lg:max-w-xl border border-slate-700/50 hover:border-emerald-500/30 hover:shadow-emerald-500/10 transition-all duration-300">
+      <div className="relative z-10 w-full flex items-center justify-center p-2 sm:p-4">
+        <div className="bg-slate-800/30 backdrop-blur-xl rounded-lg sm:rounded-2xl shadow-2xl w-full max-w-[95vw] sm:max-w-md border border-slate-700/50 hover:border-emerald-500/30 hover:shadow-emerald-500/10 transition-all duration-300 max-h-[96vh] flex flex-col">
           {/* Header */}
-          <div className="text-center mb-6 sm:mb-8 space-y-3 sm:space-y-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 bg-emerald-500/10 rounded-full border border-emerald-500/20 mb-3 sm:mb-4">
-              <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-emerald-400 rounded-full animate-pulse"></div>
-              <span className="text-emerald-300 text-xs sm:text-sm font-medium">
+          <div className="text-center p-3 sm:p-6 space-y-2 sm:space-y-4 flex-shrink-0">
+            <div className="inline-flex items-center gap-1 sm:gap-2 px-2 py-1 sm:px-3 sm:py-1.5 bg-emerald-500/10 rounded-full border border-emerald-500/20 mb-2 sm:mb-3">
+              <div className="w-1 h-1 sm:w-1.5 sm:h-1.5 bg-emerald-400 rounded-full animate-pulse"></div>
+              <span className="text-emerald-300 text-xs font-medium">
                 Email Verification
               </span>
             </div>
 
-            <div className="flex items-center justify-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+            <div className="flex items-center justify-center gap-2 mb-2 sm:mb-3">
               <div className="relative">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-emerald-500 to-cyan-500 rounded-lg sm:rounded-xl flex items-center justify-center shadow-lg">
-                  <Mail className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-emerald-500 to-cyan-500 rounded-lg flex items-center justify-center shadow-lg">
+                  <Mail className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                 </div>
-                <div className="absolute -top-0.5 -right-0.5 sm:-top-1 sm:-right-1 w-3 h-3 sm:w-4 sm:h-4 bg-purple-500 rounded-full flex items-center justify-center animate-bounce">
-                  <span className="text-white text-[10px] sm:text-xs">✨</span>
+                <div className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 sm:w-3 sm:h-3 bg-purple-500 rounded-full flex items-center justify-center animate-bounce">
+                  <span className="text-white text-[8px] sm:text-[10px]">
+                    ✨
+                  </span>
                 </div>
               </div>
               <div className="text-left">
-                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-white via-emerald-200 to-cyan-300 bg-clip-text text-transparent">
+                <h1 className="text-lg sm:text-2xl lg:text-3xl font-bold bg-gradient-to-r from-white via-emerald-200 to-cyan-300 bg-clip-text text-transparent">
                   HelpMeMake
                 </h1>
-                <p className="text-[10px] sm:text-xs lg:text-sm text-slate-400">
+                <p className="text-[9px] sm:text-xs text-slate-400">
                   Code. Learn. Grow.
                 </p>
               </div>
             </div>
 
-            <h2 className="text-xl sm:text-2xl font-bold text-white mb-2">
+            <h2 className="text-lg sm:text-xl font-bold text-white mb-1">
               Verify Your Email
             </h2>
-            <div className="text-slate-300 leading-relaxed text-sm sm:text-base">
-              <p className="mb-1">We've sent a 6-digit verification code to</p>
-              <span className="text-emerald-400 font-semibold break-all">
+            <div className="text-slate-300 text-xs sm:text-sm">
+              <p className="mb-1">We've sent a 6-digit code to</p>
+              <span className="text-emerald-400 font-semibold break-all text-xs">
                 {email}
               </span>
             </div>
 
             {/* Feature Icons */}
-            <div className="flex justify-center gap-4 sm:gap-6 mt-4 sm:mt-6">
-              <div className="flex flex-col items-center gap-1">
-                <div className="w-6 h-6 sm:w-8 sm:h-8 bg-purple-500/20 rounded-md sm:rounded-lg flex items-center justify-center">
-                  <Mail className="w-3 h-3 sm:w-4 sm:h-4 text-purple-400" />
+            <div className="flex justify-center gap-3 sm:gap-6 mt-3 sm:mt-4">
+              {[
+                { icon: Mail, color: "purple", label: "Secure" },
+                { icon: Shield, color: "emerald", label: "Protected" },
+                { icon: Code, color: "cyan", label: "Verified" },
+              ].map(({ icon: Icon, color, label }) => (
+                <div
+                  key={label}
+                  className="flex flex-col items-center gap-0.5 sm:gap-1"
+                >
+                  <div
+                    className={`w-5 h-5 sm:w-7 sm:h-7 bg-${color}-500/20 rounded-md flex items-center justify-center`}
+                  >
+                    <Icon
+                      className={`w-2.5 h-2.5 sm:w-3.5 sm:h-3.5 text-${color}-400`}
+                    />
+                  </div>
+                  <span className="text-[9px] sm:text-xs text-slate-400">
+                    {label}
+                  </span>
                 </div>
-                <span className="text-[10px] sm:text-xs text-slate-400">
-                  Secure
-                </span>
-              </div>
-              <div className="flex flex-col items-center gap-1">
-                <div className="w-6 h-6 sm:w-8 sm:h-8 bg-emerald-500/20 rounded-md sm:rounded-lg flex items-center justify-center">
-                  <Shield className="w-3 h-3 sm:w-4 sm:h-4 text-emerald-400" />
-                </div>
-                <span className="text-[10px] sm:text-xs text-slate-400">
-                  Protected
-                </span>
-              </div>
-              <div className="flex flex-col items-center gap-1">
-                <div className="w-6 h-6 sm:w-8 sm:h-8 bg-cyan-500/20 rounded-md sm:rounded-lg flex items-center justify-center">
-                  <Code className="w-3 h-3 sm:w-4 sm:h-4 text-cyan-400" />
-                </div>
-                <span className="text-[10px] sm:text-xs text-slate-400">
-                  Verified
-                </span>
-              </div>
+              ))}
             </div>
           </div>
 
           {/* OTP Form */}
-          <div className="bg-slate-800/40 rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-slate-700/50 backdrop-blur-sm hover:border-emerald-500/30 transition-all duration-300">
-            <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
+          <div className="bg-slate-800/40 rounded-xl m-3 sm:m-6 p-3 sm:p-4 border border-slate-700/50 backdrop-blur-sm hover:border-emerald-500/30 transition-all duration-300 flex-1 flex flex-col justify-center min-h-0">
+            <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
               {/* OTP Input Fields */}
-              <div className="space-y-3 sm:space-y-4">
+              <div className="space-y-2 sm:space-y-3">
                 <label className="block text-xs sm:text-sm font-semibold text-slate-200 text-center">
                   Enter Verification Code
                 </label>
 
-                {/* Paste instruction for mobile */}
+                {/* Paste instruction */}
                 <div className="text-center">
-                  <p className="text-xs text-slate-400 mb-2">
-                    You can paste the entire code with Ctrl+V (or Cmd+V on Mac)
+                  <p className="text-[10px] sm:text-xs text-slate-400 mb-1 sm:mb-2">
+                    Paste the code with Ctrl+V (Cmd+V on Mac)
                   </p>
                 </div>
 
-                <div className="flex justify-center gap-2 sm:gap-3 overflow-x-auto px-2">
+                <div className="flex justify-center gap-1.5 sm:gap-2 px-1">
                   {otp.map((digit, index) => (
                     <input
                       key={index}
@@ -377,7 +376,15 @@ export default function VerifyOTP() {
                       }
                       onKeyDown={(e) => handleKeyDown(index, e)}
                       onPaste={(e) => handlePaste(e, index)}
-                      className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 text-center text-lg sm:text-xl font-bold bg-slate-800/50 border border-slate-700 rounded-lg sm:rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300 backdrop-blur-sm hover:bg-slate-800/70 flex-shrink-0"
+                      onFocus={(e) => {
+                        // Prevent scroll on focus for number inputs
+                        e.target.addEventListener(
+                          "wheel",
+                          (e) => e.preventDefault(),
+                          { passive: false }
+                        );
+                      }}
+                      className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 text-center text-base sm:text-lg font-bold bg-slate-800/50 border border-slate-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300 backdrop-blur-sm hover:bg-slate-800/70 flex-shrink-0"
                       disabled={isSubmitting}
                     />
                   ))}
@@ -388,19 +395,19 @@ export default function VerifyOTP() {
               <button
                 type="submit"
                 disabled={isSubmitting || otp.join("").length !== 6}
-                className="w-full bg-gradient-to-r from-emerald-600 via-green-600 to-teal-600 hover:from-emerald-700 hover:via-green-700 hover:to-teal-700 text-white font-bold py-3 sm:py-4 px-6 sm:px-8 rounded-lg sm:rounded-xl transition-all duration-300 transform hover:scale-105 hover:shadow-2xl hover:shadow-emerald-500/25 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 relative overflow-hidden group text-sm sm:text-base"
+                className="w-full bg-gradient-to-r from-emerald-600 via-green-600 to-teal-600 hover:from-emerald-700 hover:via-green-700 hover:to-teal-700 text-white font-bold py-2.5 sm:py-3 px-4 sm:px-6 rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-2xl hover:shadow-emerald-500/25 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 relative overflow-hidden group text-sm sm:text-base"
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
-                <span className="relative flex items-center justify-center gap-2 sm:gap-3">
+                <span className="relative flex items-center justify-center gap-2">
                   {isSubmitting ? (
                     <>
-                      <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                      <div className="w-3 h-3 sm:w-4 sm:h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
                       <span>Verifying...</span>
                     </>
                   ) : (
                     <>
                       <span>Verify Email</span>
-                      <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform duration-200" />
+                      <ChevronRight className="w-3 h-3 sm:w-4 sm:h-4 group-hover:translate-x-1 transition-transform duration-200" />
                     </>
                   )}
                 </span>
@@ -409,10 +416,10 @@ export default function VerifyOTP() {
           </div>
 
           {/* Resend Section */}
-          <div className="text-center mt-4 sm:mt-6 space-y-3 sm:space-y-4">
+          <div className="text-center p-3 sm:p-6 space-y-2 sm:space-y-3 flex-shrink-0">
             <div className="flex items-center">
               <div className="flex-1 border-t border-slate-700/50"></div>
-              <span className="px-3 sm:px-4 text-slate-400 text-xs sm:text-sm font-medium">
+              <span className="px-2 sm:px-3 text-slate-400 text-xs font-medium">
                 Didn't receive the code?
               </span>
               <div className="flex-1 border-t border-slate-700/50"></div>
@@ -422,38 +429,38 @@ export default function VerifyOTP() {
               type="button"
               onClick={handleResendOTP}
               disabled={isResending || countdown > 0}
-              className="inline-flex items-center gap-2 text-emerald-400 hover:text-emerald-300 font-semibold transition-all duration-300 hover:underline disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:no-underline text-xs sm:text-sm"
+              className="inline-flex items-center gap-1 sm:gap-2 text-emerald-400 hover:text-emerald-300 font-semibold transition-all duration-300 hover:underline disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:no-underline text-xs sm:text-sm"
             >
               {isResending ? (
                 <>
-                  <div className="w-3 h-3 sm:w-4 sm:h-4 border-2 border-emerald-400/30 border-t-emerald-400 rounded-full animate-spin"></div>
+                  <div className="w-3 h-3 border-2 border-emerald-400/30 border-t-emerald-400 rounded-full animate-spin"></div>
                   <span>Sending...</span>
                 </>
               ) : countdown > 0 ? (
                 <>
-                  <RefreshCw className="w-3 h-3 sm:w-4 sm:h-4" />
+                  <RefreshCw className="w-3 h-3" />
                   <span>Resend in {countdown}s</span>
                 </>
               ) : (
                 <>
-                  <RefreshCw className="w-3 h-3 sm:w-4 sm:h-4" />
+                  <RefreshCw className="w-3 h-3" />
                   <span>Resend Code</span>
                 </>
               )}
             </button>
-          </div>
 
-          {/* Footer */}
-          <div className="text-center pt-3 sm:pt-4 mt-4 sm:mt-6 border-t border-slate-700/50">
-            <p className="text-slate-400 text-xs sm:text-sm">
-              Wrong email address?{" "}
-              <button
-                onClick={() => navigate("/signup")}
-                className="text-emerald-400 hover:text-emerald-300 font-semibold transition-all duration-300 hover:underline"
-              >
-                Go back to signup
-              </button>
-            </p>
+            {/* Footer */}
+            <div className="pt-2 sm:pt-3 mt-2 sm:mt-3 border-t border-slate-700/50">
+              <p className="text-slate-400 text-xs">
+                Wrong email address?{" "}
+                <button
+                  onClick={() => navigate("/signup")}
+                  className="text-emerald-400 hover:text-emerald-300 font-semibold transition-all duration-300 hover:underline"
+                >
+                  Go back to signup
+                </button>
+              </p>
+            </div>
           </div>
         </div>
       </div>
@@ -474,12 +481,26 @@ export default function VerifyOTP() {
           animation: slide-in 0.5s ease-out;
         }
 
-        /* Ensure inputs don't shrink on very small screens */
-        @media (max-width: 320px) {
-          .otp-input {
-            min-width: 2rem;
-            min-height: 2rem;
-          }
+        /* Prevent scroll on number inputs */
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+          -webkit-appearance: none;
+          margin: 0;
+        }
+
+        input[type="number"] {
+          -moz-appearance: textfield;
+        }
+
+        /* Prevent body scroll when inputs are focused */
+        body {
+          overscroll-behavior: none;
+        }
+
+        /* Ensure container fills screen */
+        html, body, #root {
+          height: 100%;
+          overflow: hidden;
         }
       `}</style>
     </div>

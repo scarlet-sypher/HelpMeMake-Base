@@ -7,6 +7,7 @@ import {
   Shield,
   Eye,
   EyeOff,
+  House,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import Toast from "./Toast";
@@ -53,6 +54,30 @@ const heroImages = [
     image: saitama,
   },
 ];
+
+// Home Button Component
+const HomeButton = () => {
+  const navigate = useNavigate();
+
+  return (
+    <button
+      onClick={() => navigate("/")}
+      aria-label="Go to home"
+      className="absolute top-4 left-4 z-30 w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-110 active:scale-95 flex items-center justify-center backdrop-blur-sm border border-white/20 group"
+    >
+      <House
+        size={16}
+        className="sm:w-5 sm:h-5 group-hover:scale-110 transition-transform duration-200"
+      />
+
+      {/* Tooltip */}
+      <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 px-2 py-1 bg-slate-800 text-white text-xs rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none">
+        Go to Home
+        <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-b-4 border-transparent border-b-slate-800"></div>
+      </div>
+    </button>
+  );
+};
 
 // InputField component
 const InputField = ({
@@ -328,6 +353,10 @@ export default function Login() {
         isVisible={toast.isVisible}
         onClose={hideToast}
       />
+
+      {/* Home Button - Visible on all screen sizes */}
+      <HomeButton />
+
       {/* Animated Background */}
       <div className="absolute inset-0 pointer-events-none">
         {/* Gradient Orbs */}
@@ -364,7 +393,7 @@ export default function Login() {
         {/* Desktop Layout */}
         <div className="hidden lg:flex min-h-screen items-center">
           {/* Left Hero Section - Desktop Only */}
-          <div className="flex w-1/2 items-center justify-center px-4 xl:px-8">
+          <div className="flex w-1/2 items-center justify-center px-4 xl:px-8 relative">
             <div
               className={`relative w-full h-[32rem] max-w-lg transition-all duration-700 ${
                 imageLoaded
@@ -525,7 +554,6 @@ export default function Login() {
   );
 }
 
-// Extracted LoginForm component for reusability
 function LoginForm({
   form,
   errors,

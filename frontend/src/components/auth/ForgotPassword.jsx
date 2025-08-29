@@ -7,7 +7,7 @@ export default function ForgotPassword() {
     email: "",
     otp: ["", "", "", "", "", ""],
     newPassword: "",
-    confirmPassword: ""
+    confirmPassword: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState("");
@@ -19,11 +19,14 @@ export default function ForgotPassword() {
     setMessage("");
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/forgot-password`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: formData.email }),
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/auth/forgot-password`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: formData.email }),
+        }
+      );
 
       const data = await response.json();
 
@@ -45,7 +48,7 @@ export default function ForgotPassword() {
 
   const handleOtpChange = (index, value) => {
     if (value.length > 1) return;
-    
+
     const newOtp = [...formData.otp];
     newOtp[index] = value;
     setFormData({ ...formData, otp: newOtp });
@@ -66,7 +69,7 @@ export default function ForgotPassword() {
 
   const handlePasswordReset = async (e) => {
     e.preventDefault();
-    
+
     if (formData.newPassword !== formData.confirmPassword) {
       setMessage("Passwords don't match");
       setMessageType("error");
@@ -82,15 +85,18 @@ export default function ForgotPassword() {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/reset-password`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: formData.email,
-          otp: formData.otp.join(""),
-          newPassword: formData.newPassword
-        }),
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/auth/reset-password`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: formData.email,
+            otp: formData.otp.join(""),
+            newPassword: formData.newPassword,
+          }),
+        }
+      );
 
       const data = await response.json();
 
@@ -121,7 +127,6 @@ export default function ForgotPassword() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center px-4">
       <div className="bg-slate-800/30 backdrop-blur-xl rounded-3xl shadow-2xl p-8 w-full max-w-md border border-slate-700/50">
-        
         {/* Header */}
         <div className="text-center mb-8">
           <div className="w-16 h-16 bg-gradient-to-r from-emerald-500 to-cyan-500 rounded-xl flex items-center justify-center mx-auto mb-4">
@@ -137,11 +142,13 @@ export default function ForgotPassword() {
 
         {/* Message */}
         {message && (
-          <div className={`mb-6 p-4 rounded-xl border ${
-            messageType === "success" 
-              ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-300"
-              : "bg-red-500/10 border-red-500/30 text-red-300"
-          }`}>
+          <div
+            className={`mb-6 p-4 rounded-xl border ${
+              messageType === "success"
+                ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-300"
+                : "bg-red-500/10 border-red-500/30 text-red-300"
+            }`}
+          >
             {message}
           </div>
         )}
@@ -156,14 +163,21 @@ export default function ForgotPassword() {
               <input
                 type="email"
                 value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, email: e.target.value })
+                }
                 required
                 className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 placeholder="Enter your email"
-                onKeyDown={(e) => e.key === 'Enter' && !isSubmitting && formData.email && handleEmailSubmit(e)}
+                onKeyDown={(e) =>
+                  e.key === "Enter" &&
+                  !isSubmitting &&
+                  formData.email &&
+                  handleEmailSubmit(e)
+                }
               />
             </div>
-            
+
             <button
               onClick={handleEmailSubmit}
               disabled={isSubmitting || !formData.email}
@@ -201,13 +215,18 @@ export default function ForgotPassword() {
                     pattern="[0-9]*"
                     maxLength="1"
                     value={digit}
-                    onChange={(e) => handleOtpChange(index, e.target.value.replace(/[^0-9]/g, ''))}
+                    onChange={(e) =>
+                      handleOtpChange(
+                        index,
+                        e.target.value.replace(/[^0-9]/g, "")
+                      )
+                    }
                     className="w-12 h-12 text-center text-xl font-bold bg-slate-800/50 border border-slate-700 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
                   />
                 ))}
               </div>
             </div>
-            
+
             <button
               onClick={handleOtpVerify}
               disabled={formData.otp.join("").length !== 6}
@@ -216,7 +235,7 @@ export default function ForgotPassword() {
               Verify Code
               <ChevronRight className="w-4 h-4" />
             </button>
-            
+
             <button
               onClick={() => setStep(1)}
               className="w-full text-slate-400 hover:text-white py-2 transition-colors"
@@ -236,13 +255,15 @@ export default function ForgotPassword() {
               <input
                 type="password"
                 value={formData.newPassword}
-                onChange={(e) => setFormData({ ...formData, newPassword: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, newPassword: e.target.value })
+                }
                 required
                 className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 placeholder="Enter new password (min 8 characters)"
               />
             </div>
-            
+
             <div>
               <label className="block text-sm font-semibold text-slate-200 mb-2">
                 Confirm Password
@@ -250,17 +271,29 @@ export default function ForgotPassword() {
               <input
                 type="password"
                 value={formData.confirmPassword}
-                onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, confirmPassword: e.target.value })
+                }
                 required
                 className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 placeholder="Confirm new password"
-                onKeyDown={(e) => e.key === 'Enter' && !isSubmitting && formData.newPassword && formData.confirmPassword && handlePasswordReset(e)}
+                onKeyDown={(e) =>
+                  e.key === "Enter" &&
+                  !isSubmitting &&
+                  formData.newPassword &&
+                  formData.confirmPassword &&
+                  handlePasswordReset(e)
+                }
               />
             </div>
-            
+
             <button
               onClick={handlePasswordReset}
-              disabled={isSubmitting || !formData.newPassword || !formData.confirmPassword}
+              disabled={
+                isSubmitting ||
+                !formData.newPassword ||
+                !formData.confirmPassword
+              }
               className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold py-3 px-6 rounded-xl transition-all duration-300 hover:scale-105 disabled:opacity-50 flex items-center justify-center gap-2"
             >
               {isSubmitting ? (
@@ -275,7 +308,7 @@ export default function ForgotPassword() {
                 </>
               )}
             </button>
-            
+
             <button
               type="button"
               onClick={() => setStep(2)}
