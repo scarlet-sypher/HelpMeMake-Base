@@ -11,7 +11,7 @@ const getLearnerTimeline = async (req, res) => {
     const userId = req.user.id;
 
     //debug - Print logged in user ID
-    console.log("//debug - Logged in userId:", userId);
+    // console.log("//debug - Logged in userId:", userId);
 
     // Find learner by userId
     const learner = await Learner.findOne({ userId });
@@ -24,16 +24,16 @@ const getLearnerTimeline = async (req, res) => {
 
     const learnerId = learner._id;
     //debug - Print learnerId being fetched
-    console.log("//debug - LearnerId being fetched:", learnerId);
+    // console.log("//debug - LearnerId being fetched:", learnerId);
 
     // Find or create timeline
     const timeline = await LearnerTimeline.findOrCreateByLearner(learnerId);
 
     //debug - Print current timeline events count
-    console.log(
-      "//debug - Current timeline events count:",
-      timeline.events.length
-    );
+    // console.log(
+    //   "//debug - Current timeline events count:",
+    //   timeline.events.length
+    // );
 
     // Get recent events (last 50)
     const recentEvents = timeline.events.slice(0, 50).map((event) => ({

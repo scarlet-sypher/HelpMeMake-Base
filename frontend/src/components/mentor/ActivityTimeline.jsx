@@ -1,30 +1,60 @@
-import React from 'react';
+import React, { useState, useEffect } from "react";
 import {
   TrendingUp,
   Award,
   Calendar,
   Users,
   DollarSign,
-  BookOpen
-} from 'lucide-react';
+  BookOpen,
+  FolderPlus,
+  FolderMinus,
+  CheckCircle,
+  Target,
+  TargetIcon,
+  Trash2,
+  CalendarPlus,
+  CalendarX,
+  Clock,
+  PlayCircle,
+  XCircle,
+  Folder,
+} from "lucide-react";
 
-const TimelineItem = ({ icon: Icon, title, subtitle, color, isLast = false }) => {
+const TimelineItem = ({
+  icon: Icon,
+  title,
+  subtitle,
+  color,
+  isLast = false,
+}) => {
   return (
     <div className="relative flex items-start space-x-4 group">
       {/* Timeline Line */}
       {!isLast && (
         <div className="absolute left-6 top-12 w-0.5 h-8 bg-gradient-to-b from-white/20 to-white/5"></div>
       )}
-     
+
       {/* Icon Container */}
       <div className="relative z-10">
-        <div className={`p-3 rounded-xl bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-sm border border-white/20 shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-110`}>
-          <Icon size={18} className={`${color} group-hover:scale-110 transition-transform duration-300`} />
+        <div
+          className={`p-3 rounded-xl bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-sm border border-white/20 shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-110`}
+        >
+          <Icon
+            size={18}
+            className={`${color} group-hover:scale-110 transition-transform duration-300`}
+          />
         </div>
         {/* Glowing effect */}
-        <div className={`absolute inset-0 rounded-xl bg-gradient-to-br ${color.replace('text-', 'from-').replace('-400', '-400/20')} to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-sm`}></div>
+        <div
+          className={`absolute inset-0 rounded-xl bg-gradient-to-br ${color
+            .replace("text-", "from-")
+            .replace(
+              "-400",
+              "-400/20"
+            )} to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-sm`}
+        ></div>
       </div>
-     
+
       {/* Content */}
       <div className="flex-1 min-w-0 pb-6">
         <div className="bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/10 shadow-lg hover:shadow-xl transition-all duration-300 group-hover:bg-white/10 group-hover:border-white/20">
@@ -34,7 +64,7 @@ const TimelineItem = ({ icon: Icon, title, subtitle, color, isLast = false }) =>
           <p className="text-xs text-cyan-300 mt-1 group-hover:text-cyan-200 transition-colors duration-300">
             {subtitle}
           </p>
-         
+
           {/* Animated accent line */}
           <div className="mt-3 h-0.5 bg-gradient-to-r from-transparent via-cyan-400/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
         </div>
@@ -44,20 +74,163 @@ const TimelineItem = ({ icon: Icon, title, subtitle, color, isLast = false }) =>
 };
 
 const ActivityTimeline = () => {
-  const timelineItems = [
-    { id: 1, icon: Award, title: 'New 5-star review from Luffy', subtitle: '1 hour ago', color: 'text-yellow-400' },
-    { id: 2, icon: Calendar, title: 'Session completed with Zoro', subtitle: '3 hours ago', color: 'text-cyan-400' },
-    { id: 3, icon: Users, title: 'New student request from Robin', subtitle: '1 day ago', color: 'text-teal-400' },
-    { id: 4, icon: DollarSign, title: 'Earnings milestone reached: $1000', subtitle: '2 days ago', color: 'text-emerald-400' },
-    { id: 5, icon: BookOpen, title: 'Course material updated', subtitle: '3 days ago', color: 'text-purple-400' }
-  ];
+  const [timelineData, setTimelineData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Map event types to icons
+  const getIconComponent = (iconName) => {
+    const iconMap = {
+      Award: Award,
+      Calendar: Calendar,
+      Users: Users,
+      DollarSign: DollarSign,
+      BookOpen: BookOpen,
+      FolderPlus: FolderPlus,
+      FolderMinus: FolderMinus,
+      CheckCircle: CheckCircle,
+      Target: Target,
+      TargetIcon: TargetIcon,
+      Trash2: Trash2,
+      CalendarPlus: CalendarPlus,
+      CalendarX: CalendarX,
+      Clock: Clock,
+      PlayCircle: PlayCircle,
+      XCircle: XCircle,
+      Folder: Folder,
+    };
+    return iconMap[iconName] || BookOpen;
+  };
+
+  // Format time ago helper
+  const formatTimeAgo = (dateString) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffInSeconds = Math.floor((now - date) / 1000);
+
+    if (diffInSeconds < 60) return "Just now";
+    if (diffInSeconds < 3600)
+      return `${Math.floor(diffInSeconds / 60)} mins ago`;
+    if (diffInSeconds < 86400)
+      return `${Math.floor(diffInSeconds / 3600)} hours ago`;
+    if (diffInSeconds < 2592000)
+      return `${Math.floor(diffInSeconds / 86400)} days ago`;
+    return date.toLocaleDateString();
+  };
+
+  // Fetch mentor timeline data
+  const fetchMentorTimeline = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+      const token = localStorage.getItem("access_token");
+
+      //debug - Print API call details
+      // console.log(
+      //   "//debug - Fetching mentor timeline from:",
+      //   `${apiUrl}/api/mentor-timeline`
+      // );
+
+      const response = await fetch(`${apiUrl}/api/mentor-timeline`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      if (data.success) {
+        //debug - Print fetched timeline events
+        // console.log(
+        //   "//debug - Mentor Timeline events fetched:",
+        //   data.data.events.length
+        // );
+        // console.log(
+        //   "//debug - Mentor Timeline events:",
+        //   data.data.events.slice(0, 3)
+        // );
+
+        setTimelineData(data.data.events);
+      } else {
+        throw new Error(data.message || "Failed to fetch timeline");
+      }
+    } catch (error) {
+      console.error("Error fetching mentor timeline:", error);
+      setError(error.message);
+      // Fallback to empty array on error
+      setTimelineData([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Update mentor timeline
+  const updateMentorTimeline = async () => {
+    try {
+      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+      const token = localStorage.getItem("access_token");
+
+      //debug - Print update call
+      // console.log("//debug - Updating mentor timeline");
+
+      await fetch(`${apiUrl}/api/mentor-timeline/update`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      // Fetch updated data
+      await fetchMentorTimeline();
+    } catch (error) {
+      console.error("Error updating mentor timeline:", error);
+    }
+  };
+
+  // Initial load and auto-refresh
+  useEffect(() => {
+    const loadTimeline = async () => {
+      await updateMentorTimeline(); // This will update and then fetch
+    };
+
+    loadTimeline();
+
+    // Auto-refresh every 30 seconds
+    const interval = setInterval(() => {
+      updateMentorTimeline();
+    }, 10000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  if (loading && timelineData.length === 0) {
+    return (
+      <div className="bg-white/10 backdrop-blur-sm rounded-3xl shadow-2xl p-6 border border-white/20 relative overflow-hidden">
+        <div className="flex items-center justify-center h-40">
+          <div className="flex flex-col items-center space-y-4">
+            <div className="w-8 h-8 border-4 border-teal-400 border-t-transparent rounded-full animate-spin"></div>
+            <div className="text-white text-sm">Loading timeline...</div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white/10 backdrop-blur-sm rounded-3xl shadow-2xl p-6 border border-white/20 relative overflow-hidden">
       {/* Background decoration */}
       <div className="absolute -top-10 -right-10 w-20 h-20 bg-purple-400/20 rounded-full blur-xl animate-pulse"></div>
       <div className="absolute -bottom-10 -left-10 w-16 h-16 bg-teal-400/20 rounded-full blur-xl animate-pulse"></div>
-      
+
       <div className="relative z-10">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl font-bold text-white flex items-center">
@@ -66,18 +239,56 @@ const ActivityTimeline = () => {
           </h2>
           <div className="flex items-center space-x-2">
             <div className="w-2 h-2 bg-teal-400 rounded-full animate-pulse"></div>
-            <span className="text-sm text-teal-300 font-medium">Live Updates</span>
+            <span className="text-sm text-teal-300 font-medium">
+              Live Updates
+            </span>
           </div>
         </div>
-        <div className="space-y-2">
-          {timelineItems.map((item, index) => (
-            <TimelineItem
-              key={item.id}
-              {...item}
-              isLast={index === timelineItems.length - 1}
-            />
-          ))}
-        </div>
+
+        {/* Error State */}
+        {error && (
+          <div className="text-center py-8">
+            <div className="text-red-400 text-sm mb-2">
+              Failed to load timeline
+            </div>
+            <div className="text-gray-400 text-xs">{error}</div>
+            <button
+              onClick={() => updateMentorTimeline()}
+              className="mt-4 px-4 py-2 bg-teal-500 text-white rounded-lg text-sm hover:bg-teal-600 transition-colors"
+            >
+              Retry
+            </button>
+          </div>
+        )}
+
+        {/* Empty State */}
+        {!error && timelineData.length === 0 && !loading && (
+          <div className="text-center py-8">
+            <div className="text-gray-400 text-sm mb-2">No recent activity</div>
+            <div className="text-gray-500 text-xs">
+              Your mentoring activities will appear here
+            </div>
+          </div>
+        )}
+
+        {/* Timeline Events */}
+        {!error && timelineData.length > 0 && (
+          <div className="hide-scrollbar-general space-y-2 max-h-96 overflow-y-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
+            {timelineData.map((item, index) => {
+              const IconComponent = getIconComponent(item.icon);
+              return (
+                <TimelineItem
+                  key={item.id || `${item.type}-${index}`}
+                  icon={IconComponent}
+                  title={item.message}
+                  subtitle={formatTimeAgo(item.createdAt)}
+                  color={item.color}
+                  isLast={index === timelineData.length - 1}
+                />
+              );
+            })}
+          </div>
+        )}
       </div>
     </div>
   );

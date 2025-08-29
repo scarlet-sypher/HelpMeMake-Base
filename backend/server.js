@@ -34,6 +34,8 @@ const adminRoomRoutes = require("./routes/admin/roomRoutes");
 const adminProjectRoutes = require("./routes/admin/projectRoutes");
 const adminSessionsRoutes = require("./routes/admin/sessionsRoutes");
 const quickActionRoutes = require("./routes/quickActionRoute");
+const timelineRoutes = require("./routes/timelineRoute");
+const mentorTimelineRoutes = require("./routes/mentorTimelineRoute");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -138,6 +140,8 @@ app.use("/admin/rooms", adminRoomRoutes);
 app.use("/admin/projects", adminProjectRoutes);
 app.use("/admin/sessions", adminSessionsRoutes);
 app.use("/api/quick-actions", quickActionRoutes);
+app.use("/api/timeline", timelineRoutes);
+app.use("/api/mentor-timeline", mentorTimelineRoutes);
 
 // Health check endpoint
 app.get("/health", (req, res) => {
