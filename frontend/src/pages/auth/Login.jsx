@@ -64,6 +64,7 @@ const InputField = ({
   placeholder,
   error,
   type = "text",
+  onKeyDown,
 }) => (
   <div className="group">
     <label className="block text-sm font-semibold text-slate-200 mb-2 transition-colors duration-200 group-focus-within:text-emerald-400">
@@ -74,6 +75,7 @@ const InputField = ({
       name={name}
       value={value}
       onChange={onChange}
+      onKeyDown={onKeyDown}
       required={required}
       placeholder={placeholder}
       className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300 backdrop-blur-sm hover:bg-slate-800/70"
@@ -91,6 +93,7 @@ const PasswordField = ({
   required,
   placeholder,
   error,
+  onKeyDown,
 }) => {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -105,6 +108,7 @@ const PasswordField = ({
           name={name}
           value={value}
           onChange={onChange}
+          onKeyDown={onKeyDown}
           required={required}
           placeholder={placeholder}
           className="w-full px-4 py-3 pr-12 bg-slate-800/50 border border-slate-700 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300 backdrop-blur-sm hover:bg-slate-800/70"
@@ -195,8 +199,16 @@ export default function Login() {
     return Object.keys(newErrors).length === 0;
   };
 
+  // Handle Enter key press
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleSubmit();
+    }
+  };
+
   async function handleSubmit(e) {
-    e.preventDefault();
+    if (e) e.preventDefault(); // Make preventDefault conditional
 
     if (!validateForm()) {
       return;
@@ -403,8 +415,6 @@ export default function Login() {
                     </div>
 
                     {/* Floating Animation Elements */}
-                    {/* <div className="absolute top-6 right-6 w-3 h-3 bg-emerald-400/60 rounded-full animate-pulse"></div> */}
-                    {/* <div className="absolute top-20 right-12 w-2 h-2 bg-purple-400/60 rounded-full animate-ping"></div> */}
                     <div
                       className="absolute bottom-20 right-8 w-4 h-4 bg-cyan-400/40 rounded-full animate-bounce"
                       style={{ animationDelay: "0.5s" }}
@@ -442,6 +452,7 @@ export default function Login() {
               handleChange={handleChange}
               handleSubmit={handleSubmit}
               handleOAuth={handleOAuth}
+              handleKeyDown={handleKeyDown}
             />
           </div>
         </div>
@@ -458,6 +469,7 @@ export default function Login() {
             handleChange={handleChange}
             handleSubmit={handleSubmit}
             handleOAuth={handleOAuth}
+            handleKeyDown={handleKeyDown}
           />
         </div>
       </div>
@@ -524,6 +536,7 @@ function LoginForm({
   handleChange,
   handleSubmit,
   handleOAuth,
+  handleKeyDown,
 }) {
   return (
     <div
@@ -619,6 +632,7 @@ function LoginForm({
             name="username"
             value={form.username}
             onChange={handleChange}
+            onKeyDown={handleKeyDown}
             required
             placeholder="Enter your username"
             error={errors.username}
@@ -629,6 +643,7 @@ function LoginForm({
             name="password"
             value={form.password}
             onChange={handleChange}
+            onKeyDown={handleKeyDown}
             required
             placeholder="Enter your password"
             error={errors.password}

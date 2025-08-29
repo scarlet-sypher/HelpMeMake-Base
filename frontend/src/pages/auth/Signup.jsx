@@ -19,7 +19,6 @@ import nezuko from "../../assets/SignupImages/nezuko.jpg";
 import grimjow from "../../assets/SignupImages/grimmjow.jpg";
 import hancock from "../../assets/SignupImages/hancock.jpg";
 import jk from "../../assets/SignupImages/jujutsu.jpg";
-//solved
 
 const NUM_PARTICLES = 25;
 
@@ -113,6 +112,7 @@ const InputField = ({
   placeholder,
   error,
   type = "text",
+  onKeyDown,
 }) => (
   <div className="group">
     <label className="block text-sm font-semibold text-slate-200 mb-2 transition-colors duration-200 group-focus-within:text-emerald-400">
@@ -123,6 +123,7 @@ const InputField = ({
       name={name}
       value={value}
       onChange={onChange}
+      onKeyDown={onKeyDown}
       required={required}
       placeholder={placeholder}
       className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300 backdrop-blur-sm hover:bg-slate-800/70"
@@ -140,6 +141,7 @@ const PasswordField = ({
   required,
   placeholder,
   error,
+  onKeyDown,
 }) => {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -154,6 +156,7 @@ const PasswordField = ({
           name={name}
           value={value}
           onChange={onChange}
+          onKeyDown={onKeyDown}
           required={required}
           placeholder={placeholder}
           className="w-full px-4 py-3 pr-12 bg-slate-800/50 border border-slate-700 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300 backdrop-blur-sm hover:bg-slate-800/70"
@@ -297,8 +300,16 @@ export default function Signup() {
     return Object.keys(newErrors).length === 0;
   };
 
+  // Handle Enter key press
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleSubmit();
+    }
+  };
+
   async function handleSubmit(e) {
-    e.preventDefault();
+    if (e) e.preventDefault(); // Make preventDefault conditional
 
     if (!validateForm()) {
       showToast("Please fix the errors below", "error");
@@ -501,6 +512,7 @@ export default function Signup() {
               handleChange={handleChange}
               handleSubmit={handleSubmit}
               handleOAuth={handleOAuth}
+              handleKeyDown={handleKeyDown}
             />
           </div>
         </div>
@@ -515,6 +527,7 @@ export default function Signup() {
             handleChange={handleChange}
             handleSubmit={handleSubmit}
             handleOAuth={handleOAuth}
+            handleKeyDown={handleKeyDown}
           />
         </div>
       </div>
@@ -563,6 +576,7 @@ function SignupForm({
   handleChange,
   handleSubmit,
   handleOAuth,
+  handleKeyDown,
 }) {
   return (
     <div
@@ -637,6 +651,7 @@ function SignupForm({
             type="email"
             value={form.email}
             onChange={handleChange}
+            onKeyDown={handleKeyDown}
             required
             placeholder="Enter your email address"
             error={errors.email}
@@ -647,6 +662,7 @@ function SignupForm({
             name="password"
             value={form.password}
             onChange={handleChange}
+            onKeyDown={handleKeyDown}
             required
             placeholder="Create a strong password"
             error={errors.password}
@@ -657,6 +673,7 @@ function SignupForm({
             name="confirmPassword"
             value={form.confirmPassword}
             onChange={handleChange}
+            onKeyDown={handleKeyDown}
             required
             placeholder="Confirm your password"
             error={errors.confirmPassword}
