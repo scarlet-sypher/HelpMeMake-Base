@@ -37,28 +37,28 @@ const DEFAULT_MENTOR_ACTIONS = [
   {
     icon: "Calendar",
     label: "Schedule Session",
-    color: "from-rose-500 to-pink-600",
+    color: "from-blue-500 to-cyan-500",
     path: "/mentor/sessions",
     ariaLabel: "Navigate to schedule mentoring sessions",
   },
   {
     icon: "Users",
     label: "My Apprentices",
-    color: "from-indigo-500 to-violet-600",
+    color: "from-indigo-500 to-blue-500",
     path: "/mentor/my-apprentice",
     ariaLabel: "Navigate to manage your apprentices",
   },
   {
     icon: "Send",
     label: "Send Message",
-    color: "from-amber-500 to-orange-600",
+    color: "from-emerald-500 to-teal-500",
     path: "/mentor/messages",
     ariaLabel: "Navigate to send messages to students",
   },
   {
     icon: "BarChart3",
     label: "View Analytics",
-    color: "from-green-500 to-lime-600",
+    color: "from-orange-500 to-red-500",
     path: "/mentor/analysis",
     ariaLabel: "Navigate to view mentoring analytics",
   },
@@ -125,33 +125,32 @@ const ALL_AVAILABLE_USER_ACTIONS = [
 ];
 
 // All available quick action options for mentors
-// All available quick action options for mentors (colors synced with user actions)
 const ALL_AVAILABLE_MENTOR_ACTIONS = [
   {
     icon: "Calendar",
     label: "Schedule Session",
-    color: "from-blue-500 to-cyan-500", // same as user "Schedule Session"
+    color: "from-blue-500 to-cyan-500",
     path: "/mentor/sessions",
     ariaLabel: "Navigate to schedule mentoring sessions",
   },
   {
     icon: "Users",
     label: "My Apprentices",
-    color: "from-indigo-500 to-blue-500", // same as user "Find Mentor"
+    color: "from-indigo-500 to-blue-500",
     path: "/mentor/my-apprentice",
     ariaLabel: "Navigate to manage your apprentices",
   },
   {
     icon: "Send",
     label: "Messages",
-    color: "from-emerald-500 to-teal-500", // same as user "Send Message"
+    color: "from-emerald-500 to-teal-500",
     path: "/mentor/messages",
     ariaLabel: "Navigate to send messages to students",
   },
   {
     icon: "BarChart3",
     label: "Analytics",
-    color: "from-orange-500 to-red-500", // same as user "View Analytics"
+    color: "from-orange-500 to-red-500",
     path: "/mentor/analysis",
     ariaLabel: "Navigate to view mentoring analytics",
   },

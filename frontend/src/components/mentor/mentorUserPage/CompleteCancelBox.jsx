@@ -1,7 +1,3 @@
-//================================================
-//======This is mentor Complete cancel box for (my apprentice page)==============
-//===============================================
-
 import React, { useState } from "react";
 import axios from "axios";
 import { toast } from "react-hot-toast";
