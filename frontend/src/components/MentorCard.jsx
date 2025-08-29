@@ -1,7 +1,9 @@
 import React from "react";
 import { Star, MessageSquare, ArrowRight } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const MentorCard = ({ mentor, colorScheme = "emerald" }) => {
+  const navigate = useNavigate();
   return (
     <div
       className={`flex-none w-72 bg-gradient-to-br from-white/15 via-white/10 to-white/5 backdrop-blur-xl rounded-2xl border border-white/20 transition-all duration-500 group hover:scale-105 hover:shadow-2xl mx-3 overflow-hidden ${
@@ -247,7 +249,10 @@ const MentorCard = ({ mentor, colorScheme = "emerald" }) => {
                 : "bg-gradient-to-r from-red-400 to-red-500"
             }`}
           ></div>
-          <span className="relative z-10 flex items-center text-sm">
+          <span
+            onClick={() => navigate("/signup")}
+            className="relative z-10 flex items-center text-sm"
+          >
             <MessageSquare className="w-4 h-4 mr-2" />
             Start Session
             <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
