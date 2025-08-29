@@ -85,7 +85,7 @@ const UserAnalysis = () => {
   // Show loading spinner
   if (loading || isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-indigo-950 flex items-center justify-center">
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <div className="text-white text-lg">Loading Analytics...</div>
@@ -102,7 +102,7 @@ const UserAnalysis = () => {
   // Error state
   if (error && !analyticsData) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 flex">
+      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-indigo-950 flex">
         <Sidebar
           isOpen={sidebarOpen}
           toggleSidebar={toggleSidebar}
@@ -219,7 +219,7 @@ const UserAnalysis = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 flex">
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-indigo-950 flex">
       {/* Sidebar */}
       <Sidebar
         isOpen={sidebarOpen}
@@ -346,14 +346,14 @@ const UserAnalysis = () => {
           </div>
 
           {/* Main Stats Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 lg:gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 mb-8">
             {statCards.map((stat, index) => (
               <StatCard key={index} {...stat} isLoading={false} />
             ))}
           </div>
 
           {/* Additional Stats Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-2 gap-4 lg:gap-6">
             {additionalStats.map((stat, index) => (
               <StatCard key={index} {...stat} isLoading={false} />
             ))}
@@ -379,7 +379,7 @@ const UserAnalysis = () => {
           </div>
 
           {/* Additional Analytics Section */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Learning Progress */}
             <div className="relative group">
               <div className="relative bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
@@ -490,39 +490,44 @@ const UserAnalysis = () => {
                     data.recentProjects.slice(0, 5).map((project, index) => (
                       <div
                         key={project.id}
-                        className="flex items-center space-x-3 p-3 bg-white/5 rounded-lg hover:bg-white/10 transition-colors"
+                        className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-3 bg-white/5 rounded-lg hover:bg-white/10 transition-colors"
                       >
-                        <div
-                          className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                            project.status === "Completed"
-                              ? "bg-emerald-500"
-                              : project.status === "In Progress"
-                              ? "bg-blue-500"
-                              : project.status === "Cancelled"
-                              ? "bg-red-500"
-                              : "bg-yellow-500"
-                          }`}
-                        >
-                          {project.status === "Completed" ? (
-                            <CheckCircle size={16} className="text-white" />
-                          ) : project.status === "In Progress" ? (
-                            <Clock size={16} className="text-white" />
-                          ) : project.status === "Cancelled" ? (
-                            <XCircle size={16} className="text-white" />
-                          ) : (
-                            <BookOpen size={16} className="text-white" />
-                          )}
-                        </div>
-                        <div className="flex-1">
-                          <div className="text-white text-sm font-medium truncate">
-                            {project.name}
+                        {/* Left section */}
+                        <div className="flex items-center space-x-3 flex-1">
+                          <div
+                            className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                              project.status === "Completed"
+                                ? "bg-emerald-500"
+                                : project.status === "In Progress"
+                                ? "bg-blue-500"
+                                : project.status === "Cancelled"
+                                ? "bg-red-500"
+                                : "bg-yellow-500"
+                            }`}
+                          >
+                            {project.status === "Completed" ? (
+                              <CheckCircle size={16} className="text-white" />
+                            ) : project.status === "In Progress" ? (
+                              <Clock size={16} className="text-white" />
+                            ) : project.status === "Cancelled" ? (
+                              <XCircle size={16} className="text-white" />
+                            ) : (
+                              <BookOpen size={16} className="text-white" />
+                            )}
                           </div>
-                          <div className="text-gray-400 text-xs">
-                            with {project.mentorName} •{" "}
-                            {project.progressPercentage}% complete
+                          <div>
+                            <div className="text-white text-sm font-medium truncate max-w-[180px] sm:max-w-xs">
+                              {project.name}
+                            </div>
+                            <div className="text-gray-400 text-xs">
+                              with {project.mentorName} •{" "}
+                              {project.progressPercentage}% complete
+                            </div>
                           </div>
                         </div>
-                        <div className="text-xs text-gray-400">
+
+                        {/* Right section (date) */}
+                        <div className="text-xs text-gray-400 whitespace-nowrap">
                           {new Date(project.updatedAt).toLocaleDateString()}
                         </div>
                       </div>

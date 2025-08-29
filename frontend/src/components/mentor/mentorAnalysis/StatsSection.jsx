@@ -130,57 +130,42 @@ const StatCard = ({
 
       {/* Main card */}
       <div
-        className={`relative bg-gradient-to-br ${colorClasses.bg} backdrop-blur-sm rounded-2xl p-6 border ${colorClasses.border} transform transition-all duration-300 hover:scale-105 hover:shadow-xl`}
+        className={`relative bg-gradient-to-br ${colorClasses.bg} backdrop-blur-sm rounded-2xl p-4 sm:p-6 border ${colorClasses.border} transform transition-all duration-300 hover:scale-105 hover:shadow-xl`}
       >
-        <div className="flex items-start justify-between mb-4">
-          <div
-            className={`p-3 bg-gradient-to-r ${colorClasses.gradient} rounded-xl shadow-lg`}
-          >
-            <Icon className="text-white" size={24} aria-label={label} />
-          </div>
-
-          {trend !== null && (
+        {/* Mobile Layout (small screens) */}
+        <div className="block lg:hidden">
+          {/* Icon at top center */}
+          <div className="flex justify-center mb-3">
             <div
-              className={`flex items-center space-x-1 ${
-                trend >= 0 ? "text-green-400" : "text-red-400"
-              }`}
+              className={`p-2.5 bg-gradient-to-r ${colorClasses.gradient} rounded-xl shadow-lg`}
             >
-              {trend >= 0 ? (
-                <TrendingUp size={16} aria-label="Trending up" />
-              ) : (
-                <TrendingDown size={16} aria-label="Trending down" />
-              )}
-              <span className="text-sm font-semibold">{Math.abs(trend)}%</span>
+              <Icon className="text-white" size={20} aria-label={label} />
             </div>
-          )}
-        </div>
-
-        <div className="space-y-3">
-          <h3 className="text-sm font-medium text-gray-300 uppercase tracking-wide">
-            {label}
-          </h3>
-
-          <div className="flex items-baseline space-x-2">
-            <div className="text-3xl font-bold text-white transition-all duration-1000">
-              {formatValue(animatedValue)}
-            </div>
-            {unit && (
-              <span className={`text-lg font-medium ${colorClasses.text}`}>
-                {unit}
-              </span>
-            )}
           </div>
 
-          {/* Progress bar */}
-          {(showProgress || percentage !== null) && (
-            <div className="space-y-2">
-              <div className="flex justify-between items-center">
-                <span className="text-xs text-gray-400">Progress</span>
-                <span className="text-xs font-semibold text-white">
-                  {Math.round(progressWidth)}%
-                </span>
+          {/* Value and Label stacked on right side */}
+          <div className="flex justify-end mb-3">
+            <div className="flex flex-col items-end">
+              <div className="flex items-baseline space-x-1">
+                <div className="text-lg font-bold text-white transition-all duration-1000">
+                  {formatValue(animatedValue)}
+                </div>
+                {unit && (
+                  <span className={`text-sm font-medium ${colorClasses.text}`}>
+                    {unit}
+                  </span>
+                )}
               </div>
-              <div className="w-full bg-white/10 rounded-full h-2 overflow-hidden">
+              <p className="text-xs text-gray-300 text-right whitespace-nowrap mt-1">
+                {label}
+              </p>
+            </div>
+          </div>
+
+          {/* Progress bar for mobile */}
+          {(showProgress || percentage !== null) && (
+            <div className="mb-3">
+              <div className="w-full bg-white/10 rounded-full h-1.5 overflow-hidden">
                 <div
                   className={`h-full ${colorClasses.progress} rounded-full transition-all duration-1000 ease-out`}
                   style={{
@@ -191,6 +176,92 @@ const StatCard = ({
               </div>
             </div>
           )}
+
+          {/* Trend indicator for mobile */}
+          {trend !== null && (
+            <div className="flex justify-center">
+              <div
+                className={`flex items-center space-x-1 ${
+                  trend >= 0 ? "text-green-400" : "text-red-400"
+                }`}
+              >
+                {trend >= 0 ? (
+                  <TrendingUp size={12} aria-label="Trending up" />
+                ) : (
+                  <TrendingDown size={12} aria-label="Trending down" />
+                )}
+                <span className="text-xs font-semibold">
+                  {Math.abs(trend)}%
+                </span>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Desktop Layout (large screens and up) */}
+        <div className="hidden lg:block">
+          <div className="flex items-start justify-between mb-4">
+            <div
+              className={`p-3 bg-gradient-to-r ${colorClasses.gradient} rounded-xl shadow-lg`}
+            >
+              <Icon className="text-white" size={24} aria-label={label} />
+            </div>
+
+            {trend !== null && (
+              <div
+                className={`flex items-center space-x-1 ${
+                  trend >= 0 ? "text-green-400" : "text-red-400"
+                }`}
+              >
+                {trend >= 0 ? (
+                  <TrendingUp size={16} aria-label="Trending up" />
+                ) : (
+                  <TrendingDown size={16} aria-label="Trending down" />
+                )}
+                <span className="text-sm font-semibold">
+                  {Math.abs(trend)}%
+                </span>
+              </div>
+            )}
+          </div>
+
+          <div className="space-y-3">
+            <h3 className="text-sm font-medium text-gray-300 uppercase tracking-wide whitespace-nowrap">
+              {label}
+            </h3>
+
+            <div className="flex items-baseline space-x-2">
+              <div className="text-3xl font-bold text-white transition-all duration-1000">
+                {formatValue(animatedValue)}
+              </div>
+              {unit && (
+                <span className={`text-lg font-medium ${colorClasses.text}`}>
+                  {unit}
+                </span>
+              )}
+            </div>
+
+            {/* Progress bar */}
+            {(showProgress || percentage !== null) && (
+              <div className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <span className="text-xs text-gray-400">Progress</span>
+                  <span className="text-xs font-semibold text-white">
+                    {Math.round(progressWidth)}%
+                  </span>
+                </div>
+                <div className="w-full bg-white/10 rounded-full h-2 overflow-hidden">
+                  <div
+                    className={`h-full ${colorClasses.progress} rounded-full transition-all duration-1000 ease-out`}
+                    style={{
+                      width: `${Math.min(progressWidth, 100)}%`,
+                      transitionDelay: animated ? "500ms" : "0ms",
+                    }}
+                  ></div>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Sparkle animation on hover */}
@@ -204,14 +275,13 @@ const StatCard = ({
   );
 };
 
-// Stats Section Component with 4/3 layout
+// Stats Section Component with proper responsive layout
 const StatsSection = ({ analyticsData }) => {
   const overview = analyticsData?.overview || {};
   const sessions = analyticsData?.sessions || {};
 
   // Define exactly 7 stat cards with live data
   const statsConfig = [
-    // Top row (4 cards)
     {
       icon: Target,
       label: "Total Projects",
@@ -252,7 +322,6 @@ const StatsSection = ({ analyticsData }) => {
       percentage: overview.successRate || 0,
       color: "green",
     },
-    // Bottom row (3 cards)
     {
       icon: Clock,
       label: "Avg Completion",
@@ -277,18 +346,40 @@ const StatsSection = ({ analyticsData }) => {
 
   return (
     <div className="space-y-6">
-      {/* Top Row - 4 Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
-        {statsConfig.slice(0, 4).map((stat, index) => (
-          <StatCard key={`top-${index}`} {...stat} />
-        ))}
+      {/* Mobile/Tablet Layout - Simple 2x2 grid that flows naturally */}
+      <div className="lg:hidden">
+        <div className="grid grid-cols-2 gap-3 sm:gap-4">
+          {statsConfig.map((stat, index) => (
+            <div
+              key={`mobile-${index}`}
+              className={`${
+                // Make the last card span full width if odd number of cards
+                index === statsConfig.length - 1 && statsConfig.length % 2 === 1
+                  ? "col-span-2"
+                  : ""
+              }`}
+            >
+              <StatCard {...stat} />
+            </div>
+          ))}
+        </div>
       </div>
 
-      {/* Bottom Row - 3 Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {statsConfig.slice(4, 7).map((stat, index) => (
-          <StatCard key={`bottom-${index}`} {...stat} />
-        ))}
+      {/* Desktop Layout - 4+3 layout */}
+      <div className="hidden lg:block space-y-6">
+        {/* Top Row - 4 Cards */}
+        <div className="grid grid-cols-4 gap-6">
+          {statsConfig.slice(0, 4).map((stat, index) => (
+            <StatCard key={`top-${index}`} {...stat} />
+          ))}
+        </div>
+
+        {/* Bottom Row - 3 Cards */}
+        <div className="grid grid-cols-3 gap-6">
+          {statsConfig.slice(4, 7).map((stat, index) => (
+            <StatCard key={`bottom-${index}`} {...stat} />
+          ))}
+        </div>
       </div>
     </div>
   );

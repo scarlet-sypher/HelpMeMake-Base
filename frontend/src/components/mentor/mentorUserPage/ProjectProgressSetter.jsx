@@ -299,7 +299,7 @@ const ProjectProgressSetter = ({ projectData, onDataRefresh }) => {
         )}
       </div>
 
-      <style jsx>{`
+      <style>{`
         .slider-thumb::-webkit-slider-thumb {
           appearance: none;
           height: 20px;
