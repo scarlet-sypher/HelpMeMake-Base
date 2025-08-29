@@ -49,6 +49,14 @@ import ProjectView from "./components/admin/project/ProjectView";
 import ProjectEdit from "./components/admin/project/ProjectEdit";
 import AdminSessionsDashboard from "./pages/admin/AdminSessionsDashboard";
 
+if (import.meta.env.MODE === "production") {
+  console.log = () => {};
+  console.warn = () => {};
+  console.error = () => {};
+  console.info = () => {};
+  console.debug = () => {};
+}
+
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <BrowserRouter>
