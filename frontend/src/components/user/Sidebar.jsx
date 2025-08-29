@@ -197,7 +197,7 @@ const Sidebar = ({
 
       {/* Sidebar */}
       <div
-        className={`fixed left-0 top-0 h-full w-64 bg-gradient-to-b backdrop-blur-sm ${
+        className={`fixed left-0 top-0 h-full w-64 flex flex-col justify-between bg-gradient-to-b backdrop-blur-sm ${
           userRole === "mentor"
             ? "from-slate-900 via-cyan-900 to-teal-900"
             : "from-slate-950 via-blue-950 to-indigo-950"
@@ -249,7 +249,7 @@ const Sidebar = ({
           </nav>
         </div>
 
-        <div className="absolute bottom-0 left-0 right-0 p-6">
+        <div className="p-6">
           <button
             onClick={handleLogout}
             className="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-red-500/20 hover:text-red-300 transition-all duration-200 w-full"
