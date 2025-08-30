@@ -196,7 +196,7 @@ const HeroSection = () => {
 
                 <button
                   onClick={() =>
-                    window.open("/src/assets/pdf/help-me-make.pdf", "_blank")
+                    window.open("/assets/pdf/help-me-make.pdf", "_blank")
                   }
                   className="group border-2 border-white/30 text-white px-6 sm:px-8 md:px-10 py-3 sm:py-4 md:py-5 rounded-full font-semibold text-sm sm:text-base hover:bg-white/10 hover:border-white/50 transition-all duration-300 flex items-center justify-center backdrop-blur-sm w-full sm:w-auto"
                 >
