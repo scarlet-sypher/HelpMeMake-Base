@@ -381,7 +381,7 @@ const ShowRequestsModal = ({ project, onClose, API_URL, showToast }) => {
       {/* Response Modal */}
       {showResponseModal && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[60] flex items-center justify-center p-4">
-          <div className="relative bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 rounded-3xl shadow-2xl border border-white/20 p-8 max-w-md w-full">
+          <div className="relative bg-gradient-to-br from-slate-950 via-blue-950 to-indigo-950 rounded-3xl shadow-2xl border border-white/20 p-8 max-w-md w-full">
             <div className="relative z-10">
               {/* Response Header */}
               <div className="flex items-center mb-6">

@@ -978,7 +978,7 @@ const MentorDetailedProjectView = () => {
         {/* Accept Confirmation Modal */}
         {showAcceptConfirm && (
           <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-            <div className="relative bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 rounded-3xl shadow-2xl border border-white/20 p-8 max-w-md w-full">
+            <div className="relative bg-gradient-to-br from-slate-950 via-blue-950 to-indigo-950 rounded-3xl shadow-2xl border border-white/20 p-8 max-w-md w-full">
               <div className="relative z-10">
                 <h3 className="text-xl font-bold text-white mb-4">
                   Confirm Project Acceptance

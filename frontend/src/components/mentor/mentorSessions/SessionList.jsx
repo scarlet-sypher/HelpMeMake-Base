@@ -564,7 +564,7 @@ const SessionCard = ({
         {/* Recording Link Modal */}
         {showRecordingModal && (
           <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-            <div className="bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 rounded-2xl p-6 border border-white/20 max-w-md w-full shadow-2xl">
+            <div className="bg-gradient-to-br from-slate-950 via-blue-950 to-indigo-950 rounded-2xl p-6 border border-white/20 max-w-md w-full shadow-2xl">
               <div className="text-center mb-5">
                 <div className="w-14 h-14 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-full flex items-center justify-center mx-auto mb-3 border border-blue-400/30">
                   <Play className="text-blue-400" size={24} />
@@ -614,7 +614,7 @@ const SessionCard = ({
         {/* Mentor Reason Modal */}
         {showMentorReasonModal && (
           <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-            <div className="bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 rounded-2xl p-6 border border-white/20 max-w-md w-full shadow-2xl">
+            <div className="bg-gradient-to-br from-slate-950 via-blue-950 to-indigo-950 rounded-2xl p-6 border border-white/20 max-w-md w-full shadow-2xl">
               <div className="text-center mb-5">
                 <div className="w-14 h-14 bg-gradient-to-br from-orange-500/20 to-red-500/20 rounded-full flex items-center justify-center mx-auto mb-3 border border-orange-400/30">
                   <MessageSquare className="text-orange-400" size={24} />

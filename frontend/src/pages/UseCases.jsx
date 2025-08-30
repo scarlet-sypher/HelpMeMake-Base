@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Rocket, GraduationCap, Brain, Code, Zap, Target } from "lucide-react";
 
+
 const UseCases = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [cardsVisible, setCardsVisible] = useState([false, false, false]);
