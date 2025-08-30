@@ -334,7 +334,7 @@ const SelectRole = () => {
                 </span>
               ) : (
                 <span className="flex items-center gap-3">
-                  Continue to Dashboard
+                  Continue to Login Page
                   <ArrowRight className="w-5 h-5" />
                 </span>
               )}
