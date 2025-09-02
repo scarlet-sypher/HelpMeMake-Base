@@ -1,9 +1,9 @@
-const { GoogleGenerativeAI } = require('@google/generative-ai');
-const Project = require('../Model/Project');
-const Learner = require('../Model/Learner');
-const fs = require('fs');
-const path = require('path');
-const cloudinary = require('../utils/cloudinary');
+const { GoogleGenerativeAI } = require("@google/generative-ai");
+const Project = require("../Model/Project");
+const Learner = require("../Model/Learner");
+const fs = require("fs");
+const path = require("path");
+const cloudinary = require("../utils/cloudinary");
 
 // Initialize Gemini AI
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
@@ -17,7 +17,7 @@ const aiMilestoneController = {
       if (!userId) {
         return res.status(401).json({
           success: false,
-          message: 'User ID not found in token'
+          message: "User ID not found in token",
         });
       }
 
@@ -26,7 +26,7 @@ const aiMilestoneController = {
       if (!project) {
         return res.status(404).json({
           success: false,
-          message: 'Project not found'
+          message: "Project not found",
         });
       }
 
@@ -34,32 +34,47 @@ const aiMilestoneController = {
       if (!learner || project.learnerId.toString() !== learner._id.toString()) {
         return res.status(403).json({
           success: false,
-          message: 'Access denied to this project'
+          message: "Access denied to this project",
         });
       }
 
       // Get previous suggestions if regenerating
       let previousSuggestions = [];
-      if (regenerate && project.aiResponse && project.aiResponse.previousSuggestions) {
-        previousSuggestions = project.aiResponse.previousSuggestions.map(s => s.text);
+      if (
+        regenerate &&
+        project.aiResponse &&
+        project.aiResponse.previousSuggestions
+      ) {
+        previousSuggestions = project.aiResponse.previousSuggestions.map(
+          (s) => s.text
+        );
       }
 
       // Generate AI milestones
-      const aiSuggestions = await generateMilestonesWithGemini(project, previousSuggestions);
+      const aiSuggestions = await generateMilestonesWithGemini(
+        project,
+        previousSuggestions
+      );
 
       // Update project with AI suggestions
       const updatedProject = await Project.findByIdAndUpdate(
         projectId,
         {
           $set: {
-            'aiResponse.suggestions': aiSuggestions.map(text => ({ text, isCompleted: false })),
-            'aiResponse.lastGenerated': new Date()
+            "aiResponse.suggestions": aiSuggestions.map((text) => ({
+              text,
+              isCompleted: false,
+            })),
+            "aiResponse.lastGenerated": new Date(),
           },
           $push: {
-            'aiResponse.previousSuggestions': {
-              $each: aiSuggestions.map(text => ({ text, generatedAt: new Date() }))
-            }
-          }
+            "aiResponse.previousSuggestions": {
+              $each: aiSuggestions.map((text) => ({
+                text,
+                generatedAt: new Date(),
+              })),
+            },
+          },
         },
         { new: true, upsert: true }
       );
@@ -67,15 +82,14 @@ const aiMilestoneController = {
       res.json({
         success: true,
         suggestions: aiSuggestions,
-        message: 'AI milestones generated successfully'
+        message: "AI milestones generated successfully",
       });
-
     } catch (error) {
-      console.error('AI milestone generation error:', error);
+      console.error("AI milestone generation error:", error);
       res.status(500).json({
         success: false,
-        message: 'Failed to generate AI milestones',
-        error: error.message
+        message: "Failed to generate AI milestones",
+        error: error.message,
       });
     }
   },
@@ -88,7 +102,7 @@ const aiMilestoneController = {
       if (!userId) {
         return res.status(401).json({
           success: false,
-          message: 'User ID not found in token'
+          message: "User ID not found in token",
         });
       }
 
@@ -96,7 +110,7 @@ const aiMilestoneController = {
       if (!project) {
         return res.status(404).json({
           success: false,
-          message: 'Project not found'
+          message: "Project not found",
         });
       }
 
@@ -104,20 +118,22 @@ const aiMilestoneController = {
       if (!learner || project.learnerId.toString() !== learner._id.toString()) {
         return res.status(403).json({
           success: false,
-          message: 'Access denied to this project'
+          message: "Access denied to this project",
         });
       }
 
       res.json({
         success: true,
-        aiResponse: project.aiResponse || { suggestions: [], previousSuggestions: [] }
+        aiResponse: project.aiResponse || {
+          suggestions: [],
+          previousSuggestions: [],
+        },
       });
-
     } catch (error) {
-      console.error('Get AI milestones error:', error);
+      console.error("Get AI milestones error:", error);
       res.status(500).json({
         success: false,
-        message: 'Failed to fetch AI milestones'
+        message: "Failed to fetch AI milestones",
       });
     }
   },
@@ -130,7 +146,7 @@ const aiMilestoneController = {
       if (!userId) {
         return res.status(401).json({
           success: false,
-          message: 'User ID not found in token'
+          message: "User ID not found in token",
         });
       }
 
@@ -138,7 +154,7 @@ const aiMilestoneController = {
       if (!project) {
         return res.status(404).json({
           success: false,
-          message: 'Project not found'
+          message: "Project not found",
         });
       }
 
@@ -146,167 +162,181 @@ const aiMilestoneController = {
       if (!learner || project.learnerId.toString() !== learner._id.toString()) {
         return res.status(403).json({
           success: false,
-          message: 'Access denied to this project'
+          message: "Access denied to this project",
         });
       }
 
       // Toggle the completion status
       if (project.aiResponse && project.aiResponse.suggestions[index]) {
-        project.aiResponse.suggestions[index].isCompleted = !project.aiResponse.suggestions[index].isCompleted;
+        project.aiResponse.suggestions[index].isCompleted =
+          !project.aiResponse.suggestions[index].isCompleted;
         await project.save();
       }
 
       res.json({
         success: true,
-        message: 'Milestone toggled successfully'
+        message: "Milestone toggled successfully",
       });
-
     } catch (error) {
-      console.error('Toggle milestone error:', error);
+      console.error("Toggle milestone error:", error);
       res.status(500).json({
         success: false,
-        message: 'Failed to toggle milestone'
+        message: "Failed to toggle milestone",
       });
     }
   },
 
   // NEW: Generate image from text prompt
   async generateRealImage(req, res) {
-  try {
-    const { prompt } = req.body;
-
-    if (!prompt || prompt.trim().length === 0) {
-      return res.status(400).json({
-        success: false,
-        message: 'Image prompt is required'
-      });
-    }
-
-    // Initialize Gemini with new image generation model
-    const model = genAI.getGenerativeModel({ 
-      model: 'gemini-2.0-flash-preview-image-generation'
-    });
-
-    // Modify prompt to ensure only image generation (no text)
-    const finalPrompt = `Please generate a realistic, high-quality image based on the following description. Do not provide any text explanation or description — only return an image.\n\n${prompt.trim()}`;
-
-    // Generate image using Gemini with new API structure
-    const result = await model.generateContent({
-      contents: [{ role: "user", parts: [{ text: finalPrompt }] }],
-      generationConfig: { responseModalities: ["TEXT", "IMAGE"] }
-    });
-
-    const parts = result.response.candidates[0].content.parts;
-    
-    // Find the image part in the response
-    const imagePart = parts.find(p => p.inlineData && p.inlineData.data);
-    
-    if (!imagePart) {
-      return res.status(400).json({
-        success: false,
-        message: 'No image generated from the prompt'
-      });
-    }
-
-    // Extract base64 image data
-    const base64Image = imagePart.inlineData.data;
-    const buffer = Buffer.from(base64Image, 'base64');
-    
-    // Create temp directory if it doesn't exist
-    const tempDir = path.join(__dirname, '../uploads/temp');
-    if (!fs.existsSync(tempDir)) {
-      fs.mkdirSync(tempDir, { recursive: true });
-    }
-
-    // Generate unique filename
-    const fileName = `ai-generated-${Date.now()}-${Math.random().toString(36).substr(2, 9)}.png`;
-    const filePath = path.join(tempDir, fileName);
-
-    // Save temp file
-    fs.writeFileSync(filePath, buffer);
-
     try {
-      // Upload to Cloudinary (overwrite previous if exists)
-      const uploadResult = await cloudinary.uploader.upload(filePath, {
-        folder: 'temp-ai-images',
-        public_id: `ai-temp-${Date.now()}`,
-        overwrite: true,
-        resource_type: 'image',
-        format: 'png',
-        // Set expiration for temp images (24 hours)
-        expires_at: Math.floor(Date.now() / 1000) + 86400
-      });
-
-      // Clean up temp file
-      fs.unlinkSync(filePath);
-
-      res.status(200).json({
-        success: true,
-        imageUrl: uploadResult.secure_url,
-        publicId: uploadResult.public_id,
-        originalPrompt: prompt,
-        message: 'Image generated successfully'
-      });
-
-    } catch (uploadError) {
-      // Clean up temp file even if upload fails
-      if (fs.existsSync(filePath)) {
-        fs.unlinkSync(filePath);
-      }
-      
-      throw uploadError;
-    }
-
-  } catch (error) {
-    console.error('Real image generation failed:', error);
-    
-    // Handle specific Gemini API errors
-    if (error.message?.includes('safety') || error.message?.includes('policy')) {
-      return res.status(400).json({
-        success: false,
-        message: 'Image prompt violates safety guidelines. Please try a different description.'
-      });
-    }
-    
-    if (error.message?.includes('quota') || error.message?.includes('limit') || error.message?.includes('exceeded')) {
-      return res.status(429).json({
-        success: false,
-        message: 'Daily AI image generation limit reached. Please try again tomorrow.'
-      });
-    }
-
-    if (error.message?.includes('model') || error.message?.includes('not found')) {
-      return res.status(503).json({
-        success: false,
-        message: 'AI image generation service is temporarily unavailable. Please try again later.'
-      });
-    }
-
-    res.status(500).json({
-      success: false,
-      message: 'Image generation failed. Please try again.',
-      error: process.env.NODE_ENV === 'development' ? error.message : undefined
-    });
-  }
-},
-
-  // NEW: Generate description from text prompt
-  async generateDescriptionFromPrompt(req, res) {
-    try {
-      const { prompt, type = 'both' } = req.body;
+      const { prompt } = req.body;
 
       if (!prompt || prompt.trim().length === 0) {
         return res.status(400).json({
           success: false,
-          message: 'Prompt is required'
+          message: "Image prompt is required",
         });
       }
 
-      const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
-      
-      let descriptionPrompt = '';
-      
-      if (type === 'short' || type === 'both') {
+      // Initialize Gemini with new image generation model
+      const model = genAI.getGenerativeModel({
+        model: "gemini-2.0-flash-preview-image-generation",
+      });
+
+      // Modify prompt to ensure only image generation (no text)
+      const finalPrompt = `Please generate a realistic, high-quality image based on the following description. Do not provide any text explanation or description — only return an image.\n\n${prompt.trim()}`;
+
+      // Generate image using Gemini with new API structure
+      const result = await model.generateContent({
+        contents: [{ role: "user", parts: [{ text: finalPrompt }] }],
+        generationConfig: { responseModalities: ["TEXT", "IMAGE"] },
+      });
+
+      const parts = result.response.candidates[0].content.parts;
+
+      // Find the image part in the response
+      const imagePart = parts.find((p) => p.inlineData && p.inlineData.data);
+
+      if (!imagePart) {
+        return res.status(400).json({
+          success: false,
+          message: "No image generated from the prompt",
+        });
+      }
+
+      // Extract base64 image data
+      const base64Image = imagePart.inlineData.data;
+      const buffer = Buffer.from(base64Image, "base64");
+
+      // Create temp directory if it doesn't exist
+      const tempDir = path.join(__dirname, "../uploads/temp");
+      if (!fs.existsSync(tempDir)) {
+        fs.mkdirSync(tempDir, { recursive: true });
+      }
+
+      // Generate unique filename
+      const fileName = `ai-generated-${Date.now()}-${Math.random()
+        .toString(36)
+        .substr(2, 9)}.png`;
+      const filePath = path.join(tempDir, fileName);
+
+      // Save temp file
+      fs.writeFileSync(filePath, buffer);
+
+      try {
+        // Upload to Cloudinary (overwrite previous if exists)
+        const uploadResult = await cloudinary.uploader.upload(filePath, {
+          folder: "temp-ai-images",
+          public_id: `ai-temp-${Date.now()}`,
+          overwrite: true,
+          resource_type: "image",
+          format: "png",
+          // Set expiration for temp images (24 hours)
+          expires_at: Math.floor(Date.now() / 1000) + 86400,
+        });
+
+        // Clean up temp file
+        fs.unlinkSync(filePath);
+
+        res.status(200).json({
+          success: true,
+          imageUrl: uploadResult.secure_url,
+          publicId: uploadResult.public_id,
+          originalPrompt: prompt,
+          message: "Image generated successfully",
+        });
+      } catch (uploadError) {
+        // Clean up temp file even if upload fails
+        if (fs.existsSync(filePath)) {
+          fs.unlinkSync(filePath);
+        }
+
+        throw uploadError;
+      }
+    } catch (error) {
+      console.error("Real image generation failed:", error);
+
+      // Handle specific Gemini API errors
+      if (
+        error.message?.includes("safety") ||
+        error.message?.includes("policy")
+      ) {
+        return res.status(400).json({
+          success: false,
+          message:
+            "Image prompt violates safety guidelines. Please try a different description.",
+        });
+      }
+
+      if (
+        error.message?.includes("quota") ||
+        error.message?.includes("limit") ||
+        error.message?.includes("exceeded")
+      ) {
+        return res.status(429).json({
+          success: false,
+          message:
+            "Daily AI image generation limit reached. Please try again tomorrow.",
+        });
+      }
+
+      if (
+        error.message?.includes("model") ||
+        error.message?.includes("not found")
+      ) {
+        return res.status(503).json({
+          success: false,
+          message:
+            "AI image generation service is temporarily unavailable. Please try again later.",
+        });
+      }
+
+      res.status(500).json({
+        success: false,
+        message: "Image generation failed. Please try again.",
+        error:
+          process.env.NODE_ENV === "development" ? error.message : undefined,
+      });
+    }
+  },
+
+  // NEW: Generate description from text prompt
+  async generateDescriptionFromPrompt(req, res) {
+    try {
+      const { prompt, type = "both" } = req.body;
+
+      if (!prompt || prompt.trim().length === 0) {
+        return res.status(400).json({
+          success: false,
+          message: "Prompt is required",
+        });
+      }
+
+      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+      let descriptionPrompt = "";
+
+      if (type === "short" || type === "both") {
         descriptionPrompt = `Create a compelling short description (50-100 words) for a project based on this prompt: "${prompt}"
 
 Requirements:
@@ -317,7 +347,7 @@ Requirements:
 - No jargon or fluff
 
 Return only the short description without any additional text or formatting.`;
-      } else if (type === 'long') {
+      } else if (type === "long") {
         descriptionPrompt = `Create a comprehensive long description (200-400 words) for a project based on this prompt: "${prompt}"
 
 Requirements:
@@ -329,7 +359,7 @@ Requirements:
 - Professional and informative tone
 
 Return only the long description without any additional text or formatting.`;
-      } else if (type === 'both') {
+      } else if (type === "both") {
         descriptionPrompt = `Create both a short description (50-100 words) and a long description (200-400 words) for a project based on this prompt: "${prompt}"
 
 Format your response as:
@@ -350,23 +380,23 @@ Requirements:
       const response = await result.response;
       const generatedText = response.text();
 
-      let shortDescription = '';
-      let longDescription = '';
+      let shortDescription = "";
+      let longDescription = "";
 
-      if (type === 'both') {
+      if (type === "both") {
         // Parse the response to extract short and long descriptions
-        const parts = generatedText.split('LONG DESCRIPTION:');
+        const parts = generatedText.split("LONG DESCRIPTION:");
         if (parts.length === 2) {
-          shortDescription = parts[0].replace('SHORT DESCRIPTION:', '').trim();
+          shortDescription = parts[0].replace("SHORT DESCRIPTION:", "").trim();
           longDescription = parts[1].trim();
         } else {
           // Fallback if parsing fails
-          shortDescription = generatedText.substring(0, 200) + '...';
+          shortDescription = generatedText.substring(0, 200) + "...";
           longDescription = generatedText;
         }
-      } else if (type === 'short') {
+      } else if (type === "short") {
         shortDescription = generatedText;
-      } else if (type === 'long') {
+      } else if (type === "long") {
         longDescription = generatedText;
       }
 
@@ -376,27 +406,32 @@ Requirements:
         longDescription: longDescription,
         fullText: generatedText,
         originalPrompt: prompt,
-        message: 'Description generated successfully'
+        message: "Description generated successfully",
       });
-
     } catch (error) {
-      console.error('Description generation error:', error);
+      console.error("Description generation error:", error);
       res.status(500).json({
         success: false,
-        message: 'Failed to generate description',
-        error: error.message
+        message: "Failed to generate description",
+        error: error.message,
       });
     }
-  }
+  },
 };
 
-async function generateMilestonesWithGemini(projectData, previousSuggestions = []) {
+async function generateMilestonesWithGemini(
+  projectData,
+  previousSuggestions = []
+) {
   try {
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-    const previousText = previousSuggestions.length > 0 
-      ? `\n\nPREVIOUS SUGGESTIONS TO AVOID:\n${previousSuggestions.map((s, i) => `${i + 1}. ${s}`).join('\n')}`
-      : '';
+    const previousText =
+      previousSuggestions.length > 0
+        ? `\n\nPREVIOUS SUGGESTIONS TO AVOID:\n${previousSuggestions
+            .map((s, i) => `${i + 1}. ${s}`)
+            .join("\n")}`
+        : "";
 
     const prompt = `You are an AI project mentor helping learners break down their projects into manageable milestones.
 
@@ -404,12 +439,14 @@ PROJECT DETAILS:
 - Name: ${projectData.name}
 - Description: ${projectData.shortDescription}
 - Full Description: ${projectData.fullDescription}
-- Tech Stack: ${projectData.techStack.join(', ')}
+- Tech Stack: ${projectData.techStack.join(", ")}
 - Category: ${projectData.category}
 - Difficulty: ${projectData.difficultyLevel}
 - Duration: ${projectData.duration}
 - Expected Outcome: ${projectData.projectOutcome}
-- Prerequisites: ${projectData.prerequisites ? projectData.prerequisites.join(', ') : 'None'}
+- Prerequisites: ${
+      projectData.prerequisites ? projectData.prerequisites.join(", ") : "None"
+    }
 - Knowledge Level: ${projectData.knowledgeLevel}${previousText}
 
 TASK:
@@ -445,37 +482,39 @@ Return exactly 5 milestone strings in the JSON array.`;
 
     // Clean up response
     let cleanResponse = response.trim();
-    if (cleanResponse.startsWith('```json')) {
-      cleanResponse = cleanResponse.replace(/```json\n?/, '').replace(/\n?```$/, '');
+    if (cleanResponse.startsWith("```json")) {
+      cleanResponse = cleanResponse
+        .replace(/```json\n?/, "")
+        .replace(/\n?```$/, "");
     }
-    if (cleanResponse.startsWith('```')) {
-      cleanResponse = cleanResponse.replace(/```\n?/, '').replace(/\n?```$/, '');
+    if (cleanResponse.startsWith("```")) {
+      cleanResponse = cleanResponse
+        .replace(/```\n?/, "")
+        .replace(/\n?```$/, "");
     }
 
     const parsedResponse = JSON.parse(cleanResponse);
-    
-    if (!parsedResponse.milestones || !Array.isArray(parsedResponse.milestones)) {
-      throw new Error('Invalid AI response structure');
+
+    if (
+      !parsedResponse.milestones ||
+      !Array.isArray(parsedResponse.milestones)
+    ) {
+      throw new Error("Invalid AI response structure");
     }
 
     return parsedResponse.milestones.slice(0, 5);
-
   } catch (error) {
-    console.error('Gemini AI error:', error);
-    
+    console.error("Gemini AI error:", error);
+
     // Fallback milestones
     return [
       "Set up project foundation and development environment",
       "Design and create basic user interface components",
       "Implement core functionality and business logic",
-      "Add advanced features and external integrations", 
-      "Test thoroughly and deploy the final application"
+      "Add advanced features and external integrations",
+      "Test thoroughly and deploy the final application",
     ];
   }
-
-
-
-  
 }
 
 module.exports = aiMilestoneController;
