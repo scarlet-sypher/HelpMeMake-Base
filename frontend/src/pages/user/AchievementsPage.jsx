@@ -23,6 +23,8 @@ import {
   Gift,
   TrendingUp,
   Award,
+  AlertTriangle,
+  X,
 } from "lucide-react";
 
 const customStyles = `
@@ -35,6 +37,150 @@ const customStyles = `
   }
 `;
 
+const DebugConfirmationModal = ({ isOpen, onClose, onConfirm, isLoading }) => {
+  const [inputValue, setInputValue] = useState("");
+  const [error, setError] = useState("");
+  const requiredPhrase = "i want to distroy my account";
+  const isValid = inputValue.trim() === requiredPhrase;
+
+  useEffect(() => {
+    if (!isOpen) {
+      setInputValue("");
+      setError("");
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
+    const handleEscape = (e) => {
+      if (e.key === "Escape" && isOpen) {
+        onClose();
+      }
+    };
+
+    const handleEnter = (e) => {
+      if (e.key === "Enter" && isOpen && isValid && !isLoading) {
+        handleConfirm();
+      }
+    };
+
+    document.addEventListener("keydown", handleEscape);
+    document.addEventListener("keydown", handleEnter);
+
+    return () => {
+      document.removeEventListener("keydown", handleEscape);
+      document.removeEventListener("keydown", handleEnter);
+    };
+  }, [isOpen, isValid, isLoading]);
+
+  const handleInputChange = (e) => {
+    const value = e.target.value;
+    setInputValue(value);
+
+    if (value.trim() !== "" && value.trim() !== requiredPhrase) {
+      setError("Type the exact phrase to enable Confirm.");
+    } else {
+      setError("");
+    }
+  };
+
+  const handleConfirm = () => {
+    if (isValid && !isLoading) {
+      onConfirm();
+    }
+  };
+
+  const handleBackdropClick = (e) => {
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div
+        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+        onClick={handleBackdropClick}
+      ></div>
+
+      <div className="relative bg-gradient-to-br from-slate-900 to-red-950/80 backdrop-blur-sm rounded-2xl sm:rounded-3xl border border-red-500/30 shadow-2xl max-w-md w-full mx-4">
+        <div className="p-4 sm:p-6">
+          <div className="flex items-center justify-between mb-4 sm:mb-6">
+            <div className="flex items-center space-x-3">
+              <div className="p-2 bg-red-500/20 rounded-lg">
+                <AlertTriangle className="text-red-400" size={24} />
+              </div>
+              <h2 className="text-lg sm:text-xl font-bold text-white">
+                ⚠ Dangerous Debug Action
+              </h2>
+            </div>
+            <button
+              onClick={onClose}
+              disabled={isLoading}
+              className="text-gray-400 hover:text-white transition-colors disabled:opacity-50"
+            >
+              <X size={20} />
+            </button>
+          </div>
+
+          <div className="space-y-4 sm:space-y-6 mb-6">
+            <div className="space-y-2 text-sm sm:text-base text-gray-200">
+              <p>
+                By continuing, you will open the debug panel with testing
+                controls.
+              </p>
+              <p>
+                Use the debug panel carefully as it can modify your account
+                data.
+              </p>
+              <p>This will give you access to testing functions.</p>
+            </div>
+
+            <div className="space-y-2">
+              <label className="block text-white font-semibold text-sm">
+                To proceed, type: "{requiredPhrase}"
+              </label>
+              <input
+                type="text"
+                value={inputValue}
+                onChange={handleInputChange}
+                disabled={isLoading}
+                className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-white/10 border border-gray-600/50 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:border-red-500/50 disabled:opacity-50 text-sm sm:text-base"
+                placeholder="Type the phrase here..."
+                autoComplete="off"
+              />
+              {error && (
+                <p className="text-red-400 text-xs sm:text-sm">{error}</p>
+              )}
+            </div>
+          </div>
+
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+            <button
+              onClick={onClose}
+              disabled={isLoading}
+              className="flex-1 px-4 py-2 sm:py-3 bg-white/10 hover:bg-white/20 text-white rounded-lg font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleConfirm}
+              disabled={!isValid || isLoading}
+              className="flex-1 flex items-center justify-center space-x-2 px-4 py-2 sm:py-3 bg-red-600 hover:bg-red-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white rounded-lg font-semibold transition-all text-sm sm:text-base"
+            >
+              {isLoading && (
+                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+              )}
+              <span>{isLoading ? "Processing..." : "Confirm"}</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const AchievementsPage = () => {
   const { user, loading, isAuthenticated } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -45,6 +191,9 @@ const AchievementsPage = () => {
   const [newBadges, setNewBadges] = useState([]);
   const [showTestPanel, setShowTestPanel] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [showDebugModal, setShowDebugModal] = useState(false);
+  const [isDebugLoading, setIsDebugLoading] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
 
   const [testValues, setTestValues] = useState({
     projectCount: 0,
@@ -79,7 +228,6 @@ const AchievementsPage = () => {
 
         if (data.newBadges && data.newBadges.length > 0) {
           setNewBadges(data.newBadges);
-
           setTimeout(() => setNewBadges([]), 5000);
         }
       }
@@ -120,6 +268,24 @@ const AchievementsPage = () => {
       console.error("Error recalculating achievements:", error);
     } finally {
       setIsRefreshing(false);
+    }
+  };
+  const executeDebugAction = async () => {
+    if (!isAuthenticated) return;
+
+    try {
+      setIsDebugLoading(true);
+
+      // Just close modal and open debug panel
+      setShowDebugModal(false);
+      setShowTestPanel(true);
+
+      setSuccessMessage("Debug panel opened successfully!");
+      setTimeout(() => setSuccessMessage(""), 3000);
+    } catch (error) {
+      console.error("Error opening debug panel:", error);
+    } finally {
+      setIsDebugLoading(false);
     }
   };
 
@@ -177,6 +343,10 @@ const AchievementsPage = () => {
     console.log("Badge clicked:", badgeInfo);
   };
 
+  const handleDebugClick = () => {
+    setShowDebugModal(true);
+  };
+
   if (loading || achievementsLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-indigo-950 flex items-center justify-center w-full overflow-hidden">
@@ -229,6 +399,17 @@ const AchievementsPage = () => {
           </div>
 
           <div className="relative z-10 p-3 sm:p-4 lg:p-6 space-y-4 sm:space-y-6 w-full">
+            {successMessage && (
+              <div className="bg-green-500/20 border border-green-500/30 rounded-lg p-3 mb-4">
+                <div className="flex items-center space-x-2">
+                  <CheckCircle className="text-green-400" size={16} />
+                  <span className="text-green-200 text-sm">
+                    {successMessage}
+                  </span>
+                </div>
+              </div>
+            )}
+
             <div className="relative group w-full">
               <div className="absolute -inset-0.5 bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 rounded-2xl sm:rounded-3xl blur opacity-20 group-hover:opacity-30 transition duration-500"></div>
               <div className="relative bg-gradient-to-r from-yellow-500/20 to-orange-600/20 backdrop-blur-sm rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 border border-yellow-400/30 w-full">
@@ -293,10 +474,154 @@ const AchievementsPage = () => {
                         {isRefreshing ? "Updating..." : "Refresh Achievements"}
                       </span>
                     </button>
+
+                    <button
+                      onClick={() => setShowDebugModal(true)}
+                      className="flex items-center space-x-2 px-3 sm:px-4 py-2 sm:py-3 bg-white/10 hover:bg-white/20 text-white rounded-lg sm:rounded-xl font-semibold transition-all text-sm sm:text-base transform hover:scale-105"
+                    >
+                      <Settings size={16} />
+                      <span className="hidden sm:inline">Debug Panel</span>
+                      <span className="sm:hidden">Debug</span>
+                    </button>
                   </div>
                 </div>
               </div>
             </div>
+
+            {showTestPanel && (
+              <div className="bg-gray-800/90 backdrop-blur-sm rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-gray-600/50">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-bold text-white flex items-center">
+                    <Settings className="mr-2 text-gray-400" size={20} />
+                    Debug Panel (Testing Only)
+                  </h3>
+                  <button
+                    onClick={() => setShowTestPanel(false)}
+                    className="text-gray-400 hover:text-white"
+                  >
+                    ×
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <div className="bg-white/5 rounded-lg p-3">
+                    <label className="block text-white text-sm font-semibold mb-2">
+                      Add Project
+                    </label>
+                    <button
+                      onClick={() => updateTestValue("addProject")}
+                      className="w-full bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-lg transition-colors text-sm"
+                    >
+                      Add Completed Project
+                    </button>
+                  </div>
+
+                  <div className="bg-white/5 rounded-lg p-3">
+                    <label className="block text-white text-sm font-semibold mb-2">
+                      Add Session
+                    </label>
+                    <button
+                      onClick={() => updateTestValue("addSession")}
+                      className="w-full bg-green-500 hover:bg-green-600 text-white px-3 py-2 rounded-lg transition-colors text-sm"
+                    >
+                      Add Completed Session
+                    </button>
+                  </div>
+
+                  <div className="bg-white/5 rounded-lg p-3">
+                    <label className="block text-white text-sm font-semibold mb-2">
+                      Add Milestone
+                    </label>
+                    <button
+                      onClick={() => updateTestValue("addMilestone")}
+                      className="w-full bg-purple-500 hover:bg-purple-600 text-white px-3 py-2 rounded-lg transition-colors text-sm"
+                    >
+                      Add Completed Milestone
+                    </button>
+                  </div>
+
+                  <div className="bg-white/5 rounded-lg p-3">
+                    <label className="block text-white text-sm font-semibold mb-2">
+                      Streak Days
+                    </label>
+                    <div className="flex items-center space-x-2">
+                      <button
+                        onClick={() =>
+                          updateTestValue(
+                            "updateStreak",
+                            Math.max(0, (learnerData?.streakDays || 0) - 1)
+                          )
+                        }
+                        className="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded text-sm"
+                      >
+                        <Minus size={14} />
+                      </button>
+                      <span className="text-white text-sm flex-1 text-center">
+                        {learnerData?.streakDays || 0}
+                      </span>
+                      <button
+                        onClick={() =>
+                          updateTestValue(
+                            "updateStreak",
+                            (learnerData?.streakDays || 0) + 1
+                          )
+                        }
+                        className="bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded text-sm"
+                      >
+                        <Plus size={14} />
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="bg-white/5 rounded-lg p-3">
+                    <label className="block text-white text-sm font-semibold mb-2">
+                      Total Logins
+                    </label>
+                    <div className="flex items-center space-x-2">
+                      <button
+                        onClick={() =>
+                          updateTestValue(
+                            "updateLogins",
+                            Math.max(0, (learnerData?.totalLogins || 0) - 1)
+                          )
+                        }
+                        className="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded text-sm"
+                      >
+                        <Minus size={14} />
+                      </button>
+                      <span className="text-white text-sm flex-1 text-center">
+                        {learnerData?.totalLogins || 0}
+                      </span>
+                      <button
+                        onClick={() =>
+                          updateTestValue(
+                            "updateLogins",
+                            (learnerData?.totalLogins || 0) + 1
+                          )
+                        }
+                        className="bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded text-sm"
+                      >
+                        <Plus size={14} />
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="bg-white/5 rounded-lg p-3">
+                    <label className="block text-white text-sm font-semibold mb-2">
+                      Quick Actions
+                    </label>
+                    <div className="space-y-2">
+                      <button
+                        onClick={handleDebugClick}
+                        className="w-full bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded text-xs"
+                      >
+                        Add All Types
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {learnerData && achievementData && (
               <XPProgressTracker
@@ -376,8 +701,16 @@ const AchievementsPage = () => {
             </div>
           </div>
         </div>
+
+        <DebugConfirmationModal
+          isOpen={showDebugModal}
+          onClose={() => setShowDebugModal(false)}
+          onConfirm={executeDebugAction}
+          isLoading={isDebugLoading}
+        />
       </div>
     </>
   );
 };
+
 export default AchievementsPage;
