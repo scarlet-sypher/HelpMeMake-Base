@@ -10,7 +10,6 @@ import {
   Star,
 } from "lucide-react";
 
-// Enhanced StepCard Component
 const StepCard = ({
   step,
   title,
@@ -171,7 +170,6 @@ const StepCard = ({
   );
 };
 
-// Enhanced ConnectingLine Component
 const ConnectingLine = ({ isVertical, index, isVisible }) => {
   const [isInView, setIsInView] = useState(false);
   const [animationPhase, setAnimationPhase] = useState(0);
@@ -750,7 +748,7 @@ const SafePayments = () => {
         
         .rounded-4xl { border-radius: 2rem; }
         
-        /* Custom scrollbar for better UX */
+       
         ::-webkit-scrollbar {
           width: 8px;
         }
@@ -768,7 +766,7 @@ const SafePayments = () => {
           background: linear-gradient(to bottom, #059669, #2563eb);
         }
         
-        /* Smooth focus styles */
+       
         *:focus-visible {
           outline: 2px solid #10b981;
           outline-offset: 2px;

@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Rocket, GraduationCap, Brain, Code, Zap, Target } from "lucide-react";
 
-
 const UseCases = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [cardsVisible, setCardsVisible] = useState([false, false, false]);
@@ -11,7 +10,6 @@ const UseCases = () => {
   const cardsRef = useRef([]);
   const quoteRef = useRef(null);
 
-  // Enhanced Intersection Observer for bidirectional scroll animations
   useEffect(() => {
     const observerOptions = {
       threshold: [0.1, 0.3, 0.6],
@@ -31,7 +29,6 @@ const UseCases = () => {
           setQuoteVisible(isIntersecting && intersectionRatio > 0.2);
         }
 
-        // Enhanced individual card animations
         cardsRef.current.forEach((cardRef, index) => {
           if (entry.target === cardRef) {
             setCardsVisible((prev) => {
@@ -44,7 +41,6 @@ const UseCases = () => {
       });
     }, observerOptions);
 
-    // Observe elements
     const elementsToObserve = [
       sectionRef.current,
       quoteRef.current,
@@ -109,7 +105,6 @@ const UseCases = () => {
     },
   ];
 
-  // Dynamic particle count based on screen size
   const getParticleCount = () => {
     if (typeof window !== "undefined") {
       if (window.innerWidth < 640) return 8;
@@ -331,7 +326,7 @@ const UseCases = () => {
         .animation-delay-1500 { animation-delay: 1500ms; }
         .animation-delay-2000 { animation-delay: 2000ms; }
 
-        /* Enhanced responsive shadow utilities */
+       
         @media (max-width: 640px) {
           .shadow-4xl {
             box-shadow: 0 15px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -5px rgba(0, 0, 0, 0.2);
@@ -350,7 +345,7 @@ const UseCases = () => {
           }
         }
 
-        /* Enhanced responsive blur utilities */
+       
         @media (max-width: 640px) {
           .blur-responsive { filter: blur(8px); }
         }
@@ -363,12 +358,12 @@ const UseCases = () => {
           .blur-responsive { filter: blur(16px); }
         }
 
-        /* Smooth scrolling for better UX */
+       
         html {
           scroll-behavior: smooth;
         }
 
-        /* Enhanced responsive hover effects */
+       
         @media (hover: hover) and (pointer: fine) {
           .group:hover .group-hover\\:scale-110 {
             transform: scale(1.1);
@@ -381,7 +376,7 @@ const UseCases = () => {
           }
         }
 
-        /* Touch device optimizations */
+       
         @media (hover: none) {
           .group:active .group-hover\\:scale-110 {
             transform: scale(1.05);
@@ -389,7 +384,7 @@ const UseCases = () => {
           }
         }
 
-        /* Enhanced responsive typography scaling */
+       
         @media (max-width: 375px) {
           .text-responsive-sm { font-size: 0.75rem; }
           .text-responsive-base { font-size: 0.875rem; }
@@ -397,29 +392,29 @@ const UseCases = () => {
           .text-responsive-xl { font-size: 1.125rem; }
         }
 
-        /* Improved performance for animations */
+       
         .animate-pulse {
           animation-duration: 2s;
         }
 
-        /* Better spacing for very small screens */
+       
         @media (max-width: 360px) {
           .container-padding { padding-left: 0.75rem; padding-right: 0.75rem; }
         }
 
-        /* Enhanced focus states for accessibility */
+       
         .focus\\:ring-enhanced:focus {
           outline: none;
           box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
         }
 
-        /* Performance optimizations */
+       
         * {
           -webkit-font-smoothing: antialiased;
           -moz-osx-font-smoothing: grayscale;
         }
 
-        /* Prevent layout shift on load */
+       
         .prevent-cls {
           contain: layout style paint;
         }

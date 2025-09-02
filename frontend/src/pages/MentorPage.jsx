@@ -50,7 +50,6 @@ const MentorPage = () => {
       });
     }, observerOptions);
 
-    // Observe elements
     const elements = [headerRef.current, statsRef.current, ctaRef.current];
     elements.forEach((el, index) => {
       if (el) {
@@ -183,8 +182,7 @@ const MentorPage = () => {
       setCanScrollLeft(scrollLeft > 0);
       setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 10);
 
-      // Calculate current page based on scroll position
-      const cardWidth = 288 + 24; // card width + margin
+      const cardWidth = 288 + 24;
       const newPage = Math.round(scrollLeft / (cardWidth * cardsPerPage));
       setCurrentPage(newPage);
     }
@@ -192,7 +190,7 @@ const MentorPage = () => {
 
   const scrollLeft = () => {
     if (scrollContainerRef.current) {
-      const cardWidth = 288 + 24; // card width + margin
+      const cardWidth = 288 + 24;
       const scrollAmount = cardWidth * cardsPerPage;
       scrollContainerRef.current.scrollBy({
         left: -scrollAmount,
@@ -204,7 +202,7 @@ const MentorPage = () => {
 
   const scrollRight = () => {
     if (scrollContainerRef.current) {
-      const cardWidth = 288 + 24; // card width + margin
+      const cardWidth = 288 + 24;
       const scrollAmount = cardWidth * cardsPerPage;
       scrollContainerRef.current.scrollBy({
         left: scrollAmount,
@@ -216,7 +214,7 @@ const MentorPage = () => {
 
   const scrollToPage = (pageIndex) => {
     if (scrollContainerRef.current) {
-      const cardWidth = 288 + 24; // card width + margin
+      const cardWidth = 288 + 24;
       const scrollAmount = cardWidth * cardsPerPage * pageIndex;
       scrollContainerRef.current.scrollTo({
         left: scrollAmount,
@@ -253,7 +251,6 @@ const MentorPage = () => {
     },
   ];
 
-  // Animation helper function
   const getAnimationStyle = (elementKey, delay = 0) => {
     const inViewRatio = elementsInView[elementKey] || 0;
     const opacity = Math.min(inViewRatio * 1.5, 1);
@@ -572,25 +569,25 @@ const MentorPage = () => {
           display: none;
         }
 
-        /* Enhanced responsive typography */
+       
         @media (max-width: 640px) {
           .text-responsive {
             font-size: clamp(0.875rem, 2.5vw, 1rem);
           }
         }
 
-        /* Smooth scrolling enhancement */
+       
         html {
           scroll-behavior: smooth;
         }
 
-        /* Better focus states for accessibility */
+       
         button:focus-visible {
           outline: 2px solid #10b981;
           outline-offset: 2px;
         }
 
-        /* Enhanced hover effects */
+       
         @media (hover: hover) {
           .group:hover .group-hover\\:scale-110 {
             transform: scale(1.1);
@@ -601,7 +598,7 @@ const MentorPage = () => {
           }
         }
 
-        /* Improved mobile touch targets */
+       
         @media (max-width: 768px) {
           button {
             min-height: 44px;
@@ -609,7 +606,7 @@ const MentorPage = () => {
           }
         }
 
-        /* Enhanced animations for reduced motion preference */
+       
         @media (prefers-reduced-motion: reduce) {
           * {
             animation-duration: 0.01ms !important;

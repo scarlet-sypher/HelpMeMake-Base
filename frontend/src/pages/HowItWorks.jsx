@@ -870,7 +870,7 @@ const HowItWorks = () => {
           animation-delay: 1500ms;
         }
 
-        /* Enhanced typography and responsive design */
+       
         @media (max-width: 640px) {
           .leading-tight {
             line-height: 1.15;
@@ -901,12 +901,12 @@ const HowItWorks = () => {
           }
         }
 
-        /* Smooth scrolling behavior */
+       
         html {
           scroll-behavior: smooth;
         }
 
-        /* Better touch targets for mobile */
+       
         @media (max-width: 768px) {
           button, .cursor-pointer {
             min-height: 44px;
@@ -914,7 +914,7 @@ const HowItWorks = () => {
           }
         }
 
-        /* Enhanced backdrop blur support */
+       
         @supports (backdrop-filter: blur(0)) {
           .backdrop-blur-sm {
             backdrop-filter: blur(4px);
@@ -925,7 +925,7 @@ const HowItWorks = () => {
           }
         }
 
-        /* Custom scrollbar for better UX */
+       
         ::-webkit-scrollbar {
           width: 8px;
           height: 8px;
@@ -945,20 +945,20 @@ const HowItWorks = () => {
           background: linear-gradient(to bottom, #059669, #2563eb);
         }
 
-        /* Enhanced focus states for accessibility */
+       
         button:focus-visible,
         .cursor-pointer:focus-visible {
           outline: 2px solid #10b981;
           outline-offset: 2px;
         }
 
-        /* Improved animations performance */
+       
         .animate-pulse,
         .animate-bounce {
           will-change: transform, opacity;
         }
 
-        /* Enhanced gradient animations */
+       
         @keyframes gradient-x {
           0%, 100% {
             background-position: 0% 50%;
@@ -973,13 +973,13 @@ const HowItWorks = () => {
           animation: gradient-x 3s ease infinite;
         }
 
-        /* Enhanced shadow effects */
+       
         .shadow-3xl {
           box-shadow: 0 35px 60px -12px rgba(0, 0, 0, 0.25), 
                       0 0 0 1px rgba(255, 255, 255, 0.1);
         }
 
-        /* Improved responsive spacing */
+       
         @media (max-width: 480px) {
           .max-w-7xl {
             padding-left: 1rem;
@@ -987,12 +987,12 @@ const HowItWorks = () => {
           }
         }
 
-        /* Enhanced button states */
+       
         button:active {
           transform: scale(0.98);
         }
 
-        /* Better contrast for text readability */
+       
         .text-white\/90 {
           color: rgba(255, 255, 255, 0.95);
         }
@@ -1005,7 +1005,7 @@ const HowItWorks = () => {
           color: rgba(255, 255, 255, 0.75);
         }
 
-        /* Enhanced border radius for modern look */
+       
         .rounded-4xl {
           border-radius: 2rem;
         }
@@ -1016,7 +1016,7 @@ const HowItWorks = () => {
           }
         }
 
-        /* Performance optimizations */
+       
         * {
           box-sizing: border-box;
         }
@@ -1026,7 +1026,7 @@ const HowItWorks = () => {
           height: auto;
         }
 
-        /* Enhanced mobile tap targets */
+       
         @media (hover: none) and (pointer: coarse) {
           button,
           .cursor-pointer {
@@ -1043,7 +1043,7 @@ const HowItWorks = () => {
   display: none;
 }
 
-/* Ensure progress bar stays centered on very small screens */
+
 @media (max-width: 380px) {
   .flex.items-center.space-x-1 {
     padding: 0 8px;

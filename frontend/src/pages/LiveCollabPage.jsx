@@ -118,7 +118,6 @@ const LiveCollabPage = () => {
     },
   ]);
 
-  // Refs for scroll animations
   const headerRef = useRef(null);
   const videoSectionRef = useRef(null);
   const screenShareRef = useRef(null);
@@ -137,7 +136,6 @@ const LiveCollabPage = () => {
     setIsVisible(true);
   }, []);
 
-  // Scroll animation observer
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -415,9 +413,7 @@ const LiveCollabPage = () => {
                 <div className="p-2 sm:p-4 bg-gray-900 rounded-lg">
                   <div className="aspect-video bg-slate-800/50 rounded-lg sm:rounded-xl p-2 sm:p-3 lg:p-6 border-2 border-blue-500/30 shadow-inner">
                     <div className="h-full bg-gradient-to-br from-slate-900 to-slate-800 rounded-lg p-2 sm:p-4 font-mono text-xs sm:text-sm overflow-auto">
-                      <div className="text-emerald-400 mb-2">
-                        // React Component
-                      </div>
+                      <div className="text-emerald-400 mb-2"></div>
                       <div className="text-blue-400">
                         const <span className="text-yellow-400">TodoApp</span> =
                         () =&gt; {`{`}
@@ -428,9 +424,7 @@ const LiveCollabPage = () => {
                       <div className="text-white ml-2 sm:ml-4 break-all">
                         const [input, setInput] = useState('');
                       </div>
-                      <div className="text-gray-500 mt-2 ml-2 sm:ml-4">
-                        // Add todo function
-                      </div>
+                      <div className="text-gray-500 mt-2 ml-2 sm:ml-4"></div>
                       <div className="text-blue-400 ml-2 sm:ml-4">
                         const addTodo = () =&gt; {`{`}
                       </div>
@@ -640,7 +634,7 @@ const LiveCollabPage = () => {
           background: rgba(255, 255, 255, 0.3);
         }
 
-        /* Responsive breakpoints for better mobile experience */
+       
         @media (max-width: 640px) {
           .aspect-video {
             aspect-ratio: 4/3;
@@ -653,14 +647,14 @@ const LiveCollabPage = () => {
           }
         }
 
-        /* Enhanced scroll animations */
+       
         .transform {
           transition-property: transform, opacity;
           transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
           transition-duration: 1000ms;
         }
 
-        /* Smooth entrance animations */
+       
         @keyframes slideInUp {
           from {
             transform: translateY(30px);
@@ -683,7 +677,7 @@ const LiveCollabPage = () => {
           }
         }
 
-        /* Animation classes for scroll effects */
+       
         .animate-slide-in-up {
           animation: slideInUp 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
         }
