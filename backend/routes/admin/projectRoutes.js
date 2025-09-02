@@ -5,6 +5,7 @@ const {
   updateProject,
   deleteProject,
   getProjectStats,
+  batchDeleteProjects,
 } = require("../../controller/admin/projectController");
 const { authenticateAdmin } = require("../../middleware/adminAuth");
 const router = express.Router();
@@ -13,27 +14,26 @@ router.use(authenticateAdmin);
 
 router.get("/stats", getProjectStats);
 
+router.delete("/batch-delete", batchDeleteProjects);
+
 router.get("/", getAllProjects);
 
 router.get(
   "/:projectId",
   (req, res, next) => {
     const { projectId } = req.params;
-
     if (!projectId || projectId === "undefined" || projectId === "null") {
       return res.status(400).json({
         success: false,
         message: "Valid project ID is required",
       });
     }
-
     if (!/^[0-9a-fA-F]{24}$/.test(projectId)) {
       return res.status(400).json({
         success: false,
         message: "Invalid project ID format",
       });
     }
-
     next();
   },
   getProjectById

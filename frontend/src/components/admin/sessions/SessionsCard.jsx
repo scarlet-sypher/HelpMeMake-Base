@@ -13,7 +13,13 @@ import {
   Users,
 } from "lucide-react";
 
-const SessionsCard = ({ session, onDelete }) => {
+const SessionsCard = ({
+  session,
+  onDelete,
+  isSelected,
+  onSelectChange,
+  selectionMode,
+}) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteConfirmText, setDeleteConfirmText] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
@@ -113,7 +119,24 @@ const SessionsCard = ({ session, onDelete }) => {
 
   return (
     <>
-      <div className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 p-6 border border-gray-200">
+      <div
+        className={`bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 p-6 border relative ${
+          selectionMode && isSelected
+            ? "border-blue-500 ring-2 ring-blue-200"
+            : "border-gray-200"
+        }`}
+      >
+        {selectionMode && (
+          <div className="absolute top-4 left-4 z-10">
+            <input
+              type="checkbox"
+              checked={isSelected}
+              onChange={(e) => onSelectChange(session._id, e.target.checked)}
+              className="w-5 h-5 text-blue-600 bg-white border-2 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+            />
+          </div>
+        )}
+
         <div className="flex justify-between items-start mb-4">
           <div className="flex-1">
             <h3 className="text-lg font-bold text-gray-900 mb-2">
@@ -128,13 +151,15 @@ const SessionsCard = ({ session, onDelete }) => {
               {session.status.toUpperCase()}
             </div>
           </div>
-          <button
-            onClick={() => setShowDeleteModal(true)}
-            className="p-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors"
-            title="Delete Session"
-          >
-            <Trash2 size={18} />
-          </button>
+          {!selectionMode && (
+            <button
+              onClick={() => setShowDeleteModal(true)}
+              className="p-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors"
+              title="Delete Session"
+            >
+              <Trash2 size={18} />
+            </button>
+          )}
         </div>
 
         <div className="mb-4 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-100">

@@ -458,10 +458,59 @@ const getProjectStats = async (req, res) => {
   }
 };
 
+const batchDeleteProjects = async (req, res) => {
+  try {
+    const { projectIds } = req.body;
+
+    if (!projectIds || !Array.isArray(projectIds) || projectIds.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Project IDs array is required",
+      });
+    }
+
+    // Find projects before deletion
+    const projects = await Project.find({ _id: { $in: projectIds } });
+
+    if (projects.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No projects found to delete",
+      });
+    }
+
+    // Delete related data
+    const Milestone = require("../../Model/Milestone");
+    await Milestone.deleteMany({ projectId: { $in: projectIds } });
+
+    const MessageRoom = require("../../Model/MessageRoom");
+    await MessageRoom.deleteMany({ projectId: { $in: projectIds } });
+
+    // Delete projects
+    const result = await Project.deleteMany({ _id: { $in: projectIds } });
+
+    res.json({
+      success: true,
+      message: `${result.deletedCount} projects deleted successfully`,
+      data: {
+        deletedCount: result.deletedCount,
+        requestedCount: projectIds.length,
+      },
+    });
+  } catch (error) {
+    console.error("Batch delete projects error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to delete projects",
+    });
+  }
+};
+
 module.exports = {
   getAllProjects,
   getProjectById,
   updateProject,
   deleteProject,
   getProjectStats,
+  batchDeleteProjects,
 };

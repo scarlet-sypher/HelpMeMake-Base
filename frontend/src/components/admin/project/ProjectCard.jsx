@@ -11,7 +11,15 @@ import {
 } from "lucide-react";
 import toast from "react-hot-toast";
 
-const ProjectCard = ({ project, onView, onEdit, onDelete }) => {
+const ProjectCard = ({
+  project,
+  onView,
+  onEdit,
+  onDelete,
+  isSelected,
+  onSelectChange,
+  selectionMode,
+}) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteConfirmation, setDeleteConfirmation] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
@@ -100,7 +108,27 @@ const ProjectCard = ({ project, onView, onEdit, onDelete }) => {
 
   return (
     <>
-      <div className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200 overflow-hidden">
+      <div
+        className={`relative bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border overflow-hidden ${
+          selectionMode && isSelected
+            ? "border-blue-500 ring-2 ring-blue-200"
+            : "border-gray-200"
+        }`}
+      >
+        {/* Selection Checkbox - Always visible when in selection mode */}
+        {selectionMode && (
+          <div className="absolute top-3 left-3 z-10 bg-white rounded-full p-1 shadow-md">
+            <input
+              type="checkbox"
+              checked={isSelected}
+              onChange={(e) => onSelectChange(project._id, e.target.checked)}
+              className="w-5 h-5 text-blue-600 border-2 border-gray-300 rounded focus:ring-blue-500 focus:ring-2 cursor-pointer"
+              onClick={(e) => e.stopPropagation()} // Prevent event bubbling
+            />
+          </div>
+        )}
+
+        {/* Project Image/Thumbnail */}
         <div className="relative h-48 bg-gradient-to-r from-blue-500 to-purple-600">
           {project.thumbnail ? (
             <img
@@ -117,6 +145,7 @@ const ProjectCard = ({ project, onView, onEdit, onDelete }) => {
               <Tag className="text-white" size={48} />
             </div>
           )}
+          {/* Status Badge */}
           <div className="absolute top-3 right-3 flex gap-2">
             <span
               className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(
@@ -128,7 +157,9 @@ const ProjectCard = ({ project, onView, onEdit, onDelete }) => {
           </div>
         </div>
 
+        {/* Project Content */}
         <div className="p-6">
+          {/* Project Title and Description */}
           <div className="mb-4">
             <h3 className="text-xl font-bold text-gray-900 mb-2 hover:text-blue-600 transition-colors">
               {truncateText(project.name, 50)}
@@ -141,6 +172,7 @@ const ProjectCard = ({ project, onView, onEdit, onDelete }) => {
             </p>
           </div>
 
+          {/* Project Details */}
           <div className="space-y-3 mb-4">
             <div className="flex items-center justify-between">
               <span className="text-sm text-gray-500">Category:</span>
@@ -176,7 +208,9 @@ const ProjectCard = ({ project, onView, onEdit, onDelete }) => {
             </div>
           </div>
 
+          {/* Learner and Mentor Info */}
           <div className="space-y-3 mb-4 bg-gray-50 p-3 rounded-lg">
+            {/* Learner */}
             <div className="flex items-center space-x-3">
               <div className="flex items-center justify-center w-8 h-8 bg-blue-100 rounded-full">
                 <GraduationCap size={16} className="text-blue-600" />
@@ -203,6 +237,7 @@ const ProjectCard = ({ project, onView, onEdit, onDelete }) => {
               )}
             </div>
 
+            {/* Mentor */}
             <div className="flex items-center space-x-3">
               <div className="flex items-center justify-center w-8 h-8 bg-purple-100 rounded-full">
                 <User size={16} className="text-purple-600" />
@@ -230,6 +265,7 @@ const ProjectCard = ({ project, onView, onEdit, onDelete }) => {
             </div>
           </div>
 
+          {/* Dates */}
           <div className="text-xs text-gray-500 mb-4 space-y-1">
             <div className="flex items-center">
               <Calendar size={12} className="mr-1" />
@@ -243,31 +279,35 @@ const ProjectCard = ({ project, onView, onEdit, onDelete }) => {
             )}
           </div>
 
-          <div className="flex gap-2">
-            <button
-              onClick={() => onView(project._id)}
-              className="flex-1 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center"
-            >
-              <Eye size={16} className="mr-1" />
-              View
-            </button>
-            <button
-              onClick={() => onEdit(project)}
-              className="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center"
-            >
-              <Edit size={16} className="mr-1" />
-              Edit
-            </button>
-            <button
-              onClick={() => setShowDeleteModal(true)}
-              className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center"
-            >
-              <Trash2 size={16} />
-            </button>
-          </div>
+          {/* Action Buttons - Hidden in selection mode */}
+          {!selectionMode && (
+            <div className="flex gap-2">
+              <button
+                onClick={() => onView(project._id)}
+                className="flex-1 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center"
+              >
+                <Eye size={16} className="mr-1" />
+                View
+              </button>
+              <button
+                onClick={() => onEdit(project)}
+                className="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center"
+              >
+                <Edit size={16} className="mr-1" />
+                Edit
+              </button>
+              <button
+                onClick={() => setShowDeleteModal(true)}
+                className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center"
+              >
+                <Trash2 size={16} />
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
+      {/* Delete Confirmation Modal */}
       {showDeleteModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl p-6 max-w-md w-full">

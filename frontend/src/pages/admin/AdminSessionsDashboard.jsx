@@ -10,6 +10,7 @@ import {
   CheckCircle,
   XCircle,
   AlertCircle,
+  Trash2,
 } from "lucide-react";
 import SessionsCard from "../../components/admin/sessions/SessionsCard";
 import toast from "react-hot-toast";
@@ -21,6 +22,11 @@ const AdminSessionsDashboard = ({ onReturn }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("");
   const navigate = useNavigate();
+  const [selectionMode, setSelectionMode] = useState(false);
+  const [selectedSessions, setSelectedSessions] = useState([]);
+  const [showBatchDeleteModal, setShowBatchDeleteModal] = useState(false);
+  const [batchDeleteConfirmText, setBatchDeleteConfirmText] = useState("");
+  const [isBatchDeleting, setIsBatchDeleting] = useState(false);
   const [stats, setStats] = useState({
     total: 0,
     scheduled: 0,
@@ -185,6 +191,64 @@ const AdminSessionsDashboard = ({ onReturn }) => {
     return sessions;
   };
 
+  const toggleSelectionMode = () => {
+    setSelectionMode(!selectionMode);
+    setSelectedSessions([]);
+  };
+
+  const handleSelectSession = (sessionId, isSelected) => {
+    if (isSelected) {
+      setSelectedSessions((prev) => [...prev, sessionId]);
+    } else {
+      setSelectedSessions((prev) => prev.filter((id) => id !== sessionId));
+    }
+  };
+
+  const handleSelectAll = () => {
+    if (selectedSessions.length === filteredSessions.length) {
+      setSelectedSessions([]);
+    } else {
+      setSelectedSessions(filteredSessions.map((session) => session._id));
+    }
+  };
+
+  const handleBatchDelete = async () => {
+    if (batchDeleteConfirmText !== "I want to delete all") return;
+
+    setIsBatchDeleting(true);
+    try {
+      const adminToken = localStorage.getItem("admin_token");
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/admin/sessions/batch-delete`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${adminToken}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ sessionIds: selectedSessions }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to delete sessions");
+      }
+
+      toast.success(`${selectedSessions.length} sessions deleted successfully`);
+      setShowBatchDeleteModal(false);
+      setBatchDeleteConfirmText("");
+      setSelectedSessions([]);
+      setSelectionMode(false);
+      fetchSessions();
+      fetchStats();
+    } catch (error) {
+      console.error("Batch delete error:", error);
+      toast.error("Failed to delete sessions");
+    } finally {
+      setIsBatchDeleting(false);
+    }
+  };
+
   const filteredSessions = getFilteredSessions();
 
   return (
@@ -209,13 +273,34 @@ const AdminSessionsDashboard = ({ onReturn }) => {
             </div>
           </div>
 
-          <button
-            onClick={handleRefresh}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
-          >
-            <RefreshCw size={18} />
-            Refresh
-          </button>
+          <div className="flex items-center space-x-2">
+            <button
+              onClick={toggleSelectionMode}
+              className={`px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2 ${
+                selectionMode
+                  ? "bg-red-600 hover:bg-red-700 text-white"
+                  : "bg-gray-600 hover:bg-gray-700 text-white"
+              }`}
+            >
+              {selectionMode ? "Cancel Selection" : "Select Multiple"}
+            </button>
+            {selectionMode && selectedSessions.length > 0 && (
+              <button
+                onClick={() => setShowBatchDeleteModal(true)}
+                className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2"
+              >
+                <Trash2 size={16} />
+                Delete Selected ({selectedSessions.length})
+              </button>
+            )}
+            <button
+              onClick={handleRefresh}
+              className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+            >
+              <RefreshCw size={18} />
+              Refresh
+            </button>
+          </div>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
@@ -290,6 +375,19 @@ const AdminSessionsDashboard = ({ onReturn }) => {
           </div>
         </div>
 
+        {selectionMode && (
+          <div className="bg-slate-800/60 rounded-xl p-4 backdrop-blur-sm border border-slate-700 mb-6">
+            <button
+              onClick={handleSelectAll}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+            >
+              {selectedSessions.length === filteredSessions.length
+                ? "Deselect All"
+                : "Select All"}
+            </button>
+          </div>
+        )}
+
         {loading ? (
           <div className="text-center py-12">
             <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
@@ -321,6 +419,9 @@ const AdminSessionsDashboard = ({ onReturn }) => {
                   key={session._id}
                   session={session}
                   onDelete={handleDeleteSession}
+                  selectionMode={selectionMode}
+                  isSelected={selectedSessions.includes(session._id)}
+                  onSelectChange={handleSelectSession}
                 />
               ))}
             </div>
@@ -348,6 +449,60 @@ const AdminSessionsDashboard = ({ onReturn }) => {
                 </button>
               </div>
             )}
+          </div>
+        )}
+
+        {showBatchDeleteModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-xl max-w-md w-full p-6">
+              <h3 className="text-lg font-bold text-red-600 mb-4">
+                Delete Sessions
+              </h3>
+              <p className="text-gray-700 mb-4">
+                This will permanently delete {selectedSessions.length} selected
+                session{selectedSessions.length !== 1 ? "s" : ""} and all
+                associated data.
+              </p>
+              <p className="text-gray-700 mb-4">
+                Please type the following text to confirm:
+              </p>
+              <p className="text-sm font-mono bg-gray-100 p-2 rounded mb-4">
+                I want to delete all
+              </p>
+              <input
+                type="text"
+                value={batchDeleteConfirmText}
+                onChange={(e) => setBatchDeleteConfirmText(e.target.value)}
+                placeholder="Type the confirmation text..."
+                className="w-full p-3 border border-gray-300 rounded-lg mb-4 text-sm"
+              />
+              <div className="flex gap-3">
+                <button
+                  onClick={handleBatchDelete}
+                  disabled={
+                    batchDeleteConfirmText !== "I want to delete all" ||
+                    isBatchDeleting
+                  }
+                  className={`flex-1 py-3 rounded-lg font-medium transition-colors ${
+                    batchDeleteConfirmText === "I want to delete all" &&
+                    !isBatchDeleting
+                      ? "bg-red-600 text-white hover:bg-red-700"
+                      : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                  }`}
+                >
+                  {isBatchDeleting ? "Deleting..." : "Confirm Delete"}
+                </button>
+                <button
+                  onClick={() => {
+                    setShowBatchDeleteModal(false);
+                    setBatchDeleteConfirmText("");
+                  }}
+                  className="flex-1 py-3 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 transition-colors"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
           </div>
         )}
       </div>

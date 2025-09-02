@@ -220,6 +220,62 @@ const adminSessionsController = {
       });
     }
   },
+
+  batchDeleteSessions: async (req, res) => {
+    try {
+      const { sessionIds } = req.body;
+
+      if (
+        !sessionIds ||
+        !Array.isArray(sessionIds) ||
+        sessionIds.length === 0
+      ) {
+        return res.status(400).json({
+          success: false,
+          message: "Session IDs array is required",
+        });
+      }
+
+      // Find sessions before deletion for logging
+      const sessions = await Session.find({ _id: { $in: sessionIds } })
+        .populate("projectId", "name")
+        .populate({
+          path: "mentorId",
+          populate: { path: "userId", select: "name" },
+        })
+        .populate({
+          path: "learnerId",
+          populate: { path: "userId", select: "name" },
+        });
+
+      if (sessions.length === 0) {
+        return res.status(404).json({
+          success: false,
+          message: "No sessions found to delete",
+        });
+      }
+
+      // Delete sessions
+      const result = await Session.deleteMany({ _id: { $in: sessionIds } });
+
+      res.json({
+        success: true,
+        message: `${result.deletedCount} sessions deleted successfully`,
+        data: {
+          deletedCount: result.deletedCount,
+          requestedCount: sessionIds.length,
+        },
+      });
+    } catch (error) {
+      console.error("Batch delete sessions error:", error);
+      res.status(500).json({
+        success: false,
+        message: "Failed to delete sessions",
+        error:
+          process.env.NODE_ENV === "development" ? error.message : undefined,
+      });
+    }
+  },
 };
 
 module.exports = adminSessionsController;

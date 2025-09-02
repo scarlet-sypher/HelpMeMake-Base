@@ -11,6 +11,7 @@ import {
   AlertCircle,
   XCircle,
   Plus,
+  Trash2,
   RefreshCw,
 } from "lucide-react";
 import ProjectCard from "../../components/admin/project/ProjectCard";
@@ -28,6 +29,11 @@ const AdminProjectDashboard = ({ onReturn }) => {
   const [totalPages, setTotalPages] = useState(1);
   const [totalProjects, setTotalProjects] = useState(0);
   const [stats, setStats] = useState(null);
+  const [selectionMode, setSelectionMode] = useState(false);
+  const [selectedProjects, setSelectedProjects] = useState([]);
+  const [showBatchDeleteModal, setShowBatchDeleteModal] = useState(false);
+  const [batchDeleteConfirmText, setBatchDeleteConfirmText] = useState("");
+  const [isBatchDeleting, setIsBatchDeleting] = useState(false);
 
   const statusOptions = ["", "Open", "In Progress", "Completed", "Cancelled"];
   const itemsPerPage = 8;
@@ -95,6 +101,64 @@ const AdminProjectDashboard = ({ onReturn }) => {
     }
   };
 
+  const toggleSelectionMode = () => {
+    setSelectionMode(!selectionMode);
+    setSelectedProjects([]);
+  };
+
+  const handleSelectProject = (projectId, isSelected) => {
+    if (isSelected) {
+      setSelectedProjects((prev) => [...prev, projectId]);
+    } else {
+      setSelectedProjects((prev) => prev.filter((id) => id !== projectId));
+    }
+  };
+
+  const handleSelectAll = () => {
+    if (selectedProjects.length === projects.length) {
+      setSelectedProjects([]);
+    } else {
+      setSelectedProjects(projects.map((project) => project._id));
+    }
+  };
+
+  const handleBatchDelete = async () => {
+    if (batchDeleteConfirmText !== "I want to delete all") return;
+
+    setIsBatchDeleting(true);
+    try {
+      const adminToken = localStorage.getItem("admin_token");
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/admin/projects/batch-delete`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${adminToken}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ projectIds: selectedProjects }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to delete projects");
+      }
+
+      toast.success(`${selectedProjects.length} projects deleted successfully`);
+      setShowBatchDeleteModal(false);
+      setBatchDeleteConfirmText("");
+      setSelectedProjects([]);
+      setSelectionMode(false);
+      fetchProjects();
+      fetchStats();
+    } catch (error) {
+      console.error("Batch delete error:", error);
+      toast.error("Failed to delete projects");
+    } finally {
+      setIsBatchDeleting(false);
+    }
+  };
+
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
     setCurrentPage(1);
@@ -149,44 +213,10 @@ const AdminProjectDashboard = ({ onReturn }) => {
     fetchStats();
   };
 
-  const getStatusColor = (status) => {
-    switch (status) {
-      case "Open":
-        return "text-blue-600 bg-blue-100";
-      case "In Progress":
-        return "text-yellow-600 bg-yellow-100";
-      case "Completed":
-        return "text-green-600 bg-green-100";
-      case "Cancelled":
-        return "text-red-600 bg-red-100";
-      default:
-        return "text-gray-600 bg-gray-100";
-    }
-  };
-
-  <ProjectView
-    onReturn={() => {
-      setCurrentView("dashboard");
-      setSelectedProject(null);
-    }}
-    onEdit={(project) => {
-      navigate(`/admin/projects/${project._id}/edit`);
-    }}
-    onDelete={handleDeleteProject}
-  />;
-
-  <ProjectEdit
-    onReturn={() => {
-      setCurrentView("dashboard");
-      setSelectedProject(null);
-      fetchProjects();
-      fetchStats();
-    }}
-  />;
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 p-4 md:p-8">
       <div className="max-w-7xl mx-auto">
+        {/* Header */}
         <div className="flex justify-between items-center mb-8">
           <div className="flex items-center space-x-4">
             <button
@@ -203,16 +233,38 @@ const AdminProjectDashboard = ({ onReturn }) => {
             <h1 className="text-3xl font-bold text-white">
               Projects Management
             </h1>
-            <button
-              onClick={handleRefresh}
-              className="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-lg transition-colors"
-              title="Refresh"
-            >
-              <RefreshCw size={20} />
-            </button>
+            <div className="flex items-center space-x-2">
+              <button
+                onClick={toggleSelectionMode}
+                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                  selectionMode
+                    ? "bg-red-600 hover:bg-red-700 text-white"
+                    : "bg-gray-600 hover:bg-gray-700 text-white"
+                }`}
+              >
+                {selectionMode ? "Cancel Selection" : "Select Multiple"}
+              </button>
+              {selectionMode && selectedProjects.length > 0 && (
+                <button
+                  onClick={() => setShowBatchDeleteModal(true)}
+                  className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center space-x-2"
+                >
+                  <Trash2 size={16} />
+                  <span>Delete Selected ({selectedProjects.length})</span>
+                </button>
+              )}
+              <button
+                onClick={handleRefresh}
+                className="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-lg transition-colors"
+                title="Refresh"
+              >
+                <RefreshCw size={20} />
+              </button>
+            </div>
           </div>
         </div>
 
+        {/* Stats Cards */}
         {stats && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             <div className="bg-gradient-to-r from-blue-500 to-cyan-500 rounded-2xl shadow-lg p-6 text-white">
@@ -271,6 +323,7 @@ const AdminProjectDashboard = ({ onReturn }) => {
           </div>
         )}
 
+        {/* Search and Filter Controls */}
         <div className="bg-white rounded-2xl shadow-lg p-6 mb-8">
           <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
             <div className="flex-1 max-w-md">
@@ -315,8 +368,26 @@ const AdminProjectDashboard = ({ onReturn }) => {
               Showing {projects.length} of {totalProjects} projects
             </div>
           </div>
+
+          {/* Selection Mode Controls */}
+          {selectionMode && (
+            <div className="mt-4 flex items-center justify-between border-t pt-4">
+              <button
+                onClick={handleSelectAll}
+                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+              >
+                {selectedProjects.length === projects.length
+                  ? "Deselect All"
+                  : "Select All"}
+              </button>
+              <span className="text-gray-600 text-sm">
+                {selectedProjects.length} of {projects.length} projects selected
+              </span>
+            </div>
+          )}
         </div>
 
+        {/* Projects Grid or Empty State */}
         {loading ? (
           <div className="flex justify-center items-center py-12">
             <div className="text-white text-xl">Loading projects...</div>
@@ -349,6 +420,7 @@ const AdminProjectDashboard = ({ onReturn }) => {
           </div>
         ) : (
           <>
+            {/* Projects Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
               {projects.map((project) => (
                 <ProjectCard
@@ -357,10 +429,14 @@ const AdminProjectDashboard = ({ onReturn }) => {
                   onView={handleViewProject}
                   onEdit={handleEditProject}
                   onDelete={handleDeleteProject}
+                  selectionMode={selectionMode}
+                  isSelected={selectedProjects.includes(project._id)}
+                  onSelectChange={handleSelectProject}
                 />
               ))}
             </div>
 
+            {/* Pagination */}
             {totalPages > 1 && (
               <div className="flex justify-center items-center space-x-4">
                 <button
@@ -404,6 +480,64 @@ const AdminProjectDashboard = ({ onReturn }) => {
               </div>
             )}
           </>
+        )}
+
+        {/* Batch Delete Confirmation Modal */}
+        {showBatchDeleteModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+            <div className="bg-white rounded-2xl p-6 max-w-md w-full">
+              <div className="text-center mb-6">
+                <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Trash2 className="text-red-600" size={32} />
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">
+                  Delete Projects
+                </h3>
+                <p className="text-gray-600 mb-4">
+                  This will permanently delete {selectedProjects.length}{" "}
+                  selected project{selectedProjects.length !== 1 ? "s" : ""} and
+                  all associated data.
+                </p>
+                <div className="text-left">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Type the following to confirm:
+                    <span className="block font-mono text-red-600 bg-red-50 p-2 rounded mt-1">
+                      I want to delete all
+                    </span>
+                  </label>
+                  <input
+                    type="text"
+                    value={batchDeleteConfirmText}
+                    onChange={(e) => setBatchDeleteConfirmText(e.target.value)}
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                    placeholder="Type confirmation text here..."
+                  />
+                </div>
+              </div>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => {
+                    setShowBatchDeleteModal(false);
+                    setBatchDeleteConfirmText("");
+                  }}
+                  className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-lg font-medium transition-colors"
+                  disabled={isBatchDeleting}
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleBatchDelete}
+                  disabled={
+                    batchDeleteConfirmText !== "I want to delete all" ||
+                    isBatchDeleting
+                  }
+                  className="flex-1 bg-red-600 hover:bg-red-700 disabled:bg-red-300 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+                >
+                  {isBatchDeleting ? "Deleting..." : "Delete All"}
+                </button>
+              </div>
+            </div>
+          </div>
         )}
       </div>
     </div>
