@@ -202,7 +202,6 @@ const MentorDetailsPageView = () => {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-950 via-blue-950 to-indigo-950 p-4 relative overflow-hidden">
-        {/* Enhanced background animation */}
         <div className="absolute inset-0">
           <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse"></div>
           <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
@@ -234,7 +233,6 @@ const MentorDetailsPageView = () => {
   if (!mentorData) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-950 via-blue-950 to-indigo-950 p-4 relative overflow-hidden">
-        {/* Background effects */}
         <div className="absolute inset-0">
           <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-red-500/10 rounded-full blur-3xl animate-pulse"></div>
           <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-orange-500/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
@@ -274,18 +272,15 @@ const MentorDetailsPageView = () => {
   /** ---------- MAIN VIEW ---------- **/
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-indigo-950 relative overflow-hidden">
-      {/* Enhanced background animation */}
       <div className="fixed inset-0 pointer-events-none">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-full blur-3xl animate-pulse"></div>
         <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-tr from-purple-500/20 to-pink-500/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-r from-cyan-500/10 to-blue-500/10 rounded-full blur-3xl animate-pulse delay-500"></div>
 
-        {/* Floating particles */}
         <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-blue-400/40 rounded-full animate-ping delay-700"></div>
         <div className="absolute top-3/4 right-1/4 w-1 h-1 bg-purple-400/40 rounded-full animate-ping delay-1200"></div>
         <div className="absolute bottom-1/4 left-3/4 w-1.5 h-1.5 bg-cyan-400/40 rounded-full animate-ping delay-300"></div>
 
-        {/* Subtle grid overlay */}
         <div
           className="absolute inset-0 opacity-[0.02]"
           style={{
@@ -295,7 +290,6 @@ const MentorDetailsPageView = () => {
         ></div>
       </div>
 
-      {/* Scroll progress indicator */}
       <div className="fixed top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-600 to-purple-600 transform origin-left scale-x-0 transition-transform duration-300 z-50"></div>
 
       <div
@@ -303,7 +297,6 @@ const MentorDetailsPageView = () => {
           pageLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
         }`}
       >
-        {/* Enhanced Header */}
         <div className="mb-8">
           <div className="flex items-center justify-between">
             <button
@@ -322,7 +315,6 @@ const MentorDetailsPageView = () => {
               </span>
             </button>
 
-            {/* Breadcrumb */}
             <div className="hidden sm:flex items-center space-x-2 text-gray-400 text-sm">
               <span>Mentors</span>
               <span>/</span>
@@ -331,7 +323,6 @@ const MentorDetailsPageView = () => {
           </div>
         </div>
 
-        {/* Hero Section with enhanced container */}
         <div className="transform transition-all duration-700 delay-100">
           <MentorHeroSection
             mentorData={mentorData}
@@ -345,9 +336,7 @@ const MentorDetailsPageView = () => {
           />
         </div>
 
-        {/* Enhanced Main Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-8">
-          {/* Left Column with staggered animation */}
           <div className="lg:col-span-2 space-y-8">
             <div className="transform transition-all duration-700 delay-200">
               <MentorAboutSection mentorData={mentorData} />
@@ -360,7 +349,6 @@ const MentorDetailsPageView = () => {
             </div>
           </div>
 
-          {/* Right Column with staggered animation */}
           <div className="space-y-8">
             <div className="transform transition-all duration-700 delay-500">
               <MentorPricingSection mentorData={mentorData} />
@@ -377,7 +365,6 @@ const MentorDetailsPageView = () => {
           </div>
         </div>
 
-        {/* Enhanced Specializations Section */}
         <div className="mt-12 transform transition-all duration-700 delay-900">
           <div className="mb-6">
             <div className="flex items-center space-x-3">
@@ -389,7 +376,6 @@ const MentorDetailsPageView = () => {
           <MentorSpecializationsSection mentorData={mentorData} />
         </div>
 
-        {/* Enhanced Projects Section */}
         <div className="mt-12 transform transition-all duration-700 delay-1000">
           <div className="mb-6">
             <div className="flex items-center space-x-3">
@@ -407,11 +393,9 @@ const MentorDetailsPageView = () => {
           />
         </div>
 
-        {/* Bottom spacer for better scrolling */}
         <div className="h-20"></div>
       </div>
 
-      {/* Enhanced Request Modal */}
       {showRequestModal && selectedProject && (
         <RequestModal
           mentor={mentorData}

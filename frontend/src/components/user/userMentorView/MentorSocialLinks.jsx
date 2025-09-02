@@ -76,7 +76,6 @@ const MentorSocialLinks = ({ mentorData }) => {
 
   return (
     <div className="bg-white/5 backdrop-blur-xl rounded-3xl shadow-2xl p-6 border border-white/10 hover:border-white/20 transition-all duration-500 group">
-      {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <h2 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-cyan-400 via-blue-400 to-indigo-400 bg-clip-text text-transparent flex items-center">
           <div className="relative mr-3">
@@ -92,7 +91,6 @@ const MentorSocialLinks = ({ mentorData }) => {
         </div>
       </div>
 
-      {/* Links or Empty State */}
       {validLinks.length > 0 ? (
         <div className="space-y-4">
           {validLinks.map((link, index) => (
@@ -103,15 +101,12 @@ const MentorSocialLinks = ({ mentorData }) => {
                 rel="noopener noreferrer"
                 className={`relative block p-4 rounded-2xl transition-all duration-300 border ${link.borderColor} ${link.hoverBorder} overflow-hidden`}
               >
-                {/* Background gradient */}
                 <div
                   className={`absolute inset-0 bg-gradient-to-br ${link.color} ${link.hoverColor} transition-all duration-300`}
                 ></div>
 
-                {/* Shine effect */}
                 <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent opacity-0 group-hover/link:opacity-100 transition-opacity duration-300"></div>
 
-                {/* Content */}
                 <div className="relative flex items-center justify-between">
                   <div className="flex items-center space-x-4">
                     <div className="relative">
@@ -164,7 +159,6 @@ const MentorSocialLinks = ({ mentorData }) => {
         </div>
       )}
 
-      {/* Connection stats */}
       {validLinks.length > 0 && (
         <div className="mt-6 pt-6 border-t border-white/10">
           <div className="flex items-center justify-center space-x-2 text-xs text-gray-400">

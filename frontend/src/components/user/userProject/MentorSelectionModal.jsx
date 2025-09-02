@@ -182,10 +182,8 @@ const MentorSelectionModal = ({
         className="bg-gradient-to-r from-slate-900/80 to-blue-900/80
  backdrop-blur-xl rounded-3xl border border-white/20 shadow-2xl shadow-purple-500/10 max-w-7xl w-full max-h-[95vh] overflow-y-auto hide-scrollbar-general"
       >
-        {/* Header Section */}
         <div className="border-b border-white/10">
           <div className="relative p-4 sm:p-6">
-            {/* Animated background gradient */}
             <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 via-blue-500/10 to-cyan-500/10 animate-pulse"></div>
 
             <div className="relative flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -216,7 +214,6 @@ const MentorSelectionModal = ({
           </div>
         </div>
 
-        {/* Project Info Banner */}
         <div className="mx-4 sm:mx-6 mt-4 sm:mt-6">
           <div className="bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-pink-500/20 rounded-2xl p-5 sm:p-6 border border-blue-500/30 relative overflow-hidden shadow-xl shadow-blue-500/10">
             <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-purple-500/5 animate-pulse"></div>
@@ -241,10 +238,8 @@ const MentorSelectionModal = ({
           </div>
         </div>
 
-        {/* Search and Filter Section */}
         <div className="px-4 sm:px-6 py-5 border-b border-white/5">
           <div className="flex flex-col lg:flex-row gap-4">
-            {/* Search Bar */}
             <div className="relative flex-1">
               <Search
                 className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"
@@ -259,7 +254,6 @@ const MentorSelectionModal = ({
               />
             </div>
 
-            {/* Filter Toggle */}
             <button
               onClick={() => setShowFilters(!showFilters)}
               className="flex items-center justify-center space-x-3 px-5 py-3.5 bg-white/10 border border-white/20 rounded-xl text-white hover:bg-white/20 transition-all duration-300 active:scale-95 min-w-fit"
@@ -275,7 +269,6 @@ const MentorSelectionModal = ({
             </button>
           </div>
 
-          {/* Filter Options */}
           {showFilters && (
             <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 p-5 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-sm">
               <div className="space-y-2">
@@ -348,7 +341,6 @@ const MentorSelectionModal = ({
           )}
         </div>
 
-        {/* Main Content */}
         <div className="p-4 sm:p-6 pb-8">
           {mentorsLoading || loadingRequests ? (
             <div className="text-center py-16">
@@ -378,13 +370,10 @@ const MentorSelectionModal = ({
                         : "border-white/20 hover:border-white/40 hover:bg-white/15"
                     }`}
                   >
-                    {/* Hover Glow Effect */}
                     <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 via-blue-500/10 to-cyan-500/10 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10"></div>
 
-                    {/* Request Status Section */}
                     {isRequested && requestStatus && (
                       <div className="mb-6 space-y-4">
-                        {/* Status Badge */}
                         <div
                           className={`inline-flex items-center space-x-2 px-4 py-2 rounded-xl text-sm border backdrop-blur-sm font-medium ${getStatusBadgeStyle(
                             requestStatus.status
@@ -409,7 +398,6 @@ const MentorSelectionModal = ({
                           </span>
                         </div>
 
-                        {/* Mentor Response */}
                         {requestStatus.mentorResponse &&
                           requestStatus.status !== "pending" && (
                             <div className="bg-gradient-to-r from-white/10 to-white/5 rounded-2xl p-4 border border-white/20 backdrop-blur-sm">
@@ -442,7 +430,6 @@ const MentorSelectionModal = ({
                       </div>
                     )}
 
-                    {/* Mentor Header */}
                     <div className="flex items-start space-x-5 mb-5">
                       <div className="relative flex-shrink-0">
                         <div className="w-18 h-18 sm:w-20 sm:h-20 bg-gradient-to-r from-blue-500 to-purple-500 rounded-2xl flex items-center justify-center shadow-xl shadow-purple-500/20">
@@ -475,7 +462,6 @@ const MentorSelectionModal = ({
                           {mentor.title}
                         </p>
 
-                        {/* Quick Stats */}
                         <div className="flex items-center space-x-4 text-sm text-gray-300">
                           <div className="flex items-center space-x-1.5">
                             <Star
@@ -502,12 +488,10 @@ const MentorSelectionModal = ({
                       </div>
                     </div>
 
-                    {/* Description */}
                     <p className="text-gray-200 text-sm sm:text-base leading-relaxed mb-5 line-clamp-2">
                       {mentor.description}
                     </p>
 
-                    {/* Expertise Tags */}
                     <div className="mb-5">
                       <div className="flex items-center space-x-2 mb-3">
                         <Award className="text-purple-400" size={16} />
@@ -532,7 +516,6 @@ const MentorSelectionModal = ({
                       </div>
                     </div>
 
-                    {/* Stats Grid */}
                     <div className="grid grid-cols-2 gap-4 mb-5 p-4 bg-white/5 rounded-2xl border border-white/10">
                       <div className="text-center">
                         <div className="flex items-center justify-center space-x-1 text-purple-400 mb-2">
@@ -558,7 +541,6 @@ const MentorSelectionModal = ({
                       </div>
                     </div>
 
-                    {/* Pricing */}
                     <div className="mb-5 p-4 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-2xl border border-blue-500/20">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-2">
@@ -576,7 +558,6 @@ const MentorSelectionModal = ({
                       </div>
                     </div>
 
-                    {/* Social Links & Status */}
                     <div className="flex items-center justify-between mb-6">
                       <div className="flex space-x-2">
                         {mentor.socialLinks?.linkedin &&
@@ -625,7 +606,6 @@ const MentorSelectionModal = ({
                       </div>
                     </div>
 
-                    {/* Action Buttons */}
                     <div className="space-y-3">
                       {isRequested ? (
                         <>
@@ -697,7 +677,6 @@ const MentorSelectionModal = ({
             </div>
           )}
 
-          {/* Empty State */}
           {!mentorsLoading &&
             !loadingRequests &&
             filteredAndSortedMentors.length === 0 && (

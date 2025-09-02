@@ -77,11 +77,9 @@ const MentorStatsSection = ({ mentorData }) => {
 
   return (
     <div className="group relative">
-      {/* Background effects */}
       <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 via-purple-500/5 to-pink-500/5 rounded-3xl blur-xl group-hover:blur-2xl transition-all duration-500"></div>
 
       <div className="relative bg-white/10 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-6 lg:p-8 hover:bg-white/15 transition-all duration-500">
-        {/* Header */}
         <div className="flex items-center space-x-4 mb-8">
           <div className="relative">
             <div className="absolute inset-0 bg-gradient-to-br from-indigo-400 to-purple-500 rounded-xl blur-lg opacity-50"></div>
@@ -99,7 +97,6 @@ const MentorStatsSection = ({ mentorData }) => {
           </div>
         </div>
 
-        {/* Stats Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {statsData.map((stat, index) => (
             <div
@@ -110,13 +107,11 @@ const MentorStatsSection = ({ mentorData }) => {
                 animation: "fadeInScale 0.5s ease-out forwards",
               }}
             >
-              {/* Card glow effect */}
               <div
                 className={`absolute -inset-1 bg-gradient-to-r ${stat.bgGlow} rounded-xl opacity-0 group-hover/stat:opacity-100 transition-opacity duration-300 blur-sm`}
               ></div>
 
               <div className="relative bg-white/5 hover:bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/10 hover:border-white/20 transition-all duration-300">
-                {/* Icon and Value Row */}
                 <div className="flex items-center justify-between mb-3">
                   <div className="relative">
                     <div
@@ -139,14 +134,12 @@ const MentorStatsSection = ({ mentorData }) => {
                   </div>
                 </div>
 
-                {/* Label */}
                 <div className="mb-3">
                   <span className="text-gray-300 text-sm font-medium">
                     {stat.label}
                   </span>
                 </div>
 
-                {/* Progress Bar */}
                 <div className="relative h-2 bg-white/10 rounded-full overflow-hidden">
                   <div className="absolute inset-0 bg-gradient-to-r from-white/5 to-white/10 rounded-full"></div>
                   <div
@@ -162,7 +155,6 @@ const MentorStatsSection = ({ mentorData }) => {
                   </div>
                 </div>
 
-                {/* Hover indicator */}
                 <div className="absolute top-2 right-2 opacity-0 group-hover/stat:opacity-100 transition-opacity duration-300">
                   <Zap className="w-3 h-3 text-white/50" />
                 </div>
@@ -171,7 +163,6 @@ const MentorStatsSection = ({ mentorData }) => {
           ))}
         </div>
 
-        {/* Summary Footer */}
         <div className="mt-8 pt-6 border-t border-white/10">
           <div className="flex items-center justify-center space-x-6 text-sm">
             <div className="flex items-center space-x-2 text-emerald-400">

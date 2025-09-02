@@ -30,7 +30,6 @@ const ReviewerBox = ({ milestone, onClose, onMarkAsRead, saving }) => {
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 z-50 animate-in fade-in duration-300">
       <div className="bg-gradient-to-br from-slate-950/95 via-blue-950/95 to-indigo-950/95 backdrop-blur-xl rounded-2xl sm:rounded-3xl shadow-2xl border border-white/20 w-full max-w-2xl sm:max-w-3xl max-h-[95vh] overflow-hidden animate-in slide-in-from-bottom-4 duration-500">
-        {/* Simplified Header */}
         <div className="relative bg-gradient-to-r from-purple-600/10 via-blue-600/10 to-indigo-600/10 border-b border-white/10">
           <div className="p-4 sm:p-6">
             <div className="flex items-center justify-between">
@@ -62,7 +61,6 @@ const ReviewerBox = ({ milestone, onClose, onMarkAsRead, saving }) => {
           </div>
         </div>
 
-        {/* Content */}
         <div
           className="overflow-y-auto"
           style={{ maxHeight: "calc(95vh - 180px)" }}
@@ -70,7 +68,6 @@ const ReviewerBox = ({ milestone, onClose, onMarkAsRead, saving }) => {
           <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
             {milestone.reviewNote ? (
               <>
-                {/* Unread notification - moved inside content */}
                 {isUnread && (
                   <div className="bg-gradient-to-r from-orange-500/15 via-red-500/15 to-pink-500/15 backdrop-blur-sm rounded-xl p-3 sm:p-4 border border-orange-400/30">
                     <div className="flex items-center space-x-3">
@@ -90,9 +87,7 @@ const ReviewerBox = ({ milestone, onClose, onMarkAsRead, saving }) => {
                   </div>
                 )}
 
-                {/* Main Review Message */}
                 <div className="bg-gradient-to-br from-white/[0.08] via-white/[0.05] to-white/[0.02] backdrop-blur-xl rounded-xl border border-white/20 overflow-hidden shadow-lg">
-                  {/* Message header */}
                   <div className="bg-gradient-to-r from-purple-600/20 to-blue-600/20 p-3 sm:p-4 border-b border-white/10">
                     <div className="flex items-center space-x-3">
                       <div className="p-1.5 bg-gradient-to-br from-purple-500 to-blue-600 rounded-lg shadow-md flex-shrink-0">
@@ -130,7 +125,6 @@ const ReviewerBox = ({ milestone, onClose, onMarkAsRead, saving }) => {
                     </div>
                   </div>
 
-                  {/* Message content */}
                   <div className="p-4 sm:p-6">
                     <div className="bg-gradient-to-br from-purple-500/10 via-blue-500/10 to-indigo-500/10 rounded-lg p-3 sm:p-4 border border-purple-400/20">
                       <p className="text-white/95 leading-relaxed whitespace-pre-wrap text-sm sm:text-base break-words">
@@ -140,7 +134,6 @@ const ReviewerBox = ({ milestone, onClose, onMarkAsRead, saving }) => {
                   </div>
                 </div>
 
-                {/* Learning Tip Section */}
                 <div className="bg-gradient-to-br from-blue-500/10 via-indigo-500/10 to-purple-500/10 rounded-xl p-3 sm:p-4 border border-blue-400/20">
                   <div className="flex items-start space-x-3">
                     <div className="p-1.5 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex-shrink-0">
@@ -186,7 +179,6 @@ const ReviewerBox = ({ milestone, onClose, onMarkAsRead, saving }) => {
           </div>
         </div>
 
-        {/* Action Footer - Fixed and Always Visible */}
         {milestone.reviewNote && (
           <div className="bg-gradient-to-r from-slate-900/80 to-slate-800/80 backdrop-blur-sm border-t border-white/10 p-4 sm:p-6">
             {isUnread ? (

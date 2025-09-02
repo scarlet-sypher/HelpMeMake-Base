@@ -190,7 +190,6 @@ const AdminSessionsDashboard = ({ onReturn }) => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 p-4 md:p-8">
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
           <div className="flex items-center gap-4">
             <button
@@ -219,7 +218,6 @@ const AdminSessionsDashboard = ({ onReturn }) => {
           </button>
         </div>
 
-        {/* Stats Cards */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
           <div className="bg-slate-800/60 rounded-xl p-4 backdrop-blur-sm border border-slate-700">
             <div className="text-2xl font-bold text-white">{stats.total}</div>
@@ -257,10 +255,8 @@ const AdminSessionsDashboard = ({ onReturn }) => {
           </div>
         </div>
 
-        {/* Search and Filters */}
         <div className="bg-slate-800/60 rounded-xl p-6 backdrop-blur-sm border border-slate-700 mb-8">
           <div className="flex flex-col md:flex-row gap-4">
-            {/* Search */}
             <div className="flex-1">
               <div className="relative">
                 <Search
@@ -277,7 +273,6 @@ const AdminSessionsDashboard = ({ onReturn }) => {
               </div>
             </div>
 
-            {/* Status Filter */}
             <div className="flex items-center gap-2">
               <Filter className="text-slate-400" size={20} />
               <select
@@ -295,7 +290,6 @@ const AdminSessionsDashboard = ({ onReturn }) => {
           </div>
         </div>
 
-        {/* Sessions List */}
         {loading ? (
           <div className="text-center py-12">
             <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
@@ -321,7 +315,6 @@ const AdminSessionsDashboard = ({ onReturn }) => {
               </h2>
             </div>
 
-            {/* Sessions Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
               {filteredSessions.map((session) => (
                 <SessionsCard
@@ -332,7 +325,6 @@ const AdminSessionsDashboard = ({ onReturn }) => {
               ))}
             </div>
 
-            {/* Pagination */}
             {pagination.totalPages > 1 && (
               <div className="flex justify-center items-center gap-4 mt-8">
                 <button

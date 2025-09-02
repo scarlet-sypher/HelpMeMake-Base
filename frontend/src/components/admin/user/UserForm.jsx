@@ -240,7 +240,6 @@ const UserForm = ({ userId, onSave, onCancel }) => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 p-4">
       <div className="max-w-4xl mx-auto">
-        {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center space-x-4">
             <button
@@ -257,7 +256,6 @@ const UserForm = ({ userId, onSave, onCancel }) => {
         </div>
 
         <div className="space-y-8">
-          {/* Profile Picture */}
           <div className="bg-slate-800/60 backdrop-blur-sm rounded-2xl p-6">
             <h2 className="text-xl font-bold text-white mb-6 flex items-center">
               <User className="mr-2" />
@@ -296,7 +294,6 @@ const UserForm = ({ userId, onSave, onCancel }) => {
             </div>
           </div>
 
-          {/* Basic Information */}
           <div className="bg-slate-800/60 backdrop-blur-sm rounded-2xl p-6">
             <h2 className="text-xl font-bold text-white mb-6 flex items-center">
               <User className="mr-2" />
@@ -405,7 +402,6 @@ const UserForm = ({ userId, onSave, onCancel }) => {
               </div>
             </div>
 
-            {/* Account Status */}
             <div className="mt-6">
               <h3 className="text-lg font-medium text-white mb-4">
                 Account Status
@@ -438,7 +434,6 @@ const UserForm = ({ userId, onSave, onCancel }) => {
             </div>
           </div>
 
-          {/* Profile Details */}
           <div className="bg-slate-800/60 backdrop-blur-sm rounded-2xl p-6">
             <h2 className="text-xl font-bold text-white mb-6 flex items-center">
               <Briefcase className="mr-2" />
@@ -476,7 +471,6 @@ const UserForm = ({ userId, onSave, onCancel }) => {
             </div>
           </div>
 
-          {/* Social Links */}
           <div className="bg-slate-800/60 backdrop-blur-sm rounded-2xl p-6">
             <h2 className="text-xl font-bold text-white mb-6 flex items-center">
               <Link className="mr-2" />
@@ -534,7 +528,6 @@ const UserForm = ({ userId, onSave, onCancel }) => {
             </div>
           </div>
 
-          {/* Mentor-specific fields */}
           {userData.role === "mentor" && (
             <div className="bg-slate-800/60 backdrop-blur-sm rounded-2xl p-6">
               <h2 className="text-xl font-bold text-white mb-6 flex items-center">
@@ -576,14 +569,12 @@ const UserForm = ({ userId, onSave, onCancel }) => {
             </div>
           )}
 
-          {/* Error Display */}
           {errors.submit && (
             <div className="bg-red-600/20 border border-red-600 rounded-lg p-4">
               <p className="text-red-400">{errors.submit}</p>
             </div>
           )}
 
-          {/* Action Buttons */}
           <div className="flex justify-end space-x-4">
             <button
               type="button"

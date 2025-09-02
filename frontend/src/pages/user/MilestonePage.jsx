@@ -436,13 +436,11 @@ const MilestonePage = () => {
 
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-slate-950 via-blue-950 to-indigo-950 flex overflow-x-hidden">
-      {/* Animated background elements */}
       <div className="fixed inset-0 w-full h-full overflow-hidden pointer-events-none">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-500/20 rounded-full blur-3xl animate-pulse"></div>
         <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-500/20 rounded-full blur-3xl animate-pulse"></div>
       </div>
 
-      {/* Sidebar */}
       <Sidebar
         isOpen={sidebarOpen}
         toggleSidebar={toggleSidebar}
@@ -453,9 +451,7 @@ const MilestonePage = () => {
         }
       />
 
-      {/* Main Content */}
       <div className="flex-1 lg:ml-64 min-h-screen w-full max-w-full bg-gradient-to-br from-slate-950 via-blue-950 to-indigo-950">
-        {/* Mobile Header */}
         <div className="lg:hidden bg-gradient-to-r from-slate-900/80 to-blue-900/80 backdrop-blur-sm border-b border-white/10 p-4 w-full">
           <div className="flex items-center justify-between">
             <button
@@ -463,7 +459,7 @@ const MilestonePage = () => {
               className="text-white hover:text-gray-300 transition-colors relative"
             >
               <Menu size={24} />
-              {/* Notification badge */}
+
               {unreadReviewsCount > 0 && (
                 <div className="absolute -top-2 -right-2 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center">
                   <span className="text-white text-xs font-bold">
@@ -487,7 +483,6 @@ const MilestonePage = () => {
         </div>
 
         <div className="relative z-10 p-4 lg:p-6 space-y-6 w-full max-w-full">
-          {/* Header */}
           <div className="flex flex-col lg:flex-row lg:items-center justify-between">
             <div>
               <div className="flex items-center space-x-3">
@@ -495,7 +490,7 @@ const MilestonePage = () => {
                   <Target className="mr-3 text-purple-400" size={36} />
                   Milestones
                 </h1>
-                {/* Desktop notification badge */}
+
                 {unreadReviewsCount > 0 && (
                   <div className="hidden lg:flex px-3 py-1 bg-gradient-to-r from-orange-500 to-red-500 rounded-full animate-pulse">
                     <span className="text-white text-sm font-bold">
@@ -511,7 +506,6 @@ const MilestonePage = () => {
             </div>
           </div>
 
-          {/* Error Display */}
           {error && (
             <div className="bg-red-500/20 backdrop-blur-sm rounded-2xl p-4 border border-red-400/30 flex items-center space-x-3">
               <AlertCircle className="text-red-400" size={24} />
@@ -519,7 +513,6 @@ const MilestonePage = () => {
             </div>
           )}
 
-          {/* New Review Alert */}
           {unreadReviewsCount > 0 && (
             <div className="bg-gradient-to-r from-orange-500/20 to-red-500/20 backdrop-blur-sm rounded-2xl p-4 border border-orange-400/30 animate-pulse">
               <div className="flex items-center space-x-3">
@@ -560,10 +553,8 @@ const MilestonePage = () => {
             </div>
           ) : (
             <div className="space-y-6">
-              {/* Project Information Component */}
               <ProjectInfo projectData={projectData} />
 
-              {/* Milestone Creation Form Component */}
               <MilestoneForm
                 milestones={milestones}
                 newMilestone={newMilestone}
@@ -572,7 +563,6 @@ const MilestonePage = () => {
                 saving={saving}
               />
 
-              {/* Milestones List Component - Updated with review support */}
               <MilestoneList
                 milestones={milestones}
                 markMilestoneAsDone={markMilestoneAsDone}

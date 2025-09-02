@@ -167,7 +167,6 @@ export default function AdminLearnerDashboard({ onReturn }) {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 p-4 md:p-8">
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center space-x-4">
             <button
@@ -201,7 +200,6 @@ export default function AdminLearnerDashboard({ onReturn }) {
           </div>
         </div>
 
-        {/* Statistics Cards */}
         {stats && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             <div className="bg-gradient-to-r from-blue-500 to-cyan-500 rounded-xl p-6 text-white">
@@ -236,7 +234,6 @@ export default function AdminLearnerDashboard({ onReturn }) {
           </div>
         )}
 
-        {/* Search and Filter Bar */}
         <div className="bg-slate-800/60 backdrop-blur-sm rounded-xl p-6 mb-8 border border-slate-700/50">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
             <div className="relative flex-1 max-w-md">
@@ -264,7 +261,6 @@ export default function AdminLearnerDashboard({ onReturn }) {
           </div>
         </div>
 
-        {/* Learners Grid */}
         {filteredLearners.length === 0 ? (
           <div className="bg-slate-800/60 backdrop-blur-sm rounded-xl p-12 text-center border border-slate-700/50">
             <Users size={64} className="text-slate-600 mx-auto mb-4" />
@@ -297,7 +293,6 @@ export default function AdminLearnerDashboard({ onReturn }) {
               ))}
             </div>
 
-            {/* Pagination */}
             {!searchTerm && pagination.pages > 1 && (
               <div className="bg-slate-800/60 backdrop-blur-sm rounded-xl p-6 border border-slate-700/50">
                 <div className="flex items-center justify-between">
@@ -366,7 +361,6 @@ export default function AdminLearnerDashboard({ onReturn }) {
           </>
         )}
 
-        {/* Loading Overlay */}
         {loading && learners.length > 0 && (
           <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50">
             <div className="bg-slate-800 rounded-xl p-6 border border-slate-700">

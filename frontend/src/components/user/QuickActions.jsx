@@ -242,12 +242,10 @@ const QuickActions = () => {
 
   return (
     <div className="bg-white/10 backdrop-blur-sm rounded-3xl shadow-2xl p-4 sm:p-6 border border-white/20 relative overflow-hidden">
-      {/* Animated background elements */}
       <div className="absolute -top-10 -right-10 w-20 h-20 bg-yellow-400/20 rounded-full blur-xl animate-pulse"></div>
       <div className="absolute -bottom-10 -left-10 w-16 h-16 bg-blue-400/20 rounded-full blur-xl animate-pulse"></div>
 
       <div className="relative z-10">
-        {/* Header */}
         <div className="flex items-center justify-between mb-4 sm:mb-6">
           <h2 className="text-lg sm:text-xl font-bold text-white flex items-center">
             <Zap className="mr-2 text-yellow-400" size={20} />
@@ -275,7 +273,6 @@ const QuickActions = () => {
           </div>
         </div>
 
-        {/* Edit Mode Controls */}
         {isEditMode && (
           <div className="mb-4 flex flex-wrap items-center justify-between gap-2 p-3 bg-white/5 rounded-xl border border-white/10">
             <span className="text-sm text-white">
@@ -314,7 +311,6 @@ const QuickActions = () => {
           </div>
         )}
 
-        {/* Action Grid */}
         <div
           className={`grid gap-3 sm:gap-4 ${
             isEditMode
@@ -353,19 +349,16 @@ const QuickActions = () => {
                       : `bg-gradient-to-r ${action.color} hover:shadow-2xl transform hover:scale-105 focus:scale-105`
                   }`}
                 >
-                  {/* Selected indicator */}
                   {isEditMode && isSelected && (
                     <div className="absolute top-2 right-2 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
                       <Check size={12} className="text-white" />
                     </div>
                   )}
 
-                  {/* Shine effect */}
                   {!isEditMode && (
                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
                   )}
 
-                  {/* Content */}
                   <div className="relative z-10 flex flex-col items-center">
                     <div
                       className={`w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 rounded-lg sm:rounded-xl flex items-center justify-center mb-2 sm:mb-3 transition-colors ${
@@ -383,13 +376,11 @@ const QuickActions = () => {
                       {action.label}
                     </span>
 
-                    {/* Action indicator */}
                     {!isEditMode && (
                       <div className="mt-1 sm:mt-2 w-6 sm:w-8 h-0.5 bg-white/40 rounded-full group-hover:bg-white/60 transition-colors"></div>
                     )}
                   </div>
 
-                  {/* Hover glow */}
                   {!isEditMode && (
                     <div className="absolute inset-0 rounded-xl sm:rounded-2xl opacity-0 group-hover:opacity-100 group-focus:opacity-100 transition-opacity duration-300 shadow-lg"></div>
                   )}
@@ -399,7 +390,6 @@ const QuickActions = () => {
           )}
         </div>
 
-        {/* Status indicator */}
         {!isEditMode && (
           <div className="flex items-center justify-center mt-4">
             <div className="flex items-center space-x-2">

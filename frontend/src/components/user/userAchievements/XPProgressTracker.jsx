@@ -64,7 +64,6 @@ const XPProgressTracker = ({ learnerData, achievements }) => {
   return (
     <div className="bg-white/10 backdrop-blur-sm rounded-2xl sm:rounded-3xl shadow-2xl p-4 sm:p-6 border border-white/20">
       <div className="flex flex-col space-y-4 sm:space-y-6">
-        {/* Header */}
         <div className="flex items-center justify-between">
           <h2 className="text-lg sm:text-xl font-bold text-white flex items-center">
             <TrendingUp className="mr-2 text-blue-400" size={20} />
@@ -78,9 +77,7 @@ const XPProgressTracker = ({ learnerData, achievements }) => {
           </div>
         </div>
 
-        {/* Level Badge and XP Display */}
         <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-6">
-          {/* Level Badge */}
           <div className="relative group">
             <div
               className={`
@@ -93,14 +90,12 @@ const XPProgressTracker = ({ learnerData, achievements }) => {
               <LevelIcon size={32} className="text-white" />
             </div>
 
-            {/* Level number overlay */}
             <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-gray-800 rounded-full flex items-center justify-center border-2 border-white/20">
               <span className="text-white text-sm font-bold">
                 {displayLevel}
               </span>
             </div>
 
-            {/* Tooltip */}
             <div className="absolute -top-12 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
               <div className="bg-gray-800 text-white text-xs px-3 py-1 rounded-lg whitespace-nowrap">
                 Level {displayLevel} {isMaxLevel ? "(MAX)" : ""}
@@ -108,7 +103,6 @@ const XPProgressTracker = ({ learnerData, achievements }) => {
             </div>
           </div>
 
-          {/* XP Information */}
           <div className="flex-1 text-center sm:text-left">
             <div className="mb-3">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-2">
@@ -122,7 +116,6 @@ const XPProgressTracker = ({ learnerData, achievements }) => {
                 )}
               </div>
 
-              {/* Progress Bar */}
               {!isMaxLevel ? (
                 <div className="relative">
                   <div className="w-full bg-gray-700/50 rounded-full h-3 sm:h-4 overflow-hidden">
@@ -133,7 +126,6 @@ const XPProgressTracker = ({ learnerData, achievements }) => {
                       `}
                       style={{ width: `${progressPercentage}%` }}
                     >
-                      {/* Animated shine effect */}
                       <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent transform -skew-x-12 animate-shimmer" />
                     </div>
                   </div>
@@ -154,7 +146,6 @@ const XPProgressTracker = ({ learnerData, achievements }) => {
               )}
             </div>
 
-            {/* XP Breakdown */}
             <div className="grid grid-cols-2 gap-2 sm:gap-4 text-xs sm:text-sm">
               <div className="bg-white/5 rounded-lg p-2 sm:p-3">
                 <div className="text-gray-300">Total Badges</div>
@@ -172,7 +163,6 @@ const XPProgressTracker = ({ learnerData, achievements }) => {
           </div>
         </div>
 
-        {/* Level Milestones */}
         <div className="border-t border-white/10 pt-4">
           <h3 className="text-white font-semibold mb-3 text-sm sm:text-base">
             Level Milestones
@@ -224,7 +214,6 @@ const XPProgressTracker = ({ learnerData, achievements }) => {
                     {level}
                   </span>
 
-                  {/* Tooltip */}
                   <div className="absolute -top-12 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
                     <div className="bg-gray-800 text-white text-xs px-2 py-1 rounded whitespace-nowrap">
                       Level {level}{" "}
@@ -237,7 +226,6 @@ const XPProgressTracker = ({ learnerData, achievements }) => {
           </div>
         </div>
 
-        {/* Quick Stats */}
         <div className="grid grid-cols-3 gap-3 border-t border-white/10 pt-4">
           <div className="text-center">
             <div className="text-xs sm:text-sm text-gray-300">Streak</div>
@@ -259,7 +247,6 @@ const XPProgressTracker = ({ learnerData, achievements }) => {
           </div>
         </div>
 
-        {/* Motivational Message */}
         <div className="bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-lg p-3 sm:p-4 border border-blue-400/20">
           <div className="flex items-center mb-2">
             <Star className="text-yellow-400 mr-2" size={16} />

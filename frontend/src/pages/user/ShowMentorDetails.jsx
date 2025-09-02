@@ -357,14 +357,12 @@ const ShowMentorDetails = () => {
         theme="dark"
       />
 
-      {/* Animated background elements */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-500/20 rounded-full blur-3xl animate-pulse"></div>
         <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-500/20 rounded-full blur-3xl animate-pulse"></div>
       </div>
 
       <div className="relative z-10 p-4 lg:p-6">
-        {/* Header */}
         <div className="mb-6">
           <button
             onClick={() => navigate(-1)}
@@ -378,10 +376,8 @@ const ShowMentorDetails = () => {
           </button>
         </div>
 
-        {/* Hero Section - Mentor Profile */}
         <div className="bg-white/10 backdrop-blur-sm rounded-3xl shadow-2xl p-6 border border-white/20 mb-6">
           <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
-            {/* Mentor Info */}
             <div className="flex flex-col sm:flex-row items-start space-y-4 sm:space-y-0 sm:space-x-6 flex-1">
               <div className="relative">
                 <div className="w-24 h-24 sm:w-32 sm:h-32 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center flex-shrink-0 mx-auto sm:mx-0">
@@ -400,7 +396,6 @@ const ShowMentorDetails = () => {
                   )}
                 </div>
 
-                {/* AI Badge */}
                 {location.state?.fromAI && (
                   <div className="absolute -top-2 -right-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white px-2 py-1 rounded-lg text-xs font-bold flex items-center space-x-1">
                     <Bot size={10} />
@@ -408,7 +403,6 @@ const ShowMentorDetails = () => {
                   </div>
                 )}
 
-                {/* Online Status */}
                 <div
                   className={`absolute -bottom-1 -right-1 w-6 h-6 rounded-full border-2 border-white ${
                     mentor.isOnline ? "bg-green-500" : "bg-gray-500"
@@ -425,7 +419,6 @@ const ShowMentorDetails = () => {
                   {mentor.description}
                 </p>
 
-                {/* Key Stats */}
                 <div className="flex flex-wrap justify-center sm:justify-start gap-4 mb-4">
                   <div className="flex items-center space-x-1 text-sm">
                     <Star className="text-yellow-400" size={16} />
@@ -452,7 +445,6 @@ const ShowMentorDetails = () => {
                   </div>
                 </div>
 
-                {/* Location and Join Date */}
                 <div className="flex flex-wrap justify-center sm:justify-start gap-4 text-sm text-gray-300">
                   <div className="flex items-center space-x-1">
                     <MapPin size={14} />
@@ -470,9 +462,7 @@ const ShowMentorDetails = () => {
               </div>
             </div>
 
-            {/* Action Buttons */}
             <div className="flex flex-col space-y-3 lg:w-64">
-              {/* Request Status or Send Request Button */}
               {checkingRequest ? (
                 <div className="w-full px-6 py-3 bg-white/10 border border-white/20 text-white rounded-xl font-medium flex items-center justify-center space-x-2">
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
@@ -480,7 +470,6 @@ const ShowMentorDetails = () => {
                 </div>
               ) : requestStatus ? (
                 <div className="space-y-3">
-                  {/* Status Display */}
                   <div
                     className={`w-full px-6 py-3 rounded-xl font-medium flex items-center justify-center space-x-2 ${
                       requestStatus === "accepted"
@@ -500,7 +489,6 @@ const ShowMentorDetails = () => {
                     </span>
                   </div>
 
-                  {/* Mentor Response */}
                   {mentorResponse && requestStatus !== "pending" && (
                     <div className="bg-white/5 rounded-xl p-4 border border-white/10">
                       <div className="flex items-start space-x-2">
@@ -574,11 +562,8 @@ const ShowMentorDetails = () => {
           </div>
         </div>
 
-        {/* Main Content Grid */}
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-          {/* Left Column - Mentor Details */}
           <div className="xl:col-span-2 space-y-6">
-            {/* AI Reasoning Section */}
             {location.state?.fromAI && whyReason && (
               <div className="bg-gradient-to-r from-purple-500/20 to-blue-500/20 backdrop-blur-sm rounded-3xl shadow-2xl p-6 border border-purple-500/30">
                 <div className="flex items-center justify-between mb-6">
@@ -639,7 +624,6 @@ const ShowMentorDetails = () => {
               </div>
             )}
 
-            {/* Project Context */}
             {project && (
               <div className="bg-gradient-to-r from-blue-500/20 to-purple-500/20 backdrop-blur-sm rounded-3xl shadow-2xl p-6 border border-blue-500/30">
                 <h2 className="text-xl font-bold text-white mb-4 flex items-center">
@@ -668,7 +652,6 @@ const ShowMentorDetails = () => {
               </div>
             )}
 
-            {/* Expertise & Skills */}
             <div className="bg-white/10 backdrop-blur-sm rounded-3xl shadow-2xl p-6 border border-white/20">
               <h2 className="text-xl font-bold text-white mb-6 flex items-center">
                 <Award className="mr-2 text-green-400" size={20} />
@@ -706,7 +689,6 @@ const ShowMentorDetails = () => {
               </div>
             </div>
 
-            {/* Experience */}
             <div className="bg-white/10 backdrop-blur-sm rounded-3xl shadow-2xl p-6 border border-white/20">
               <h2 className="text-xl font-bold text-white mb-6 flex items-center">
                 <Activity className="mr-2 text-blue-400" size={20} />
@@ -762,7 +744,6 @@ const ShowMentorDetails = () => {
               </div>
             </div>
 
-            {/* Bio */}
             {mentor.bio && (
               <div className="bg-white/10 backdrop-blur-sm rounded-3xl shadow-2xl p-6 border border-white/20">
                 <h2 className="text-xl font-bold text-white mb-4 flex items-center">
@@ -774,9 +755,7 @@ const ShowMentorDetails = () => {
             )}
           </div>
 
-          {/* Right Column - Stats & Info */}
           <div className="space-y-6">
-            {/* Pricing & Availability */}
             <div className="bg-white/10 backdrop-blur-sm rounded-3xl shadow-2xl p-6 border border-white/20">
               <h2 className="text-xl font-bold text-white mb-4 flex items-center">
                 <DollarSign className="mr-2 text-green-400" size={20} />
@@ -828,7 +807,6 @@ const ShowMentorDetails = () => {
               </div>
             </div>
 
-            {/* Stats Overview */}
             <div className="bg-white/10 backdrop-blur-sm rounded-3xl shadow-2xl p-6 border border-white/20">
               <h2 className="text-xl font-bold text-white mb-4 flex items-center">
                 <TrendingUp className="mr-2 text-yellow-400" size={20} />
@@ -873,7 +851,6 @@ const ShowMentorDetails = () => {
               </div>
             </div>
 
-            {/* Social Links */}
             <div className="bg-white/10 backdrop-blur-sm rounded-3xl shadow-2xl p-6 border border-white/20">
               <h2 className="text-xl font-bold text-white mb-4 flex items-center">
                 <Globe className="mr-2 text-cyan-400" size={20} />
@@ -934,7 +911,6 @@ const ShowMentorDetails = () => {
               </div>
             </div>
 
-            {/* Badges & Achievements */}
             {mentor.badges && mentor.badges.length > 0 && (
               <div className="bg-white/10 backdrop-blur-sm rounded-3xl shadow-2xl p-6 border border-white/20">
                 <h2 className="text-xl font-bold text-white mb-4 flex items-center">
@@ -960,7 +936,6 @@ const ShowMentorDetails = () => {
           </div>
         </div>
 
-        {/* Request Modal */}
         {showRequestModal && (
           <RequestModal
             mentor={mentor}

@@ -242,7 +242,6 @@ const AchievementBadge = () => {
           onMouseEnter={() => setHoveredBadge(badgeType)}
           onMouseLeave={() => setHoveredBadge(null)}
         >
-          {/* Animated background effects for unlocked badges */}
           {badge.unlocked && (
             <>
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
@@ -252,7 +251,6 @@ const AchievementBadge = () => {
             </>
           )}
 
-          {/* Sparkle effects for higher tier badges */}
           {badge.unlocked &&
             (badgeType === "epic" || badgeType === "legendary") && (
               <>
@@ -270,7 +268,6 @@ const AchievementBadge = () => {
             )}
 
           <div className="relative z-10 flex flex-col items-center justify-center">
-            {/* Badge Icon */}
             <div className="relative">
               <IconComponent
                 size={isCenter ? 32 : 24}
@@ -279,7 +276,6 @@ const AchievementBadge = () => {
                 }
               />
 
-              {/* Lock overlay for locked badges */}
               {!badge.unlocked && (
                 <div className="absolute inset-0 flex items-center justify-center">
                   <Lock size={isCenter ? 20 : 16} className="text-gray-300" />
@@ -287,7 +283,6 @@ const AchievementBadge = () => {
               )}
             </div>
 
-            {/* Stars for unlocked badges */}
             {badge.unlocked && (
               <div className="flex mt-1">
                 {[...Array(levelConfig.stars)].map((_, i) => (
@@ -300,7 +295,6 @@ const AchievementBadge = () => {
               </div>
             )}
 
-            {/* Progress bar for locked badges (only show on center badge) */}
             {!badge.unlocked && isCenter && (
               <div className="w-12 bg-white/20 rounded-full h-1 mt-2">
                 <div
@@ -311,7 +305,6 @@ const AchievementBadge = () => {
             )}
           </div>
 
-          {/* Tooltip */}
           {hoveredBadge === badgeType && (
             <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 z-50">
               <div className="bg-black/90 backdrop-blur-sm text-white text-xs py-2 px-3 rounded-lg border border-white/20 shadow-xl whitespace-nowrap">
@@ -380,12 +373,10 @@ const AchievementBadge = () => {
 
   return (
     <div className="bg-white/10 backdrop-blur-sm rounded-3xl shadow-2xl p-6 border border-white/20 relative overflow-hidden">
-      {/* Background Animation Elements */}
       <div className="absolute -top-10 -right-10 w-20 h-20 bg-yellow-400/20 rounded-full blur-xl animate-pulse"></div>
       <div className="absolute -bottom-10 -left-10 w-16 h-16 bg-blue-400/20 rounded-full blur-xl animate-pulse"></div>
 
       <div className="relative z-10">
-        {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-lg font-bold text-white flex items-center">
             <Trophy className="mr-2 text-yellow-400" size={20} />
@@ -399,37 +390,30 @@ const AchievementBadge = () => {
           </div>
         </div>
 
-        {/* Badge Layout - Cross Pattern with Legendary in Center */}
         <div className="relative w-full max-w-[240px] mx-auto">
           <div className="relative flex items-center justify-center h-[235px] w-[235px]">
-            {/* Top Badge (Rare) */}
             <div className="absolute top-2 left-1/2 transform -translate-x-1/2">
               {renderBadge("rare")}
             </div>
 
-            {/* Left Badge (Basic) */}
             <div className="absolute left-2 top-1/2 transform -translate-y-1/2">
               {renderBadge("basic")}
             </div>
 
-            {/* Center Badge (Legendary) */}
             <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
               {renderBadge("legendary", true)}
             </div>
 
-            {/* Right Badge (Common) */}
             <div className="absolute right-2 top-1/2 transform -translate-y-1/2">
               {renderBadge("common")}
             </div>
 
-            {/* Bottom Badge (Epic) */}
             <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2">
               {renderBadge("epic")}
             </div>
           </div>
         </div>
 
-        {/* Progress Summary */}
         {totalUnlocked < 5 && (
           <div className="mt-6 text-center">
             <div className="text-sm text-gray-400 mb-2">
@@ -445,7 +429,6 @@ const AchievementBadge = () => {
         )}
       </div>
 
-      {/* Legendary Overlay */}
       <LegendaryOverlay
         open={legendaryOverlayOpen}
         onClose={() => setLegendaryOverlayOpen(false)}

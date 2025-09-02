@@ -167,7 +167,6 @@ const AchievementCategoryList = ({
             `}
             onClick={handleBadgeClick}
           >
-            {/* Badge Icon */}
             <div className="absolute inset-0 flex items-center justify-center">
               <BadgeIcon
                 size={24}
@@ -177,7 +176,6 @@ const AchievementCategoryList = ({
               />
             </div>
 
-            {/* Badge Level Stars */}
             <div className="absolute -top-1 -right-1 flex space-x-0.5">
               {[
                 ...Array(
@@ -204,7 +202,6 @@ const AchievementCategoryList = ({
               ))}
             </div>
 
-            {/* Progress indicator for locked badges */}
             {!isUnlocked && (
               <div className="absolute bottom-1 left-1 right-1">
                 <div className="bg-gray-700 rounded-full h-1">
@@ -223,14 +220,12 @@ const AchievementCategoryList = ({
               </div>
             )}
 
-            {/* New badge indicator */}
             {isNewBadge && (
               <div className="absolute -top-2 -left-2 w-6 h-6 bg-yellow-400 rounded-full flex items-center justify-center animate-bounce">
                 <Sparkles size={12} className="text-yellow-900" />
               </div>
             )}
 
-            {/* Tooltip */}
             <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
               <div className="bg-gray-800 text-white text-xs px-2 py-1 rounded whitespace-nowrap">
                 {isUnlocked
@@ -283,7 +278,6 @@ const AchievementCategoryList = ({
         key={categoryKey}
         className={`bg-gradient-to-r ${colors.bg} backdrop-blur-sm rounded-2xl border ${colors.border} overflow-hidden`}
       >
-        {/* Category Header */}
         <div
           className="p-4 sm:p-6 cursor-pointer hover:bg-white/5 transition-all duration-300"
           onClick={() => setExpandedCategory(isExpanded ? null : categoryKey)}
@@ -325,7 +319,6 @@ const AchievementCategoryList = ({
           </div>
         </div>
 
-        {/* Category Content */}
         {isExpanded && (
           <div className="px-4 pb-6 sm:px-6">
             {validAchievements.map(([achievementKey, achievement]) => {
@@ -390,7 +383,6 @@ const AchievementCategoryList = ({
                     )}
                   </div>
 
-                  {/* Progress bar for current achievement */}
                   <div className="mt-3">
                     <div className="flex justify-between text-xs text-gray-400 mb-1">
                       <span>Progress to next badge</span>

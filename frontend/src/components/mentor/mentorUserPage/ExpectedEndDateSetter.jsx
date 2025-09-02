@@ -98,7 +98,6 @@ const ExpectedEndDateSetter = ({ projectData, onDataRefresh }) => {
           </div>
         </div>
 
-        {/* Current Status Display */}
         <div className="mb-6 space-y-3">
           {projectData?.startDate && (
             <div className="flex items-center justify-between p-3 bg-gray-800/50 rounded-xl border border-gray-700/50">
@@ -159,7 +158,6 @@ const ExpectedEndDateSetter = ({ projectData, onDataRefresh }) => {
           )}
         </div>
 
-        {/* Date Setter (only if not confirmed) */}
         {!isDateConfirmed && (
           <div className="space-y-4">
             <div className="flex items-center space-x-4">
@@ -213,7 +211,6 @@ const ExpectedEndDateSetter = ({ projectData, onDataRefresh }) => {
           </div>
         )}
 
-        {/* Confirmed Date Display */}
         {isDateConfirmed && (
           <div className="flex items-start p-4 bg-green-900/20 rounded-xl border border-green-600/30">
             <CheckCircle className="w-5 h-5 text-green-400 mr-3 mt-0.5 flex-shrink-0" />

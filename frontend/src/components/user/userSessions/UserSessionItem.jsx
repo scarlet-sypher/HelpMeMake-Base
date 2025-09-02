@@ -215,7 +215,6 @@ const UserSessionItem = ({ session, isLast, onSessionUpdate }) => {
           isSessionSoon() ? "ring-2 ring-cyan-500/50" : ""
         } z-10`}
       >
-        {/* Upcoming session indicator */}
         {isSessionSoon() && (
           <div className="absolute -top-2 -right-2 px-3 py-1 bg-gradient-to-r from-cyan-500 to-teal-500 text-white text-xs font-bold rounded-full animate-pulse">
             <div className="flex items-center space-x-1">
@@ -225,19 +224,15 @@ const UserSessionItem = ({ session, isLast, onSessionUpdate }) => {
           </div>
         )}
 
-        {/* Content */}
         <div className="relative z-10">
-          {/* Header */}
           <div className="flex items-start justify-between mb-4">
             <div className="flex items-start space-x-4 flex-1">
-              {/* Mentor Avatar */}
               <img
                 src={getAvatarUrl(mentor?.avatar)}
                 alt={mentor?.name || "Mentor"}
                 className="w-12 h-12 rounded-full object-cover border-2 border-white/20 shadow-lg"
               />
 
-              {/* Session Info */}
               <div className="flex-1 min-w-0">
                 <h3 className="text-lg font-bold text-white mb-1 line-clamp-1">
                   {session.title}
@@ -258,7 +253,6 @@ const UserSessionItem = ({ session, isLast, onSessionUpdate }) => {
               </div>
             </div>
 
-            {/* Status Badge */}
             <div
               className={`flex items-center space-x-2 px-3 py-1 rounded-full text-xs font-medium border backdrop-blur-sm ${getStatusStyle(
                 session.status
@@ -269,7 +263,6 @@ const UserSessionItem = ({ session, isLast, onSessionUpdate }) => {
             </div>
           </div>
 
-          {/* Description */}
           {session.description && (
             <p className="text-gray-300 text-sm mb-4 line-clamp-2">
               {session.description}
@@ -277,9 +270,7 @@ const UserSessionItem = ({ session, isLast, onSessionUpdate }) => {
           )}
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Left Column - Session Details */}
             <div className="space-y-4">
-              {/* Session Details */}
               <div className="p-4 bg-white/5 rounded-xl border border-white/10">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="flex items-center space-x-2">
@@ -305,7 +296,6 @@ const UserSessionItem = ({ session, isLast, onSessionUpdate }) => {
                 </div>
               </div>
 
-              {/* Prerequisites */}
               {session.prerequisites && (
                 <div className="p-3 bg-amber-500/10 rounded-lg border border-amber-500/20">
                   <div className="text-amber-300 text-sm font-medium mb-1">
@@ -317,7 +307,6 @@ const UserSessionItem = ({ session, isLast, onSessionUpdate }) => {
                 </div>
               )}
 
-              {/* Submitted reason display */}
               {session.learnerReason && (
                 <div className="p-3 bg-orange-500/10 rounded-lg border border-orange-500/20">
                   <div className="text-orange-300 text-sm font-medium mb-1">
@@ -329,7 +318,6 @@ const UserSessionItem = ({ session, isLast, onSessionUpdate }) => {
                 </div>
               )}
 
-              {/* Absence Reasons */}
               {session.status === "expired" && (
                 <div className="p-3 bg-red-500/10 rounded-lg border border-red-500/20">
                   {session.mentorReason && (
@@ -353,11 +341,8 @@ const UserSessionItem = ({ session, isLast, onSessionUpdate }) => {
               )}
             </div>
 
-            {/* Right Column - Actions */}
             <div className="space-y-4">
-              {/* Action Buttons */}
               <div className="space-y-3">
-                {/* Join Session Button */}
                 {shouldShowJoinButton() && (
                   <div className="relative group w-full flex justify-center">
                     <button
@@ -380,7 +365,6 @@ const UserSessionItem = ({ session, isLast, onSessionUpdate }) => {
                       )}
                     </button>
 
-                    {/* Tooltip */}
                     {(loading || !canJoinSession()) && (
                       <span className="absolute -top-10 px-3 py-1 text-xs text-white bg-gray-800 rounded-md opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-lg">
                         {loading
@@ -391,7 +375,6 @@ const UserSessionItem = ({ session, isLast, onSessionUpdate }) => {
                   </div>
                 )}
 
-                {/* Recording Button */}
                 {session.status === "completed" && session.recordingLink && (
                   <button
                     onClick={() => window.open(session.recordingLink, "_blank")}
@@ -403,7 +386,6 @@ const UserSessionItem = ({ session, isLast, onSessionUpdate }) => {
                   </button>
                 )}
 
-                {/* Reason Button */}
                 {needsAbsenceReason() && (
                   <button
                     onClick={() => setShowReasonBox(true)}
@@ -415,7 +397,6 @@ const UserSessionItem = ({ session, isLast, onSessionUpdate }) => {
                 )}
               </div>
 
-              {/* Attendance Status */}
               <div className="flex flex-col space-y-2">
                 {session.status === "completed" && (
                   <div className="flex items-center space-x-2 text-green-300 bg-green-500/10 px-3 py-2 rounded-lg border border-green-400/20">
@@ -440,11 +421,9 @@ const UserSessionItem = ({ session, isLast, onSessionUpdate }) => {
           </div>
         </div>
 
-        {/* Reason Submission Modal */}
         {showReasonBox && (
           <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in">
             <div className="bg-gradient-to-br from-slate-950 via-blue-950 to-indigo-950 rounded-2xl p-6 border border-white/20 max-w-md w-full shadow-2xl relative overflow-hidden animate-scale-in">
-              {/* Modal background effects */}
               <div className="absolute inset-0 bg-gradient-to-br from-orange-500/10 via-transparent to-red-500/10 rounded-2xl"></div>
               <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-white/5 to-transparent rounded-full blur-xl"></div>
 

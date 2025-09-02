@@ -43,7 +43,6 @@ const AssignedMentorSection = ({ project, API_URL, onToast }) => {
 
   return (
     <div className="bg-gradient-to-br from-white/10 via-white/5 to-transparent backdrop-blur-md rounded-3xl shadow-2xl p-6 border border-white/20 hover:border-white/30 transition-all duration-300">
-      {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-xl font-bold text-white flex items-center">
           <div className="p-2 bg-gradient-to-br from-green-500/20 to-blue-500/20 rounded-xl mr-3 border border-green-400/30">
@@ -57,17 +56,14 @@ const AssignedMentorSection = ({ project, API_URL, onToast }) => {
         </div>
       </div>
 
-      {/* Main Mentor Card */}
       <div
         className="group relative p-5 bg-gradient-to-br from-white/5 to-transparent rounded-2xl border border-white/10 hover:border-white/20 transition-all duration-300 cursor-pointer hover:shadow-xl"
         onClick={handleMentorClick}
       >
-        {/* Background glow effect */}
         <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
 
         <div className="relative z-10">
           <div className="flex items-start space-x-4 mb-4">
-            {/* Avatar */}
             <div className="relative">
               <img
                 src={
@@ -83,13 +79,12 @@ const AssignedMentorSection = ({ project, API_URL, onToast }) => {
                   e.target.src = `${API_URL}/uploads/public/default.jpg`;
                 }}
               />
-              {/* Online indicator */}
+
               <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-green-400 border-2 border-gray-900 rounded-full flex items-center justify-center">
                 <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
               </div>
             </div>
 
-            {/* Mentor Info */}
             <div className="flex-1 min-w-0">
               <div className="flex items-start justify-between">
                 <div>
@@ -101,7 +96,6 @@ const AssignedMentorSection = ({ project, API_URL, onToast }) => {
                   </p>
                 </div>
 
-                {/* Rating */}
                 {mentor.rating && (
                   <div className="flex items-center space-x-1 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 px-2 py-1 rounded-lg border border-yellow-400/30">
                     <Star className="text-yellow-400 fill-current" size={14} />
@@ -112,7 +106,6 @@ const AssignedMentorSection = ({ project, API_URL, onToast }) => {
                 )}
               </div>
 
-              {/* Contact Info */}
               <div className="space-y-1">
                 {mentor.location && (
                   <div className="flex items-center text-gray-300 text-sm">
@@ -130,7 +123,6 @@ const AssignedMentorSection = ({ project, API_URL, onToast }) => {
             </div>
           </div>
 
-          {/* Stats Row */}
           <div className="grid grid-cols-3 gap-3 mb-4">
             <div className="bg-gradient-to-br from-blue-500/10 to-cyan-500/10 border border-blue-400/20 rounded-xl p-3 text-center">
               <Award className="text-blue-400 mx-auto mb-1" size={16} />
@@ -160,7 +152,6 @@ const AssignedMentorSection = ({ project, API_URL, onToast }) => {
             </div>
           </div>
 
-          {/* Price Section */}
           <div className="bg-gradient-to-r from-green-500/10 to-emerald-500/10 border border-green-400/20 rounded-xl p-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
@@ -188,7 +179,6 @@ const AssignedMentorSection = ({ project, API_URL, onToast }) => {
         </div>
       </div>
 
-      {/* Mentor Description */}
       {mentor.description && (
         <div className="mt-4 p-4 bg-gradient-to-r from-white/5 to-transparent rounded-2xl border border-white/10">
           <div className="flex items-start space-x-3">
@@ -208,7 +198,6 @@ const AssignedMentorSection = ({ project, API_URL, onToast }) => {
         </div>
       )}
 
-      {/* Expertise Tags */}
       {mentor.expertise && mentor.expertise.length > 0 && (
         <div className="mt-4 p-4 bg-gradient-to-r from-purple-500/5 to-blue-500/5 rounded-2xl border border-purple-400/20">
           <h4 className="text-white font-semibold text-sm mb-3 flex items-center">

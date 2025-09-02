@@ -73,12 +73,10 @@ const MentorProjectCard = ({ mentorData, projectData }) => {
 
   return (
     <div className="bg-white/10 backdrop-blur-sm rounded-3xl shadow-2xl p-6 border border-white/20 relative overflow-hidden">
-      {/* Animated background elements */}
       <div className="absolute -top-10 -right-10 w-20 h-20 bg-blue-400/20 rounded-full blur-xl animate-pulse"></div>
       <div className="absolute -bottom-10 -left-10 w-16 h-16 bg-purple-400/20 rounded-full blur-xl animate-pulse"></div>
 
       <div className="relative z-10">
-        {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl font-bold text-white flex items-center">
             <User className="mr-2 text-blue-400" size={20} />
@@ -100,7 +98,6 @@ const MentorProjectCard = ({ mentorData, projectData }) => {
           </div>
         </div>
 
-        {/* Mentor Profile */}
         <div className="text-center mb-6">
           <div className="relative inline-block mb-4">
             <img
@@ -126,7 +123,6 @@ const MentorProjectCard = ({ mentorData, projectData }) => {
             {mentorData.title || "Software Engineer"}
           </p>
 
-          {/* Rating */}
           <div className="flex items-center justify-center space-x-2 mb-2">
             <div className="flex space-x-1">
               {renderStars(mentorData.rating || 5)}
@@ -139,7 +135,6 @@ const MentorProjectCard = ({ mentorData, projectData }) => {
             </span>
           </div>
 
-          {/* Location */}
           {mentorData.location && (
             <div className="flex items-center justify-center text-gray-300 text-sm">
               <MapPin size={14} className="mr-1" />
@@ -148,7 +143,6 @@ const MentorProjectCard = ({ mentorData, projectData }) => {
           )}
         </div>
 
-        {/* Project Information */}
         <div className="space-y-4 mb-6">
           <div className="bg-white/5 rounded-2xl p-4 border border-white/10">
             <h4 className="text-lg font-semibold text-white mb-2">
@@ -159,7 +153,6 @@ const MentorProjectCard = ({ mentorData, projectData }) => {
             </p>
           </div>
 
-          {/* Project Details Grid */}
           <div className="grid grid-cols-2 gap-3">
             <div className="bg-white/5 rounded-xl p-3 border border-white/10">
               <div className="flex items-center mb-2">
@@ -203,7 +196,6 @@ const MentorProjectCard = ({ mentorData, projectData }) => {
           </div>
         </div>
 
-        {/* Mentor Stats */}
         <div className="bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-2xl p-4 border border-blue-400/30 mb-6">
           <h4 className="text-white font-semibold mb-3 flex items-center">
             <Award className="mr-2 text-yellow-400" size={16} />
@@ -237,7 +229,6 @@ const MentorProjectCard = ({ mentorData, projectData }) => {
           </div>
         </div>
 
-        {/* Social Links */}
         {mentorData.socialLinks && (
           <div className="mb-6">
             <h4 className="text-white font-semibold mb-3 text-sm">
@@ -281,7 +272,6 @@ const MentorProjectCard = ({ mentorData, projectData }) => {
           </div>
         )}
 
-        {/* Action Button */}
         <div className="space-y-3">
           <button
             onClick={() => (window.location.href = "/user/messages")}

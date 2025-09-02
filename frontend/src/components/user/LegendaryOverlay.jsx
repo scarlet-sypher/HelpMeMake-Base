@@ -93,7 +93,6 @@ const LegendaryOverlay = ({ open, onClose, label = "LEGENDARY!" }) => {
         bottom: 0,
       }}
     >
-      {/* Animated background rings - responsive sizes */}
       <div className="absolute inset-0 flex items-center justify-center">
         <motion.div
           animate={{
@@ -135,13 +134,11 @@ const LegendaryOverlay = ({ open, onClose, label = "LEGENDARY!" }) => {
         />
       </div>
 
-      {/* Central badge - responsive sizing */}
       <div className="relative flex flex-col items-center max-w-full">
         <motion.div
           animate={badgeControls}
           className="relative w-24 h-24 sm:w-32 sm:h-32 md:w-36 md:h-36 lg:w-40 lg:h-40 xl:w-44 xl:h-44 rounded-2xl sm:rounded-3xl bg-gradient-to-br from-yellow-400 to-amber-500 border-2 sm:border-3 md:border-4 border-yellow-400/60 shadow-xl sm:shadow-2xl shadow-yellow-500/40 flex items-center justify-center overflow-hidden"
         >
-          {/* Multiple animated background gradients for more intensity */}
           <motion.div
             animate={{
               rotate: 360,
@@ -165,7 +162,6 @@ const LegendaryOverlay = ({ open, onClose, label = "LEGENDARY!" }) => {
             className="absolute inset-0 bg-gradient-to-r from-orange-400/20 via-yellow-400/20 to-amber-400/20"
           />
 
-          {/* Multiple shine effects */}
           <motion.div
             animate={{
               x: ["-120%", "120%"],
@@ -180,10 +176,8 @@ const LegendaryOverlay = ({ open, onClose, label = "LEGENDARY!" }) => {
             className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent skew-x-12"
           />
 
-          {/* Crown icon - responsive sizing */}
           <Crown className="text-yellow-100 relative z-10 drop-shadow-lg w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 xl:w-16 xl:h-16" />
 
-          {/* Enhanced corner sparkles - responsive positioning and sizing */}
           <motion.div
             animate={{
               rotate: 360,
@@ -234,7 +228,6 @@ const LegendaryOverlay = ({ open, onClose, label = "LEGENDARY!" }) => {
             <Star className="w-3 h-3 sm:w-4 sm:h-4" />
           </motion.div>
 
-          {/* Stars at bottom - responsive positioning */}
           <div className="absolute bottom-1 sm:bottom-2 md:bottom-3 flex space-x-0.5 sm:space-x-1">
             {[...Array(5)].map((_, i) => (
               <motion.div
@@ -256,7 +249,6 @@ const LegendaryOverlay = ({ open, onClose, label = "LEGENDARY!" }) => {
           </div>
         </motion.div>
 
-        {/* Legendary text with enhanced effects - responsive sizing */}
         <motion.div
           animate={textControls}
           initial={{ opacity: 0, scale: 0.5, letterSpacing: "-0.2em" }}
@@ -298,7 +290,6 @@ const LegendaryOverlay = ({ open, onClose, label = "LEGENDARY!" }) => {
         </motion.div>
       </div>
 
-      {/* Enhanced floating stars blast effect - responsive scaling */}
       {stars.map((star) => (
         <motion.div
           key={star.id}
@@ -353,7 +344,6 @@ const LegendaryOverlay = ({ open, onClose, label = "LEGENDARY!" }) => {
         </motion.div>
       ))}
 
-      {/* Additional particle effects - responsive scaling */}
       {Array.from({ length: 8 }).map((_, i) => (
         <motion.div
           key={`particle-${i}`}

@@ -106,16 +106,10 @@ const ProjectOverview = ({ project, API_URL, onToast }) => {
 
   return (
     <div className="space-y-4 sm:space-y-6 lg:space-y-8 px-2 sm:px-4 lg:px-0">
-      {/* Hero Project Overview Card */}
       <div className="relative overflow-hidden bg-gradient-to-br from-white/10 via-white/5 to-transparent backdrop-blur-xl rounded-2xl sm:rounded-3xl shadow-2xl border border-white/20 hover:border-white/30 transition-all duration-700 group">
-        {/* Animated background gradient */}
-        {/* <div className="absolute inset-0 bg-gradient-to-br from-blue-600/10 via-purple-600/10 to-cyan-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div> */}
-
         <div className="relative z-10 p-3 sm:p-4 md:p-6 lg:p-8">
-          {/* Header Section */}
           <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between mb-6 sm:mb-8 gap-4 sm:gap-6">
             <div className="flex flex-col sm:flex-row sm:items-start space-y-3 sm:space-y-0 sm:space-x-4 md:space-x-6 flex-1 min-w-0">
-              {/* Category Icon */}
               <div className="relative group/icon flex-shrink-0 self-start">
                 <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-xl sm:rounded-2xl blur-lg opacity-50 group-hover/icon:opacity-75 transition-opacity duration-300"></div>
                 <div className="relative p-2 sm:p-3 md:p-4 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-xl sm:rounded-2xl transform transition-transform duration-300 group-hover/icon:scale-110 group-hover/icon:rotate-3">
@@ -132,7 +126,6 @@ const ProjectOverview = ({ project, API_URL, onToast }) => {
                 </div>
               </div>
 
-              {/* Project Info */}
               <div className="flex-1 min-w-0">
                 <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-2 leading-tight break-words">
                   {project.name}
@@ -149,7 +142,6 @@ const ProjectOverview = ({ project, API_URL, onToast }) => {
               </div>
             </div>
 
-            {/* Status & Difficulty Badges */}
             <div className="flex flex-row sm:flex-col gap-2 sm:gap-3 flex-shrink-0">
               <div
                 className={`flex-1 sm:flex-none px-3 sm:px-4 lg:px-6 py-2 sm:py-3 bg-gradient-to-r ${getStatusColor(
@@ -174,9 +166,7 @@ const ProjectOverview = ({ project, API_URL, onToast }) => {
             </div>
           </div>
 
-          {/* Key Metrics Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 lg:gap-6 mb-6 sm:mb-8">
-            {/* Opening Price */}
             <div className="group relative">
               <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/20 to-green-500/20 rounded-xl sm:rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
               <div className="relative bg-white/10 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6 text-center border border-white/20 hover:border-emerald-400/50 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl">
@@ -195,7 +185,6 @@ const ProjectOverview = ({ project, API_URL, onToast }) => {
               </div>
             </div>
 
-            {/* Duration */}
             <div className="group relative">
               <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-cyan-500/20 rounded-xl sm:rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
               <div className="relative bg-white/10 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6 text-center border border-white/20 hover:border-blue-400/50 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl">
@@ -214,7 +203,6 @@ const ProjectOverview = ({ project, API_URL, onToast }) => {
               </div>
             </div>
 
-            {/* Progress */}
             <div className="group relative">
               <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-xl sm:rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
               <div className="relative bg-white/10 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6 text-center border border-white/20 hover:border-purple-400/50 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl">
@@ -238,7 +226,6 @@ const ProjectOverview = ({ project, API_URL, onToast }) => {
             </div>
           </div>
 
-          {/* Progress Bar */}
           <div className="mb-6 sm:mb-8">
             <div className="flex justify-between items-center mb-2">
               <span className="text-xs sm:text-sm font-medium text-gray-300">
@@ -258,7 +245,6 @@ const ProjectOverview = ({ project, API_URL, onToast }) => {
             </div>
           </div>
 
-          {/* Project Description */}
           <div className="mb-6 sm:mb-8">
             <div className="flex items-center mb-3 sm:mb-4">
               <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-r from-blue-400 to-cyan-500 rounded-lg flex items-center justify-center mr-2 sm:mr-3 flex-shrink-0">
@@ -278,7 +264,6 @@ const ProjectOverview = ({ project, API_URL, onToast }) => {
             </div>
           </div>
 
-          {/* Tech Stack */}
           <div className="mb-6 sm:mb-8">
             <div className="flex items-center mb-3 sm:mb-4">
               <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-r from-green-400 to-emerald-500 rounded-lg flex items-center justify-center mr-2 sm:mr-3 flex-shrink-0">
@@ -309,9 +294,7 @@ const ProjectOverview = ({ project, API_URL, onToast }) => {
             </div>
           </div>
 
-          {/* Project Outcome & Motivation Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 mb-6 sm:mb-8">
-            {/* Expected Outcome */}
             <div className="flex flex-col">
               <div className="flex items-center mb-3 sm:mb-4">
                 <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-r from-purple-400 to-pink-500 rounded-lg flex items-center justify-center mr-2 sm:mr-3 flex-shrink-0">
@@ -331,7 +314,6 @@ const ProjectOverview = ({ project, API_URL, onToast }) => {
               </div>
             </div>
 
-            {/* Motivation */}
             <div className="flex flex-col">
               <div className="flex items-center mb-3 sm:mb-4">
                 <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-lg flex items-center justify-center mr-2 sm:mr-3 flex-shrink-0">
@@ -352,7 +334,6 @@ const ProjectOverview = ({ project, API_URL, onToast }) => {
             </div>
           </div>
 
-          {/* Prerequisites */}
           {project.prerequisites && project.prerequisites.length > 0 && (
             <div className="mb-6 sm:mb-8">
               <div className="flex items-center mb-3 sm:mb-4">
@@ -389,7 +370,6 @@ const ProjectOverview = ({ project, API_URL, onToast }) => {
             </div>
           )}
 
-          {/* References */}
           {project.references && project.references.length > 0 && (
             <div>
               <div className="flex items-center mb-3 sm:mb-4">
@@ -454,7 +434,6 @@ const ProjectOverview = ({ project, API_URL, onToast }) => {
         </div>
       </div>
 
-      {/* Enhanced Pricing Information */}
       <div className="relative overflow-hidden bg-gradient-to-br from-white/10 via-white/5 to-transparent backdrop-blur-xl rounded-2xl sm:rounded-3xl shadow-2xl border border-white/20 hover:border-white/30 transition-all duration-700 group">
         <div className="absolute inset-0 bg-gradient-to-br from-emerald-600/10 via-green-600/10 to-teal-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
 
@@ -472,7 +451,6 @@ const ProjectOverview = ({ project, API_URL, onToast }) => {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
-            {/* Opening Price */}
             <div className="group relative">
               <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/20 to-green-500/20 rounded-xl sm:rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
               <div className="relative bg-white/10 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-white/20 hover:border-emerald-400/50 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl">
@@ -493,7 +471,6 @@ const ProjectOverview = ({ project, API_URL, onToast }) => {
               </div>
             </div>
 
-            {/* Negotiated Price */}
             <div className="group relative">
               <div className="absolute inset-0 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 rounded-xl sm:rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
               <div className="relative bg-white/10 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-white/20 hover:border-yellow-400/50 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl">
@@ -521,7 +498,6 @@ const ProjectOverview = ({ project, API_URL, onToast }) => {
               </div>
             </div>
 
-            {/* Final Price */}
             <div className="group relative">
               <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-xl sm:rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
               <div className="relative bg-white/10 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-white/20 hover:border-purple-400/50 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl">
@@ -547,7 +523,6 @@ const ProjectOverview = ({ project, API_URL, onToast }) => {
         </div>
       </div>
 
-      {/* Enhanced Timeline */}
       <div className="relative overflow-hidden bg-gradient-to-br from-white/10 via-white/5 to-transparent backdrop-blur-xl rounded-2xl sm:rounded-3xl shadow-2xl border border-white/20 hover:border-white/30 transition-all duration-700 group">
         <div className="absolute inset-0 bg-gradient-to-br from-blue-600/10 via-indigo-600/10 to-purple-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
 
@@ -565,7 +540,6 @@ const ProjectOverview = ({ project, API_URL, onToast }) => {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
-            {/* Start Date */}
             <div className="group text-center">
               <div className="relative">
                 <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-indigo-500/20 rounded-xl sm:rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
@@ -586,7 +560,6 @@ const ProjectOverview = ({ project, API_URL, onToast }) => {
               </div>
             </div>
 
-            {/* Expected End */}
             <div className="group text-center">
               <div className="relative">
                 <div className="absolute inset-0 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 rounded-xl sm:rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
@@ -607,7 +580,6 @@ const ProjectOverview = ({ project, API_URL, onToast }) => {
               </div>
             </div>
 
-            {/* Actual End */}
             <div className="group text-center">
               <div className="relative">
                 <div className="absolute inset-0 bg-gradient-to-r from-green-500/20 to-emerald-500/20 rounded-xl sm:rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>

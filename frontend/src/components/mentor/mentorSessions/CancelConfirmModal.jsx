@@ -82,7 +82,6 @@ const CancelConfirmModal = ({ session, onClose, onSuccess }) => {
       tabIndex={-1}
     >
       <div className="bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 rounded-3xl shadow-2xl w-full max-w-md border border-white/20 max-h-[95vh] overflow-y-auto">
-        {/* Header */}
         <div className="flex items-center justify-between p-4 sm:p-6 border-b border-white/10">
           <div className="flex items-center space-x-3">
             <div className="p-2 bg-gradient-to-r from-red-500 to-red-600 rounded-xl">
@@ -105,7 +104,6 @@ const CancelConfirmModal = ({ session, onClose, onSuccess }) => {
           </button>
         </div>
 
-        {/* Session Info */}
         <div className="p-4 sm:p-6 border-b border-white/10 bg-white/5">
           <h3 className="text-white font-semibold mb-2 text-sm sm:text-base truncate">
             {session.title}
@@ -127,7 +125,6 @@ const CancelConfirmModal = ({ session, onClose, onSuccess }) => {
           </p>
         </div>
 
-        {/* Warning */}
         <div className="p-4 sm:p-6 border-b border-white/10">
           <div className="p-3 sm:p-4 bg-red-500/20 rounded-xl border border-red-500/30">
             <div className="flex items-start space-x-3">
@@ -152,12 +149,10 @@ const CancelConfirmModal = ({ session, onClose, onSuccess }) => {
           </div>
         </div>
 
-        {/* Form */}
         <form
           onSubmit={handleSubmit}
           className="p-4 sm:p-6 space-y-4 sm:space-y-6"
         >
-          {/* Cancellation Reason */}
           <div>
             <label className="block text-sm font-medium text-white mb-2">
               Reason for Cancellation (Optional)
@@ -171,7 +166,6 @@ const CancelConfirmModal = ({ session, onClose, onSuccess }) => {
             />
           </div>
 
-          {/* Confirmation Input */}
           <div>
             <label className="block text-sm font-medium text-white mb-2">
               Type "
@@ -199,7 +193,6 @@ const CancelConfirmModal = ({ session, onClose, onSuccess }) => {
             )}
           </div>
 
-          {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row items-center space-y-3 sm:space-y-0 sm:space-x-4">
             <button
               type="button"

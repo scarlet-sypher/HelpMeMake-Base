@@ -22,7 +22,6 @@ const MentorPricingSection = ({ mentorData }) => {
 
   return (
     <div className="bg-white/5 backdrop-blur-xl rounded-3xl shadow-2xl p-6 border border-white/10 hover:border-white/20 transition-all duration-500 group">
-      {/* Header with animated gradient */}
       <div className="flex items-center justify-between mb-8">
         <h2 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-green-400 via-emerald-400 to-teal-400 bg-clip-text text-transparent flex items-center">
           <div className="relative mr-3">
@@ -35,7 +34,6 @@ const MentorPricingSection = ({ mentorData }) => {
       </div>
 
       <div className="space-y-6">
-        {/* Main Pricing Card */}
         <div className="relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-green-500/20 via-emerald-500/15 to-teal-500/20 rounded-2xl"></div>
           <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent rounded-2xl"></div>
@@ -53,7 +51,6 @@ const MentorPricingSection = ({ mentorData }) => {
                 </div>
               </div>
 
-              {/* Pricing tier indicator */}
               <div className="flex items-center justify-center space-x-2 mt-4">
                 <Zap className="w-4 h-4 text-yellow-400" />
                 <span className="text-xs font-semibold px-3 py-1 bg-gradient-to-r from-yellow-500/20 to-amber-500/20 text-yellow-400 rounded-full border border-yellow-500/30">
@@ -68,7 +65,6 @@ const MentorPricingSection = ({ mentorData }) => {
           </div>
         </div>
 
-        {/* Free Sessions Card */}
         {mentorData.pricing?.freeSessionsOffered > 0 && (
           <div className="relative group/card">
             <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 via-cyan-500/15 to-indigo-500/20 rounded-2xl"></div>
@@ -95,7 +91,6 @@ const MentorPricingSection = ({ mentorData }) => {
           </div>
         )}
 
-        {/* Availability Status */}
         <div className="relative group/status">
           <div
             className={`absolute inset-0 rounded-2xl ${
@@ -144,7 +139,6 @@ const MentorPricingSection = ({ mentorData }) => {
                 </div>
               </div>
 
-              {/* Status indicator dot */}
               <div className="relative">
                 <div
                   className={`w-3 h-3 rounded-full ${
@@ -162,7 +156,6 @@ const MentorPricingSection = ({ mentorData }) => {
         </div>
       </div>
 
-      {/* Bottom accent line */}
       <div className="mt-6 h-px bg-gradient-to-r from-transparent via-green-400/50 to-transparent"></div>
     </div>
   );

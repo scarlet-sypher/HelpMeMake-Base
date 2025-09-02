@@ -208,7 +208,6 @@ const MentorSessions = () => {
         </div>
       </div>
 
-      {/* Display past sessions */}
       <div className="bg-white/5 backdrop-blur-sm rounded-3xl border border-white/10 p-4 sm:p-6 mx-2 sm:mx-0">
         <h2 className="text-xl sm:text-2xl font-bold text-white mb-4 sm:mb-6 flex items-center">
           <Calendar className="mr-2 sm:mr-3 text-cyan-400 w-5 h-5 sm:w-6 sm:h-6" />
@@ -226,7 +225,6 @@ const MentorSessions = () => {
 
   return (
     <div className="relative min-h-screen w-full bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 flex">
-      {/* Sidebar (fixed so it overlays on mobile, pushes content on desktop) */}
       <div className="fixed inset-y-0 left-0 z-30 lg:static lg:inset-auto">
         <Sidebar
           isOpen={sidebarOpen}
@@ -237,9 +235,7 @@ const MentorSessions = () => {
         />
       </div>
 
-      {/* Main Content */}
       <div className="flex-1 w-full lg:ml-64">
-        {/* Mobile Header */}
         <div className="lg:hidden bg-gradient-to-r from-slate-900/80 to-gray-900/80 backdrop-blur-sm border-b border-white/10 p-4">
           <div className="flex items-center justify-between">
             <button
@@ -255,7 +251,6 @@ const MentorSessions = () => {
           </div>
         </div>
 
-        {/* Main Page Content */}
         <div className="relative z-10 p-2 sm:p-4 lg:p-6 space-y-4 sm:space-y-6">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-4 sm:space-y-0 px-2 sm:px-0">
             <div className="flex-1 min-w-0">
@@ -267,7 +262,6 @@ const MentorSessions = () => {
               </p>
             </div>
 
-            {/* Add Session Button - Only show if has active project */}
             {sessionsData?.hasActiveProject && (
               <button
                 onClick={() => setShowAddSession(true)}
@@ -280,7 +274,6 @@ const MentorSessions = () => {
             )}
           </div>
 
-          {/* Content based on state */}
           {!sessionsData?.hasActiveProject &&
             sessionsData?.sessions?.length === 0 && <NoProjectState />}
 
@@ -289,12 +282,10 @@ const MentorSessions = () => {
 
           {sessionsData?.hasActiveProject && (
             <div className="space-y-4 sm:space-y-6">
-              {/* Learner & Project Profile */}
               <LearnerProjectProfile
                 activeProject={sessionsData.activeProject}
               />
 
-              {/* Sessions List */}
               <div className="bg-white/5 backdrop-blur-sm rounded-3xl border border-white/10 p-4 sm:p-6 mx-2 sm:mx-0">
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 sm:mb-6 space-y-2 sm:space-y-0">
                   <h2 className="text-xl sm:text-2xl font-bold text-white flex items-center">
@@ -316,7 +307,6 @@ const MentorSessions = () => {
             </div>
           )}
 
-          {/* Add Session Modal */}
           {showAddSession && (
             <AddSessionForm
               activeProject={sessionsData?.activeProject}

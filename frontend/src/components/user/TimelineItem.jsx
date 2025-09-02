@@ -26,15 +26,12 @@ const TimelineItem = ({
 }) => {
   return (
     <div className="relative flex items-start space-x-4 group px-2">
-      {/* Timeline Line */}
       {!isLast && (
         <div className="absolute left-8 top-16 w-0.5 h-12 bg-gradient-to-b from-white/30 via-white/20 to-white/5 z-0"></div>
       )}
 
-      {/* Icon Container with improved hover spacing */}
       <div className="relative z-10 flex-shrink-0">
         <div className="relative">
-          {/* Glow effect background */}
           <div
             className={`absolute -inset-2 rounded-2xl bg-gradient-to-br ${color
               .replace("text-", "from-")
@@ -44,7 +41,6 @@ const TimelineItem = ({
               )} to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 blur-md scale-110`}
           ></div>
 
-          {/* Main icon container */}
           <div className="relative p-4 rounded-xl bg-gradient-to-br from-white/15 to-white/5 backdrop-blur-lg border border-white/25 shadow-lg group-hover:shadow-2xl transition-all duration-300 group-hover:scale-105 group-hover:border-white/40">
             <Icon
               size={20}
@@ -52,15 +48,12 @@ const TimelineItem = ({
             />
           </div>
 
-          {/* Pulsing dot indicator */}
           <div className="absolute -top-1 -right-1 w-3 h-3 bg-gradient-to-r from-blue-400 to-cyan-400 rounded-full opacity-75 group-hover:opacity-100 animate-pulse"></div>
         </div>
       </div>
 
-      {/* Content */}
       <div className="flex-1 min-w-0 pb-8">
         <div className="relative bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-lg rounded-2xl p-5 border border-white/15 shadow-lg hover:shadow-2xl transition-all duration-500 group-hover:bg-gradient-to-br group-hover:from-white/15 group-hover:to-white/8 group-hover:border-white/30 group-hover:translate-x-1">
-          {/* Content inner glow */}
           <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-blue-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
 
           <div className="relative z-10">
@@ -72,10 +65,8 @@ const TimelineItem = ({
             </p>
           </div>
 
-          {/* Animated accent line */}
           <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-blue-400/60 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 rounded-b-2xl"></div>
 
-          {/* Side accent */}
           <div className="absolute left-0 top-4 bottom-4 w-0.5 bg-gradient-to-b from-blue-400/60 to-purple-400/60 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-full"></div>
         </div>
       </div>
@@ -296,7 +287,6 @@ const Timeline = () => {
 
   return (
     <div className="relative">
-      {/* Custom scrollbar styles */}
       <style>{`
         .custom-scrollbar {
           scrollbar-width: thin;
@@ -338,12 +328,9 @@ const Timeline = () => {
         }
       `}</style>
 
-      {/* Timeline Container with improved height and padding */}
       <div className="relative">
-        {/* Gradient fade at top */}
         <div className="absolute top-0 left-0 right-0 h-4 bg-gradient-to-b from-black/20 to-transparent z-10 pointer-events-none rounded-t-lg"></div>
 
-        {/* Timeline Events */}
         <div className="custom-scrollbar space-y-1 h-[420px] overflow-y-auto py-4 px-1">
           {timelineEvents.map((event, index) => {
             const IconComponent = getIconComponent(event.icon);
@@ -360,7 +347,6 @@ const Timeline = () => {
           })}
         </div>
 
-        {/* Gradient fade at bottom */}
         <div className="absolute bottom-0 left-0 right-0 h-4 bg-gradient-to-t from-black/20 to-transparent z-10 pointer-events-none rounded-b-lg"></div>
       </div>
     </div>

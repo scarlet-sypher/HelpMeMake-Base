@@ -262,7 +262,6 @@ const CompleteCancelBox = ({
           </div>
         </div>
 
-        {/* Review Modal - Keep existing review modal code */}
         {showReviewModal && (
           <>
             {console.log(
@@ -317,7 +316,6 @@ const CompleteCancelBox = ({
                 )}
 
                 <div className="space-y-6">
-                  {/* Rating Categories */}
                   {Object.entries({
                     communication: "Communication Skills",
                     commitment: "Commitment & Dedication",
@@ -354,7 +352,6 @@ const CompleteCancelBox = ({
                     </div>
                   ))}
 
-                  {/* Overall Rating Display */}
                   <div className="text-center p-4 bg-yellow-900/20 rounded-xl border border-yellow-600/30">
                     <div className="text-yellow-300 font-medium mb-2">
                       Average Rating
@@ -369,7 +366,6 @@ const CompleteCancelBox = ({
                     </div>
                   </div>
 
-                  {/* Comment */}
                   <div>
                     <label className="block text-white font-medium mb-2">
                       Additional Comments (Optional)
@@ -389,7 +385,6 @@ const CompleteCancelBox = ({
                     />
                   </div>
 
-                  {/* Submit Button */}
                   <div className="flex space-x-4">
                     <button
                       onClick={handleSubmitReview}
@@ -452,7 +447,6 @@ const CompleteCancelBox = ({
           </div>
         </div>
 
-        {/* Pending Request from Mentor */}
         {isRequestFromMentor && (
           <div className="mb-6 p-4 bg-yellow-900/20 rounded-xl border border-yellow-600/30">
             <div className="flex items-start">
@@ -476,7 +470,6 @@ const CompleteCancelBox = ({
           </div>
         )}
 
-        {/* Pending Request from Apprentice - ✅ FIXED */}
         {isRequestFromApprentice && (
           <div className="mb-6 p-4 bg-blue-900/20 rounded-xl border border-blue-600/30">
             <div className="flex items-start justify-between">
@@ -532,7 +525,6 @@ const CompleteCancelBox = ({
           </div>
         )}
 
-        {/* Action Buttons (only show if no pending request) */}
         {!hasPendingRequest && (
           <div className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

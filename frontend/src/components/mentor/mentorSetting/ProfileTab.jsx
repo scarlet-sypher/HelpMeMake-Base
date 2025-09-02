@@ -299,7 +299,6 @@ const ProfileTab = ({
 
   return (
     <div className="space-y-8 animate-fade-in">
-      {/* Only show notifications when modal is NOT open */}
       {!otpModal.isOpen && (
         <>
           <NotificationComponent notification={notifications.profile} />
@@ -307,7 +306,6 @@ const ProfileTab = ({
         </>
       )}
 
-      {/* Avatar Upload Section */}
       <div className="relative group/avatar">
         <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-600 to-teal-700 rounded-2xl blur opacity-15 group-hover/avatar:opacity-20 transition duration-500"></div>
         <div className="relative bg-gradient-to-br from-white/10 to-white/5 rounded-2xl p-4 sm:p-6 lg:p-8 border border-white/20">
@@ -375,7 +373,6 @@ const ProfileTab = ({
         </div>
       </div>
 
-      {/* Profile Form */}
       <form onSubmit={handleProfileUpdateWithOTP} className="space-y-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="space-y-2">
@@ -586,7 +583,6 @@ const ProfileTab = ({
         </button>
       </form>
 
-      {/* Click outside to close email tooltip */}
       {showEmailTooltip && (
         <div
           className="fixed inset-0 z-5"
@@ -594,16 +590,13 @@ const ProfileTab = ({
         />
       )}
 
-      {/* OTP Verification Modal */}
       {otpModal.isOpen && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="bg-slate-800/95 backdrop-blur-xl rounded-3xl shadow-2xl p-6 sm:p-8 w-full max-w-sm sm:max-w-md border border-slate-700/50 relative z-50 mx-4">
-            {/* Show notifications inside modal with higher z-index */}
             <div className="relative z-50">
               <NotificationComponent notification={notifications.profile} />
             </div>
 
-            {/* Close button */}
             <button
               onClick={closeOtpModal}
               className="absolute top-4 right-4 text-slate-400 hover:text-white transition-colors z-50 p-1"
@@ -611,7 +604,6 @@ const ProfileTab = ({
               <X size={20} />
             </button>
 
-            {/* Header */}
             <div className="text-center mb-6">
               <div className="w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-r from-cyan-500 to-teal-500 rounded-xl flex items-center justify-center mx-auto mb-4">
                 <Shield className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
@@ -625,7 +617,6 @@ const ProfileTab = ({
               </p>
             </div>
 
-            {/* OTP Input */}
             <div className="space-y-6">
               <div className="flex justify-center gap-2 sm:gap-3">
                 {otpModal.otp.map((digit, index) => (
@@ -657,7 +648,6 @@ const ProfileTab = ({
                 ))}
               </div>
 
-              {/* Verify Button */}
               <button
                 onClick={verifyOTPAndUpdate}
                 disabled={
@@ -675,7 +665,6 @@ const ProfileTab = ({
                 )}
               </button>
 
-              {/* Resend Button */}
               <div className="text-center">
                 <button
                   onClick={handleResendOTP}

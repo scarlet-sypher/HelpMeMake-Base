@@ -100,7 +100,6 @@ const PitchModal = ({
           </button>
         </div>
 
-        {/* Project Info */}
         <div className="bg-white/5 rounded-2xl p-4 border border-white/10 mb-6">
           <h3 className="text-lg font-semibold text-white mb-2">
             {project.name}

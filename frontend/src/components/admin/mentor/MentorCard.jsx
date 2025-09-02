@@ -97,7 +97,6 @@ const MentorCard = ({ mentor, onDelete }) => {
   return (
     <>
       <div className="bg-slate-800/60 backdrop-blur-sm rounded-xl p-6 hover:scale-105 transition-all duration-300 border border-slate-700/50 shadow-lg">
-        {/* Header with Avatar and Basic Info */}
         <div className="flex items-center space-x-4 mb-4">
           <img
             src={getMentorAvatarUrl()}
@@ -123,7 +122,6 @@ const MentorCard = ({ mentor, onDelete }) => {
           </div>
         </div>
 
-        {/* Status Indicators */}
         <div className="flex items-center space-x-2 mb-4">
           <span className="text-xs px-2 py-1 rounded-full bg-blue-600/20 text-blue-400 border border-blue-500/30">
             {mentor.role || "mentor"}
@@ -140,7 +138,6 @@ const MentorCard = ({ mentor, onDelete }) => {
           )}
         </div>
 
-        {/* Professional Info */}
         <div className="space-y-2 mb-4">
           <p className="text-white font-semibold">
             {mentorData.title || "Software Engineer"}
@@ -155,7 +152,6 @@ const MentorCard = ({ mentor, onDelete }) => {
           </p>
         </div>
 
-        {/* Stats Grid */}
         <div className="grid grid-cols-2 gap-4 mb-4">
           <div className="bg-slate-700/30 rounded-lg p-3">
             <div className="flex items-center text-yellow-400 mb-1">
@@ -208,13 +204,11 @@ const MentorCard = ({ mentor, onDelete }) => {
           </div>
         </div>
 
-        {/* Join Date */}
         <div className="flex items-center text-slate-400 text-sm mb-4">
           <Calendar className="w-4 h-4 mr-1" />
           Joined: {formatDate(mentor.createdAt)}
         </div>
 
-        {/* Action Buttons */}
         <div className="flex space-x-2">
           <button
             onClick={handleEdit}
@@ -233,7 +227,6 @@ const MentorCard = ({ mentor, onDelete }) => {
         </div>
       </div>
 
-      {/* Delete Confirmation Modal */}
       {showDeleteModal && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="bg-slate-800 rounded-2xl p-6 w-full max-w-md border border-slate-700">

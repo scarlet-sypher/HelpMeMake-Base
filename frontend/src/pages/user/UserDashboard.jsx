@@ -372,7 +372,6 @@ const UserDashboard = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-indigo-950 flex">
-      {/* Sidebar */}
       <Sidebar
         isOpen={sidebarOpen}
         toggleSidebar={toggleSidebar}
@@ -381,9 +380,7 @@ const UserDashboard = () => {
         userRole="user"
       />
 
-      {/* Main Content */}
       <div className="flex-1 lg:ml-64">
-        {/* Mobile Header */}
         <div className="lg:hidden bg-gradient-to-r from-slate-900/80 to-blue-900/80 backdrop-blur-sm border-b border-white/10 p-4">
           <div className="flex items-center justify-between">
             <button
@@ -397,17 +394,14 @@ const UserDashboard = () => {
           </div>
         </div>
 
-        {/* Animated background elements */}
         <div className="fixed inset-0 overflow-hidden pointer-events-none">
           <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-500/20 rounded-full blur-3xl animate-pulse"></div>
           <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-500/20 rounded-full blur-3xl animate-pulse"></div>
         </div>
 
         <div className="relative z-10 p-4 lg:p-6 space-y-6">
-          {/* Hero Profile Section */}
           <HeroProfile user={userProfileData} />
 
-          {/* Profile Completion Banner */}
           {userData && !userData.isProfileUpdated && (
             <div className="relative group mb-6">
               <div className="absolute -inset-0.5 bg-gradient-to-r from-amber-500 to-orange-600 rounded-2xl blur opacity-20 group-hover:opacity-30 transition duration-500"></div>
@@ -440,21 +434,16 @@ const UserDashboard = () => {
             </div>
           )}
 
-          {/* Stats Grid */}
           <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
             {userStats.map((stat, index) => (
               <StatCard key={index} {...stat} />
             ))}
           </div>
 
-          {/* Quick Actions */}
           <QuickActions />
 
-          {/* Main Content Grid */}
           <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-            {/* Left Column */}
             <div className="xl:col-span-2 space-y-6">
-              {/* Upcoming Sessions */}
               <div className="bg-white/10 backdrop-blur-sm rounded-3xl shadow-2xl p-6 border border-white/20">
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-xl font-bold text-white flex items-center">
@@ -464,10 +453,8 @@ const UserDashboard = () => {
                   <Activity className="text-blue-400 animate-pulse" size={20} />
                 </div>
                 <SessionCard />{" "}
-                {/* ✅ Just use SessionCard once, it handles everything */}
               </div>
 
-              {/* Project Milestone Tracker */}
               <div className="bg-white/10 backdrop-blur-sm rounded-3xl shadow-2xl p-4 sm:p-6 border border-white/20">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 sm:mb-6 space-y-2 sm:space-y-0">
                   <h2 className="text-lg sm:text-xl font-bold text-white flex items-center">
@@ -485,7 +472,6 @@ const UserDashboard = () => {
                 <MilestonePoint projectData={projectData} />
               </div>
 
-              {/* Grand Line Journey */}
               <div className="bg-gradient-to-r from-orange-500/30 to-red-500/30 backdrop-blur-sm rounded-3xl p-6 text-white border border-white/20 shadow-2xl">
                 <h2 className="text-xl font-bold mb-4 flex items-center">
                   <Flame className="mr-2 text-orange-400" size={20} />
@@ -526,9 +512,7 @@ const UserDashboard = () => {
               </div>
             </div>
 
-            {/* Right Column */}
             <div className="space-y-6">
-              {/* Recent Messages */}
               <div className="bg-white/10 backdrop-blur-sm rounded-3xl shadow-2xl p-6 border border-white/20">
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-xl font-bold text-white flex items-center">
@@ -542,7 +526,6 @@ const UserDashboard = () => {
                 </div>
               </div>
 
-              {/* Activity Timeline */}
               <div className="bg-white/10 backdrop-blur-sm rounded-3xl shadow-2xl p-6 border border-white/20">
                 <h2 className="text-xl font-bold text-white mb-6 flex items-center">
                   <TrendingUp className="mr-2 text-yellow-400" size={20} />

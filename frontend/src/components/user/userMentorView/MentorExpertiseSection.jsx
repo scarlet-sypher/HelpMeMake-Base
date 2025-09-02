@@ -61,7 +61,6 @@ const MentorExpertiseSection = ({ mentorData }) => {
 
   return (
     <div className="relative bg-gradient-to-br from-white/10 via-white/5 to-transparent backdrop-blur-md rounded-3xl shadow-2xl p-6 sm:p-8 border border-white/20 overflow-hidden group">
-      {/* Background pattern */}
       <div
         className="absolute inset-0 opacity-[0.02]"
         style={{
@@ -70,11 +69,9 @@ const MentorExpertiseSection = ({ mentorData }) => {
         }}
       ></div>
 
-      {/* Animated background gradient */}
       <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/5 via-blue-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
 
       <div className="relative z-10">
-        {/* Enhanced Header */}
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center space-x-3">
             <div className="p-2 bg-gradient-to-br from-emerald-500/20 to-green-500/20 rounded-xl border border-emerald-400/30">
@@ -94,7 +91,6 @@ const MentorExpertiseSection = ({ mentorData }) => {
 
         {mentorData.expertise && mentorData.expertise.length > 0 ? (
           <>
-            {/* Skills count indicator */}
             <div className="mb-6 text-center sm:text-left">
               <div className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-sm rounded-lg px-4 py-2 border border-white/20">
                 <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
@@ -104,7 +100,6 @@ const MentorExpertiseSection = ({ mentorData }) => {
               </div>
             </div>
 
-            {/* Skills Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6">
               {mentorData.expertise.map((skill, index) => {
                 const config = getExpertiseLevelConfig(skill.level);
@@ -113,7 +108,6 @@ const MentorExpertiseSection = ({ mentorData }) => {
                     key={index}
                     className={`group/skill relative bg-gradient-to-br ${config.bgGradient} backdrop-blur-sm rounded-2xl p-5 border border-white/20 hover:border-white/40 transition-all duration-300 transform hover:scale-[1.02] hover:shadow-xl hover:shadow-white/10`}
                   >
-                    {/* Skill header */}
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex items-center space-x-3 flex-1 min-w-0">
                         <div className="p-2 bg-white/10 rounded-lg group-hover/skill:scale-110 transition-transform duration-300">
@@ -127,7 +121,6 @@ const MentorExpertiseSection = ({ mentorData }) => {
                       </div>
                     </div>
 
-                    {/* Level badge */}
                     <div className="flex items-center justify-between mb-3">
                       <div
                         className={`inline-flex items-center space-x-2 px-3 py-1.5 rounded-lg text-xs font-semibold border bg-gradient-to-r ${config.color} group-hover/skill:shadow-lg transition-all duration-300`}
@@ -139,7 +132,6 @@ const MentorExpertiseSection = ({ mentorData }) => {
                       </div>
                     </div>
 
-                    {/* Experience */}
                     <div className="flex items-center space-x-2">
                       <div className="p-1.5 bg-blue-500/20 rounded-lg">
                         <TrendingUp size={14} className="text-blue-400" />
@@ -149,7 +141,6 @@ const MentorExpertiseSection = ({ mentorData }) => {
                       </span>
                     </div>
 
-                    {/* Experience bar visualization */}
                     <div className="mt-3">
                       <div className="h-2 bg-white/10 rounded-full overflow-hidden">
                         <div
@@ -164,14 +155,12 @@ const MentorExpertiseSection = ({ mentorData }) => {
                       </div>
                     </div>
 
-                    {/* Hover effect overlay */}
                     <div className="absolute inset-0 bg-gradient-to-br from-white/0 to-white/5 rounded-2xl opacity-0 group-hover/skill:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
                   </div>
                 );
               })}
             </div>
 
-            {/* Summary stats */}
             <div className="mt-8 grid grid-cols-2 sm:grid-cols-3 gap-4">
               <div className="bg-gradient-to-br from-purple-500/10 to-pink-500/10 rounded-xl p-4 text-center border border-purple-400/20">
                 <div className="text-2xl font-bold text-purple-300 mb-1">

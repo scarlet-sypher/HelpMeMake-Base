@@ -688,7 +688,6 @@ const MentorMessages = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 flex overflow-hidden">
-      {/* Toast */}
       <Toast toast={toast} onClose={closeToast} />
 
       <Sidebar
@@ -702,7 +701,6 @@ const MentorMessages = () => {
       <div
         className={`flex-1 flex h-screen transition-all duration-300 lg:ml-64`}
       >
-        {/* Room List Sidebar */}
         <RoomListSidebar
           showRoomList={showRoomList}
           rooms={rooms}
@@ -718,7 +716,6 @@ const MentorMessages = () => {
           setRoomListCollapsed={setRoomListCollapsed}
         />
 
-        {/* Chat Area */}
         <div
           className={`${
             showRoomList ? "hidden" : "flex"
@@ -745,7 +742,6 @@ const MentorMessages = () => {
             </div>
           ) : (
             <>
-              {/* Chat Header */}
               <ChatHeader
                 selectedRoom={selectedRoom}
                 setShowRoomList={setShowRoomList}
@@ -754,7 +750,6 @@ const MentorMessages = () => {
                 setShowWallpaperSettings={setShowWallpaperSettings}
               />
 
-              {/* Chat Messages */}
               <ChatMessages
                 messages={messages}
                 selectedRoom={selectedRoom}
@@ -765,7 +760,6 @@ const MentorMessages = () => {
                 isLoading={false}
               />
 
-              {/* Chat Input */}
               <ChatInput
                 selectedRoom={selectedRoom}
                 newMessage={newMessage}
@@ -782,7 +776,6 @@ const MentorMessages = () => {
         </div>
       </div>
 
-      {/* Wallpaper Settings Modal */}
       <WallpaperSettingsModal
         showWallpaperSettings={showWallpaperSettings}
         setShowWallpaperSettings={setShowWallpaperSettings}

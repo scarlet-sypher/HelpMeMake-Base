@@ -209,7 +209,6 @@ export default function AdminDashboard() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 p-4 md:p-8">
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
         <div className="flex justify-between items-center mb-8">
           <div>
             <h1 className="text-4xl font-bold text-white mb-2">
@@ -225,7 +224,6 @@ export default function AdminDashboard() {
           </button>
         </div>
 
-        {/* Statistics Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 mb-12">
           {statCards.map((card) => (
             <div
@@ -243,7 +241,6 @@ export default function AdminDashboard() {
           ))}
         </div>
 
-        {/* Navigation Buttons */}
         <div className="mb-8">
           <h2 className="text-2xl font-bold text-white mb-6 flex items-center">
             <Eye className="mr-2" />
@@ -267,7 +264,6 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        {/* Quick Stats Summary */}
         <div className="bg-slate-800/60 rounded-2xl p-8 backdrop-blur-sm">
           <h3 className="text-xl font-bold text-white mb-6">
             Platform Overview

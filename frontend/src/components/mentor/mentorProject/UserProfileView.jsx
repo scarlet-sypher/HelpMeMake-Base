@@ -394,7 +394,6 @@ const UserProfileView = () => {
 
     return (
       <div className="space-y-6">
-        {/* Achievement Summary */}
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <div className="p-2 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 rounded-xl border border-yellow-400/30">
@@ -415,7 +414,6 @@ const UserProfileView = () => {
           </div>
         </div>
 
-        {/* Progress Bar */}
         {totalAvailable > 0 && (
           <div className="w-full bg-white/10 rounded-full h-3 border border-white/20 overflow-hidden">
             <div
@@ -427,7 +425,6 @@ const UserProfileView = () => {
           </div>
         )}
 
-        {/* Grouped Badge Levels */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
           {groupedBadges.map((badgeGroup) => {
             const { level, config, count, unlocked, totalAvailable } =
@@ -447,7 +444,6 @@ const UserProfileView = () => {
                   rounded-2xl p-4 backdrop-blur-sm overflow-hidden cursor-pointer
                 `}
               >
-                {/* Animated background effects for unlocked badges */}
                 {unlocked && (
                   <>
                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
@@ -466,7 +462,6 @@ const UserProfileView = () => {
                 )}
 
                 <div className="relative z-10 flex flex-col items-center text-center">
-                  {/* Badge Icon */}
                   <div className="relative mb-3">
                     <div
                       className={`p-3 rounded-xl ${
@@ -480,7 +475,6 @@ const UserProfileView = () => {
                         }
                       />
 
-                      {/* Lock overlay for locked badges */}
                       {!unlocked && (
                         <div className="absolute inset-0 flex items-center justify-center">
                           <Lock size={16} className="text-gray-300" />
@@ -489,7 +483,6 @@ const UserProfileView = () => {
                     </div>
                   </div>
 
-                  {/* Badge Level Name */}
                   <h5
                     className={`text-sm font-bold mb-1 ${
                       unlocked ? "text-white" : "text-gray-400"
@@ -498,7 +491,6 @@ const UserProfileView = () => {
                     {config.name}
                   </h5>
 
-                  {/* Badge Count */}
                   <div className="flex items-center space-x-1">
                     <span
                       className={`text-lg font-bold ${
@@ -514,7 +506,6 @@ const UserProfileView = () => {
                     )}
                   </div>
 
-                  {/* Stars for unlocked badges */}
                   {unlocked && (
                     <div className="flex mt-2 space-x-1">
                       {[
@@ -529,7 +520,6 @@ const UserProfileView = () => {
                     </div>
                   )}
 
-                  {/* Progress indicator for partially unlocked levels */}
                   {unlocked && count < totalAvailable && totalAvailable > 0 && (
                     <div className="w-full bg-white/20 rounded-full h-1 mt-2">
                       <div
@@ -540,7 +530,6 @@ const UserProfileView = () => {
                   )}
                 </div>
 
-                {/* Hover tooltip */}
                 <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-50 pointer-events-none">
                   <div className="bg-black/90 backdrop-blur-sm text-white text-xs py-2 px-3 rounded-lg border border-white/20 shadow-xl whitespace-nowrap">
                     {unlocked
@@ -554,7 +543,6 @@ const UserProfileView = () => {
           })}
         </div>
 
-        {/* Achievement Statistics */}
         {totalAvailable > 0 && (
           <div className="bg-white/5 rounded-2xl p-4 border border-white/10">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
@@ -623,7 +611,6 @@ const UserProfileView = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800">
-      {/* Enhanced animated background elements */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-cyan-500/20 rounded-full blur-3xl animate-pulse"></div>
         <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-teal-500/20 rounded-full blur-3xl animate-pulse"></div>
@@ -631,7 +618,6 @@ const UserProfileView = () => {
       </div>
 
       <div className="relative z-10 p-4 lg:p-6">
-        {/* Enhanced header with back button */}
         <div className="mb-6">
           <button
             onClick={handleGoBack}
@@ -645,16 +631,13 @@ const UserProfileView = () => {
           </button>
         </div>
 
-        {/* Enhanced User Profile Section */}
         <div className="bg-white/10 backdrop-blur-sm rounded-3xl shadow-2xl p-6 lg:p-8 border border-white/20 mb-6 relative overflow-hidden">
-          {/* Enhanced animated background elements */}
           <div className="absolute -top-10 -right-10 w-20 h-20 bg-cyan-400/20 rounded-full blur-xl animate-pulse"></div>
           <div className="absolute -bottom-10 -left-10 w-16 h-16 bg-teal-400/20 rounded-full blur-xl animate-pulse"></div>
           <div className="absolute top-1/2 right-10 w-12 h-12 bg-purple-400/15 rounded-full blur-lg animate-pulse"></div>
 
           <div className="relative z-10">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
-              {/* Enhanced User Avatar and Basic Info */}
               <div className="lg:col-span-1">
                 <div className="text-center lg:text-left">
                   <div className="relative inline-block mb-6">
@@ -673,11 +656,11 @@ const UserProfileView = () => {
                           e.target.src = `${API_URL}/uploads/public/default.jpg`;
                         }}
                       />
-                      {/* Enhanced status indicator */}
+
                       <div className="absolute -bottom-2 -right-2 w-10 h-10 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full border-4 border-white shadow-lg flex items-center justify-center">
                         <CheckCircle size={20} className="text-white" />
                       </div>
-                      {/* Glow effect */}
+
                       <div className="absolute inset-0 rounded-full bg-gradient-to-r from-cyan-500/20 to-teal-500/20 blur-xl -z-10"></div>
                     </div>
                   </div>
@@ -703,7 +686,6 @@ const UserProfileView = () => {
                     )}
                   </div>
 
-                  {/* Enhanced stats grid */}
                   <div className="grid grid-cols-3 gap-3 mb-6">
                     <div className="bg-gradient-to-br from-yellow-500/20 to-orange-500/20 rounded-xl p-4 border border-yellow-400/30 text-center group hover:scale-105 transition-transform duration-200">
                       <div className="text-xl font-bold text-yellow-400 flex items-center justify-center">
@@ -728,7 +710,6 @@ const UserProfileView = () => {
                     </div>
                   </div>
 
-                  {/* Enhanced Action Buttons */}
                   <div className="space-y-3">
                     {user.email && (
                       <a
@@ -744,9 +725,7 @@ const UserProfileView = () => {
                 </div>
               </div>
 
-              {/* Enhanced User Details and Stats */}
               <div className="lg:col-span-2">
-                {/* Enhanced About Section */}
                 <div className="mb-6">
                   <h3 className="text-xl font-bold text-white mb-4 flex items-center">
                     <div className="p-2 bg-gradient-to-r from-cyan-500/20 to-teal-500/20 rounded-xl border border-cyan-400/30 mr-3">
@@ -762,7 +741,6 @@ const UserProfileView = () => {
                   </div>
                 </div>
 
-                {/* Enhanced Achievement Badges Section */}
                 <div className="mb-6">
                   <h3 className="text-xl font-bold text-white mb-4 flex items-center">
                     <div className="p-2 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 rounded-xl border border-yellow-400/30 mr-3">
@@ -775,7 +753,6 @@ const UserProfileView = () => {
                   </div>
                 </div>
 
-                {/* Enhanced Social Links */}
                 {user.socialLinks && (
                   <div className="mb-6">
                     <h3 className="text-xl font-bold text-white mb-4 flex items-center">
@@ -817,7 +794,6 @@ const UserProfileView = () => {
                   </div>
                 )}
 
-                {/* Enhanced User Stats Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
                   <div className="bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-xl p-4 border border-blue-400/30 text-center group hover:scale-105 transition-all duration-200 shadow-lg">
                     <div className="p-2 bg-blue-400/20 rounded-xl w-fit mx-auto mb-3">
@@ -864,7 +840,6 @@ const UserProfileView = () => {
                   </div>
                 </div>
 
-                {/* Enhanced Join Date */}
                 <div className="bg-gradient-to-r from-indigo-500/10 to-purple-500/10 rounded-xl p-4 border border-indigo-400/20 shadow-lg">
                   <div className="flex items-center text-sm">
                     <div className="p-2 bg-indigo-400/20 rounded-xl mr-3">
@@ -887,9 +862,7 @@ const UserProfileView = () => {
           </div>
         </div>
 
-        {/* Enhanced User Projects Section */}
         <div className="bg-white/10 backdrop-blur-sm rounded-3xl shadow-2xl p-6 border border-white/20 relative overflow-hidden">
-          {/* Background decoration */}
           <div className="absolute -top-5 -right-5 w-16 h-16 bg-cyan-400/15 rounded-full blur-xl animate-pulse"></div>
           <div className="absolute -bottom-5 -left-5 w-12 h-12 bg-teal-400/15 rounded-full blur-xl animate-pulse"></div>
 

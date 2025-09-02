@@ -94,7 +94,6 @@ const MentorMilestoneList = ({
 
   return (
     <div className="space-y-4">
-      {/* Progress Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
         <div className="flex items-center">
           <Users className="text-cyan-400 mr-3" size={24} />
@@ -114,7 +113,6 @@ const MentorMilestoneList = ({
         </div>
       </div>
 
-      {/* Milestones List */}
       <div className="space-y-4">
         {milestones.map((milestone, index) => {
           const status = getMilestoneStatus(milestone);
@@ -214,7 +212,6 @@ const MentorMilestoneList = ({
                     </div>
                   </div>
 
-                  {/* Review Note Display */}
                   {milestone.reviewNote && (
                     <div className="mt-3 p-3 bg-gradient-to-r from-cyan-500/10 to-teal-600/10 rounded-xl border border-cyan-400/20">
                       <div className="flex items-start space-x-2">
@@ -240,9 +237,7 @@ const MentorMilestoneList = ({
                   )}
                 </div>
 
-                {/* Action Buttons */}
                 <div className="flex items-center flex-wrap gap-2">
-                  {/* Edit Button - Only show if milestone can be edited */}
                   {canEdit(milestone) && (
                     <button
                       onClick={() => setEditingMilestone(milestone)}
@@ -258,7 +253,6 @@ const MentorMilestoneList = ({
                     </button>
                   )}
 
-                  {/* Verify Button */}
                   {canVerify(milestone) && (
                     <button
                       onClick={() => verifyMilestone(milestone._id)}
@@ -274,7 +268,6 @@ const MentorMilestoneList = ({
                     </button>
                   )}
 
-                  {/* Unverify Button */}
                   {canUnverify(milestone) && (
                     <button
                       onClick={() => unverifyMilestone(milestone._id)}
@@ -290,7 +283,6 @@ const MentorMilestoneList = ({
                     </button>
                   )}
 
-                  {/* Review Button - Always available for mentors */}
                   <button
                     onClick={() => setReviewingMilestone(milestone)}
                     disabled={saving}
@@ -308,7 +300,6 @@ const MentorMilestoneList = ({
         })}
       </div>
 
-      {/* Completion Banner */}
       {getCompletionPercentage() === 100 && (
         <div className="mt-6 text-center">
           <div className="bg-gradient-to-r from-emerald-500/20 to-teal-600/20 backdrop-blur-sm rounded-2xl p-4 sm:p-6 border border-emerald-400/30">
@@ -323,7 +314,6 @@ const MentorMilestoneList = ({
         </div>
       )}
 
-      {/* Edit Modal */}
       {editingMilestone && (
         <MilestoneEditModal
           milestone={editingMilestone}
@@ -333,7 +323,6 @@ const MentorMilestoneList = ({
         />
       )}
 
-      {/* Review Modal */}
       {reviewingMilestone && (
         <ReviewerBox
           milestone={reviewingMilestone}

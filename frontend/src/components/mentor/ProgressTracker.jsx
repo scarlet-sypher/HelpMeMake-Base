@@ -181,7 +181,6 @@ const ProgressTracker = ({ userImg }) => {
 
     return (
       <div className="flex flex-col items-center relative group">
-        {/* Connection Line - Hidden on mobile, visible on larger screens */}
         {!isLast && (
           <div
             className={`absolute top-5 left-1/2 w-full h-0.5 bg-gradient-to-r ${getStatusColor()} ${
@@ -190,26 +189,21 @@ const ProgressTracker = ({ userImg }) => {
           ></div>
         )}
 
-        {/* Animated Background Glow */}
         <div
           className={`absolute w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 rounded-full bg-gradient-to-r ${getStatusColor()} ${
             isPlaceholder ? "opacity-10" : "opacity-20"
           } blur-xl ${getPulseAnimation()} transition-all duration-500`}
         ></div>
 
-        {/* Milestone Point */}
         <div
           className={`w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 rounded-full bg-gradient-to-r ${getStatusColor()} flex items-center justify-center relative z-10 shadow-xl ${getGlowColor()} transition-all duration-500 hover:scale-125 hover:shadow-2xl border-2 border-white/20 backdrop-blur-sm group-hover:border-white/40 ${
             isPlaceholder ? "opacity-50" : ""
           }`}
         >
-          {/* Inner glow effect */}
           <div className="absolute inset-0 rounded-full bg-gradient-to-r from-white/20 to-transparent opacity-50"></div>
 
-          {/* Status Icon */}
           <div className="relative z-10">{getStatusIcon()}</div>
 
-          {/* Floating particles effect for completed milestones */}
           {isCompleted && !isPlaceholder && (
             <div className="absolute -top-1 -right-1 w-3 h-3 bg-yellow-400 rounded-full animate-bounce shadow-lg">
               <Star size={8} className="text-white p-0.5" />
@@ -217,7 +211,6 @@ const ProgressTracker = ({ userImg }) => {
           )}
         </div>
 
-        {/* Milestone Label - Fixed Size Box */}
         <div className="mt-3 sm:mt-4 text-center relative z-10 w-20 sm:w-24 lg:w-28">
           <div
             className={`bg-white/10 backdrop-blur-sm rounded-xl p-2 sm:p-3 border border-white/20 shadow-lg group-hover:bg-white/20 transition-all duration-300 ${
@@ -233,10 +226,8 @@ const ProgressTracker = ({ userImg }) => {
               {truncateTitle(title, 15)}
             </p>
 
-            {/* Special Icon */}
             <div className="flex justify-center my-1">{getSpecialIcon()}</div>
 
-            {/* Enhanced Verification Status - Hidden for placeholders */}
             {!isPlaceholder && (
               <div className="flex items-center justify-center space-x-1">
                 <div className="flex items-center space-x-0.5">
@@ -279,7 +270,6 @@ const ProgressTracker = ({ userImg }) => {
           </div>
         </div>
 
-        {/* Enhanced Tooltip - Only visible on larger screens and not for placeholders */}
         {!isPlaceholder && (
           <div className="absolute -top-24 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-slate-800 to-slate-900 text-white text-xs px-4 py-3 rounded-xl opacity-0 group-hover:opacity-100 transition-all duration-300 whitespace-nowrap z-30 shadow-2xl border border-white/20 backdrop-blur-sm hidden lg:block">
             <div className="space-y-2">
@@ -315,12 +305,10 @@ const ProgressTracker = ({ userImg }) => {
               </div>
             </div>
 
-            {/* Tooltip Arrow */}
             <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-slate-800"></div>
           </div>
         )}
 
-        {/* Progress Indicator Ring - Hidden for placeholders */}
         {!isPlaceholder && (
           <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 rounded-full border-2 border-white/10 group-hover:border-white/30 transition-all duration-500">
             <div
@@ -371,7 +359,6 @@ const ProgressTracker = ({ userImg }) => {
 
   return (
     <div className="bg-white/10 backdrop-blur-sm rounded-3xl shadow-2xl p-4 sm:p-6 border border-white/20 relative overflow-hidden">
-      {/* Animated background elements */}
       <div className="absolute -top-10 -right-10 w-20 h-20 bg-cyan-400/20 rounded-full blur-xl animate-pulse"></div>
       <div className="absolute -bottom-10 -left-10 w-16 h-16 bg-teal-400/20 rounded-full blur-xl animate-pulse"></div>
 
@@ -389,9 +376,7 @@ const ProgressTracker = ({ userImg }) => {
           </div>
         </div>
 
-        {/* Single Student Progress Card */}
         <div className="bg-gradient-to-r from-cyan-500/10 to-teal-500/10 rounded-2xl p-4 sm:p-6 border border-white/10 relative overflow-hidden">
-          {/* Student Info Header */}
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center space-x-4">
               <div className="relative">
@@ -438,7 +423,6 @@ const ProgressTracker = ({ userImg }) => {
             </div>
           </div>
 
-          {/* Milestone Tracker Section */}
           <div className="bg-gradient-to-r from-cyan-500/10 to-teal-500/10 rounded-2xl p-4 sm:p-6 border border-white/10 mb-6">
             <div className="flex items-center justify-between mb-6">
               <h4 className="text-lg font-bold text-white flex items-center">
@@ -453,7 +437,6 @@ const ProgressTracker = ({ userImg }) => {
               </div>
             </div>
 
-            {/* Milestones */}
             <div className="flex flex-col sm:flex-row justify-between items-center relative z-10 space-y-8 sm:space-y-0 px-2 sm:px-4 lg:px-6 py-6 sm:py-8">
               {displayMilestones.map((milestone, index) => (
                 <div key={milestone.id} className="flex-1 flex justify-center">
@@ -466,7 +449,6 @@ const ProgressTracker = ({ userImg }) => {
               ))}
             </div>
 
-            {/* Progress Summary Bar */}
             <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 sm:p-4 border border-white/20">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-xs sm:text-sm font-medium text-white">
@@ -492,7 +474,6 @@ const ProgressTracker = ({ userImg }) => {
             </div>
           </div>
 
-          {/* Additional Stats Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="text-center bg-white/10 rounded-xl p-4 border border-white/20">
               <div className="text-2xl font-bold text-emerald-400">
@@ -515,7 +496,6 @@ const ProgressTracker = ({ userImg }) => {
           </div>
         </div>
 
-        {/* Overall Summary */}
         <div className="mt-6 bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm font-medium text-white">

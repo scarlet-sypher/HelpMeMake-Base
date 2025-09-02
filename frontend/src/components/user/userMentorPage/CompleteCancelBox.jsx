@@ -259,7 +259,6 @@ const CompleteCancelBox = ({ projectData, onUpdate, showToast }) => {
           </div>
         </div>
 
-        {/* Review Modal */}
         {showReviewModal && (
           <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
             <div className="bg-gradient-to-br from-slate-900 to-blue-900 rounded-3xl shadow-2xl border border-white/20 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
@@ -277,7 +276,6 @@ const CompleteCancelBox = ({ projectData, onUpdate, showToast }) => {
                 </div>
 
                 <div className="space-y-6">
-                  {/* Rating Categories */}
                   <div className="grid gap-4">
                     <div className="bg-white/5 rounded-2xl p-4 border border-white/10">
                       <div className="flex items-center justify-between mb-2">
@@ -365,7 +363,6 @@ const CompleteCancelBox = ({ projectData, onUpdate, showToast }) => {
                     </div>
                   </div>
 
-                  {/* Average Rating Display */}
                   <div className="bg-gradient-to-r from-yellow-500/20 to-orange-500/20 rounded-2xl p-4 border border-yellow-400/30">
                     <div className="text-center">
                       <span className="text-yellow-400 text-sm">
@@ -377,7 +374,6 @@ const CompleteCancelBox = ({ projectData, onUpdate, showToast }) => {
                     </div>
                   </div>
 
-                  {/* Comment */}
                   <div className="bg-white/5 rounded-2xl p-4 border border-white/10">
                     <label className="text-white font-medium block mb-2">
                       Comments (Optional)
@@ -396,7 +392,6 @@ const CompleteCancelBox = ({ projectData, onUpdate, showToast }) => {
                     />
                   </div>
 
-                  {/* Submit Button */}
                   <div className="flex space-x-3">
                     <button
                       onClick={() => setShowReviewModal(false)}
@@ -450,7 +445,6 @@ const CompleteCancelBox = ({ projectData, onUpdate, showToast }) => {
           </div>
         </div>
 
-        {/* Handle Mentor Request */}
         {projectData?.completionRequest?.status === "pending" &&
           projectData?.completionRequest?.from === "mentor" && (
             <div className="mb-6 bg-yellow-500/20 backdrop-blur-sm rounded-3xl p-6 border border-yellow-400/30">
@@ -487,7 +481,6 @@ const CompleteCancelBox = ({ projectData, onUpdate, showToast }) => {
           )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Complete Button */}
           <button
             onClick={() => handleActionClick("complete")}
             disabled={
@@ -503,7 +496,6 @@ const CompleteCancelBox = ({ projectData, onUpdate, showToast }) => {
                 : "bg-gradient-to-r from-green-500/20 to-emerald-600/20 border-green-400/30 hover:from-green-500/30 hover:to-emerald-600/30 hover:border-green-400/50 hover:shadow-2xl transform hover:scale-105 cursor-pointer"
             }`}
           >
-            {/* Shine effect */}
             {!isCompleteDisabled && !completeRequested && (
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
             )}
@@ -536,7 +528,6 @@ const CompleteCancelBox = ({ projectData, onUpdate, showToast }) => {
             </div>
           </button>
 
-          {/* Cancel Button */}
           <button
             onClick={() => handleActionClick("cancel")}
             disabled={
@@ -552,7 +543,6 @@ const CompleteCancelBox = ({ projectData, onUpdate, showToast }) => {
                 : "bg-gradient-to-r from-red-500/20 to-pink-600/20 border-red-400/30 hover:from-red-500/30 hover:to-pink-600/30 hover:border-red-400/50 hover:shadow-2xl transform hover:scale-105 cursor-pointer"
             }`}
           >
-            {/* Shine effect */}
             {!isCancelDisabled && !cancelRequested && (
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
             )}
@@ -586,7 +576,6 @@ const CompleteCancelBox = ({ projectData, onUpdate, showToast }) => {
           </button>
         </div>
 
-        {/* Information Box */}
         <div className="mt-6 bg-blue-500/10 rounded-2xl p-4 border border-blue-400/20">
           <div className="flex items-start space-x-3">
             <AlertTriangle className="text-blue-400 mt-0.5" size={20} />
@@ -605,7 +594,6 @@ const CompleteCancelBox = ({ projectData, onUpdate, showToast }) => {
         </div>
       </div>
 
-      {/* Confirmation Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="bg-gradient-to-br from-slate-900 to-blue-900 rounded-3xl shadow-2xl border border-white/20 max-w-md w-full">

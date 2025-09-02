@@ -24,9 +24,7 @@ const ChatHeader = ({
     <div className="bg-gradient-to-r from-slate-900/95 via-blue-900/90 to-indigo-900/95 backdrop-blur-xl border-b border-white/20 shadow-xl sticky top-0 z-30">
       <div className="px-3 py-3 sm:px-4 sm:py-4 md:px-6">
         <div className="flex items-center justify-between">
-          {/* Left Section - Back Button + Avatar + Info */}
           <div className="flex items-center space-x-2 sm:space-x-3 md:space-x-4 min-w-0 flex-1">
-            {/* Mobile Back Button */}
             <button
               onClick={() => setShowMobileChat(false)}
               className="lg:hidden group p-2 text-white/80 hover:text-white hover:bg-white/10 rounded-xl transition-all duration-200 active:scale-95"
@@ -38,7 +36,6 @@ const ChatHeader = ({
               />
             </button>
 
-            {/* Avatar with Status Ring */}
             <div className="relative flex-shrink-0">
               <div className="relative">
                 <img
@@ -49,12 +46,11 @@ const ChatHeader = ({
                     e.target.src = "/default-avatar.jpg";
                   }}
                 />
-                {/* Online Status Indicator */}
+
                 <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 sm:w-4 sm:h-4 bg-green-500 border-2 border-slate-900 rounded-full shadow-sm"></div>
               </div>
             </div>
 
-            {/* Mentor Info */}
             <div className="min-w-0 flex-1">
               <div className="flex items-center space-x-2 mb-0.5">
                 <h2 className="text-white font-bold text-sm sm:text-base md:text-lg truncate">
@@ -70,7 +66,6 @@ const ChatHeader = ({
                 )}
               </div>
 
-              {/* Project and Status Info */}
               <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
                 <div className="flex items-center space-x-1 text-xs sm:text-sm">
                   <User size={12} className="text-gray-400 flex-shrink-0" />
@@ -81,7 +76,6 @@ const ChatHeader = ({
                   </span>
                 </div>
 
-                {/* Status Badges */}
                 <div className="flex items-center space-x-2">
                   {isRoomClosedStatus && (
                     <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-500/20 text-red-300 border border-red-500/30">
@@ -99,7 +93,6 @@ const ChatHeader = ({
                 </div>
               </div>
 
-              {/* Additional Mentor Info - Desktop Only */}
               <div className="hidden md:flex items-center space-x-3 mt-1">
                 {mentor?.expertise && (
                   <span className="text-xs text-gray-400 bg-white/5 px-2 py-0.5 rounded-md">
@@ -129,9 +122,7 @@ const ChatHeader = ({
             </div>
           </div>
 
-          {/* Right Section - Action Buttons */}
           <div className="flex items-center space-x-1 sm:space-x-2 flex-shrink-0">
-            {/* Wallpaper Button */}
             <button
               onClick={() => setShowWallpaperModal(true)}
               className="group p-2 sm:p-2.5 text-white/70 hover:text-white hover:bg-white/10 rounded-xl transition-all duration-200 active:scale-95 relative overflow-hidden"
@@ -145,10 +136,8 @@ const ChatHeader = ({
               />
             </button>
 
-            {/* Mobile Menu Button - Optional */}
             <div className="hidden sm:block w-px h-6 bg-white/20 mx-1"></div>
 
-            {/* Connection Status Indicator */}
             <div className="hidden sm:flex items-center space-x-2 px-2 py-1 bg-white/5 rounded-lg">
               <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
               <span className="text-xs text-gray-400 font-medium">Online</span>
@@ -157,7 +146,6 @@ const ChatHeader = ({
         </div>
       </div>
 
-      {/* Subtle Bottom Glow Effect */}
       <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
     </div>
   );

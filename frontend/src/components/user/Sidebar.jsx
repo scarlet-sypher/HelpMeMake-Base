@@ -184,7 +184,6 @@ const Sidebar = ({
 
   return (
     <>
-      {/* Mobile overlay */}
       {isOpen && (
         <div
           className="fixed inset-0 bg-black/50 z-40 lg:hidden"
@@ -192,7 +191,6 @@ const Sidebar = ({
         />
       )}
 
-      {/* Sidebar */}
       <div
         className={`fixed left-0 top-0 h-full w-64 flex flex-col justify-between bg-gradient-to-b backdrop-blur-sm ${
           userRole === "mentor"

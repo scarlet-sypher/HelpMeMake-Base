@@ -140,7 +140,7 @@ const MessageCard = () => {
           onNavigate={handleNavigateToMessages}
         />
       ))}
-      {/* View all messages button */}
+
       <div className="pt-2">
         <button
           onClick={handleNavigateToMessages}
@@ -174,10 +174,8 @@ const SingleMessageCard = ({
       }`}
       onClick={onNavigate}
     >
-      {/* Animated gradient background on hover */}
       <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-pink-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
 
-      {/* Unread indicator */}
       {isUnread && (
         <div className="absolute top-3 right-3 w-3 h-3 bg-blue-400 rounded-full shadow-lg animate-pulse">
           <div className="absolute inset-0 w-3 h-3 bg-blue-400 rounded-full animate-ping"></div>
@@ -186,7 +184,6 @@ const SingleMessageCard = ({
 
       <div className="relative z-10 p-5">
         <div className="flex items-start space-x-4">
-          {/* Profile Image with Online Status */}
           <div className="relative flex-shrink-0">
             <img
               src={senderImage || "/default-avatar.png"}
@@ -203,9 +200,7 @@ const SingleMessageCard = ({
             )}
           </div>
 
-          {/* Message Content - improved contrast and spacing */}
           <div className="flex-1 min-w-0">
-            {/* Header */}
             <div className="flex items-center justify-between mb-2">
               <h4 className="font-bold text-white truncate text-base group-hover:text-blue-200 transition-colors">
                 {senderName}
@@ -220,19 +215,16 @@ const SingleMessageCard = ({
               </div>
             </div>
 
-            {/* Room name (optional) */}
             {roomName && (
               <div className="text-xs text-blue-200/70 mb-2 font-medium">
                 in {roomName}
               </div>
             )}
 
-            {/* Message Text - improved readability */}
             <p className="text-sm text-gray-100 leading-relaxed mb-4 line-clamp-2 group-hover:text-white transition-colors font-medium">
               {message}
             </p>
 
-            {/* Action Buttons */}
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                 <button
@@ -282,7 +274,6 @@ const SingleMessageCard = ({
         </div>
       </div>
 
-      {/* Subtle shine effect */}
       <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -skew-x-12 transform translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000"></div>
     </div>
   );

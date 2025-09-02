@@ -141,13 +141,11 @@ const BadgeAnimations = ({
 
     return (
       <>
-        {/* Main animated icon */}
         <BadgeIcon
           className={`absolute inset-0 m-auto ${getIconClasses()}`}
           size={32}
         />
 
-        {/* Additional effect layers */}
         {animationType === "sparkleStorm" && (
           <>
             <BadgeIcon
@@ -209,7 +207,6 @@ const BadgeAnimations = ({
 
   return (
     <>
-      {/* Enhanced CSS animations */}
       <style>{`
         /* Star Burst Animation */
         @keyframes star-burst {
@@ -434,7 +431,6 @@ const BadgeAnimations = ({
         }
       `}</style>
 
-      {/* Badge Container */}
       <div
         className={`
           relative transition-all duration-300 
@@ -451,15 +447,12 @@ const BadgeAnimations = ({
           isClickable && cooldown === 0 ? "Click for amazing animation!" : ""
         }
       >
-        {/* Enhanced animation overlay */}
         {isAnimating && (
           <div className="absolute -inset-8 pointer-events-none z-10 overflow-hidden">
             {getAnimationIcon()}
 
-            {/* Particle effects */}
             <div className="absolute inset-0">{renderParticles()}</div>
 
-            {/* Additional sparkle effects for legendary */}
             {animationType === "sparkleStorm" && (
               <div className="absolute inset-0">
                 {[...Array(12)].map((_, i) => (
@@ -477,7 +470,6 @@ const BadgeAnimations = ({
               </div>
             )}
 
-            {/* Ring effects for crown explosion */}
             {animationType === "crownExplosion" && (
               <div className="absolute inset-0">
                 {[...Array(3)].map((_, i) => (
@@ -497,7 +489,6 @@ const BadgeAnimations = ({
           </div>
         )}
 
-        {/* Render children (the actual badge content) */}
         <div
           className={`relative z-20 ${
             isAnimating
@@ -516,7 +507,6 @@ const BadgeAnimations = ({
           {children}
         </div>
 
-        {/* Cooldown indicator */}
         {cooldown > 0 && (
           <div className="absolute -top-2 -right-2 w-6 h-6 bg-red-500/80 rounded-full flex items-center justify-center text-white text-xs font-bold animate-pulse">
             {cooldown}

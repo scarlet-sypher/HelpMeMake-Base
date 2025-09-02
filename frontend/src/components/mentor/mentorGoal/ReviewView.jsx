@@ -86,7 +86,6 @@ const ReviewView = ({ reviews, totals = {} }) => {
 
   return (
     <div className="space-y-4">
-      {/* Reviews Summary */}
       <div className="relative group">
         <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-500 to-pink-600 rounded-2xl blur opacity-20 group-hover:opacity-30 transition duration-500"></div>
         <div className="relative bg-slate-800/50 backdrop-blur-sm rounded-2xl p-4 sm:p-6 border border-white/10">
@@ -107,7 +106,6 @@ const ReviewView = ({ reviews, totals = {} }) => {
             </div>
           </div>
 
-          {/* Money Totals Section - Always show if we have totals data */}
           <div className="bg-slate-700/30 rounded-xl p-4 mb-6 border border-white/10">
             <h4 className="text-lg font-bold text-blue-300 mb-4 flex items-center gap-2">
               <DollarSign size={20} />
@@ -150,7 +148,6 @@ const ReviewView = ({ reviews, totals = {} }) => {
             </div>
           </div>
 
-          {/* Average Rating Summary */}
           {reviews.length > 0 && (
             <div className="bg-slate-700/30 rounded-xl p-4 border border-white/10">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -191,7 +188,6 @@ const ReviewView = ({ reviews, totals = {} }) => {
         </div>
       </div>
 
-      {/* Reviews List */}
       <div className="space-y-4">
         {reviews.map((review, index) => {
           const statusStyling = getStatusStyling(review.status);
@@ -201,7 +197,6 @@ const ReviewView = ({ reviews, totals = {} }) => {
             <div key={index} className="relative group">
               <div className="absolute -inset-0.5 bg-gradient-to-r from-slate-600 to-gray-600 rounded-xl blur opacity-10 group-hover:opacity-20 transition duration-300"></div>
               <div className="relative bg-slate-800/40 backdrop-blur-sm rounded-xl p-4 sm:p-5 border border-white/10 hover:border-white/20 transition-all">
-                {/* Project Status Badge - Top Right */}
                 <div className="absolute top-3 right-3 flex items-center gap-2">
                   <div
                     className={`px-3 py-1 rounded-full text-xs font-medium border ${statusStyling.bgColor} ${statusStyling.textColor}`}
@@ -213,7 +208,6 @@ const ReviewView = ({ reviews, totals = {} }) => {
                   </div>
                 </div>
 
-                {/* Review Header */}
                 <div className="flex flex-col gap-4 mb-4 pr-24">
                   <div className="flex flex-col sm:flex-row sm:items-start gap-3">
                     <img
@@ -250,7 +244,6 @@ const ReviewView = ({ reviews, totals = {} }) => {
                     </div>
                   </div>
 
-                  {/* Stars Rating - Separate row for better mobile layout */}
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       {renderStars(review.rating)}
@@ -261,7 +254,6 @@ const ReviewView = ({ reviews, totals = {} }) => {
                   </div>
                 </div>
 
-                {/* Request Information */}
                 {review.requestInfo && (
                   <div className="mb-4 p-3 bg-slate-700/30 rounded-lg border border-white/10">
                     <div className="text-xs text-gray-400 mb-1">
@@ -273,7 +265,6 @@ const ReviewView = ({ reviews, totals = {} }) => {
                   </div>
                 )}
 
-                {/* Review Content */}
                 <div className="mb-4">
                   <div className="text-xs text-gray-400 mb-2">Review</div>
                   <p className="text-gray-200 leading-relaxed italic break-words text-sm">
@@ -283,7 +274,6 @@ const ReviewView = ({ reviews, totals = {} }) => {
                   </p>
                 </div>
 
-                {/* Review Meta Info */}
                 <div className="flex flex-wrap items-center gap-4 text-sm text-gray-400">
                   <div className="flex items-center space-x-1">
                     <Calendar size={14} />
@@ -307,7 +297,6 @@ const ReviewView = ({ reviews, totals = {} }) => {
         })}
       </div>
 
-      {/* Reviews Stats */}
       {reviews.length > 1 && (
         <div className="relative group">
           <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-xl blur opacity-50"></div>

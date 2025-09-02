@@ -124,7 +124,6 @@ export default function ForgotPassword() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center px-4">
       <div className="bg-slate-800/30 backdrop-blur-xl rounded-3xl shadow-2xl p-8 w-full max-w-md border border-slate-700/50">
-        {/* Header */}
         <div className="text-center mb-8">
           <div className="w-16 h-16 bg-gradient-to-r from-emerald-500 to-cyan-500 rounded-xl flex items-center justify-center mx-auto mb-4">
             <Mail className="w-8 h-8 text-white" />
@@ -137,7 +136,6 @@ export default function ForgotPassword() {
           </p>
         </div>
 
-        {/* Message */}
         {message && (
           <div
             className={`mb-6 p-4 rounded-xl border ${
@@ -150,7 +148,6 @@ export default function ForgotPassword() {
           </div>
         )}
 
-        {/* Step 1: Email */}
         {step === 1 && (
           <div className="space-y-6">
             <div>
@@ -195,7 +192,6 @@ export default function ForgotPassword() {
           </div>
         )}
 
-        {/* Step 2: OTP */}
         {step === 2 && (
           <div className="space-y-6">
             <div>
@@ -242,7 +238,6 @@ export default function ForgotPassword() {
           </div>
         )}
 
-        {/* Step 3: New Password */}
         {step === 3 && (
           <div className="space-y-6">
             <div>
@@ -316,7 +311,6 @@ export default function ForgotPassword() {
           </div>
         )}
 
-        {/* Back to Login */}
         <div className="text-center mt-6 pt-4 border-t border-slate-700/50">
           <button
             onClick={handleBackToLogin}

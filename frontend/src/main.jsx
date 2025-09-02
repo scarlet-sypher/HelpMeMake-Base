@@ -67,7 +67,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         <Route path="/verify-otp" element={<VerifyOTP />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/select-role" element={<SelectRole />} />
-        {/* Protected User Routes */}
+
         <Route
           path="/userdashboard"
           element={
@@ -92,7 +92,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
             </ProtectedRoute>
           }
         />
-        {/* ✅ Projects Routes */}
+
         <Route
           path="/user/projects"
           element={
@@ -109,7 +109,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
             </ProtectedRoute>
           }
         />
-        {/* ✅ Add other user routes as you build them */}
+
         <Route
           path="/user/sessions"
           element={
@@ -118,7 +118,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
             </ProtectedRoute>
           }
         />
-        {/* ✅ NEW: Achievements Page Route */}
+
         <Route
           path="/user/achievements"
           element={
@@ -135,8 +135,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
             </ProtectedRoute>
           }
         />
-        {/* <Route path="/mentordashboard" element={<MentorDashboard />} /> */}
-        {/* Admin Routes */}
+
         <Route
           path="/admindashboard"
           element={
@@ -277,7 +276,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
           path="/user/mentor-details/:mentorId"
           element={<MentorDetailsPageView />}
         />
-        {/* Mentor Routes */}
+
         <Route
           path="/mentordashboard"
           element={
@@ -318,7 +317,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
             </ProtectedRoute>
           }
         />
-        {/* for users viewing other users Future use if needed */}
+
         <Route
           path="/user/profile/:userId"
           element={

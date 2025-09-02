@@ -94,7 +94,6 @@ const MilestoneList = ({
 
   return (
     <div className="bg-gradient-to-br from-white/[0.08] via-white/[0.05] to-white/[0.02] backdrop-blur-xl rounded-2xl sm:rounded-3xl shadow-2xl border border-white/10 overflow-hidden w-full">
-      {/* Header Section */}
       <div className="bg-gradient-to-r from-blue-600/20 via-purple-600/20 to-indigo-600/20 backdrop-blur-sm p-3 sm:p-4 lg:p-6 border-b border-white/10">
         <div className="flex flex-col space-y-3 sm:space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-3">
@@ -125,7 +124,6 @@ const MilestoneList = ({
             </div>
           </div>
 
-          {/* Progress Bar */}
           <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
             <div className="flex items-center gap-2 sm:gap-3 flex-1 w-full">
               <Loader className="text-blue-400 flex-shrink-0" size={14} />
@@ -146,7 +144,6 @@ const MilestoneList = ({
             </div>
           </div>
 
-          {/* Stats Row */}
           <div className="grid grid-cols-3 gap-2 sm:gap-4 pt-1 sm:pt-2">
             <div className="text-center">
               <div className="text-base sm:text-lg font-bold text-emerald-400">
@@ -185,7 +182,6 @@ const MilestoneList = ({
         </div>
       </div>
 
-      {/* Milestones List */}
       <div className="p-2 sm:p-3 lg:p-6 space-y-3 sm:space-y-4">
         {milestones.map((milestone, index) => {
           const status = getMilestoneStatus(milestone);
@@ -206,10 +202,8 @@ const MilestoneList = ({
                   : ""
               }`}
             >
-              {/* Mobile Layout */}
               <div className="block sm:hidden">
                 <div className="p-3 space-y-3">
-                  {/* Mobile Header with Number Badge */}
                   <div className="flex items-start gap-3">
                     <div
                       className={`flex-shrink-0 w-8 h-8 bg-gradient-to-br ${status.color} rounded-lg shadow-lg border border-white/20 flex items-center justify-center transform transition-all duration-300 group-hover:scale-110`}
@@ -225,7 +219,6 @@ const MilestoneList = ({
                     </div>
                   </div>
 
-                  {/* Mobile Badges */}
                   <div className="flex flex-wrap items-center gap-2">
                     <div
                       className={`flex items-center space-x-1.5 px-2.5 py-1 rounded-full border bg-gradient-to-r ${status.color}/10 ${status.borderColor} backdrop-blur-sm`}
@@ -273,7 +266,6 @@ const MilestoneList = ({
                     )}
                   </div>
 
-                  {/* Mobile Verification Status */}
                   <div className="flex items-center space-x-4">
                     <div className="flex items-center space-x-1.5">
                       <div
@@ -323,7 +315,6 @@ const MilestoneList = ({
                     </div>
                   </div>
 
-                  {/* Mobile Review Section */}
                   {milestone.reviewNote && (
                     <div
                       className={`relative p-3 rounded-lg border backdrop-blur-sm transition-all duration-300 ${
@@ -386,7 +377,6 @@ const MilestoneList = ({
                     </div>
                   )}
 
-                  {/* Mobile Action Buttons */}
                   <div className="flex items-center flex-wrap gap-2 pt-1">
                     {isVisible &&
                       !milestone.learnerVerification?.isVerified && (
@@ -459,9 +449,7 @@ const MilestoneList = ({
                 </div>
               </div>
 
-              {/* Desktop Layout */}
               <div className="hidden sm:block">
-                {/* Milestone Number Badge - Fixed positioning for desktop */}
                 <div className="absolute -left-2 lg:-left-3 top-4 lg:top-6 z-10">
                   <div
                     className={`w-8 h-8 lg:w-10 lg:h-10 bg-gradient-to-br ${status.color} rounded-xl shadow-lg border-2 border-white/20 flex items-center justify-center transform transition-all duration-300 group-hover:scale-110`}
@@ -474,11 +462,9 @@ const MilestoneList = ({
 
                 <div className="pl-6 lg:pl-8 pr-3 lg:pr-4 py-4 lg:py-5">
                   <div className="flex flex-col space-y-3 lg:space-y-4">
-                    {/* Desktop Header Row */}
                     <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between space-y-2 lg:space-y-0">
                       <div className="flex-1 min-w-0">
                         <div className="flex flex-wrap items-center gap-2 mb-3">
-                          {/* Status Badge */}
                           <div
                             className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-full border bg-gradient-to-r ${status.color}/10 ${status.borderColor} backdrop-blur-sm`}
                           >
@@ -493,7 +479,6 @@ const MilestoneList = ({
                             </span>
                           </div>
 
-                          {/* Visibility Badge */}
                           <div
                             className={`flex items-center space-x-1 px-2 py-1 rounded-lg ${
                               isVisible
@@ -518,7 +503,6 @@ const MilestoneList = ({
                             )}
                           </div>
 
-                          {/* Unread Review Notification */}
                           {unreadReview && (
                             <div className="flex items-center space-x-1.5 bg-gradient-to-r from-orange-500/15 to-red-500/15 px-3 py-1.5 rounded-full border border-orange-400/30 animate-pulse">
                               <div className="w-1.5 h-1.5 bg-orange-400 rounded-full animate-ping"></div>
@@ -530,12 +514,10 @@ const MilestoneList = ({
                           )}
                         </div>
 
-                        {/* Milestone Title */}
                         <h4 className="text-base lg:text-lg font-bold text-white mb-3 line-clamp-2 group-hover:text-blue-300 transition-colors">
                           {milestone.title}
                         </h4>
 
-                        {/* Verification Status */}
                         <div className="flex items-center space-x-6 mb-4">
                           <div className="flex items-center space-x-2">
                             <div
@@ -591,7 +573,6 @@ const MilestoneList = ({
                           </div>
                         </div>
 
-                        {/* Review Message Preview */}
                         {milestone.reviewNote && (
                           <div
                             className={`relative p-4 rounded-xl border backdrop-blur-sm transition-all duration-300 hover:scale-[1.01] ${
@@ -668,7 +649,6 @@ const MilestoneList = ({
                       </div>
                     </div>
 
-                    {/* Desktop Action Buttons */}
                     <div className="flex items-center flex-wrap gap-2 pt-2">
                       {isVisible &&
                         !milestone.learnerVerification?.isVerified && (
@@ -719,7 +699,6 @@ const MilestoneList = ({
                           </button>
                         )}
 
-                      {/* View Review Button */}
                       {milestone.reviewNote && (
                         <button
                           onClick={() => setViewingReview(milestone)}
@@ -747,7 +726,6 @@ const MilestoneList = ({
         })}
       </div>
 
-      {/* Completion Celebration */}
       {completionPercentage === 100 && (
         <div className="p-4 sm:p-6 border-t border-white/10">
           <div className="bg-gradient-to-r from-yellow-500/15 via-orange-500/15 to-amber-500/15 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-yellow-400/30 shadow-lg shadow-yellow-400/10">
@@ -770,7 +748,6 @@ const MilestoneList = ({
         </div>
       )}
 
-      {/* Review Modal */}
       {viewingReview && (
         <ReviewerBox
           milestone={viewingReview}

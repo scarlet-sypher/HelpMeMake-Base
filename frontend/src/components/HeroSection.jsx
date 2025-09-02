@@ -49,9 +49,7 @@ const HeroSection = () => {
 
   return (
     <section id="home" className="min-h-screen relative overflow-hidden">
-      {/* Enhanced Animated Background */}
       <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-        {/* Dynamic Gradient Overlay */}
         <div
           className="absolute inset-0 opacity-30 md:opacity-50 transition-all duration-1000"
           style={{
@@ -63,7 +61,6 @@ const HeroSection = () => {
           }}
         />
 
-        {/* Animated Particles - Responsive */}
         <div className="absolute inset-0">
           {sparkles
             .slice(0, window.innerWidth < 768 ? 10 : NUM_SPARKLES)
@@ -81,21 +78,18 @@ const HeroSection = () => {
             ))}
         </div>
 
-        {/* Enhanced Floating Elements - Responsive */}
         <div className="absolute top-16 sm:top-20 left-4 sm:left-10 w-20 h-20 sm:w-32 sm:h-32 bg-gradient-to-r from-emerald-400/30 to-blue-400/30 rounded-full blur-2xl animate-pulse"></div>
         <div className="absolute top-32 sm:top-40 right-8 sm:right-20 w-24 h-24 sm:w-40 sm:h-40 bg-gradient-to-r from-purple-400/30 to-pink-400/30 rounded-full blur-2xl animate-pulse animation-delay-1000"></div>
         <div className="absolute bottom-24 sm:bottom-32 left-1/6 sm:left-1/4 w-28 h-28 sm:w-36 sm:h-36 bg-gradient-to-r from-blue-400/30 to-cyan-400/30 rounded-full blur-2xl animate-pulse animation-delay-500"></div>
         <div className="absolute top-1/2 right-1/6 sm:right-1/4 w-20 h-20 sm:w-28 sm:h-28 bg-gradient-to-r from-yellow-400/30 to-orange-400/30 rounded-full blur-2xl animate-pulse animation-delay-1500"></div>
       </div>
 
-      {/* Enhanced Mountain Landscape - Responsive */}
       <div className="absolute bottom-0 left-0 right-0 w-full">
         <svg
           viewBox="0 0 1440 400"
           className="w-full h-40 sm:h-60 md:h-80 lg:h-96"
           preserveAspectRatio="none"
         >
-          {/* Animated Mountain Layers */}
           <path
             d="M0,400 L0,180 Q200,120 400,150 Q600,100 800,130 Q1000,80 1200,110 Q1300,90 1440,100 L1440,400 Z"
             fill="url(#mountain1)"
@@ -142,11 +136,9 @@ const HeroSection = () => {
         </svg>
       </div>
 
-      {/* Main Content - Enhanced Responsive Layout */}
       <div className="relative z-10 pt-16 sm:pt-20 md:pt-24 pb-16 sm:pb-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="lg:grid lg:grid-cols-12 lg:gap-12 xl:gap-16 items-center">
-            {/* Left Column - Enhanced Responsive Text */}
             <div
               className={`lg:col-span-7 text-center lg:text-left transform transition-all duration-1000 ${
                 isLoaded
@@ -162,7 +154,6 @@ const HeroSection = () => {
                 </span>
               </div>
 
-              {/* Responsive Typography */}
               <h1 className="text-3xl xs:text-6xl sm:text-5xl md:text-6xl lg:text-6xl xl:text-7xl font-bold mb-6 sm:mb-8 leading-snug sm:leading-snug tracking-tight">
                 <span className="bg-gradient-to-r from-white via-emerald-200 to-blue-200 bg-clip-text text-transparent animate-gradient block">
                   Build your dream
@@ -181,7 +172,6 @@ const HeroSection = () => {
                 complex components—safely and effectively.
               </p>
 
-              {/* Enhanced Responsive CTA Buttons */}
               <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 md:gap-6 justify-end lg:justify-start mb-8 sm:mb-12">
                 <button
                   onClick={() => navigate("/signup")}
@@ -205,7 +195,6 @@ const HeroSection = () => {
                 </button>
               </div>
 
-              {/* Responsive Trust Indicators */}
               <div className="flex items-center justify-center lg:justify-start space-x-6 sm:space-x-8 text-center">
                 <div className="flex-1 sm:flex-none">
                   <div className="text-2xl sm:text-3xl font-bold text-white mb-1">
@@ -234,7 +223,6 @@ const HeroSection = () => {
               </div>
             </div>
 
-            {/* Right Column - Enhanced Responsive Hero Image */}
             <div
               className={`lg:col-span-5 mt-12 sm:mt-16 lg:mt-0 relative transform transition-all duration-1000 delay-500 ${
                 isLoaded
@@ -242,9 +230,7 @@ const HeroSection = () => {
                   : "translate-y-10 opacity-0"
               }`}
             >
-              {/* Main Hero Image Container - Responsive */}
               <div className="relative bg-gradient-to-r from-white/10 to-white/5 backdrop-blur-xl rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 border border-white/20 shadow-2xl">
-                {/* Hero Image - Responsive */}
                 <div className="relative mb-4 sm:mb-6 rounded-xl sm:rounded-2xl overflow-hidden">
                   <img
                     src={heroImage}
@@ -255,7 +241,7 @@ const HeroSection = () => {
                       e.target.nextSibling.style.display = "block";
                     }}
                   />
-                  {/* Fallback if image doesn't load */}
+
                   <div className="hidden w-full h-48 sm:h-56 md:h-64 bg-gradient-to-br from-indigo-500 via-purple-500 to-blue-500 rounded-xl sm:rounded-2xl items-center justify-center">
                     <div className="text-center text-white">
                       <Users className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-4 opacity-80" />
@@ -266,7 +252,6 @@ const HeroSection = () => {
                   </div>
                 </div>
 
-                {/* Enhanced Mock Interface - Responsive */}
                 <div className="bg-black/40 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-white/10">
                   <div className="flex items-center justify-between mb-4 sm:mb-6">
                     <div className="flex items-center space-x-2 sm:space-x-3">
@@ -291,7 +276,6 @@ const HeroSection = () => {
                     </div>
                   </div>
 
-                  {/* Live Activity Indicators - Responsive */}
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-2">
                       <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-green-400 rounded-full animate-pulse"></div>
@@ -309,7 +293,6 @@ const HeroSection = () => {
                 </div>
               </div>
 
-              {/* Enhanced Responsive Floating Elements */}
               <div className="absolute -top-4 sm:-top-6 md:-top-8 -right-4 sm:-right-6 md:-right-8 w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 bg-gradient-to-r from-emerald-400 to-blue-400 rounded-full flex items-center justify-center animate-bounce shadow-lg">
                 <Star className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-white" />
               </div>

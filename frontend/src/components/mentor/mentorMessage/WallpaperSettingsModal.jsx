@@ -60,7 +60,6 @@ const WallpaperSettingsModal = ({
         </div>
 
         <div className="space-y-4">
-          {/* Preset Wallpapers */}
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-3">
               Preset Wallpapers
@@ -122,17 +121,14 @@ const WallpaperSettingsModal = ({
                         }}
                       />
 
-                      {/* Overlay for better visibility */}
                       <div className="absolute inset-0 bg-slate-900/30 group-hover:bg-slate-900/20 transition-colors"></div>
 
-                      {/* Selected indicator */}
                       {selectedRoom?.mentorWallpaper === wallpaper && (
                         <div className="absolute top-1 right-1 p-1 bg-cyan-500 rounded-full">
                           <CheckCircle2 size={12} className="text-white" />
                         </div>
                       )}
 
-                      {/* Hover overlay */}
                       <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                         <div className="bg-black/60 px-2 py-1 rounded text-xs text-white">
                           Select
@@ -145,7 +141,6 @@ const WallpaperSettingsModal = ({
             </div>
           </div>
 
-          {/* Custom URL Input */}
           <div className="mt-6">
             <label className="block text-sm font-medium text-gray-300 mb-2">
               Or Enter Custom Wallpaper URL

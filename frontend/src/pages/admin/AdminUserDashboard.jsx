@@ -134,7 +134,6 @@ const AdminUserDashboard = ({ onReturn }) => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 p-4 md:p-8">
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 space-y-4 md:space-y-0">
           <div className="flex items-center space-x-4">
             <button
@@ -162,10 +161,8 @@ const AdminUserDashboard = ({ onReturn }) => {
           </button>
         </div>
 
-        {/* Search and Filter Bar */}
         <div className="bg-slate-800/60 backdrop-blur-sm rounded-2xl p-6 mb-8">
           <div className="flex flex-col md:flex-row gap-4">
-            {/* Search Input */}
             <div className="flex-1 relative">
               <Search
                 className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400"
@@ -180,7 +177,6 @@ const AdminUserDashboard = ({ onReturn }) => {
               />
             </div>
 
-            {/* Role Filter */}
             <div className="relative">
               <Filter
                 className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400"
@@ -199,7 +195,6 @@ const AdminUserDashboard = ({ onReturn }) => {
           </div>
         </div>
 
-        {/* Loading State */}
         {loading && (
           <div className="flex items-center justify-center py-16">
             <div className="text-center">
@@ -212,7 +207,6 @@ const AdminUserDashboard = ({ onReturn }) => {
           </div>
         )}
 
-        {/* Error State */}
         {error && (
           <div className="bg-red-600/20 border border-red-600 rounded-2xl p-6 mb-8">
             <p className="text-red-400 text-center">{error}</p>
@@ -227,7 +221,6 @@ const AdminUserDashboard = ({ onReturn }) => {
           </div>
         )}
 
-        {/* No Users Found */}
         {!loading && !error && filteredUsers.length === 0 && (
           <div className="text-center py-16">
             <Users className="text-slate-400 mx-auto mb-4" size={64} />
@@ -240,7 +233,6 @@ const AdminUserDashboard = ({ onReturn }) => {
           </div>
         )}
 
-        {/* Users Grid */}
         {!loading && !error && filteredUsers.length > 0 && (
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
@@ -254,7 +246,6 @@ const AdminUserDashboard = ({ onReturn }) => {
               ))}
             </div>
 
-            {/* Pagination */}
             {totalPages > 1 && (
               <div className="flex justify-center items-center space-x-2">
                 <button
@@ -299,7 +290,6 @@ const AdminUserDashboard = ({ onReturn }) => {
           </>
         )}
 
-        {/* Stats Summary */}
         {!loading && !error && users.length > 0 && (
           <div className="bg-slate-800/60 backdrop-blur-sm rounded-2xl p-6 mt-8">
             <h3 className="text-lg font-bold text-white mb-4">Quick Stats</h3>

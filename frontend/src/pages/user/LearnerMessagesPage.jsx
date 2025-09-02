@@ -715,7 +715,6 @@ const LearnerMessagesPage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-indigo-950 flex overflow-hidden">
-      {/* Toast */}
       <Toast toast={toast} onClose={closeToast} />
 
       <Sidebar
@@ -729,7 +728,6 @@ const LearnerMessagesPage = () => {
       <div
         className={`flex-1 flex h-screen transition-all duration-300 lg:ml-64`}
       >
-        {/* Rooms List */}
         <RoomsList
           showRoomList={showRoomList}
           setSidebarOpen={setSidebarOpen}
@@ -744,7 +742,6 @@ const LearnerMessagesPage = () => {
           setRoomListCollapsed={setRoomListCollapsed}
         />
 
-        {/* Chat Area */}
         <div
           className={`${
             showRoomList ? "hidden" : "flex"
@@ -767,7 +764,6 @@ const LearnerMessagesPage = () => {
             </div>
           ) : (
             <>
-              {/* Chat Header */}
               <ChatHeader
                 setShowMobileChat={setShowMobileChat}
                 roomDetails={roomDetails}
@@ -777,7 +773,6 @@ const LearnerMessagesPage = () => {
                 checkNewMessages={checkNewMessages}
               />
 
-              {/* Messages Area */}
               <MessagesArea
                 roomDetails={roomDetails}
                 messagesLoading={messagesLoading}
@@ -787,7 +782,6 @@ const LearnerMessagesPage = () => {
                 downloadImage={downloadImage}
               />
 
-              {/* Message Input */}
               <MessageInput
                 selectedRoom={selectedRoom}
                 isRoomClosed={isRoomClosed}
@@ -807,7 +801,6 @@ const LearnerMessagesPage = () => {
         </div>
       </div>
 
-      {/* Wallpaper Modal */}
       <WallpaperModal
         showWallpaperModal={showWallpaperModal}
         setShowWallpaperModal={setShowWallpaperModal}

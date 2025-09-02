@@ -187,7 +187,6 @@ const AIHelper = ({ formData, setFormData, onToast }) => {
 
   return (
     <div className="space-y-6">
-      {/* Image Generator Block */}
       <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 sm:p-6 border border-white/20">
         <div className="flex items-center mb-4">
           <div className="p-2 bg-gradient-to-r from-purple-500 to-pink-600 rounded-lg mr-3">
@@ -203,7 +202,6 @@ const AIHelper = ({ formData, setFormData, onToast }) => {
           </div>
         </div>
 
-        {/* Image Preview */}
         <div className="mb-4">
           <div className="bg-white/5 rounded-xl p-4 min-h-[200px] flex items-center justify-center border-2 border-dashed border-white/20">
             {loadingImage ? (
@@ -286,7 +284,6 @@ const AIHelper = ({ formData, setFormData, onToast }) => {
           </div>
         </div>
 
-        {/* Prompt Input */}
         <div className="space-y-3">
           <label className="block text-white font-medium text-sm">
             Describe the image you want to generate
@@ -318,7 +315,6 @@ const AIHelper = ({ formData, setFormData, onToast }) => {
           </button>
         </div>
 
-        {/* Developer Warning Note */}
         <div className="mt-4 p-3 bg-amber-500/10 rounded-lg border border-amber-400/20">
           <div className="flex items-start">
             <AlertTriangle
@@ -336,7 +332,6 @@ const AIHelper = ({ formData, setFormData, onToast }) => {
         </div>
       </div>
 
-      {/* Text Description Generator Block - Keep existing code */}
       <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 sm:p-6 border border-white/20">
         <div className="flex items-center mb-4">
           <div className="p-2 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-lg mr-3">
@@ -352,9 +347,7 @@ const AIHelper = ({ formData, setFormData, onToast }) => {
           </div>
         </div>
 
-        {/* Response Output Box */}
         <div className="mb-4 space-y-4">
-          {/* Short Description */}
           {generatedDescriptions.short && (
             <div className="bg-white/5 rounded-xl p-4 border border-white/20">
               <div className="flex items-center justify-between mb-2">
@@ -388,7 +381,6 @@ const AIHelper = ({ formData, setFormData, onToast }) => {
             </div>
           )}
 
-          {/* Long Description */}
           {generatedDescriptions.long && (
             <div className="bg-white/5 rounded-xl p-4 border border-white/20">
               <div className="flex items-center justify-between mb-2">
@@ -419,7 +411,6 @@ const AIHelper = ({ formData, setFormData, onToast }) => {
             </div>
           )}
 
-          {/* Empty State */}
           {!generatedDescriptions.short && !generatedDescriptions.long && (
             <div className="bg-white/5 rounded-xl p-4 min-h-[80px] flex items-center justify-center border-2 border-dashed border-white/20">
               <div className="text-center text-white/60">
@@ -432,7 +423,6 @@ const AIHelper = ({ formData, setFormData, onToast }) => {
           )}
         </div>
 
-        {/* Prompt Input */}
         <div className="space-y-3">
           <label className="block text-white font-medium text-sm">
             Tell us what you want to describe

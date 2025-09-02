@@ -340,7 +340,6 @@ const MentorProjectPage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 flex">
-      {/* Sidebar */}
       <Sidebar
         isOpen={sidebarOpen}
         toggleSidebar={toggleSidebar}
@@ -349,9 +348,7 @@ const MentorProjectPage = () => {
         userRole="mentor"
       />
 
-      {/* Main Content */}
       <div className="flex-1 lg:ml-64">
-        {/* Mobile Header */}
         <div className="lg:hidden bg-gradient-to-r from-slate-900/80 to-gray-900/80 backdrop-blur-sm border-b border-white/10 p-4">
           <div className="flex items-center justify-between">
             <button
@@ -365,14 +362,12 @@ const MentorProjectPage = () => {
           </div>
         </div>
 
-        {/* Animated background elements */}
         <div className="fixed inset-0 overflow-hidden pointer-events-none">
           <div className="absolute -top-40 -right-40 w-80 h-80 bg-cyan-500/20 rounded-full blur-3xl animate-pulse"></div>
           <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-teal-500/20 rounded-full blur-3xl animate-pulse"></div>
         </div>
 
         <div className="relative z-10 p-4 lg:p-6 space-y-6">
-          {/* Header Section with Mentor Stats */}
           <div className="bg-white/10 backdrop-blur-sm rounded-3xl shadow-2xl p-6 border border-white/20 relative overflow-hidden">
             <div className="absolute -top-10 -right-10 w-20 h-20 bg-cyan-400/20 rounded-full blur-xl animate-pulse"></div>
             <div className="absolute -bottom-10 -left-10 w-16 h-16 bg-teal-400/20 rounded-full blur-xl animate-pulse"></div>
@@ -391,7 +386,6 @@ const MentorProjectPage = () => {
                 </div>
               </div>
 
-              {/* Mentor Stats Grid */}
               <div className="grid grid-cols-2 lg:grid-cols-6 gap-4">
                 <div className="text-center bg-white/10 rounded-xl p-3 border border-white/20">
                   <div className="text-lg font-bold text-cyan-400">
@@ -433,10 +427,8 @@ const MentorProjectPage = () => {
             </div>
           </div>
 
-          {/* Search and Filter Section */}
           <div className="bg-white/10 backdrop-blur-sm rounded-3xl shadow-2xl p-6 border border-white/20 relative z-[9999]">
             <div className="flex flex-col space-y-4">
-              {/* Search Bar */}
               <div className="flex-1 relative">
                 <Search
                   className="absolute left-4 top-1/2 transform -translate-y-1/2 text-cyan-300"
@@ -451,9 +443,7 @@ const MentorProjectPage = () => {
                 />
               </div>
 
-              {/* Filters Row */}
               <div className="flex flex-wrap gap-4">
-                {/* Category Filter */}
                 <select
                   value={selectedCategory}
                   onChange={(e) => setSelectedCategory(e.target.value)}
@@ -471,7 +461,6 @@ const MentorProjectPage = () => {
                   ))}
                 </select>
 
-                {/* Difficulty Filter */}
                 <select
                   value={selectedDifficulty}
                   onChange={(e) => setSelectedDifficulty(e.target.value)}
@@ -485,7 +474,6 @@ const MentorProjectPage = () => {
                   ))}
                 </select>
 
-                {/* Price Range */}
                 <div className="flex items-center space-x-2">
                   <input
                     type="number"
@@ -514,7 +502,6 @@ const MentorProjectPage = () => {
                   />
                 </div>
 
-                {/* Sort Dropdown */}
                 <div className="relative filter-dropdown-container">
                   <button
                     onClick={() => setFilterDropdownOpen(!filterDropdownOpen)}
@@ -596,7 +583,6 @@ const MentorProjectPage = () => {
                   )}
                 </div>
 
-                {/* Clear Filters */}
                 <button
                   onClick={clearFilters}
                   className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-xl transition-colors border border-white/20"
@@ -607,7 +593,6 @@ const MentorProjectPage = () => {
             </div>
           </div>
 
-          {/* Projects Grid */}
           <div className="relative z-10">
             {error ? (
               <div className="bg-red-500/20 backdrop-blur-sm rounded-3xl shadow-2xl p-6 border border-red-500/30 text-center">
@@ -682,7 +667,6 @@ const MentorProjectPage = () => {
         </div>
       </div>
 
-      {/* Toast Notification */}
       <Toast
         open={toast.open}
         message={toast.message}

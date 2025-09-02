@@ -110,7 +110,6 @@ const PerformanceInsights = ({ data, title = "Performance Insights" }) => {
 
   return (
     <div className="bg-gradient-to-br from-violet-900/20 to-purple-900/20 backdrop-blur-sm rounded-3xl p-8 border border-violet-500/20 hover:border-violet-400/30 transition-all duration-300">
-      {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div className="flex items-center space-x-3">
           <div className="p-3 bg-gradient-to-r from-violet-500 to-purple-600 rounded-2xl shadow-lg">
@@ -124,7 +123,6 @@ const PerformanceInsights = ({ data, title = "Performance Insights" }) => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Performance Metrics */}
         <div className="space-y-6">
           <h4 className="text-lg font-semibold text-white mb-4">
             Key Performance Indicators
@@ -196,7 +194,6 @@ const PerformanceInsights = ({ data, title = "Performance Insights" }) => {
                     )}
                   </div>
 
-                  {/* Progress bar for percentage values */}
                   {insight.value.includes("%") && (
                     <div className="mt-3">
                       <div className="w-full bg-white/10 rounded-full h-2 overflow-hidden">
@@ -219,14 +216,12 @@ const PerformanceInsights = ({ data, title = "Performance Insights" }) => {
           </div>
         </div>
 
-        {/* Earnings Breakdown */}
         <div className="space-y-6">
           <h4 className="text-lg font-semibold text-white mb-4">
             Earnings Breakdown
           </h4>
 
           <div className="space-y-4">
-            {/* Total Earnings Card */}
             <div
               className={`p-6 rounded-2xl bg-gradient-to-r from-violet-500/10 to-purple-600/10 backdrop-blur-sm border border-violet-400/30 transform transition-all duration-300 ${
                 isVisible
@@ -259,7 +254,6 @@ const PerformanceInsights = ({ data, title = "Performance Insights" }) => {
               </div>
             </div>
 
-            {/* Earnings Details */}
             <div className="grid grid-cols-1 gap-4">
               {[
                 {
@@ -307,7 +301,6 @@ const PerformanceInsights = ({ data, title = "Performance Insights" }) => {
         </div>
       </div>
 
-      {/* Recommendations Section */}
       <div className="mt-8 p-6 rounded-2xl bg-gradient-to-r from-white/5 to-white/10 backdrop-blur-sm border border-white/10">
         <h4 className="text-lg font-semibold text-white mb-4">
           Recommendations

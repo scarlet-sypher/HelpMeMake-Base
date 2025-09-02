@@ -68,7 +68,6 @@ const HomeButton = () => {
         className="sm:w-5 sm:h-5 group-hover:scale-110 transition-transform duration-200"
       />
 
-      {/* Tooltip */}
       <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 px-2 py-1 bg-slate-800 text-white text-xs rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none">
         Go to Home
         <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-b-4 border-transparent border-b-slate-800"></div>
@@ -343,12 +342,9 @@ export default function Login() {
         onClose={hideToast}
       />
 
-      {/* Home Button - Visible on all screen sizes */}
       <HomeButton />
 
-      {/* Animated Background */}
       <div className="absolute inset-0 pointer-events-none">
-        {/* Gradient Orbs */}
         <div className="absolute top-10 left-10 w-32 h-32 sm:w-48 sm:h-48 lg:w-64 lg:h-64 bg-emerald-500/10 rounded-full blur-3xl animate-pulse"></div>
         <div
           className="absolute bottom-10 right-10 w-48 h-48 sm:w-64 sm:h-64 lg:w-80 lg:h-80 bg-purple-500/10 rounded-full blur-3xl animate-pulse"
@@ -359,7 +355,6 @@ export default function Login() {
           style={{ animationDelay: "2s" }}
         ></div>
 
-        {/* Floating Particles */}
         {particles.map((particle) => (
           <div
             key={particle.id}
@@ -377,11 +372,8 @@ export default function Login() {
         ))}
       </div>
 
-      {/* Main Content */}
       <div className="relative z-10 min-h-screen">
-        {/* Desktop Layout */}
         <div className="hidden lg:flex min-h-screen items-center">
-          {/* Left Hero Section - Desktop Only */}
           <div className="flex w-1/2 items-center justify-center px-4 xl:px-8 relative">
             <div
               className={`relative w-full h-[32rem] max-w-lg transition-all duration-700 ${
@@ -416,15 +408,12 @@ export default function Login() {
                     />
                     <div className="absolute inset-0 bg-black/20"></div>
 
-                    {/* Decorative elements */}
                     <div className="absolute top-8 left-8 w-16 h-16 border-2 border-white/30 rounded-full"></div>
                     <div className="absolute top-1/3 right-8 w-8 h-8 bg-white/20 rounded-lg rotate-45"></div>
                     <div className="absolute bottom-1/3 left-12 w-12 h-12 bg-white/10 rounded-full"></div>
 
-                    {/* Overlay with gradient */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
 
-                    {/* Content Overlay */}
                     <div className="absolute bottom-0 left-0 right-0 p-8 text-white">
                       <h3 className="text-3xl font-bold mb-3">{img.title}</h3>
                       <p className="text-lg opacity-90 leading-relaxed">
@@ -432,7 +421,6 @@ export default function Login() {
                       </p>
                     </div>
 
-                    {/* Floating Animation Elements */}
                     <div
                       className="absolute bottom-20 right-8 w-4 h-4 bg-cyan-400/40 rounded-full animate-bounce"
                       style={{ animationDelay: "0.5s" }}
@@ -441,7 +429,6 @@ export default function Login() {
                 </div>
               ))}
 
-              {/* Image Indicators */}
               <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-3">
                 {heroImages.map((_, index) => (
                   <button
@@ -458,7 +445,6 @@ export default function Login() {
             </div>
           </div>
 
-          {/* Right Form Section - Desktop */}
           <div className="flex w-1/2 items-center justify-center px-4 xl:px-8">
             <LoginForm
               form={form}
@@ -475,7 +461,6 @@ export default function Login() {
           </div>
         </div>
 
-        {/* Mobile/Tablet Layout - Form Only */}
         <div className="flex lg:hidden min-h-screen items-center justify-center px-4 py-8">
           <LoginForm
             form={form}
@@ -563,7 +548,6 @@ function LoginForm({
           : "opacity-0 translate-y-8 scale-95"
       } hover:border-emerald-500/30 hover:shadow-emerald-500/10`}
     >
-      {/* Header */}
       <div className="text-center mb-6 lg:mb-8 space-y-3 lg:space-y-4">
         <div className="inline-flex items-center gap-2 lg:gap-3 px-3 lg:px-4 py-2 bg-emerald-500/10 rounded-full border border-emerald-500/20 mb-3 lg:mb-4">
           <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
@@ -572,7 +556,6 @@ function LoginForm({
           </span>
         </div>
 
-        {/* Logo with Code Icon */}
         <div className="flex items-center justify-center gap-3 mb-3 lg:mb-4">
           <div className="relative">
             <div className="w-10 h-10 lg:w-12 lg:h-12 bg-gradient-to-r from-emerald-500 to-cyan-500 rounded-xl flex items-center justify-center shadow-lg transform hover:scale-110 transition-transform duration-300">
@@ -596,7 +579,6 @@ function LoginForm({
           Sign in to continue your coding journey
         </p>
 
-        {/* Feature Icons */}
         <div className="flex justify-center gap-4 lg:gap-6 mt-4 lg:mt-6">
           <div className="flex flex-col items-center gap-1 transform hover:scale-110 transition-transform duration-200">
             <div className="w-7 h-7 lg:w-8 lg:h-8 bg-purple-500/20 rounded-lg flex items-center justify-center">
@@ -619,7 +601,6 @@ function LoginForm({
         </div>
       </div>
 
-      {/* Feedback Message */}
       {feedbackMessage && (
         <div
           className={`mb-4 lg:mb-6 p-3 lg:p-4 rounded-xl border backdrop-blur-sm transition-all duration-500 ${
@@ -641,7 +622,6 @@ function LoginForm({
         </div>
       )}
 
-      {/* Login Form */}
       <div className="bg-slate-800/40 rounded-2xl p-4 lg:p-6 border border-slate-700/50 backdrop-blur-sm hover:border-emerald-500/30 transition-all duration-300">
         <div className="space-y-4 lg:space-y-6">
           <InputField
@@ -666,7 +646,6 @@ function LoginForm({
             error={errors.password}
           />
 
-          {/* Remember Me & Forgot Password */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0 text-sm">
             <label className="flex items-center gap-2 cursor-pointer group">
               <input
@@ -709,7 +688,6 @@ function LoginForm({
         </div>
       </div>
 
-      {/* Divider */}
       <div className="flex items-center my-4 lg:my-6">
         <div className="flex-1 border-t border-slate-700/50"></div>
         <span className="px-3 lg:px-4 text-slate-400 text-xs lg:text-sm font-medium">
@@ -718,7 +696,6 @@ function LoginForm({
         <div className="flex-1 border-t border-slate-700/50"></div>
       </div>
 
-      {/* OAuth Buttons */}
       <div className="flex flex-col sm:flex-row gap-3 mb-4 lg:mb-6">
         <button
           onClick={() => handleOAuth("Google")}
@@ -740,7 +717,6 @@ function LoginForm({
         </button>
       </div>
 
-      {/* Footer */}
       <div className="text-center pt-3 lg:pt-4 border-t border-slate-700/50">
         <p className="text-slate-400 text-sm lg:text-base">
           New to HelpMeMake?{" "}

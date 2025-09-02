@@ -101,7 +101,6 @@ export default function LearnerCard({ learner, onDelete }) {
   return (
     <>
       <div className="bg-slate-800/60 backdrop-blur-sm rounded-xl p-4 sm:p-6 hover:bg-slate-700/60 transition-all duration-300 border border-slate-700/50 w-full flex flex-col min-h-[400px]">
-        {/* Top Section - Centered Avatar and Basic Info */}
         <div className="flex flex-col items-center text-center mb-6">
           <img
             src={getAvatarUrl()}
@@ -128,9 +127,7 @@ export default function LearnerCard({ learner, onDelete }) {
           </div>
         </div>
 
-        {/* Middle Section - Details */}
         <div className="flex-1 space-y-4">
-          {/* Title and Description */}
           {learner.learnerDetails && (
             <>
               <div className="text-center">
@@ -144,7 +141,6 @@ export default function LearnerCard({ learner, onDelete }) {
                 )}
               </div>
 
-              {/* Location */}
               {learner.learnerDetails.location && (
                 <div className="flex items-center justify-center text-sm text-slate-400">
                   <MapPin size={14} className="mr-1" />
@@ -152,7 +148,6 @@ export default function LearnerCard({ learner, onDelete }) {
                 </div>
               )}
 
-              {/* Stats Grid */}
               <div className="grid grid-cols-2 gap-3">
                 <div className="flex flex-col items-center p-2 bg-slate-700/30 rounded-lg">
                   <Award
@@ -198,7 +193,6 @@ export default function LearnerCard({ learner, onDelete }) {
                 </div>
               </div>
 
-              {/* Social Links */}
               {learner.learnerDetails.socialLinks && (
                 <div className="flex justify-center space-x-4 pt-2">
                   {learner.learnerDetails.socialLinks.github &&
@@ -239,7 +233,6 @@ export default function LearnerCard({ learner, onDelete }) {
             </>
           )}
 
-          {/* Join Date and Auth Provider */}
           <div className="pt-3 border-t border-slate-600/50">
             <div className="flex flex-col items-center space-y-2 text-xs text-slate-400">
               <div className="flex items-center">
@@ -253,7 +246,6 @@ export default function LearnerCard({ learner, onDelete }) {
           </div>
         </div>
 
-        {/* Bottom Section - Action Buttons */}
         <div className="flex flex-col sm:flex-row gap-2 mt-4 pt-4 border-t border-slate-600/50">
           <button
             onClick={handleEdit}
@@ -274,7 +266,6 @@ export default function LearnerCard({ learner, onDelete }) {
         </div>
       </div>
 
-      {/* Delete Confirmation Modal - Same as before */}
       {showDeleteModal && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="bg-slate-800 rounded-xl border border-slate-700 max-w-md w-full p-6">

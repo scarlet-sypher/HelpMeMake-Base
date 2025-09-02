@@ -61,7 +61,6 @@ const UserProjectCard = ({ projectData, apprenticeData }) => {
     <div className="relative group">
       <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-500 to-teal-600 rounded-2xl blur opacity-20 group-hover:opacity-30 transition duration-500"></div>
       <div className="relative bg-gradient-to-r from-slate-900/50 to-gray-900/50 backdrop-blur-sm rounded-2xl p-6 border border-white/10">
-        {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-2xl font-bold text-white flex items-center">
             <User className="mr-3 text-cyan-400" size={28} />
@@ -69,7 +68,6 @@ const UserProjectCard = ({ projectData, apprenticeData }) => {
           </h3>
         </div>
 
-        {/* Apprentice Profile */}
         <div className="mb-6">
           <div className="flex items-start space-x-4 mb-4">
             <div className="relative">
@@ -106,7 +104,6 @@ const UserProjectCard = ({ projectData, apprenticeData }) => {
             </div>
           </div>
 
-          {/* Apprentice Stats */}
           <div className="grid grid-cols-2 gap-3 mb-4">
             <div className="bg-gray-800/50 rounded-lg p-3 border border-gray-700/50">
               <div className="flex items-center justify-between">
@@ -149,7 +146,6 @@ const UserProjectCard = ({ projectData, apprenticeData }) => {
           </div>
         </div>
 
-        {/* Project Information */}
         <div className="border-t border-gray-700/50 pt-6">
           <h5 className="text-lg font-semibold text-white mb-4 flex items-center">
             <Badge className="mr-2 text-teal-400" size={20} />
@@ -157,7 +153,6 @@ const UserProjectCard = ({ projectData, apprenticeData }) => {
           </h5>
 
           <div className="space-y-4">
-            {/* Project Name & Description */}
             <div>
               <h6 className="text-white font-medium mb-2 line-clamp-2">
                 {projectData.name}
@@ -167,7 +162,6 @@ const UserProjectCard = ({ projectData, apprenticeData }) => {
               </p>
             </div>
 
-            {/* Project Metadata */}
             <div className="grid grid-cols-1 gap-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center">
@@ -212,7 +206,6 @@ const UserProjectCard = ({ projectData, apprenticeData }) => {
               )}
             </div>
 
-            {/* Difficulty Level */}
             <div className="flex items-center justify-between">
               <span className="text-gray-400 text-sm">Difficulty</span>
               <span
@@ -224,7 +217,6 @@ const UserProjectCard = ({ projectData, apprenticeData }) => {
               </span>
             </div>
 
-            {/* Tech Stack */}
             {projectData.techStack && projectData.techStack.length > 0 && (
               <div>
                 <span className="text-gray-400 text-sm block mb-2">
@@ -248,7 +240,6 @@ const UserProjectCard = ({ projectData, apprenticeData }) => {
               </div>
             )}
 
-            {/* Project Category */}
             <div className="flex items-center justify-between">
               <span className="text-gray-400 text-sm">Category</span>
               <span className="text-white text-sm">{projectData.category}</span>

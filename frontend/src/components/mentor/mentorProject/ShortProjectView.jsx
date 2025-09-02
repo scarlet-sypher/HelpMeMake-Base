@@ -265,13 +265,10 @@ const ShortProjectView = ({ project, onApply = null, onToast = null }) => {
 
   return (
     <>
-      {/* Project Card */}
       <div className="group relative bg-white/10 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/20 overflow-hidden hover:shadow-3xl transition-all duration-500 hover:scale-[1.02] z-0 w-full max-w-full">
-        {/* Animated background elements */}
         <div className="absolute -top-10 -right-10 w-20 h-20 bg-cyan-400/20 rounded-full blur-xl animate-pulse opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
         <div className="absolute -bottom-10 -left-10 w-16 h-16 bg-teal-400/20 rounded-full blur-xl animate-pulse opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
 
-        {/* Project Thumbnail */}
         <div className="relative h-40 sm:h-48 lg:h-52 overflow-hidden">
           <img
             src={
@@ -292,7 +289,6 @@ const ShortProjectView = ({ project, onApply = null, onToast = null }) => {
             }}
           />
 
-          {/* Request Notification Badge */}
           {hasNewRequests && (
             <div className="absolute top-2 sm:top-4 left-2 sm:left-4 z-10">
               <div className="relative">
@@ -307,7 +303,6 @@ const ShortProjectView = ({ project, onApply = null, onToast = null }) => {
             </div>
           )}
 
-          {/* Price Badge */}
           <div className="absolute top-2 sm:top-4 right-2 sm:right-4 z-10">
             <div className="bg-gradient-to-r from-cyan-500 to-teal-500 text-white px-2 py-1 sm:px-3 sm:py-1 rounded-full text-xs sm:text-sm font-bold min-w-0">
               <span className="break-words">
@@ -316,7 +311,6 @@ const ShortProjectView = ({ project, onApply = null, onToast = null }) => {
             </div>
           </div>
 
-          {/* Closing Price Badge */}
           {project.closingPrice && (
             <div className="absolute top-10 sm:top-16 right-2 sm:right-4 z-10">
               <div className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-2 py-1 rounded-full text-xs font-bold">
@@ -325,7 +319,6 @@ const ShortProjectView = ({ project, onApply = null, onToast = null }) => {
             </div>
           )}
 
-          {/* Difficulty Badge */}
           <div
             className={`absolute ${
               hasNewRequests ? "top-10 sm:top-16" : "top-2 sm:top-4"
@@ -342,7 +335,6 @@ const ShortProjectView = ({ project, onApply = null, onToast = null }) => {
             </div>
           </div>
 
-          {/* Application Status Badge */}
           {hasApplied && (
             <div className="absolute bottom-2 sm:bottom-4 right-2 sm:right-4 bg-green-500/80 text-green-100 px-2 py-1 sm:px-3 sm:py-1 rounded-full text-xs font-medium flex items-center z-10">
               <CheckCircle2
@@ -353,7 +345,6 @@ const ShortProjectView = ({ project, onApply = null, onToast = null }) => {
             </div>
           )}
 
-          {/* Image Loading Fallback */}
           <div
             className="absolute inset-0 bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center opacity-0 transition-opacity duration-300"
             id={`fallback-${project._id}`}
@@ -365,13 +356,11 @@ const ShortProjectView = ({ project, onApply = null, onToast = null }) => {
           </div>
         </div>
 
-        {/* Card Content */}
         <div className="relative z-10 p-4 sm:p-6 w-full max-w-full">
-          {/* Project Name */}
           <div className="mb-3 min-w-0 w-full">
             <h3 className="text-lg sm:text-xl font-bold text-white group-hover:text-cyan-300 transition-colors leading-tight break-words">
               {project.name}
-              {/* Small notification indicator in title */}
+
               {hasNewRequests && (
                 <span className="ml-2 inline-flex items-center flex-shrink-0">
                   <Bell
@@ -383,14 +372,12 @@ const ShortProjectView = ({ project, onApply = null, onToast = null }) => {
             </h3>
           </div>
 
-          {/* Short Description */}
           <div className="mb-4 min-w-0 w-full">
             <p className="text-gray-300 text-sm leading-relaxed break-words line-clamp-3">
               {project.shortDescription}
             </p>
           </div>
 
-          {/* Learner Info */}
           {project.learner && (
             <div className="mb-4 bg-white/5 rounded-xl p-3 border border-white/10 w-full max-w-full">
               <div className="flex items-center space-x-3 min-w-0">
@@ -442,7 +429,6 @@ const ShortProjectView = ({ project, onApply = null, onToast = null }) => {
             </div>
           )}
 
-          {/* Tech Stack */}
           <div className="mb-4 w-full max-w-full">
             <div className="flex items-center mb-2">
               <Code
@@ -470,9 +456,7 @@ const ShortProjectView = ({ project, onApply = null, onToast = null }) => {
             </div>
           </div>
 
-          {/* Project Details Grid */}
           <div className="grid grid-cols-2 gap-2 sm:gap-4 mb-6 w-full max-w-full">
-            {/* Duration */}
             <div className="bg-white/5 rounded-xl p-2 sm:p-3 border border-white/10 min-w-0">
               <div className="flex items-center mb-1">
                 <Clock
@@ -488,7 +472,6 @@ const ShortProjectView = ({ project, onApply = null, onToast = null }) => {
               </p>
             </div>
 
-            {/* Category */}
             <div className="bg-white/5 rounded-xl p-2 sm:p-3 border border-white/10 min-w-0">
               <div className="flex items-center mb-1">
                 <Tag
@@ -504,7 +487,6 @@ const ShortProjectView = ({ project, onApply = null, onToast = null }) => {
               </p>
             </div>
 
-            {/* Applications Count */}
             <div className="bg-white/5 rounded-xl p-2 sm:p-3 border border-white/10 min-w-0">
               <div className="flex items-center mb-1">
                 <Users
@@ -520,7 +502,6 @@ const ShortProjectView = ({ project, onApply = null, onToast = null }) => {
               </p>
             </div>
 
-            {/* Views / Requests */}
             <div className="bg-white/5 rounded-xl p-2 sm:p-3 border border-white/10 min-w-0">
               <div className="flex items-center mb-1">
                 {hasNewRequests ? (
@@ -551,7 +532,6 @@ const ShortProjectView = ({ project, onApply = null, onToast = null }) => {
             </div>
           </div>
 
-          {/* Project Date */}
           {project.createdAt && (
             <div className="bg-gradient-to-r from-indigo-500/10 to-purple-500/10 rounded-xl p-3 border border-white/10 mb-6 w-full max-w-full">
               <div className="flex items-center text-xs min-w-0">
@@ -566,10 +546,8 @@ const ShortProjectView = ({ project, onApply = null, onToast = null }) => {
             </div>
           )}
 
-          {/* Action Buttons */}
           <div className="flex flex-col gap-3 pt-4 border-t border-white/10 w-full max-w-full">
             <div className="flex flex-col sm:flex-row gap-3 w-full">
-              {/* View Project Button - Enhanced with notification */}
               <button
                 onClick={handleViewProject}
                 className={`group/btn flex items-center justify-center space-x-2 px-4 py-2 sm:py-3 rounded-xl font-medium transition-all transform hover:scale-105 shadow-lg min-w-0 flex-1 ${
@@ -596,7 +574,6 @@ const ShortProjectView = ({ project, onApply = null, onToast = null }) => {
                 </span>
               </button>
 
-              {/* Apply Button */}
               <div className="relative group flex-1">
                 <button
                   onClick={handleApplyClick}
@@ -636,20 +613,16 @@ const ShortProjectView = ({ project, onApply = null, onToast = null }) => {
           </div>
         </div>
 
-        {/* Hover glow effect */}
         <div className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 shadow-2xl pointer-events-none"></div>
       </div>
 
-      {/* Application Modal */}
       {showApplicationModal && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="relative bg-gradient-to-br from-slate-950 via-blue-950 to-indigo-950 rounded-3xl shadow-2xl border border-white/20 p-6 sm:p-8 max-w-md w-full max-h-[90vh] overflow-y-auto">
-            {/* Animated background elements */}
             <div className="absolute -top-10 -right-10 w-20 h-20 bg-cyan-400/20 rounded-full blur-xl animate-pulse"></div>
             <div className="absolute -bottom-10 -left-10 w-16 h-16 bg-teal-400/20 rounded-full blur-xl animate-pulse"></div>
 
             <div className="relative z-10 w-full max-w-full">
-              {/* Header */}
               <div className="flex items-center mb-6 min-w-0">
                 <div className="p-3 bg-gradient-to-r from-cyan-500 to-teal-500 rounded-xl mr-4 flex-shrink-0">
                   <Star className="text-white" size={20} />
@@ -664,7 +637,6 @@ const ShortProjectView = ({ project, onApply = null, onToast = null }) => {
                 </div>
               </div>
 
-              {/* Application Form */}
               <div className="space-y-4 w-full max-w-full">
                 <div className="min-w-0">
                   <label className="block text-sm font-medium text-white mb-2">
@@ -757,7 +729,6 @@ const ShortProjectView = ({ project, onApply = null, onToast = null }) => {
                 </div>
               </div>
 
-              {/* Action Buttons */}
               <div className="flex flex-col sm:flex-row gap-3 sm:space-x-4 mt-6 w-full max-w-full">
                 <button
                   onClick={() => {

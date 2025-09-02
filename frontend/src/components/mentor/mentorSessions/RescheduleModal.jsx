@@ -108,7 +108,6 @@ const RescheduleModal = ({ session, onClose, onSuccess }) => {
       tabIndex={-1}
     >
       <div className="bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 rounded-3xl shadow-2xl w-full max-w-md border border-white/20 max-h-[95vh] overflow-y-auto">
-        {/* Header */}
         <div className="flex items-center justify-between p-4 sm:p-6 border-b border-white/10">
           <div className="flex items-center space-x-3">
             <div className="p-2 bg-gradient-to-r from-amber-500 to-orange-600 rounded-xl">
@@ -131,7 +130,6 @@ const RescheduleModal = ({ session, onClose, onSuccess }) => {
           </button>
         </div>
 
-        {/* Current Session Info */}
         <div className="p-4 sm:p-6 border-b border-white/10 bg-white/5">
           <div className="mb-4">
             <h3 className="text-white font-semibold mb-2 text-sm sm:text-base truncate">
@@ -153,12 +151,10 @@ const RescheduleModal = ({ session, onClose, onSuccess }) => {
           </div>
         </div>
 
-        {/* Form */}
         <form
           onSubmit={handleSubmit}
           className="p-4 sm:p-6 space-y-4 sm:space-y-6"
         >
-          {/* New DateTime */}
           <div>
             <label className="block text-sm font-medium text-white mb-2">
               New Date & Time <span className="text-red-400">*</span>
@@ -184,7 +180,6 @@ const RescheduleModal = ({ session, onClose, onSuccess }) => {
             )}
           </div>
 
-          {/* Warning Message */}
           <div className="p-3 sm:p-4 bg-amber-500/20 rounded-xl border border-amber-500/30">
             <div className="flex items-start space-x-3">
               <AlertCircle
@@ -202,7 +197,6 @@ const RescheduleModal = ({ session, onClose, onSuccess }) => {
             </div>
           </div>
 
-          {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row items-center space-y-3 sm:space-y-0 sm:space-x-4">
             <button
               type="button"

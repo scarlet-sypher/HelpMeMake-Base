@@ -152,7 +152,6 @@ const MentorAnalysis = () => {
   };
   return (
     <div className="relative min-h-screen w-full bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 flex">
-      {/* Sidebar (fixed so it overlays on mobile, pushes content on desktop) */}
       <div className="fixed inset-y-0 left-0 z-30 lg:static lg:inset-auto">
         <Sidebar
           isOpen={sidebarOpen}
@@ -163,9 +162,7 @@ const MentorAnalysis = () => {
         />
       </div>
 
-      {/* Main Content */}
       <div className="flex-1 w-full lg:ml-64">
-        {/* Mobile Header */}
         <div className="lg:hidden bg-gradient-to-r from-slate-900/80 to-gray-900/80 backdrop-blur-sm border-b border-white/10 p-4">
           <div className="flex items-center justify-between">
             <button
@@ -188,16 +185,13 @@ const MentorAnalysis = () => {
           </div>
         </div>
 
-        {/* Animated background elements */}
         <div className="fixed inset-0 overflow-hidden pointer-events-none">
           <div className="absolute -top-40 -right-40 w-80 h-80 bg-cyan-500/10 rounded-full blur-3xl animate-pulse"></div>
           <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-teal-500/10 rounded-full blur-3xl animate-pulse"></div>
           <div className="absolute top-1/2 -left-20 w-60 h-60 bg-slate-500/5 rounded-full blur-3xl animate-pulse delay-1000"></div>
         </div>
 
-        {/* Page Content */}
         <div className="relative z-10 p-4 sm:p-6 space-y-6 sm:space-y-8">
-          {/* Header Section */}
           <div className="bg-gradient-to-r from-slate-800/50 to-gray-800/50 backdrop-blur-sm rounded-3xl p-4 sm:p-6 border border-white/10">
             <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 lg:gap-6">
               <div className="flex items-center gap-4">
@@ -262,12 +256,9 @@ const MentorAnalysis = () => {
             </div>
           </div>
 
-          {/* Stats Grid - 7 cards */}
           <StatsSection analyticsData={analyticsData} />
 
-          {/* Charts Grid */}
           <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 sm:gap-8">
-            {/* Donut Chart */}
             <div className="animate-fade-in-left min-h-[300px] sm:min-h-[350px]">
               <DonutChart
                 data={projectDistribution}
@@ -275,27 +266,23 @@ const MentorAnalysis = () => {
               />
             </div>
 
-            {/* Top Learners List */}
             <div className="animate-fade-in-right">
               <TopLearnersList learners={topLearners} title="Top Apprentices" />
             </div>
           </div>
 
-          {/* Recent Activity */}
           {analyticsData?.recentProjects?.length > 0 && (
             <div className="animate-fade-in-up">
               <RecentActivity projects={analyticsData.recentProjects} />
             </div>
           )}
 
-          {/* Monthly Trend Chart */}
           {analyticsData?.monthlyTrend?.length > 0 && (
             <div className="animate-fade-in-up min-h-[300px] sm:min-h-[350px]">
               <MonthlyTrend data={analyticsData.monthlyTrend} />
             </div>
           )}
 
-          {/* Performance Insights */}
           <div className="animate-fade-in-up">
             <PerformanceInsights data={overview} />
           </div>

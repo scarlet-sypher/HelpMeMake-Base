@@ -41,16 +41,13 @@ const UserSessionBox = ({ projectData, onSessionUpdate }) => {
 
   return (
     <div className="group bg-gradient-to-br from-white/10 via-white/5 to-white/10 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 overflow-hidden hover:shadow-2xl transition-all duration-300 hover:scale-[1.01] hover:border-white/30">
-      {/* Box Header */}
       <div className="relative bg-gradient-to-r from-blue-500/20 via-purple-500/10 to-cyan-500/20 p-4 md:p-5 border-b border-white/10 overflow-hidden">
-        {/* Header background effects */}
         <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-transparent to-purple-500/5"></div>
         <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-white/5 to-transparent rounded-full blur-xl"></div>
         <div className="absolute -bottom-6 -left-6 w-20 h-20 bg-gradient-to-tr from-blue-400/10 to-transparent rounded-full blur-lg"></div>
 
         <div className="relative z-10">
           <div className="flex flex-col space-y-4">
-            {/* Project Title Section */}
             <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between space-y-3 sm:space-y-0">
               <div className="flex items-start space-x-3">
                 <div className="relative group">
@@ -85,7 +82,6 @@ const UserSessionBox = ({ projectData, onSessionUpdate }) => {
               </div>
             </div>
 
-            {/* Project Stats */}
             <div className="grid grid-cols-3 gap-3">
               <div className="group bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-sm rounded-xl p-3 border border-white/10 hover:border-white/20 transition-all duration-300 hover:scale-105 hover:shadow-md">
                 <div className="text-center">
@@ -139,7 +135,6 @@ const UserSessionBox = ({ projectData, onSessionUpdate }) => {
               </div>
             </div>
 
-            {/* Progress indicator */}
             {project.status === "In Progress" && (
               <div className="bg-gradient-to-r from-blue-500/10 to-purple-500/10 backdrop-blur-sm rounded-xl p-3 border border-blue-400/20">
                 <div className="flex items-center justify-between mb-2">
@@ -180,7 +175,6 @@ const UserSessionBox = ({ projectData, onSessionUpdate }) => {
         </div>
       </div>
 
-      {/* Sessions List */}
       <div className="p-4 md:p-5">
         {sessions.length === 0 ? (
           <div className="text-center py-8">

@@ -29,10 +29,8 @@ const MessageCard = ({
           : "bg-white/10 border-white/10 hover:bg-white/15"
       }`}
     >
-      {/* Animated gradient background on hover */}
       <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 via-teal-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
 
-      {/* Unread indicator */}
       {isUnread && (
         <div className="absolute top-2 right-2 w-3 h-3 bg-cyan-400 rounded-full shadow-lg animate-pulse">
           <div className="absolute inset-0 w-3 h-3 bg-cyan-400 rounded-full animate-ping"></div>
@@ -41,7 +39,6 @@ const MessageCard = ({
 
       <div className="relative z-10 p-4">
         <div className="flex items-start space-x-3">
-          {/* Profile Image with Online Status */}
           <div className="relative flex-shrink-0">
             <img
               src={senderImage || "/default-avatar.png"}
@@ -58,9 +55,7 @@ const MessageCard = ({
             )}
           </div>
 
-          {/* Message Content */}
           <div className="flex-1 min-w-0">
-            {/* Header */}
             <div className="flex items-center justify-between mb-1">
               <h4 className="font-semibold text-white truncate text-sm group-hover:text-cyan-200 transition-colors">
                 {senderName}
@@ -75,12 +70,10 @@ const MessageCard = ({
               </div>
             </div>
 
-            {/* Message Text */}
             <p className="text-sm text-cyan-100/90 leading-relaxed mb-3 line-clamp-2 group-hover:text-white/90 transition-colors">
               {message}
             </p>
 
-            {/* Action Buttons */}
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                 <button
@@ -130,7 +123,6 @@ const MessageCard = ({
         </div>
       </div>
 
-      {/* Subtle shine effect */}
       <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -skew-x-12 transform translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000"></div>
     </div>
   );
@@ -239,7 +231,6 @@ const RecentMessages = () => {
 
   return (
     <div className="bg-white/10 backdrop-blur-sm rounded-3xl shadow-2xl p-6 border border-white/20 relative overflow-hidden">
-      {/* Background decoration */}
       <div className="absolute -top-10 -right-10 w-20 h-20 bg-teal-400/20 rounded-full blur-xl animate-pulse"></div>
       <div className="absolute -bottom-10 -left-10 w-16 h-16 bg-cyan-400/20 rounded-full blur-xl animate-pulse"></div>
 

@@ -212,7 +212,6 @@ const UserAnalysis = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-indigo-950 flex">
-      {/* Sidebar */}
       <Sidebar
         isOpen={sidebarOpen}
         toggleSidebar={toggleSidebar}
@@ -221,9 +220,7 @@ const UserAnalysis = () => {
         userRole="user"
       />
 
-      {/* Main Content */}
       <div className="flex-1 lg:ml-64">
-        {/* Mobile Header */}
         <div className="lg:hidden bg-gradient-to-r from-slate-900/80 to-blue-900/80 backdrop-blur-sm border-b border-white/10 p-4">
           <div className="flex items-center justify-between">
             <button
@@ -237,7 +234,6 @@ const UserAnalysis = () => {
           </div>
         </div>
 
-        {/* Animated background elements */}
         <div className="fixed inset-0 overflow-hidden pointer-events-none">
           <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-500/20 rounded-full blur-3xl animate-pulse"></div>
           <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-500/20 rounded-full blur-3xl animate-pulse"></div>
@@ -245,15 +241,11 @@ const UserAnalysis = () => {
 
         <div className="relative z-10 p-4 lg:p-6 space-y-6">
           <div className="relative z-10 p-4 sm:p-5 lg:p-6 space-y-6">
-            {/* Header Section */}
             <div className="relative group mb-8">
-              {/* Outer glow border */}
               <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500 via-cyan-400 to-cyan-500 rounded-3xl blur opacity-20 group-hover:opacity-30 transition duration-500"></div>
 
-              {/* Content card */}
               <div className="relative bg-white/10 backdrop-blur-sm rounded-3xl p-5 sm:p-6 lg:p-8 border border-white/20 transition-transform duration-300 group-hover:scale-[1.01]">
                 <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
-                  {/* Avatar & User Info */}
                   <div className="flex items-center gap-4 sm:gap-6">
                     <div className="relative shrink-0">
                       <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full blur opacity-60"></div>
@@ -283,7 +275,6 @@ const UserAnalysis = () => {
                     </div>
                   </div>
 
-                  {/* Stats */}
                   <div className="grid grid-cols-3 gap-4 sm:gap-6 text-center">
                     <div>
                       <div className="text-lg sm:text-2xl font-bold text-white">
@@ -312,7 +303,6 @@ const UserAnalysis = () => {
                   </div>
                 </div>
 
-                {/* XP Progress Bar */}
                 {data?.learner && (
                   <div className="mt-6">
                     <div className="flex justify-between text-xs sm:text-sm text-gray-300 mb-2">
@@ -337,23 +327,19 @@ const UserAnalysis = () => {
             </div>
           </div>
 
-          {/* Main Stats Grid */}
           <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 mb-8">
             {statCards.map((stat, index) => (
               <StatCard key={index} {...stat} isLoading={false} />
             ))}
           </div>
 
-          {/* Additional Stats Grid */}
           <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-2 gap-4 lg:gap-6">
             {additionalStats.map((stat, index) => (
               <StatCard key={index} {...stat} isLoading={false} />
             ))}
           </div>
 
-          {/* Charts and Lists Section */}
           <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-            {/* Project Status Chart */}
             <div className="xl:col-span-2">
               <ProjectStatusChart
                 data={data?.projectDistribution}
@@ -361,7 +347,6 @@ const UserAnalysis = () => {
               />
             </div>
 
-            {/* Top Mentors List */}
             <div>
               <TopMentorsList
                 mentors={data?.topMentors || []}
@@ -370,9 +355,7 @@ const UserAnalysis = () => {
             </div>
           </div>
 
-          {/* Additional Analytics Section */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Learning Progress */}
             <div className="relative group">
               <div className="relative bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
                 <h3 className="text-xl font-bold text-white mb-6 flex items-center">
@@ -381,7 +364,6 @@ const UserAnalysis = () => {
                 </h3>
 
                 <div className="space-y-4">
-                  {/* Milestones */}
                   <div
                     className="flex items-center justify-between p-4 bg-white/5 rounded-xl 
                       transition-transform duration-300 ease-out hover:scale-[1.03] hover:bg-white/10 cursor-pointer"
@@ -407,7 +389,6 @@ const UserAnalysis = () => {
                     </div>
                   </div>
 
-                  {/* Sessions */}
                   <div
                     className="flex items-center justify-between p-4 bg-white/5 rounded-xl 
                       transition-transform duration-300 ease-out hover:scale-[1.03] hover:bg-white/10 cursor-pointer"
@@ -433,7 +414,6 @@ const UserAnalysis = () => {
                     </div>
                   </div>
 
-                  {/* Success Rate */}
                   <div
                     className="flex items-center justify-between p-4 bg-white/5 rounded-xl 
                       transition-transform duration-300 ease-out hover:scale-[1.03] hover:bg-white/10 cursor-pointer"
@@ -468,7 +448,6 @@ const UserAnalysis = () => {
               </div>
             </div>
 
-            {/* Recent Activity */}
             <div className="relative group">
               <div className="absolute -inset-0.5 bg-gradient-to-r from-orange-500 to-red-500 rounded-2xl blur opacity-20 group-hover:opacity-30 transition duration-500"></div>
               <div className="relative bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
@@ -484,7 +463,6 @@ const UserAnalysis = () => {
                         key={project.id}
                         className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-3 bg-white/5 rounded-lg hover:bg-white/10 transition-colors"
                       >
-                        {/* Left section */}
                         <div className="flex items-center space-x-3 flex-1">
                           <div
                             className={`w-8 h-8 rounded-full flex items-center justify-center ${
@@ -518,7 +496,6 @@ const UserAnalysis = () => {
                           </div>
                         </div>
 
-                        {/* Right section (date) */}
                         <div className="text-xs text-gray-400 whitespace-nowrap">
                           {new Date(project.updatedAt).toLocaleDateString()}
                         </div>
@@ -538,7 +515,6 @@ const UserAnalysis = () => {
             </div>
           </div>
 
-          {/* Monthly Trend Chart */}
           {data?.monthlyTrend && data.monthlyTrend.length > 0 && (
             <div className="relative group">
               <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-2xl blur opacity-20 group-hover:opacity-30 transition duration-500"></div>

@@ -257,7 +257,6 @@ const MentorAiSelectionModal = ({
     <div className="fixed inset-0 bg-black/60 backdrop-blur-md z-50 flex items-center justify-center p-2 sm:p-4">
       <div className=" bg-gradient-to-br from-slate-950 via-blue-950 to-indigo-950 backdrop-blur-xl rounded-3xl border border-white/20 shadow-2xl max-w-7xl w-full max-h-[95vh] overflow-y-auto hide-scrollbar-general">
         <div className="flex flex-col h-full">
-          {/* Header */}
           <div className="flex-shrink-0 p-4 sm:p-6 border-b border-white/10">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
@@ -287,16 +286,13 @@ const MentorAiSelectionModal = ({
             </div>
           </div>
 
-          {/* Content */}
           <div className="flex-1 overflow-y-auto p-4 sm:p-6">
-            {/* Project Info Banner */}
             <div
               className="bg-gradient-to-r from-purple-600/20 via-blue-600/20 to-indigo-600/20 
                 rounded-3xl p-5 sm:p-7 lg:p-8 mb-6 
                 border border-purple-400/30 backdrop-blur-md shadow-lg"
             >
               <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4">
-                {/* Icon */}
                 <div
                   className="w-14 h-14 sm:w-16 sm:h-16 
                     bg-gradient-to-r from-blue-500 to-purple-500 
@@ -306,9 +302,7 @@ const MentorAiSelectionModal = ({
                   <Target className="w-7 h-7 text-white" />
                 </div>
 
-                {/* Content */}
                 <div className="flex-1 min-w-0 text-center sm:text-left">
-                  {/* Title */}
                   <h3
                     className="text-lg sm:text-xl font-bold text-white mb-2 
                      flex justify-center sm:justify-start items-center gap-2"
@@ -317,17 +311,14 @@ const MentorAiSelectionModal = ({
                     <Activity className="w-4 h-4 text-green-400 animate-pulse" />
                   </h3>
 
-                  {/* Project Name */}
                   <h4 className="text-purple-200 font-semibold text-sm sm:text-base lg:text-lg mb-1 truncate">
                     {project?.name}
                   </h4>
 
-                  {/* Description */}
                   <p className="text-gray-300 text-xs sm:text-sm lg:text-base leading-relaxed line-clamp-2">
                     {project?.shortDescription}
                   </p>
 
-                  {/* Tags */}
                   <div className="flex flex-wrap justify-center sm:justify-start gap-2 mt-3">
                     <span
                       className="px-3 py-1 bg-blue-500/20 text-blue-300 rounded-lg 
@@ -355,14 +346,12 @@ const MentorAiSelectionModal = ({
               </div>
             </div>
 
-            {/* Loading Animation */}
             {isAnalyzing && (
               <div className="text-center py-8 sm:py-16">
                 <div className="relative mb-8 sm:mb-12">
                   <div className="w-24 h-24 sm:w-32 sm:h-32 mx-auto relative">
-                    {/* Outer ring */}
                     <div className="absolute inset-0 rounded-full border-4 border-purple-500/20"></div>
-                    {/* Multiple spinning rings with different colors and speeds */}
+
                     <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-purple-500 animate-spin"></div>
                     <div
                       className="absolute inset-2 rounded-full border-4 border-transparent border-t-blue-500 animate-spin"
@@ -378,7 +367,7 @@ const MentorAiSelectionModal = ({
                         animationDuration: "1.5s",
                       }}
                     ></div>
-                    {/* Center icon */}
+
                     <div className="absolute inset-0 flex items-center justify-center">
                       <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full flex items-center justify-center animate-pulse">
                         {loadingSteps[loadingStep].icon}
@@ -418,10 +407,8 @@ const MentorAiSelectionModal = ({
               </div>
             )}
 
-            {/* AI Results */}
             {analysisComplete && aiMentors.length > 0 && (
               <>
-                {/* Success Banner */}
                 <div className="bg-gradient-to-r from-emerald-500/10 via-green-500/10 to-teal-500/10 rounded-2xl p-4 sm:p-6 mb-6 border border-emerald-500/30 backdrop-blur-sm">
                   <div className="flex items-center space-x-4">
                     <div className="w-12 h-12 bg-gradient-to-r from-emerald-500 to-green-500 rounded-xl flex items-center justify-center flex-shrink-0">
@@ -443,7 +430,6 @@ const MentorAiSelectionModal = ({
                   </div>
                 </div>
 
-                {/* Mentor Cards Grid */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
                   {aiMentors.map((aiMentor, index) => {
                     const mentor = aiMentor.mentorData;
@@ -459,7 +445,6 @@ const MentorAiSelectionModal = ({
                             : "border-white/20 hover:border-purple-400/60"
                         }`}
                       >
-                        {/* AI Ranking Badge */}
                         <div className="absolute top-4 right-4 flex items-center space-x-2">
                           <div className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-3 py-1.5 rounded-xl text-xs font-bold flex items-center space-x-1.5 shadow-lg">
                             <Award className="w-3 h-3" />
@@ -470,7 +455,6 @@ const MentorAiSelectionModal = ({
                           )}
                         </div>
 
-                        {/* Request Status */}
                         {isRequested && mentorStatus && (
                           <div className="mb-4 space-y-3">
                             <div
@@ -509,7 +493,6 @@ const MentorAiSelectionModal = ({
                           </div>
                         )}
 
-                        {/* Mentor Profile */}
                         <div className="flex items-start space-x-4 mb-4 mt-8">
                           <div className="relative flex-shrink-0">
                             <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-r from-blue-500 to-purple-500 rounded-2xl flex items-center justify-center overflow-hidden shadow-xl">
@@ -563,12 +546,10 @@ const MentorAiSelectionModal = ({
                           </div>
                         </div>
 
-                        {/* Description */}
                         <p className="text-gray-200 text-sm leading-relaxed mb-4 line-clamp-3">
                           {mentor.description}
                         </p>
 
-                        {/* Expertise Tags */}
                         <div className="mb-4">
                           <h4 className="text-white font-semibold mb-2 text-sm flex items-center">
                             <Shield className="w-4 h-4 mr-1.5" />
@@ -593,7 +574,6 @@ const MentorAiSelectionModal = ({
                           </div>
                         </div>
 
-                        {/* Stats Grid */}
                         <div className="grid grid-cols-2 gap-3 mb-4">
                           <div className="bg-white/5 rounded-xl p-3 backdrop-blur-sm border border-white/10">
                             <div className="flex items-center justify-between">
@@ -617,7 +597,6 @@ const MentorAiSelectionModal = ({
                           </div>
                         </div>
 
-                        {/* Pricing */}
                         <div className="bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-xl p-3 mb-4 border border-blue-500/20 backdrop-blur-sm">
                           <div className="flex items-center justify-between">
                             <span className="text-blue-200 text-sm font-medium">
@@ -632,7 +611,6 @@ const MentorAiSelectionModal = ({
                           </div>
                         </div>
 
-                        {/* Social Links */}
                         <div className="flex items-center justify-between mb-6">
                           <div className="flex space-x-2">
                             {mentor.socialLinks?.linkedin &&
@@ -681,7 +659,6 @@ const MentorAiSelectionModal = ({
                           </div>
                         </div>
 
-                        {/* Action Buttons */}
                         <div className="space-y-3">
                           {isRequested ? (
                             <div
@@ -740,7 +717,6 @@ const MentorAiSelectionModal = ({
                           </button>
                         </div>
 
-                        {/* Hover Glow Effect */}
                         <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-purple-500/5 via-blue-500/5 to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
                       </div>
                     );
@@ -749,7 +725,6 @@ const MentorAiSelectionModal = ({
               </>
             )}
 
-            {/* Empty State */}
             {analysisComplete && aiMentors.length === 0 && (
               <div className="text-center py-12 sm:py-20">
                 <div className="w-24 h-24 mx-auto mb-6 bg-gradient-to-r from-gray-500/20 to-gray-600/20 rounded-3xl flex items-center justify-center backdrop-blur-sm border border-gray-500/20">

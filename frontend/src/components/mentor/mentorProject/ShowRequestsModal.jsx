@@ -153,7 +153,6 @@ const ShowRequestsModal = ({ project, onClose, API_URL, showToast }) => {
 
   return (
     <>
-      {/* Main Modal  */}
       <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div
           className="relative bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950
@@ -165,12 +164,10 @@ const ShowRequestsModal = ({ project, onClose, API_URL, showToast }) => {
 
  rounded-3xl shadow-2xl border border-white/20 p-6 max-w-4xl w-full max-h-[90vh] overflow-hidden"
         >
-          {/* Animated background elements */}
           <div className="absolute -top-10 -right-10 w-20 h-20 bg-cyan-400/20 rounded-full blur-xl animate-pulse"></div>
           <div className="absolute -bottom-10 -left-10 w-16 h-16 bg-teal-400/20 rounded-full blur-xl animate-pulse"></div>
 
           <div className="relative z-10">
-            {/* Header */}
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center">
                 <div className="p-3 bg-gradient-to-r from-cyan-500 to-teal-500 rounded-xl mr-4">
@@ -191,7 +188,6 @@ const ShowRequestsModal = ({ project, onClose, API_URL, showToast }) => {
               </button>
             </div>
 
-            {/* Content */}
             <div className="max-h-[60vh] overflow-y-auto">
               {loading ? (
                 <div className="flex items-center justify-center py-8">
@@ -228,10 +224,8 @@ const ShowRequestsModal = ({ project, onClose, API_URL, showToast }) => {
                       key={request._id}
                       className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20"
                     >
-                      {/* Request Header */}
                       <div className="flex items-center justify-between mb-4">
                         <div className="flex items-center space-x-4">
-                          {/* Learner Avatar */}
                           <div className="relative">
                             <img
                               src={
@@ -254,7 +248,6 @@ const ShowRequestsModal = ({ project, onClose, API_URL, showToast }) => {
                             <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white"></div>
                           </div>
 
-                          {/* Learner Info */}
                           <div>
                             <h5 className="text-white font-semibold text-lg">
                               {request.learnerUser?.userId?.name ||
@@ -275,7 +268,6 @@ const ShowRequestsModal = ({ project, onClose, API_URL, showToast }) => {
                           </div>
                         </div>
 
-                        {/* Status Badge */}
                         <div
                           className={`px-3 py-1 rounded-full text-xs font-medium border flex items-center space-x-1 ${getStatusColor(
                             request.status
@@ -286,7 +278,6 @@ const ShowRequestsModal = ({ project, onClose, API_URL, showToast }) => {
                         </div>
                       </div>
 
-                      {/* Request Details */}
                       <div className="mb-4">
                         <div className="flex items-center text-sm text-gray-400 mb-2">
                           <Calendar size={14} className="mr-2" />
@@ -301,7 +292,6 @@ const ShowRequestsModal = ({ project, onClose, API_URL, showToast }) => {
                           )}
                         </div>
 
-                        {/* Request Message */}
                         <div className="bg-white/5 rounded-xl p-4 border border-white/10">
                           <p className="text-gray-200 leading-relaxed">
                             {request.message}
@@ -309,7 +299,6 @@ const ShowRequestsModal = ({ project, onClose, API_URL, showToast }) => {
                         </div>
                       </div>
 
-                      {/* Mentor Response (if exists) */}
                       {request.mentorResponse && (
                         <div className="mb-4">
                           <h6 className="text-sm font-medium text-cyan-300 mb-2">
@@ -323,7 +312,6 @@ const ShowRequestsModal = ({ project, onClose, API_URL, showToast }) => {
                         </div>
                       )}
 
-                      {/* Action Buttons */}
                       {request.status === "pending" && (
                         <div className="flex space-x-3">
                           <button
@@ -357,7 +345,6 @@ const ShowRequestsModal = ({ project, onClose, API_URL, showToast }) => {
                         </div>
                       )}
 
-                      {/* Already Responded */}
                       {request.status !== "pending" && (
                         <div className="text-center py-2">
                           <p className="text-gray-400 text-sm">
@@ -375,12 +362,10 @@ const ShowRequestsModal = ({ project, onClose, API_URL, showToast }) => {
         </div>
       </div>
 
-      {/* Response Modal */}
       {showResponseModal && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[60] flex items-center justify-center p-4">
           <div className="relative bg-gradient-to-br from-slate-950 via-blue-950 to-indigo-950 rounded-3xl shadow-2xl border border-white/20 p-8 max-w-md w-full">
             <div className="relative z-10">
-              {/* Response Header */}
               <div className="flex items-center mb-6">
                 <div
                   className={`p-3 rounded-xl mr-4 ${
@@ -406,7 +391,6 @@ const ShowRequestsModal = ({ project, onClose, API_URL, showToast }) => {
                 </div>
               </div>
 
-              {/* Response Form */}
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-white mb-2">
@@ -424,7 +408,6 @@ const ShowRequestsModal = ({ project, onClose, API_URL, showToast }) => {
                 </div>
               </div>
 
-              {/* Action Buttons */}
               <div className="flex space-x-4 mt-6">
                 <button
                   onClick={() => {

@@ -271,9 +271,7 @@ const MentorPage = () => {
       className="relative min-h-screen py-12 sm:py-16 md:py-20 overflow-hidden"
       ref={sectionRef}
     >
-      {/* Enhanced Seamless Background */}
       <div className="absolute inset-0 bg-gradient-to-l from-slate-900 via-purple-900 to-slate-900">
-        {/* Continuous floating background elements with responsive sizing */}
         <div
           className="absolute top-16 sm:top-20 left-4 sm:left-10 w-20 h-20 sm:w-24 sm:h-24 md:w-32 md:h-32 bg-gradient-to-r from-emerald-400/20 to-blue-400/20 rounded-full blur-2xl sm:blur-3xl animate-pulse"
           style={{
@@ -319,7 +317,6 @@ const MentorPage = () => {
           }}
         ></div>
 
-        {/* Enhanced animated particles */}
         <div className="absolute inset-0">
           {[...Array(15)].map((_, i) => (
             <div
@@ -340,13 +337,10 @@ const MentorPage = () => {
           ))}
         </div>
 
-        {/* Enhanced gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-slate-900/50 via-transparent to-slate-900/50"></div>
-        {/* <div className="absolute inset-0 bg-gradient-to-r from-slate-900/20 via-transparent to-slate-900/20"></div> */}
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
-        {/* Enhanced Header */}
         <div
           ref={headerRef}
           className="text-center mb-12 sm:mb-16 md:mb-20 transform"
@@ -371,7 +365,6 @@ const MentorPage = () => {
           </p>
         </div>
 
-        {/* Enhanced Stats Section */}
         <div
           ref={statsRef}
           className="mb-12 sm:mb-16"
@@ -427,9 +420,7 @@ const MentorPage = () => {
           </div>
         </div>
 
-        {/* Enhanced Mentor Cards Section */}
         <div className="relative mb-12 sm:mb-16 md:mb-20">
-          {/* Enhanced Navigation Buttons */}
           <button
             onClick={scrollLeft}
             disabled={!canScrollLeft}
@@ -454,7 +445,6 @@ const MentorPage = () => {
             <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
           </button>
 
-          {/* Enhanced Scrollable Container */}
           <div
             ref={scrollContainerRef}
             className="flex overflow-x-auto scroll-smooth scrollbar-hide px-16 sm:px-20 py-6 sm:py-8 gap-4 sm:gap-6"
@@ -476,7 +466,6 @@ const MentorPage = () => {
             ))}
           </div>
 
-          {/* Enhanced Scroll Indicators */}
           <div className="flex justify-center mt-4 sm:mt-6 space-x-2">
             {Array.from({ length: totalPages }).map((_, index) => (
               <button
@@ -492,7 +481,6 @@ const MentorPage = () => {
           </div>
         </div>
 
-        {/* Enhanced Call to Action */}
         <div
           ref={ctaRef}
           className="text-center"

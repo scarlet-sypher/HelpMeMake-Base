@@ -212,7 +212,6 @@ const AdminMentorDashboard = ({ onReturn }) => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 p-4 md:p-8">
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
         <div className="flex flex-col lg:flex-row lg:items-center justify-between mb-8">
           <div className="flex items-center space-x-4 mb-4 lg:mb-0">
             <button
@@ -249,7 +248,6 @@ const AdminMentorDashboard = ({ onReturn }) => {
           </div>
         </div>
 
-        {/* Statistics Cards */}
         {stats && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             <div className="bg-gradient-to-r from-blue-500 to-cyan-500 rounded-2xl shadow-lg p-6 text-white">
@@ -304,10 +302,8 @@ const AdminMentorDashboard = ({ onReturn }) => {
           </div>
         )}
 
-        {/* Search and Filters */}
         <div className="bg-slate-800/60 backdrop-blur-sm rounded-2xl p-6 mb-8 border border-slate-700/50">
           <div className="flex flex-col lg:flex-row gap-4">
-            {/* Search Bar */}
             <div className="flex-1 relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
               <input
@@ -319,7 +315,6 @@ const AdminMentorDashboard = ({ onReturn }) => {
               />
             </div>
 
-            {/* Filters */}
             <div className="flex flex-wrap gap-3">
               <select
                 value={filters.status}
@@ -374,7 +369,6 @@ const AdminMentorDashboard = ({ onReturn }) => {
             </div>
           </div>
 
-          {/* Active Filters Display */}
           {(searchTerm || Object.values(filters).some((f) => f !== "all")) && (
             <div className="mt-4 flex flex-wrap gap-2">
               {searchTerm && (
@@ -401,7 +395,6 @@ const AdminMentorDashboard = ({ onReturn }) => {
           )}
         </div>
 
-        {/* Results Summary */}
         <div className="flex justify-between items-center mb-6">
           <div className="text-slate-300">
             Showing{" "}
@@ -413,7 +406,6 @@ const AdminMentorDashboard = ({ onReturn }) => {
           </div>
         </div>
 
-        {/* Mentors Grid */}
         {filteredMentors.length === 0 ? (
           <div className="text-center py-16">
             <div className="w-24 h-24 bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -459,7 +451,6 @@ const AdminMentorDashboard = ({ onReturn }) => {
           </div>
         )}
 
-        {/* Load More Button (if needed for pagination) */}
         {filteredMentors.length > 0 && (
           <div className="text-center mt-12">
             <div className="text-slate-400">

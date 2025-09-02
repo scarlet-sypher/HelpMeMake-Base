@@ -62,7 +62,6 @@ const ReviewerBox = ({
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
       <div className="bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 rounded-3xl shadow-2xl border border-white/20 w-full max-w-2xl max-h-[90vh] overflow-hidden">
-        {/* Header */}
         <div className="p-6 border-b border-white/10">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
@@ -87,7 +86,6 @@ const ReviewerBox = ({
           </div>
         </div>
 
-        {/* Content */}
         <div className="p-6 overflow-y-auto max-h-[calc(90vh-200px)]">
           <div className="space-y-4">
             {isEditMode ? (
@@ -118,7 +116,6 @@ const ReviewerBox = ({
                   </div>
                 </div>
 
-                {/* Guidance tip */}
                 <div className="bg-gradient-to-r from-cyan-500/10 to-teal-600/10 rounded-xl p-4 border border-cyan-400/20">
                   <div className="flex items-start space-x-2">
                     <div className="p-1 bg-cyan-500 rounded text-white text-sm">
@@ -162,7 +159,6 @@ const ReviewerBox = ({
                           </p>
                         </div>
 
-                        {/* Review status indicator */}
                         <div className="mt-3 flex items-center space-x-2">
                           {milestone.reviewReadByLearner ? (
                             <div className="flex items-center space-x-1 text-green-400">
@@ -198,7 +194,6 @@ const ReviewerBox = ({
           </div>
         </div>
 
-        {/* Action Buttons */}
         <div className="p-6 border-t border-white/10">
           <div className="flex justify-end space-x-3">
             {isEditMode ? (

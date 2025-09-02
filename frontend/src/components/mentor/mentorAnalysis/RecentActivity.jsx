@@ -91,7 +91,6 @@ const RecentActivity = ({ projects, title = "Recent Projects" }) => {
 
   return (
     <div className="bg-gradient-to-br from-indigo-900/20 to-blue-900/20 backdrop-blur-sm rounded-3xl p-4 sm:p-6 lg:p-8 border border-indigo-500/20 hover:border-indigo-400/30 transition-all duration-300">
-      {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 sm:mb-8 gap-4">
         <div className="flex items-center space-x-3">
           <div className="p-2 sm:p-3 bg-gradient-to-r from-indigo-500 to-blue-600 rounded-2xl shadow-lg">
@@ -112,7 +111,6 @@ const RecentActivity = ({ projects, title = "Recent Projects" }) => {
         </div>
       </div>
 
-      {/* Projects List */}
       <div className="space-y-4">
         {visibleProjects.map((project, index) => (
           <div
@@ -124,7 +122,6 @@ const RecentActivity = ({ projects, title = "Recent Projects" }) => {
             }`}
             style={{ transitionDelay: `${index * 150}ms` }}
           >
-            {/* Progress stripe */}
             <div
               className={`absolute top-0 left-0 h-1 ${getProgressColor(
                 project.status
@@ -139,12 +136,10 @@ const RecentActivity = ({ projects, title = "Recent Projects" }) => {
             <div className="p-4 sm:p-6">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div className="flex items-center space-x-4 flex-1 min-w-0">
-                  {/* Status Icon */}
                   <div className="flex-shrink-0">
                     {getStatusIcon(project.status)}
                   </div>
 
-                  {/* Project Info */}
                   <div className="flex-1 min-w-0">
                     <div className="flex flex-wrap items-center gap-2 mb-2">
                       <h4 className="text-white font-semibold text-base sm:text-lg truncate">
@@ -172,7 +167,6 @@ const RecentActivity = ({ projects, title = "Recent Projects" }) => {
                   </div>
                 </div>
 
-                {/* Progress Circle */}
                 <div className="flex-shrink-0">
                   <div className="relative w-12 h-12 sm:w-16 sm:h-16">
                     <svg
@@ -225,7 +219,6 @@ const RecentActivity = ({ projects, title = "Recent Projects" }) => {
                 </div>
               </div>
 
-              {/* Progress Bar */}
               <div className="mt-3 sm:mt-4">
                 <div className="flex justify-between items-center mb-1 sm:mb-2">
                   <span className="text-[10px] sm:text-xs text-gray-400">
@@ -252,7 +245,6 @@ const RecentActivity = ({ projects, title = "Recent Projects" }) => {
         ))}
       </div>
 
-      {/* Summary Stats */}
       <div className="mt-6 sm:mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <div className="text-center p-3 sm:p-4 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-all duration-300">
           <div className="text-lg sm:text-2xl font-bold text-white mb-1">

@@ -104,10 +104,8 @@ const ProjectStatusChart = ({ data, isLoading = false }) => {
 
   return (
     <div className="relative group">
-      {/* Animated background glow */}
       <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500/30 via-cyan-500/30 to-indigo-500/30 rounded-2xl blur opacity-20 transition duration-500"></div>
 
-      {/* Main card */}
       <div className="relative bg-white/10 backdrop-blur-sm rounded-2xl p-4 sm:p-6 border border-white/20 transition-all duration-300">
         <div className="flex items-center justify-between mb-4 sm:mb-6">
           <h3 className="text-lg sm:text-xl font-bold text-white flex items-center">
@@ -125,9 +123,7 @@ const ProjectStatusChart = ({ data, isLoading = false }) => {
           </div>
         </div>
 
-        {/* Chart and Legend Container */}
         <div className="flex flex-col xl:flex-row xl:items-center xl:space-x-6">
-          {/* Chart container */}
           <div className="relative flex-shrink-0">
             <div className="w-full max-w-sm mx-auto h-72 sm:h-96 lg:w-[28rem] lg:h-[28rem]">
               <ResponsiveContainer width="100%" height="100%">
@@ -164,7 +160,6 @@ const ProjectStatusChart = ({ data, isLoading = false }) => {
               </ResponsiveContainer>
             </div>
 
-            {/* Center display - still centered */}
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
               <div className="text-center bg-slate-900/80 backdrop-blur-sm rounded-full w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 flex flex-col items-center justify-center border border-white/20">
                 <div className="text-lg sm:text-xl lg:text-2xl font-bold text-white">
@@ -175,7 +170,6 @@ const ProjectStatusChart = ({ data, isLoading = false }) => {
             </div>
           </div>
 
-          {/* Legend */}
           <div className="flex-1 mt-6 xl:mt-0">
             <h4 className="text-base sm:text-lg font-semibold text-white mb-4">
               Project Breakdown
@@ -215,7 +209,6 @@ const ProjectStatusChart = ({ data, isLoading = false }) => {
                         {percentage}%
                       </div>
 
-                      {/* Mini progress bar */}
                       <div className="w-16 sm:w-20 h-2 bg-white/20 rounded-full mt-1 overflow-hidden">
                         <div
                           className="h-full rounded-full transition-all duration-1000 ease-out"
@@ -232,7 +225,6 @@ const ProjectStatusChart = ({ data, isLoading = false }) => {
               })}
             </div>
 
-            {/* Summary Stats */}
             <div className="mt-6 pt-4 border-t border-white/10">
               <div className="grid grid-cols-2 gap-3 sm:gap-4">
                 <div className="text-center p-2 sm:p-3 bg-white/5 rounded-lg">
@@ -255,7 +247,6 @@ const ProjectStatusChart = ({ data, isLoading = false }) => {
           </div>
         </div>
 
-        {/* Animation indicator */}
         {isAnimating && (
           <div className="absolute top-4 right-4">
             <div className="w-3 sm:w-4 h-3 sm:h-4 border-2 border-purple-400 border-t-transparent rounded-full animate-spin"></div>

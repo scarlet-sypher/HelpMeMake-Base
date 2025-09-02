@@ -287,7 +287,6 @@ const ProjectsIndex = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-indigo-950 flex">
-      {/* Sidebar */}
       <Sidebar
         isOpen={sidebarOpen}
         toggleSidebar={toggleSidebar}
@@ -295,9 +294,7 @@ const ProjectsIndex = () => {
         setActiveItem={setActiveItem}
       />
 
-      {/* Main Content */}
       <div className="flex-1 lg:ml-64">
-        {/* Mobile Header */}
         <div className="lg:hidden bg-gradient-to-r from-slate-900/80 to-blue-900/80 backdrop-blur-sm border-b border-white/10 p-4">
           <div className="flex items-center justify-between">
             <button
@@ -311,16 +308,13 @@ const ProjectsIndex = () => {
           </div>
         </div>
 
-        {/* Animated background elements */}
         <div className="fixed inset-0 overflow-hidden pointer-events-none">
           <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-500/20 rounded-full blur-3xl animate-pulse"></div>
           <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-500/20 rounded-full blur-3xl animate-pulse"></div>
         </div>
 
         <div className="relative z-10 p-4 lg:p-6 space-y-6">
-          {/* Header Section */}
           <div className="bg-white/10 backdrop-blur-sm rounded-3xl shadow-2xl p-6 border border-white/20 relative overflow-hidden">
-            {/* Animated background elements */}
             <div className="absolute -top-10 -right-10 w-20 h-20 bg-blue-400/20 rounded-full blur-xl animate-pulse"></div>
             <div className="absolute -bottom-10 -left-10 w-16 h-16 bg-purple-400/20 rounded-full blur-xl animate-pulse"></div>
 
@@ -336,7 +330,6 @@ const ProjectsIndex = () => {
                   </p>
                 </div>
 
-                {/* Stats Overview */}
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
                   <div className="text-center bg-white/10 rounded-xl p-3 border border-white/20">
                     <div className="text-lg font-bold text-blue-400">
@@ -367,10 +360,8 @@ const ProjectsIndex = () => {
             </div>
           </div>
 
-          {/* Search and Filter Section */}
           <div className="bg-white/10 backdrop-blur-sm rounded-3xl shadow-2xl p-6 border border-white/20 relative z-[9999]">
             <div className="flex flex-col lg:flex-row lg:items-center space-y-4 lg:space-y-0 lg:space-x-4">
-              {/* Search Bar */}
               <div className="flex-1 relative">
                 <Search
                   className="absolute left-4 top-1/2 transform -translate-y-1/2 text-blue-300"
@@ -385,7 +376,6 @@ const ProjectsIndex = () => {
                 />
               </div>
 
-              {/* Filter Dropdown */}
               <div className="relative z-[9999] filter-dropdown-container">
                 <button
                   onClick={() => setFilterDropdownOpen(!filterDropdownOpen)}
@@ -400,7 +390,6 @@ const ProjectsIndex = () => {
                   )}
                 </button>
 
-                {/* Dropdown Menu */}
                 {filterDropdownOpen && (
                   <div className="absolute right-0 mt-2 w-48 bg-gradient-to-br from-slate-800 via-blue-800 to-indigo-800 rounded-2xl shadow-2xl border border-blue-400/30 overflow-hidden z-[9999]">
                     <div className="py-2">
@@ -463,7 +452,6 @@ const ProjectsIndex = () => {
             </div>
           </div>
 
-          {/* Projects Grid */}
           <div className="relative z-10">
             {error ? (
               <div className="bg-red-500/20 backdrop-blur-sm rounded-3xl shadow-2xl p-6 border border-red-500/30 text-center">
@@ -526,7 +514,6 @@ const ProjectsIndex = () => {
         </div>
       </div>
 
-      {/* Floating Add Button */}
       <button
         onClick={handleCreateProject}
         className="fixed bottom-6 right-6 w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white rounded-full shadow-2xl hover:shadow-blue-500/25 transition-all duration-300 transform hover:scale-110 z-50 flex items-center justify-center group"
@@ -537,7 +524,6 @@ const ProjectsIndex = () => {
         />
       </button>
 
-      {/* Toast Notification */}
       <Toast
         isOpen={toastState.isOpen}
         message={toastState.message}

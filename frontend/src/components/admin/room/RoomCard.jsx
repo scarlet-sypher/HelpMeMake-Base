@@ -86,7 +86,6 @@ export default function RoomCard({ room, onRoomUpdate }) {
   return (
     <>
       <div className="bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden hover:shadow-xl transition-all duration-300 hover:scale-105">
-        {/* Header with Project Thumbnail */}
         <div className="relative h-32 bg-gradient-to-r from-blue-600 to-purple-600">
           <img
             src={
@@ -112,7 +111,7 @@ export default function RoomCard({ room, onRoomUpdate }) {
               </span>
             </div>
           </div>
-          {/* Edit Button - Top Right */}
+
           <button
             onClick={handleEditClick}
             className="absolute top-2 right-2 bg-white/20 hover:bg-white/30 text-white p-2 rounded-full transition-colors duration-200 backdrop-blur-sm"
@@ -122,9 +121,7 @@ export default function RoomCard({ room, onRoomUpdate }) {
           </button>
         </div>
 
-        {/* Room Details */}
         <div className="p-4 space-y-3">
-          {/* Room ID and Name */}
           <div>
             <div className="flex items-center gap-2 mb-1">
               <MessageCircle size={16} className="text-blue-600" />
@@ -137,9 +134,7 @@ export default function RoomCard({ room, onRoomUpdate }) {
             </h4>
           </div>
 
-          {/* Participants */}
           <div className="space-y-2">
-            {/* Learner */}
             <div className="flex items-center gap-2 p-2 bg-green-50 rounded-lg">
               <img
                 src={
@@ -163,7 +158,6 @@ export default function RoomCard({ room, onRoomUpdate }) {
               </div>
             </div>
 
-            {/* Mentor */}
             <div className="flex items-center gap-2 p-2 bg-purple-50 rounded-lg">
               <img
                 src={
@@ -188,7 +182,6 @@ export default function RoomCard({ room, onRoomUpdate }) {
             </div>
           </div>
 
-          {/* Room Statistics */}
           <div className="grid grid-cols-2 gap-2 text-center">
             <div className="bg-slate-50 rounded-lg p-2">
               <div className="text-lg font-bold text-slate-800">
@@ -204,13 +197,11 @@ export default function RoomCard({ room, onRoomUpdate }) {
             </div>
           </div>
 
-          {/* Created Date */}
           <div className="flex items-center gap-2 text-xs text-slate-500">
             <Calendar size={14} />
             <span>Created: {formatDate(room.createdAt)}</span>
           </div>
 
-          {/* Last Message */}
           {room.lastMessage?.content && (
             <div className="bg-slate-50 rounded-lg p-2">
               <div className="text-xs text-slate-500 mb-1">Last Message:</div>
@@ -224,9 +215,7 @@ export default function RoomCard({ room, onRoomUpdate }) {
           )}
         </div>
 
-        {/* Action Buttons */}
         <div className="p-4 pt-0 space-y-2">
-          {/* Main View Button */}
           <button
             onClick={handleViewRoom}
             className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2"
@@ -235,7 +224,6 @@ export default function RoomCard({ room, onRoomUpdate }) {
             View Room
           </button>
 
-          {/* Wallpaper Buttons */}
           <div className="grid grid-cols-2 gap-2">
             <button
               onClick={() =>
@@ -261,7 +249,6 @@ export default function RoomCard({ room, onRoomUpdate }) {
         </div>
       </div>
 
-      {/* Edit Status Modal */}
       {showEditModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white rounded-xl p-6 max-w-md w-full mx-4">

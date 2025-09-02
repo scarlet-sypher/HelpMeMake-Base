@@ -54,7 +54,6 @@ const GoalView = ({ goal }) => {
           </div>
         </div>
 
-        {/* Progress Bar */}
         <div className="mb-6">
           <div className="flex justify-between items-center mb-2">
             <span className="text-sm font-medium text-gray-300">Progress</span>
@@ -72,7 +71,6 @@ const GoalView = ({ goal }) => {
           </div>
         </div>
 
-        {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="bg-slate-700/50 rounded-xl p-4 border border-white/5">
             <div className="flex items-center space-x-3">
@@ -122,7 +120,6 @@ const GoalView = ({ goal }) => {
           </div>
         </div>
 
-        {/* Achievement Message */}
         {progressPercentage >= 100 && (
           <div className="mt-6 p-4 bg-gradient-to-r from-green-500/20 to-emerald-500/20 border border-green-400/30 rounded-xl">
             <div className="flex items-center space-x-3">
@@ -139,7 +136,6 @@ const GoalView = ({ goal }) => {
           </div>
         )}
 
-        {/* Progress Message */}
         {progressPercentage < 100 && progressPercentage > 0 && (
           <div className="mt-6 p-4 bg-gradient-to-r from-cyan-500/10 to-teal-500/10 border border-cyan-400/20 rounded-xl">
             <div className="flex items-center space-x-3">

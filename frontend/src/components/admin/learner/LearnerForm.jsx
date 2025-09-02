@@ -301,7 +301,6 @@ export default function LearnerForm({ onReturn }) {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 p-4">
       <div className="max-w-4xl mx-auto">
-        {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center space-x-4">
             <button
@@ -336,9 +335,7 @@ export default function LearnerForm({ onReturn }) {
           </div>
         </div>
 
-        {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-8">
-          {/* Profile Picture Section */}
           <div className="bg-slate-800/60 backdrop-blur-sm rounded-xl p-6 border border-slate-700/50">
             <h2 className="text-xl font-semibold text-white mb-4 flex items-center">
               <Camera className="mr-2" size={20} />
@@ -383,7 +380,6 @@ export default function LearnerForm({ onReturn }) {
             </div>
           </div>
 
-          {/* Basic Information */}
           <div className="bg-slate-800/60 backdrop-blur-sm rounded-xl p-6 border border-slate-700/50">
             <h2 className="text-xl font-semibold text-white mb-4 flex items-center">
               <User className="mr-2" size={20} />
@@ -490,7 +486,6 @@ export default function LearnerForm({ onReturn }) {
             </div>
           </div>
 
-          {/* Progress & Stats */}
           <div className="bg-slate-800/60 backdrop-blur-sm rounded-xl p-6 border border-slate-700/50">
             <h2 className="text-xl font-semibold text-white mb-4 flex items-center">
               <Award className="mr-2" size={20} />
@@ -551,7 +546,6 @@ export default function LearnerForm({ onReturn }) {
             </div>
           </div>
 
-          {/* Social Links */}
           <div className="bg-slate-800/60 backdrop-blur-sm rounded-xl p-6 border border-slate-700/50">
             <h2 className="text-xl font-semibold text-white mb-4 flex items-center">
               <Activity className="mr-2" size={20} />
@@ -622,7 +616,6 @@ export default function LearnerForm({ onReturn }) {
             </div>
           </div>
 
-          {/* Submit Buttons */}
           <div className="flex justify-end space-x-4 pt-6">
             <button
               type="button"

@@ -139,7 +139,6 @@ const MyMentor = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-indigo-950 flex">
-      {/* Sidebar */}
       <Sidebar
         isOpen={sidebarOpen}
         toggleSidebar={toggleSidebar}
@@ -148,9 +147,7 @@ const MyMentor = () => {
         userRole="user"
       />
 
-      {/* Main Content */}
       <div className="flex-1 lg:ml-64">
-        {/* Mobile Header */}
         <div className="lg:hidden bg-gradient-to-r from-slate-900/80 to-blue-900/80 backdrop-blur-sm border-b border-white/10 p-4">
           <div className="flex items-center justify-between">
             <button
@@ -164,14 +161,12 @@ const MyMentor = () => {
           </div>
         </div>
 
-        {/* Animated background elements */}
         <div className="fixed inset-0 overflow-hidden pointer-events-none">
           <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-500/20 rounded-full blur-3xl animate-pulse"></div>
           <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-500/20 rounded-full blur-3xl animate-pulse"></div>
         </div>
 
         <div className="relative z-10 p-4 lg:p-6 space-y-6">
-          {/* Page Title */}
           <div className="bg-white/10 backdrop-blur-sm rounded-3xl shadow-2xl p-6 border border-white/20">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
@@ -216,20 +211,15 @@ const MyMentor = () => {
             </div>
           ) : (
             <>
-              {/* Main Content Grid */}
               <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-                {/* Left Column - Main Content */}
                 <div className="xl:col-span-2 space-y-6">
-                  {/* Expected End Date Section */}
                   <ExpectedEndDateViewer
                     projectData={projectData}
                     onUpdate={handleProjectUpdate}
                   />
 
-                  {/* Project Progress Section */}
                   <ProjectProgressViewer projectData={projectData} />
 
-                  {/* Complete/Cancel Actions */}
                   <CompleteCancelBox
                     projectData={projectData}
                     onUpdate={handleProjectUpdate}
@@ -237,7 +227,6 @@ const MyMentor = () => {
                   />
                 </div>
 
-                {/* Right Column - Mentor Card */}
                 <div className="space-y-6">
                   <MentorProjectCard
                     mentorData={mentorData}

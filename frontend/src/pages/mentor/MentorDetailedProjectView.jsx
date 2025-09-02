@@ -446,14 +446,12 @@ const MentorDetailedProjectView = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800">
-      {/* Animated background elements */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-cyan-500/20 rounded-full blur-3xl animate-pulse"></div>
         <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-teal-500/20 rounded-full blur-3xl animate-pulse"></div>
       </div>
 
       <div className="relative z-10 p-4 lg:p-6">
-        {/* Header */}
         <div className="mb-6">
           <button
             onClick={() => navigate("/mentor/projects")}
@@ -470,7 +468,7 @@ const MentorDetailedProjectView = () => {
             <div className="flex-1">
               <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2 break-words">
                 {project.name}
-                {/* NEW: Request notification in title */}
+
                 {hasRequests && (
                   <span className="ml-3 inline-flex items-center">
                     <BellRing
@@ -503,11 +501,8 @@ const MentorDetailedProjectView = () => {
           </div>
         </div>
 
-        {/* Main Content */}
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-          {/* Left Column - Project Details */}
           <div className="xl:col-span-2 space-y-6">
-            {/* Project Overview */}
             <div className="bg-white/10 backdrop-blur-sm rounded-3xl shadow-2xl p-4 sm:p-6 border border-white/20">
               <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-6 gap-4">
                 <div className="flex flex-col sm:flex-row sm:items-center space-y-3 sm:space-y-0 sm:space-x-4 flex-1">
@@ -541,7 +536,6 @@ const MentorDetailedProjectView = () => {
                 </div>
               </div>
 
-              {/* Key Metrics */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mb-6">
                 <div className="bg-white/10 rounded-2xl p-3 sm:p-4 text-center border border-white/20">
                   <DollarSign
@@ -578,7 +572,6 @@ const MentorDetailedProjectView = () => {
                 </div>
               </div>
 
-              {/* Project Description */}
               <div className="mb-6">
                 <h3 className="text-lg sm:text-xl font-bold text-white mb-3 flex items-center">
                   <BookOpen
@@ -594,7 +587,6 @@ const MentorDetailedProjectView = () => {
                 </div>
               </div>
 
-              {/* Tech Stack */}
               <div className="mb-6">
                 <h3 className="text-lg sm:text-xl font-bold text-white mb-3 flex items-center">
                   <Code
@@ -615,7 +607,6 @@ const MentorDetailedProjectView = () => {
                 </div>
               </div>
 
-              {/* Project Outcome & Motivation */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 mb-6">
                 <div>
                   <h3 className="text-base sm:text-lg font-bold text-white mb-3 flex items-center">
@@ -647,7 +638,6 @@ const MentorDetailedProjectView = () => {
                 </div>
               </div>
 
-              {/* Prerequisites */}
               {project.prerequisites && project.prerequisites.length > 0 && (
                 <div className="mb-6">
                   <h3 className="text-lg sm:text-xl font-bold text-white mb-3 flex items-center">
@@ -676,7 +666,6 @@ const MentorDetailedProjectView = () => {
                 </div>
               )}
 
-              {/* References */}
               {project.references && project.references.length > 0 && (
                 <div>
                   <h3 className="text-lg sm:text-xl font-bold text-white mb-3 flex items-center">
@@ -715,9 +704,7 @@ const MentorDetailedProjectView = () => {
             </div>
           </div>
 
-          {/* Right Column - User Info & Actions */}
           <div className="space-y-6">
-            {/* User Profile Card */}
             {learner && (
               <div className="bg-white/10 backdrop-blur-sm rounded-3xl shadow-2xl p-6 border border-white/20">
                 <div className="text-center mb-4">
@@ -789,7 +776,6 @@ const MentorDetailedProjectView = () => {
               </div>
             )}
 
-            {/* Action Buttons */}
             <div className="bg-white/10 backdrop-blur-sm rounded-3xl shadow-2xl p-6 border border-white/20">
               <h3 className="text-xl font-bold text-white mb-4 flex items-center">
                 <HandHeart className="mr-2 text-cyan-400" size={20} />
@@ -797,7 +783,6 @@ const MentorDetailedProjectView = () => {
               </h3>
 
               <div className="space-y-3">
-                {/* Show User Profile */}
                 <button
                   onClick={handleShowUserProfile}
                   className="w-full flex items-center justify-center space-x-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-4 py-3 rounded-xl font-medium transition-all duration-200 transform hover:scale-105"
@@ -806,7 +791,6 @@ const MentorDetailedProjectView = () => {
                   <span>Show User Profile</span>
                 </button>
 
-                {/* Message User */}
                 <button
                   onClick={handleMessageUser}
                   className="w-full flex items-center justify-center space-x-2 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white px-4 py-3 rounded-xl font-medium transition-all duration-200 transform hover:scale-105"
@@ -815,7 +799,6 @@ const MentorDetailedProjectView = () => {
                   <span>Message User</span>
                 </button>
 
-                {/* NEW: Show Requests Button */}
                 <button
                   onClick={handleShowRequests}
                   disabled={!hasRequests}
@@ -845,7 +828,6 @@ const MentorDetailedProjectView = () => {
                   )}
                 </button>
 
-                {/* Interest / Pitch / Negotiate */}
                 <div className="relative">
                   <button
                     onClick={handleOpenPitchModal}
@@ -881,7 +863,6 @@ const MentorDetailedProjectView = () => {
                   )}
                 </div>
 
-                {/* Take Project */}
                 <div className="relative group">
                   <button
                     onClick={handleTakeProject}
@@ -907,7 +888,6 @@ const MentorDetailedProjectView = () => {
                 </div>
               </div>
 
-              {/* Pricing Information */}
               <div className="mt-6 p-4 bg-white/5 rounded-2xl border border-white/10">
                 <h4 className="text-sm font-semibold text-white mb-3">
                   Pricing Information
@@ -943,7 +923,6 @@ const MentorDetailedProjectView = () => {
           </div>
         </div>
 
-        {/* Pitch Modal */}
         {showPitchModal && (
           <PitchModal
             project={project}
@@ -953,7 +932,6 @@ const MentorDetailedProjectView = () => {
           />
         )}
 
-        {/*Show Requests Modal */}
         {showRequestsModal && (
           <ShowRequestsModal
             project={project}
@@ -963,7 +941,6 @@ const MentorDetailedProjectView = () => {
           />
         )}
 
-        {/* Accept Confirmation Modal */}
         {showAcceptConfirm && (
           <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
             <div className="relative bg-gradient-to-br from-slate-950 via-blue-950 to-indigo-950 rounded-3xl shadow-2xl border border-white/20 p-8 max-w-md w-full">

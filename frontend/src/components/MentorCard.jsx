@@ -24,7 +24,6 @@ const MentorCard = ({ mentor, colorScheme = "emerald" }) => {
           : "hover:border-red-400/50"
       }`}
     >
-      {/* Animated background overlay */}
       <div
         className={`absolute inset-0 bg-gradient-to-br transition-all duration-500 rounded-2xl ${
           colorScheme === "emerald"
@@ -45,7 +44,6 @@ const MentorCard = ({ mentor, colorScheme = "emerald" }) => {
         }`}
       ></div>
 
-      {/* Profile Image Section */}
       <div className="relative p-5 pb-3">
         <div className="relative w-16 h-16 mx-auto mb-3">
           {mentor.image ? (
@@ -101,7 +99,6 @@ const MentorCard = ({ mentor, colorScheme = "emerald" }) => {
           </div>
         </div>
 
-        {/* Rating */}
         <div className="flex items-center justify-center mb-2">
           <div className="flex items-center space-x-1">
             {[...Array(5)].map((_, i) => (
@@ -119,7 +116,6 @@ const MentorCard = ({ mentor, colorScheme = "emerald" }) => {
         </div>
       </div>
 
-      {/* Content */}
       <div className="px-5 pb-5 relative z-10">
         <h3
           className={`text-lg font-bold text-white mb-1 text-center transition-colors duration-300 ${
@@ -165,7 +161,6 @@ const MentorCard = ({ mentor, colorScheme = "emerald" }) => {
           {mentor.specialty}
         </p>
 
-        {/* Tech Stack */}
         <div className="flex flex-wrap gap-1.5 mb-3 justify-center">
           {mentor.techStack.map((tech, index) => (
             <span
@@ -177,7 +172,6 @@ const MentorCard = ({ mentor, colorScheme = "emerald" }) => {
           ))}
         </div>
 
-        {/* Rate */}
         <div className="text-center mb-3">
           <span
             className={`text-xl font-bold text-white transition-colors duration-300 ${
@@ -203,14 +197,12 @@ const MentorCard = ({ mentor, colorScheme = "emerald" }) => {
           <span className="text-white/70 text-sm">/hour</span>
         </div>
 
-        {/* Testimonial */}
         <div className="bg-white/5 rounded-lg p-2.5 mb-4 border border-white/10 group-hover:bg-white/10 group-hover:border-white/20 transition-all duration-300">
           <p className="text-white/80 text-xs italic text-center leading-relaxed">
             "{mentor.testimonial}"
           </p>
         </div>
 
-        {/* Action Button */}
         <button
           className={`w-full relative text-white py-2.5 px-4 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 flex items-center justify-center overflow-hidden group-hover:shadow-lg ${
             colorScheme === "emerald"

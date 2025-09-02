@@ -291,10 +291,8 @@ const ProjectForm = ({
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-indigo-950">
-      {/* Toast Notification */}
       {toast && <Toast toast={toast} onClose={() => setToast(null)} />}
 
-      {/* Animated background elements */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-500/20 rounded-full blur-3xl animate-pulse"></div>
         <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-500/20 rounded-full blur-3xl animate-pulse"></div>
@@ -302,7 +300,6 @@ const ProjectForm = ({
 
       <div className="relative z-10 p-4 lg:p-6">
         <div className="max-w-7xl mx-auto">
-          {/* Header */}
           <div className="mb-8 text-center relative">
             <button
               onClick={handleCancel}
@@ -325,7 +322,6 @@ const ProjectForm = ({
             </p>
           </div>
 
-          {/* Toggle Buttons */}
           <div className="mb-6 flex flex-wrap justify-center gap-4">
             <button
               onClick={() => {
@@ -359,7 +355,6 @@ const ProjectForm = ({
               showAIHelper && !showPreview ? "lg:grid-cols-3" : "lg:grid-cols-1"
             } gap-8`}
           >
-            {/* Main Content */}
             <div
               className={
                 showAIHelper && !showPreview ? "lg:col-span-2" : "lg:col-span-1"
@@ -403,7 +398,6 @@ const ProjectForm = ({
                         </div>
                       </div>
 
-                      {/* Thumbnail Preview */}
                       {formData.thumbnail && (
                         <div className="mb-4">
                           <img
@@ -459,7 +453,6 @@ const ProjectForm = ({
                   onSubmit={handleSubmit}
                   className="space-y-6 sm:space-y-8"
                 >
-                  {/* Basic Information */}
                   <BasicInformation
                     formData={formData}
                     setFormData={setFormData}
@@ -467,7 +460,6 @@ const ProjectForm = ({
                     onToast={showToast}
                   />
 
-                  {/* Technical Details */}
                   <TechnicalDetails
                     formData={formData}
                     setFormData={setFormData}
@@ -475,7 +467,6 @@ const ProjectForm = ({
                     onToast={showToast}
                   />
 
-                  {/* Project Details */}
                   <ProjectDetails
                     formData={formData}
                     setFormData={setFormData}
@@ -483,21 +474,18 @@ const ProjectForm = ({
                     onToast={showToast}
                   />
 
-                  {/* Prerequisites */}
                   <Prerequisites
                     formData={formData}
                     setFormData={setFormData}
                     onToast={showToast}
                   />
 
-                  {/* References */}
                   <References
                     formData={formData}
                     setFormData={setFormData}
                     onToast={showToast}
                   />
 
-                  {/* Pricing */}
                   <Pricing
                     formData={formData}
                     setFormData={setFormData}
@@ -505,7 +493,6 @@ const ProjectForm = ({
                     onToast={showToast}
                   />
 
-                  {/* Form Actions */}
                   <div className="flex flex-col sm:flex-row gap-4 justify-end">
                     <button
                       type="button"
@@ -538,7 +525,6 @@ const ProjectForm = ({
               )}
             </div>
 
-            {/* AI Helper Sidebar */}
             {showAIHelper && !showPreview && (
               <div className="lg:col-span-1">
                 <div className="sticky top-6">

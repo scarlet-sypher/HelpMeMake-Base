@@ -154,7 +154,6 @@ const SelectRole = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">
-      {/* Animated Background */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-10 left-10 w-32 h-32 sm:w-48 sm:h-48 lg:w-64 lg:h-64 bg-emerald-500/10 rounded-full blur-3xl animate-pulse"></div>
         <div
@@ -167,10 +166,8 @@ const SelectRole = () => {
         ></div>
       </div>
 
-      {/* Main Content */}
       <div className="relative z-10 min-h-screen flex items-center justify-center px-4 py-8">
         <div className="bg-slate-800/30 backdrop-blur-xl rounded-3xl shadow-2xl p-8 lg:p-12 w-full max-w-4xl border border-slate-700/50">
-          {/* Header */}
           <div className="text-center mb-12">
             <div className="flex items-center justify-center gap-3 mb-6">
               <div className="relative">
@@ -200,9 +197,7 @@ const SelectRole = () => {
             </div>
           </div>
 
-          {/* Role Cards */}
           <div className="grid md:grid-cols-2 gap-8 mb-12">
-            {/* User Role Card */}
             <div
               onClick={() => setSelectedRole("user")}
               className={`relative p-8 rounded-2xl border-2 cursor-pointer transition-all duration-300 transform hover:scale-105 ${
@@ -211,7 +206,6 @@ const SelectRole = () => {
                   : "border-slate-600 bg-slate-800/40 hover:border-emerald-400/50 hover:bg-slate-800/60"
               }`}
             >
-              {/* Selection Indicator */}
               {selectedRole === "user" && (
                 <div className="absolute top-4 right-4">
                   <CheckCircle className="w-8 h-8 text-emerald-400" />
@@ -254,7 +248,6 @@ const SelectRole = () => {
               </div>
             </div>
 
-            {/* Mentor Role Card */}
             <div
               onClick={() => setSelectedRole("mentor")}
               className={`relative p-8 rounded-2xl border-2 cursor-pointer transition-all duration-300 transform hover:scale-105 ${
@@ -263,7 +256,6 @@ const SelectRole = () => {
                   : "border-slate-600 bg-slate-800/40 hover:border-purple-400/50 hover:bg-slate-800/60"
               }`}
             >
-              {/* Selection Indicator */}
               {selectedRole === "mentor" && (
                 <div className="absolute top-4 right-4">
                   <CheckCircle className="w-8 h-8 text-purple-400" />
@@ -307,7 +299,6 @@ const SelectRole = () => {
             </div>
           </div>
 
-          {/* Action Button */}
           <div className="text-center">
             <button
               onClick={handleRoleSubmit}
@@ -338,7 +329,6 @@ const SelectRole = () => {
             )}
           </div>
 
-          {/* Role Comparison */}
           <div className="mt-12 pt-8 border-t border-slate-700/50">
             <div className="text-center mb-6">
               <h3 className="text-xl font-semibold text-white mb-2">

@@ -80,7 +80,6 @@ const UserCard = ({ user, onDelete, onEdit }) => {
   return (
     <>
       <div className="bg-gradient-to-br from-slate-50 to-blue-50 rounded-xl shadow-md border border-slate-200 overflow-hidden hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
-        {/* Header with Avatar */}
         <div className="relative bg-gradient-to-r from-slate-700 to-slate-800 p-6">
           <div className="flex items-center space-x-4">
             <div className="relative">
@@ -124,9 +123,7 @@ const UserCard = ({ user, onDelete, onEdit }) => {
           </div>
         </div>
 
-        {/* Content */}
         <div className="p-6 space-y-4 bg-gradient-to-br from-slate-50/80 to-blue-50/80 backdrop-blur-sm">
-          {/* Basic Info */}
           <div className="space-y-3">
             <div className="flex items-center space-x-2 text-slate-700">
               <User size={16} />
@@ -159,7 +156,6 @@ const UserCard = ({ user, onDelete, onEdit }) => {
             )}
           </div>
 
-          {/* Role-specific Info */}
           {user.title && (
             <div className="bg-white/60 backdrop-blur-sm rounded-lg p-3 border border-slate-200/50">
               <div className="text-sm font-medium text-slate-900 mb-1">
@@ -173,7 +169,6 @@ const UserCard = ({ user, onDelete, onEdit }) => {
             </div>
           )}
 
-          {/* Social Links */}
           {user.socialLinks &&
             Object.values(user.socialLinks).some(
               (link) => link && link !== "#"
@@ -220,7 +215,6 @@ const UserCard = ({ user, onDelete, onEdit }) => {
               </div>
             )}
 
-          {/* Status Indicators */}
           <div className="flex flex-wrap gap-2">
             <span
               className={`px-2 py-1 rounded-full text-xs ${
@@ -248,7 +242,6 @@ const UserCard = ({ user, onDelete, onEdit }) => {
           </div>
         </div>
 
-        {/* Action Buttons */}
         <div className="border-t border-slate-200/50 p-4 bg-gradient-to-r from-slate-100/80 to-blue-100/80 backdrop-blur-sm">
           <div className="flex justify-end space-x-2">
             <button
@@ -269,7 +262,6 @@ const UserCard = ({ user, onDelete, onEdit }) => {
         </div>
       </div>
 
-      {/* Delete Confirmation Modal */}
       {showDeleteModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="bg-gradient-to-br from-slate-50 to-blue-50 rounded-xl shadow-2xl max-w-md w-full mx-4 transform transition-all border border-slate-200">

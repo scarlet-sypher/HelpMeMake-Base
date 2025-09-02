@@ -235,13 +235,10 @@ const ShortProjectCard = ({ project, onDelete, onToast }) => {
 
   return (
     <>
-      {/* Project Card */}
       <div className="group relative w-full max-w-full bg-white/10 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/20 overflow-hidden hover:shadow-3xl transition-all duration-500 hover:scale-[1.02] z-0">
-        {/* Animated background elements */}
         <div className="absolute -top-10 -right-10 w-20 h-20 bg-blue-400/20 rounded-full blur-xl animate-pulse opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
         <div className="absolute -bottom-10 -left-10 w-16 h-16 bg-purple-400/20 rounded-full blur-xl animate-pulse opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
 
-        {/* Project Thumbnail */}
         <div className="relative h-40 sm:h-48 md:h-52 lg:h-48 xl:h-52 w-full overflow-hidden">
           <img
             src={
@@ -259,7 +256,6 @@ const ShortProjectCard = ({ project, onDelete, onToast }) => {
             }}
           />
 
-          {/* Status Badge */}
           <div
             className={`absolute top-2 left-2 sm:top-4 sm:left-4 px-2 py-1 sm:px-3 sm:py-1 rounded-full ${statusInfo.bgColor} backdrop-blur-sm border border-white/20 flex items-center space-x-1 sm:space-x-2`}
           >
@@ -274,7 +270,6 @@ const ShortProjectCard = ({ project, onDelete, onToast }) => {
             </span>
           </div>
 
-          {/* Pitch Notification Dot */}
           {project.hasUnreadPitch && (
             <div className="absolute top-2 right-2 sm:top-4 sm:right-4 flex items-center space-x-1 sm:space-x-2 bg-green-500/20 backdrop-blur-sm rounded-full px-1.5 py-1 sm:px-2 sm:py-1 border border-green-400/30">
               <div className="relative">
@@ -291,14 +286,12 @@ const ShortProjectCard = ({ project, onDelete, onToast }) => {
             </div>
           )}
 
-          {/* Featured Badge */}
           {project.isFeatured && (
             <div className="absolute top-2 right-2 sm:top-4 sm:right-4 p-1.5 sm:p-2 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-full">
               <Star size={12} className="sm:w-3.5 sm:h-3.5 text-white" />
             </div>
           )}
 
-          {/* Image Loading Fallback */}
           <div
             className="absolute inset-0 bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center opacity-0 transition-opacity duration-300"
             id={`fallback-${project._id}`}
@@ -310,21 +303,17 @@ const ShortProjectCard = ({ project, onDelete, onToast }) => {
           </div>
         </div>
 
-        {/* Card Content */}
         <div className="relative z-10 p-4 sm:p-5 lg:p-6 min-w-0">
-          {/* Project Name */}
           <h3 className="text-lg sm:text-xl lg:text-xl font-bold text-white mb-2 sm:mb-3 leading-tight group-hover:text-blue-300 transition-colors min-w-0 overflow-hidden text-ellipsis">
             <span className="break-words line-clamp-2">{project.name}</span>
           </h3>
 
-          {/* Short Description */}
           <div className="text-gray-300 text-sm sm:text-sm leading-relaxed mb-3 sm:mb-4 min-w-0">
             <p className="break-words line-clamp-3">
               {project.shortDescription}
             </p>
           </div>
 
-          {/* Tech Stack */}
           <div className="mb-3 sm:mb-4 min-w-0">
             <div className="flex items-center mb-2">
               <Code
@@ -352,7 +341,6 @@ const ShortProjectCard = ({ project, onDelete, onToast }) => {
             </div>
           </div>
 
-          {/* Pitch Status Indicator */}
           {project.hasUnreadPitch && (
             <div className="mb-3 sm:mb-4 p-2.5 sm:p-3 bg-gradient-to-r from-green-500/10 to-emerald-500/10 rounded-xl border border-green-400/20 min-w-0">
               <div className="flex items-center space-x-1.5 sm:space-x-2 min-w-0">
@@ -368,9 +356,7 @@ const ShortProjectCard = ({ project, onDelete, onToast }) => {
             </div>
           )}
 
-          {/* Project Details Grid */}
           <div className="grid grid-cols-3 gap-2 sm:gap-3 mb-4 sm:mb-6 min-w-0">
-            {/* Duration */}
             <div className="bg-white/5 rounded-xl p-2 sm:p-3 border border-white/10 min-w-0">
               <div className="flex items-center mb-1">
                 <Clock
@@ -386,7 +372,6 @@ const ShortProjectCard = ({ project, onDelete, onToast }) => {
               </p>
             </div>
 
-            {/* Difficulty */}
             <div className="bg-white/5 rounded-xl p-2 sm:p-3 border border-white/10 min-w-0">
               <div className="flex items-center mb-1 min-w-0">
                 <TrendingUp
@@ -406,7 +391,6 @@ const ShortProjectCard = ({ project, onDelete, onToast }) => {
               </span>
             </div>
 
-            {/* Pitch Count */}
             <div className="bg-white/5 rounded-xl p-2 sm:p-3 border border-white/10 min-w-0">
               <div className="flex items-center mb-1 min-w-0">
                 <MessageSquare
@@ -427,7 +411,6 @@ const ShortProjectCard = ({ project, onDelete, onToast }) => {
               </div>
             </div>
 
-            {/* Project Status Indicator */}
             {isProjectRestricted() && (
               <div className="col-span-3 bg-gradient-to-r from-orange-500/10 to-red-500/10 rounded-xl p-2.5 sm:p-3 border border-orange-400/20 min-w-0">
                 <div className="flex items-center space-x-1.5 sm:space-x-2 min-w-0">
@@ -446,7 +429,6 @@ const ShortProjectCard = ({ project, onDelete, onToast }) => {
               </div>
             )}
 
-            {/* Category */}
             <div className="bg-white/5 rounded-xl p-2 sm:p-3 border border-white/10 min-w-0">
               <div className="flex items-center mb-1 min-w-0">
                 <Tag
@@ -462,7 +444,6 @@ const ShortProjectCard = ({ project, onDelete, onToast }) => {
               </p>
             </div>
 
-            {/* Price */}
             <div className="bg-white/5 rounded-xl p-2 sm:p-3 border border-white/10 col-span-2 min-w-0">
               <div className="flex items-center mb-1 min-w-0">
                 <DollarSign
@@ -479,7 +460,6 @@ const ShortProjectCard = ({ project, onDelete, onToast }) => {
             </div>
           </div>
 
-          {/* Project Dates */}
           {(project.startDate || project.expectedEndDate) && (
             <div className="bg-gradient-to-r from-indigo-500/10 to-purple-500/10 rounded-xl p-2.5 sm:p-3 border border-white/10 mb-4 sm:mb-6 min-w-0">
               <div className="flex items-center justify-between text-xs flex-wrap gap-2 min-w-0">
@@ -511,10 +491,8 @@ const ShortProjectCard = ({ project, onDelete, onToast }) => {
             </div>
           )}
 
-          {/* Action Buttons */}
           <div className="flex items-center justify-between pt-3 sm:pt-4 border-t border-white/10 gap-2 sm:gap-3 min-w-0">
             <div className="flex items-center space-x-2 sm:space-x-3 min-w-0 flex-1">
-              {/* Edit Button */}
               <button
                 onClick={() => handleEditProject()}
                 disabled={isProjectRestricted()}
@@ -540,7 +518,6 @@ const ShortProjectCard = ({ project, onDelete, onToast }) => {
                 <span className="leading-tight">Edit</span>
               </button>
 
-              {/* View Button with pitch notification indicator */}
               <button
                 onClick={handleViewProject}
                 className="group/btn relative flex items-center space-x-1 sm:space-x-2 px-3 py-2 sm:px-4 sm:py-2 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white rounded-xl font-medium transition-all transform hover:scale-105 shadow-lg hover:shadow-emerald-500/25 text-xs sm:text-sm min-w-0 flex-shrink-0"
@@ -552,7 +529,6 @@ const ShortProjectCard = ({ project, onDelete, onToast }) => {
                 <span className="leading-tight">View</span>
                 {project.hasUnreadPitch && (
                   <>
-                    {/* Animated notification dot */}
                     <div className="absolute -top-0.5 -right-0.5 sm:-top-1 sm:-right-1 w-2.5 h-2.5 sm:w-3 sm:h-3 bg-green-500 rounded-full animate-ping"></div>
                     <div className="absolute -top-0.5 -right-0.5 sm:-top-1 sm:-right-1 w-2.5 h-2.5 sm:w-3 sm:h-3 bg-green-400 rounded-full"></div>
                   </>
@@ -560,7 +536,6 @@ const ShortProjectCard = ({ project, onDelete, onToast }) => {
               </button>
             </div>
 
-            {/* Delete Button */}
             <button
               onClick={() => handleDeleteProject()}
               disabled={isProjectRestricted()}
@@ -586,20 +561,16 @@ const ShortProjectCard = ({ project, onDelete, onToast }) => {
           </div>
         </div>
 
-        {/* Hover glow effect */}
         <div className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 shadow-2xl pointer-events-none"></div>
       </div>
 
-      {/* Delete Confirmation Modal */}
       {showDeleteModal && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="relative hide-scrollbar-general bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 rounded-3xl shadow-2xl border border-white/20 p-6 sm:p-8 max-w-sm sm:max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto hide-sc">
-            {/* Animated background elements */}
             <div className="absolute -top-10 -right-10 w-20 h-20 bg-red-400/20 rounded-full blur-xl animate-pulse"></div>
             <div className="absolute -bottom-10 -left-10 w-16 h-16 bg-pink-400/20 rounded-full blur-xl animate-pulse"></div>
 
             <div className="relative z-10 min-w-0">
-              {/* Header */}
               <div className="flex items-start mb-4 sm:mb-6 min-w-0">
                 <div className="p-2.5 sm:p-3 bg-gradient-to-r from-red-500 to-pink-500 rounded-xl mr-3 sm:mr-4 flex-shrink-0">
                   <Trash2 className="text-white" size={20} />
@@ -614,7 +585,6 @@ const ShortProjectCard = ({ project, onDelete, onToast }) => {
                 </div>
               </div>
 
-              {/* Warning Message */}
               <div className="bg-red-500/20 border border-red-400/30 rounded-xl p-3 sm:p-4 mb-4 sm:mb-6 min-w-0">
                 <p className="text-red-200 text-sm leading-relaxed break-words">
                   You are about to permanently delete{" "}
@@ -626,7 +596,6 @@ const ShortProjectCard = ({ project, onDelete, onToast }) => {
                 </p>
               </div>
 
-              {/* Confirmation Input */}
               <div className="mb-4 sm:mb-6 min-w-0">
                 <label className="block text-sm font-medium text-white mb-2 leading-tight">
                   Type the project name to confirm deletion:
@@ -640,7 +609,6 @@ const ShortProjectCard = ({ project, onDelete, onToast }) => {
                 />
               </div>
 
-              {/* Action Buttons */}
               <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4 min-w-0">
                 <button
                   onClick={() => {

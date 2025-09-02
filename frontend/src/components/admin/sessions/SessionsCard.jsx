@@ -114,7 +114,6 @@ const SessionsCard = ({ session, onDelete }) => {
   return (
     <>
       <div className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 p-6 border border-gray-200">
-        {/* Header */}
         <div className="flex justify-between items-start mb-4">
           <div className="flex-1">
             <h3 className="text-lg font-bold text-gray-900 mb-2">
@@ -138,7 +137,6 @@ const SessionsCard = ({ session, onDelete }) => {
           </button>
         </div>
 
-        {/* Project Info */}
         <div className="mb-4 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-100">
           <div className="flex items-center gap-3">
             <img
@@ -166,9 +164,7 @@ const SessionsCard = ({ session, onDelete }) => {
           </div>
         </div>
 
-        {/* Mentor & Learner Info */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-          {/* Mentor */}
           <div className="p-3 bg-purple-50 rounded-lg border border-purple-100">
             <div className="flex items-center gap-3">
               <img
@@ -192,7 +188,6 @@ const SessionsCard = ({ session, onDelete }) => {
             </div>
           </div>
 
-          {/* Learner */}
           <div className="p-3 bg-green-50 rounded-lg border border-green-100">
             <div className="flex items-center gap-3">
               <img
@@ -217,7 +212,6 @@ const SessionsCard = ({ session, onDelete }) => {
           </div>
         </div>
 
-        {/* Session Details */}
         <div className="space-y-3 mb-4">
           <div className="flex items-center gap-2 text-sm">
             <BookOpen size={16} className="text-gray-500" />
@@ -259,7 +253,6 @@ const SessionsCard = ({ session, onDelete }) => {
           )}
         </div>
 
-        {/* Attendance Status */}
         <div className="grid grid-cols-2 gap-4 mb-4">
           <div
             className={`p-2 rounded-lg text-center text-sm ${
@@ -287,7 +280,6 @@ const SessionsCard = ({ session, onDelete }) => {
           </div>
         </div>
 
-        {/* Links */}
         <div className="flex gap-2 flex-wrap">
           {session.meetingLink && (
             <button
@@ -309,7 +301,6 @@ const SessionsCard = ({ session, onDelete }) => {
           )}
         </div>
 
-        {/* Reasons (if any) */}
         {(session.learnerReason ||
           session.mentorReason ||
           session.expireReason) && (
@@ -339,7 +330,6 @@ const SessionsCard = ({ session, onDelete }) => {
         )}
       </div>
 
-      {/* Delete Confirmation Modal */}
       {showDeleteModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-xl max-w-md w-full p-6">

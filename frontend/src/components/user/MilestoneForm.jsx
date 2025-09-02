@@ -70,7 +70,6 @@ const MilestoneForm = ({
 
   return (
     <div className="bg-white/10 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/20 overflow-hidden">
-      {/* Header Section */}
       <div className="bg-gradient-to-r from-green-600/20 to-emerald-600/20 p-4 sm:p-6 border-b border-white/10">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div className="flex items-center gap-3">
@@ -87,7 +86,6 @@ const MilestoneForm = ({
             </div>
           </div>
 
-          {/* Milestone Counter */}
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2 bg-gradient-to-r from-green-500/20 to-emerald-500/20 px-4 py-2 rounded-full border border-green-400/30">
               <Star className="text-green-400" size={18} />
@@ -114,9 +112,7 @@ const MilestoneForm = ({
         </div>
       </div>
 
-      {/* Content Section */}
       <div className="p-4 sm:p-6">
-        {/* Milestone Statistics */}
         {milestones.length > 0 && (
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
             <div className="bg-gradient-to-br from-green-500/20 to-emerald-500/20 backdrop-blur-sm rounded-xl p-3 sm:p-4 border border-green-400/30 hover:border-green-400/50 transition-all duration-300 group">
@@ -197,7 +193,6 @@ const MilestoneForm = ({
           </div>
         )}
 
-        {/* Progress Bar */}
         {milestones.length > 0 && (
           <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-4 border border-white/10 mb-6">
             <div className="flex items-center justify-between mb-3">
@@ -222,7 +217,6 @@ const MilestoneForm = ({
           </div>
         )}
 
-        {/* Milestone Creation Form */}
         {milestones.length < 5 && (
           <div className="space-y-4">
             <div className="flex flex-col lg:flex-row gap-3 sm:gap-4">
@@ -263,7 +257,6 @@ const MilestoneForm = ({
               </button>
             </div>
 
-            {/* Character count and tips */}
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-sm">
               <div className="flex items-center gap-2 text-gray-400">
                 <Calendar size={14} />
@@ -277,7 +270,6 @@ const MilestoneForm = ({
           </div>
         )}
 
-        {/* Maximum Reached Message */}
         {milestones.length >= 5 && (
           <div className="bg-gradient-to-r from-amber-500/20 to-orange-500/20 backdrop-blur-sm rounded-2xl p-4 sm:p-6 border border-amber-400/30">
             <div className="flex flex-col sm:flex-row sm:items-center gap-3">

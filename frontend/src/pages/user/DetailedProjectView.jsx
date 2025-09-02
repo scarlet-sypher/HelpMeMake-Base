@@ -371,7 +371,6 @@ const DetailedProjectView = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-indigo-950">
-      {/* Animated background elements */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-500/20 rounded-full blur-3xl animate-pulse"></div>
         <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-500/20 rounded-full blur-3xl animate-pulse"></div>
@@ -379,7 +378,6 @@ const DetailedProjectView = () => {
       </div>
 
       <div className="relative z-10 p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto">
-        {/* Header */}
         <div className="mb-8">
           <button
             onClick={() => navigate("/user/projects")}
@@ -424,9 +422,7 @@ const DetailedProjectView = () => {
           </div>
         </div>
 
-        {/* Main Content */}
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 lg:gap-8">
-          {/* Left Column - Project Details */}
           <div className="xl:col-span-2">
             <ProjectOverview
               project={project}
@@ -435,12 +431,9 @@ const DetailedProjectView = () => {
             />
           </div>
 
-          {/* Right Column - Actions */}
           <div className="space-y-6">
-            {/* Assigned Mentor Section */}
             <AssignedMentorSection project={project} API_URL={API_URL} />
 
-            {/* Project Actions */}
             <ProjectActions
               project={project}
               pitches={pitches}
@@ -460,7 +453,6 @@ const DetailedProjectView = () => {
           </div>
         </div>
 
-        {/* Set Closing Price Modal */}
         <SetClosingPriceModal
           show={showClosingPriceModal}
           closingPrice={closingPrice}
@@ -471,7 +463,6 @@ const DetailedProjectView = () => {
           onSetPrice={handleSetClosingPrice}
         />
 
-        {/* View Pitches Modal */}
         <ViewPitchesModal
           show={showPitchesModal}
           pitches={pitches}
@@ -484,7 +475,6 @@ const DetailedProjectView = () => {
           showToast={showToast}
         />
 
-        {/* Mentor Selection Modal */}
         <MentorSelectionModal
           showMentorSelection={showMentorSelection}
           setShowMentorSelection={setShowMentorSelection}
@@ -499,7 +489,6 @@ const DetailedProjectView = () => {
           onToast={showToast}
         />
 
-        {/* Mentor Selection Modal By AI */}
         <MentorAiSelectionModal
           showAIMentorSelection={showAIMentorSelection}
           setShowAIMentorSelection={setShowAIMentorSelection}
@@ -511,7 +500,6 @@ const DetailedProjectView = () => {
           onToast={showToast}
         />
 
-        {/* Mentor Request Modal */}
         <RequestMentorModal
           selectedMentor={selectedMentor}
           setSelectedMentor={setSelectedMentor}

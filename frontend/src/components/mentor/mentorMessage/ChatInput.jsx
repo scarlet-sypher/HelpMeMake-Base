@@ -23,7 +23,6 @@ const ChatInput = ({
         </div>
       ) : (
         <div className="flex items-center space-x-3">
-          {/* Image Upload Button */}
           <input
             type="file"
             accept="image/*"

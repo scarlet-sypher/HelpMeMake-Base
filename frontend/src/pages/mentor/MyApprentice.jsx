@@ -145,7 +145,6 @@ const MyApprentice = () => {
         />
 
         <div className="flex-1 lg:ml-64">
-          {/* Mobile Header */}
           <div className="lg:hidden bg-gradient-to-r from-slate-900/80 to-gray-900/80 backdrop-blur-sm border-b border-white/10 p-4">
             <div className="flex items-center justify-between">
               <button
@@ -159,7 +158,6 @@ const MyApprentice = () => {
             </div>
           </div>
 
-          {/* Error Content */}
           <div className="relative z-10 p-4 lg:p-6 flex items-center justify-center min-h-[80vh]">
             <div className="relative group max-w-md w-full">
               <div className="absolute -inset-0.5 bg-gradient-to-r from-red-500 to-rose-600 rounded-2xl blur opacity-20"></div>
@@ -188,7 +186,6 @@ const MyApprentice = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 flex">
-      {/* Sidebar */}
       <Sidebar
         isOpen={sidebarOpen}
         toggleSidebar={toggleSidebar}
@@ -197,9 +194,7 @@ const MyApprentice = () => {
         userRole="mentor"
       />
 
-      {/* Main Content */}
       <div className="flex-1 lg:ml-64">
-        {/* Mobile Header */}
         <div className="lg:hidden bg-gradient-to-r from-slate-900/80 to-gray-900/80 backdrop-blur-sm border-b border-white/10 p-4">
           <div className="flex items-center justify-between">
             <button
@@ -213,7 +208,6 @@ const MyApprentice = () => {
           </div>
         </div>
 
-        {/* Animated background elements */}
         <div className="fixed inset-0 overflow-hidden pointer-events-none">
           <div className="absolute -top-40 -right-40 w-80 h-80 bg-cyan-500/20 rounded-full blur-3xl animate-pulse"></div>
           <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-teal-500/20 rounded-full blur-3xl animate-pulse"></div>
@@ -221,7 +215,6 @@ const MyApprentice = () => {
         </div>
 
         <div className="relative z-10 p-4 lg:p-6 space-y-6">
-          {/* Header Section */}
           <div className="relative group">
             <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-500 to-teal-600 rounded-2xl blur opacity-20 group-hover:opacity-30 transition duration-500"></div>
             <div className="relative bg-gradient-to-r from-slate-900/50 to-gray-900/50 backdrop-blur-sm rounded-2xl p-6 border border-white/10">
@@ -241,7 +234,6 @@ const MyApprentice = () => {
             </div>
           </div>
 
-          {/* Project Status Banner */}
           {projectData && (
             <div
               className={`relative group ${
@@ -319,23 +311,18 @@ const MyApprentice = () => {
             </div>
           )}
 
-          {/* Main Content Grid */}
           <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-            {/* Left Column - Controls */}
             <div className="xl:col-span-2 space-y-6">
-              {/* Expected End Date Setter */}
               <ExpectedEndDateSetter
                 projectData={projectData}
                 onDataRefresh={handleDataRefresh}
               />
 
-              {/* Project Progress Setter */}
               <ProjectProgressSetter
                 projectData={projectData}
                 onDataRefresh={handleDataRefresh}
               />
 
-              {/* Complete/Cancel Box */}
               <CompleteCancelBox
                 projectData={projectData}
                 apprenticeData={apprenticeData}
@@ -345,15 +332,12 @@ const MyApprentice = () => {
               />
             </div>
 
-            {/* Right Column - Project Info */}
             <div className="space-y-6">
-              {/* User Project Card */}
               <UserProjectCard
                 projectData={projectData}
                 apprenticeData={apprenticeData}
               />
 
-              {/* Quick Stats */}
               {projectData && (
                 <div className="relative group">
                   <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-500 to-pink-600 rounded-2xl blur opacity-20 group-hover:opacity-30 transition duration-500"></div>
@@ -391,7 +375,6 @@ const MyApprentice = () => {
                 </div>
               )}
 
-              {/* Timeline Info */}
               {projectData && (
                 <div className="relative group">
                   <div className="absolute -inset-0.5 bg-gradient-to-r from-orange-500 to-red-600 rounded-2xl blur opacity-20 group-hover:opacity-30 transition duration-500"></div>

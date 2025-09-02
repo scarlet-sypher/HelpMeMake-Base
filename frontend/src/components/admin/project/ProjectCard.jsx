@@ -101,7 +101,6 @@ const ProjectCard = ({ project, onView, onEdit, onDelete }) => {
   return (
     <>
       <div className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200 overflow-hidden">
-        {/* Project Thumbnail */}
         <div className="relative h-48 bg-gradient-to-r from-blue-500 to-purple-600">
           {project.thumbnail ? (
             <img
@@ -129,9 +128,7 @@ const ProjectCard = ({ project, onView, onEdit, onDelete }) => {
           </div>
         </div>
 
-        {/* Project Content */}
         <div className="p-6">
-          {/* Project Header */}
           <div className="mb-4">
             <h3 className="text-xl font-bold text-gray-900 mb-2 hover:text-blue-600 transition-colors">
               {truncateText(project.name, 50)}
@@ -144,7 +141,6 @@ const ProjectCard = ({ project, onView, onEdit, onDelete }) => {
             </p>
           </div>
 
-          {/* Project Details */}
           <div className="space-y-3 mb-4">
             <div className="flex items-center justify-between">
               <span className="text-sm text-gray-500">Category:</span>
@@ -180,9 +176,7 @@ const ProjectCard = ({ project, onView, onEdit, onDelete }) => {
             </div>
           </div>
 
-          {/* Learner & Mentor Info */}
           <div className="space-y-3 mb-4 bg-gray-50 p-3 rounded-lg">
-            {/* Learner */}
             <div className="flex items-center space-x-3">
               <div className="flex items-center justify-center w-8 h-8 bg-blue-100 rounded-full">
                 <GraduationCap size={16} className="text-blue-600" />
@@ -209,7 +203,6 @@ const ProjectCard = ({ project, onView, onEdit, onDelete }) => {
               )}
             </div>
 
-            {/* Mentor */}
             <div className="flex items-center space-x-3">
               <div className="flex items-center justify-center w-8 h-8 bg-purple-100 rounded-full">
                 <User size={16} className="text-purple-600" />
@@ -237,7 +230,6 @@ const ProjectCard = ({ project, onView, onEdit, onDelete }) => {
             </div>
           </div>
 
-          {/* Timestamps */}
           <div className="text-xs text-gray-500 mb-4 space-y-1">
             <div className="flex items-center">
               <Calendar size={12} className="mr-1" />
@@ -251,7 +243,6 @@ const ProjectCard = ({ project, onView, onEdit, onDelete }) => {
             )}
           </div>
 
-          {/* Action Buttons */}
           <div className="flex gap-2">
             <button
               onClick={() => onView(project._id)}
@@ -277,7 +268,6 @@ const ProjectCard = ({ project, onView, onEdit, onDelete }) => {
         </div>
       </div>
 
-      {/* Delete Confirmation Modal */}
       {showDeleteModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl p-6 max-w-md w-full">

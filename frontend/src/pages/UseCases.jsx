@@ -119,9 +119,7 @@ const UseCases = () => {
       ref={sectionRef}
       className="relative min-h-screen py-8 sm:py-12 md:py-16 lg:py-20 xl:py-24 overflow-hidden"
     >
-      {/* Enhanced Responsive Background */}
       <div className="absolute inset-0 bg-gradient-to-l from-slate-900 via-purple-900 to-slate-900">
-        {/* Responsive floating elements */}
         <div className="absolute top-4 sm:top-8 md:top-12 lg:top-20 left-2 sm:left-4 md:left-6 lg:left-10 w-12 sm:w-16 md:w-24 lg:w-32 h-12 sm:h-16 md:h-24 lg:h-32 bg-gradient-to-r from-emerald-400/20 to-blue-400/20 rounded-full blur-lg sm:blur-xl md:blur-2xl lg:blur-3xl animate-pulse"></div>
         <div className="absolute top-16 sm:top-24 md:top-32 lg:top-40 right-4 sm:right-8 md:right-12 lg:right-20 w-16 sm:w-20 md:w-28 lg:w-40 h-16 sm:h-20 md:h-28 lg:h-40 bg-gradient-to-r from-purple-400/20 to-pink-400/20 rounded-full blur-lg sm:blur-xl md:blur-2xl lg:blur-3xl animate-pulse animation-delay-1000"></div>
         <div className="absolute bottom-12 sm:bottom-16 md:bottom-24 lg:bottom-32 left-1/6 sm:left-1/5 md:left-1/4 w-20 sm:w-24 md:w-32 lg:w-36 h-20 sm:h-24 md:h-32 lg:h-36 bg-gradient-to-r from-blue-400/20 to-cyan-400/20 rounded-full blur-lg sm:blur-xl md:blur-2xl lg:blur-3xl animate-pulse animation-delay-500"></div>
@@ -129,7 +127,6 @@ const UseCases = () => {
         <div className="absolute bottom-6 sm:bottom-10 md:bottom-16 lg:bottom-20 right-2 sm:right-4 md:right-6 lg:right-10 w-12 sm:w-16 md:w-20 lg:w-24 h-12 sm:h-16 md:h-20 lg:h-24 bg-gradient-to-r from-pink-400/20 to-purple-400/20 rounded-full blur-lg sm:blur-xl md:blur-2xl lg:blur-3xl animate-pulse animation-delay-2000"></div>
         <div className="absolute top-4 sm:top-6 md:top-8 lg:top-10 left-1/3 sm:left-1/2 w-8 sm:w-12 md:w-16 lg:w-20 h-8 sm:h-12 md:h-16 lg:h-20 bg-gradient-to-r from-cyan-400/20 to-blue-400/20 rounded-full blur-lg sm:blur-xl md:blur-2xl lg:blur-3xl animate-pulse animation-delay-750"></div>
 
-        {/* Enhanced responsive animated particles */}
         <div className="absolute inset-0">
           {[...Array(getParticleCount())].map((_, i) => (
             <div
@@ -147,12 +144,10 @@ const UseCases = () => {
           ))}
         </div>
 
-        {/* Enhanced responsive gradient overlays */}
         <div className="absolute inset-0 bg-gradient-to-t from-slate-900/50 via-transparent to-slate-900/50"></div>
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 xl:px-10">
-        {/* Enhanced Responsive Header */}
         <div
           className={`text-center mb-8 sm:mb-12 md:mb-16 lg:mb-20 xl:mb-24 transform transition-all duration-1200 ease-out ${
             isVisible
@@ -179,7 +174,6 @@ const UseCases = () => {
           </p>
         </div>
 
-        {/* Enhanced Fully Responsive Use Cases Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-7 lg:gap-8 xl:gap-10 mb-8 sm:mb-12 md:mb-16 lg:mb-20 xl:mb-24">
           {useCases.map((useCase, index) => (
             <div
@@ -203,19 +197,16 @@ const UseCases = () => {
                   : "none",
               }}
             >
-              {/* Enhanced gradient glow effect */}
               <div
                 className={`absolute inset-0 bg-gradient-to-br ${useCase.gradient} opacity-0 group-hover:opacity-20 rounded-xl sm:rounded-2xl md:rounded-2xl lg:rounded-3xl transition-all duration-700 blur-lg sm:blur-xl`}
               ></div>
 
-              {/* Enhanced Professional Icon Design */}
               <div className="relative mb-4 sm:mb-6 md:mb-7 lg:mb-8">
                 <div
                   className={`relative w-12 sm:w-14 md:w-16 lg:w-18 xl:w-20 h-12 sm:h-14 md:h-16 lg:h-18 xl:h-20 bg-gradient-to-br ${useCase.iconBg} rounded-lg sm:rounded-xl md:rounded-xl lg:rounded-2xl flex items-center justify-center mx-auto group-hover:scale-110 group-hover:rotate-3 transition-all duration-500 shadow-xl hover:shadow-2xl`}
                 >
                   <useCase.icon className="w-6 sm:w-7 md:w-8 lg:w-9 xl:w-10 h-6 sm:h-7 md:h-8 lg:h-9 xl:h-10 text-white drop-shadow-lg" />
 
-                  {/* Enhanced icon glow and ring effects */}
                   <div
                     className={`absolute inset-0 border-2 border-white/20 rounded-lg sm:rounded-xl md:rounded-xl lg:rounded-2xl group-hover:border-white/50 transition-all duration-500`}
                   ></div>
@@ -225,7 +216,6 @@ const UseCases = () => {
                 </div>
               </div>
 
-              {/* Enhanced Responsive Content */}
               <div className="text-center relative z-10">
                 <h3 className="text-lg sm:text-xl md:text-2xl lg:text-2xl xl:text-3xl font-bold text-white mb-1 sm:mb-2 md:mb-3">
                   {useCase.title}
@@ -239,7 +229,6 @@ const UseCases = () => {
                   {useCase.description}
                 </p>
 
-                {/* Enhanced Responsive Features */}
                 <div className="space-y-2 sm:space-y-3 md:space-y-4">
                   {useCase.features.map((feature, featureIndex) => (
                     <div
@@ -258,7 +247,6 @@ const UseCases = () => {
                 </div>
               </div>
 
-              {/* Enhanced responsive decorative elements */}
               <div
                 className={`absolute -top-2 sm:-top-3 md:-top-4 -right-2 sm:-right-3 md:-right-4 w-8 sm:w-12 md:w-16 lg:w-20 h-8 sm:h-12 md:h-16 lg:h-20 bg-gradient-to-br ${useCase.gradient} opacity-10 rounded-full blur-lg sm:blur-xl md:blur-2xl group-hover:opacity-25 group-hover:scale-125 transition-all duration-700`}
               ></div>
@@ -269,7 +257,6 @@ const UseCases = () => {
           ))}
         </div>
 
-        {/* Enhanced Responsive Footer Quote */}
         <div
           ref={quoteRef}
           className={`text-center transform transition-all duration-1200 ease-out ${
@@ -279,7 +266,6 @@ const UseCases = () => {
           }`}
         >
           <div className="relative bg-gradient-to-r from-amber-900/20 via-yellow-900/10 to-amber-900/20 backdrop-blur-xl rounded-xl sm:rounded-2xl md:rounded-2xl lg:rounded-3xl p-4 sm:p-6 md:p-7 lg:p-8 xl:p-10 border border-amber-500/20 max-w-sm sm:max-w-lg md:max-w-xl lg:max-w-2xl xl:max-w-3xl mx-auto shadow-xl hover:shadow-2xl hover:border-amber-400/40 transition-all duration-700 group">
-            {/* Enhanced responsive accent for quote */}
             <div className="absolute -top-3 sm:-top-4 md:-top-5 lg:-top-6 left-1/2 transform -translate-x-1/2 w-6 sm:w-8 md:w-9 lg:w-10 h-6 sm:h-8 md:h-9 lg:h-10 bg-gradient-to-r from-amber-400 via-yellow-500 to-orange-400 rounded-full flex items-center justify-center shadow-xl group-hover:scale-110 group-hover:rotate-6 transition-all duration-500">
               <Code className="w-3 sm:w-4 md:w-4.5 lg:w-5 h-3 sm:h-4 md:h-4.5 lg:h-5 text-white drop-shadow-lg" />
             </div>
@@ -288,13 +274,11 @@ const UseCases = () => {
               "No matter your level — we've got you covered."
             </blockquote>
 
-            {/* Enhanced responsive decorative sparkles */}
             <div className="absolute top-2 sm:top-3 md:top-4 left-3 sm:left-4 md:left-6 lg:left-8 w-1 sm:w-1.5 h-1 sm:h-1.5 bg-amber-400 rounded-full opacity-70 animate-pulse"></div>
             <div className="absolute top-4 sm:top-6 md:top-8 right-4 sm:right-6 md:right-8 lg:right-12 w-1 sm:w-1.5 h-1 sm:h-1.5 bg-yellow-400 rounded-full opacity-70 animate-pulse animation-delay-500"></div>
             <div className="absolute bottom-3 sm:bottom-4 md:bottom-6 left-6 sm:left-8 md:left-10 lg:left-16 w-1 sm:w-1.5 h-1 sm:h-1.5 bg-orange-400 rounded-full opacity-70 animate-pulse animation-delay-1000"></div>
             <div className="absolute bottom-2 sm:bottom-3 md:bottom-4 right-3 sm:right-4 md:right-6 w-1 sm:w-1.5 h-1 sm:h-1.5 bg-amber-300 rounded-full opacity-70 animate-pulse animation-delay-1500"></div>
 
-            {/* Enhanced quote background glow */}
             <div className="absolute inset-0 bg-gradient-to-r from-amber-500/5 via-yellow-500/5 to-orange-500/5 rounded-xl sm:rounded-2xl md:rounded-2xl lg:rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
           </div>
         </div>

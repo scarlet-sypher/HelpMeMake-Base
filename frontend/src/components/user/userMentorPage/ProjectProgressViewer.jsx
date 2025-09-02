@@ -86,7 +86,6 @@ const ProjectProgressViewer = ({ projectData }) => {
           </div>
         </div>
 
-        {/* Main Progress Bar */}
         <div className="mb-6">
           <div className="flex justify-between items-center mb-3">
             <span className="text-sm font-medium text-gray-300">
@@ -109,7 +108,6 @@ const ProjectProgressViewer = ({ projectData }) => {
               </div>
             </div>
 
-            {/* Progress Dots for History */}
             <div className="absolute -top-2 left-0 w-full h-8">
               {progressHistory.map((progress, index) => {
                 const position = `${progress.percentage}%`;
@@ -141,7 +139,6 @@ const ProjectProgressViewer = ({ projectData }) => {
           </div>
         </div>
 
-        {/* Progress Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           <div className="bg-white/5 rounded-2xl p-4 border border-white/10">
             <div className="flex items-center justify-between mb-2">
@@ -208,7 +205,6 @@ const ProjectProgressViewer = ({ projectData }) => {
           </div>
         </div>
 
-        {/* Progress History Timeline */}
         {loading ? (
           <div className="flex items-center justify-center py-8">
             <div className="w-6 h-6 border-2 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
@@ -273,7 +269,6 @@ const ProjectProgressViewer = ({ projectData }) => {
         )}
       </div>
 
-      {/* Note Modal */}
       {showNoteModal && selectedProgress && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="bg-gradient-to-br from-slate-900 to-blue-900 rounded-3xl shadow-2xl border border-white/20 max-w-lg w-full">

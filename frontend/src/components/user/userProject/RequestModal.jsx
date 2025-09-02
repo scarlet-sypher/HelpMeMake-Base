@@ -103,7 +103,6 @@ const RequestMentorModal = ({
             </button>
           </div>
 
-          {/* Mentor Summary */}
           <div className="bg-white/10 rounded-2xl p-4 mb-6 border border-white/20">
             <div className="flex items-center space-x-4">
               <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
@@ -144,7 +143,6 @@ const RequestMentorModal = ({
             </div>
           </div>
 
-          {/* Project Info */}
           <div className="bg-white/5 rounded-xl p-3 mb-4">
             <h4 className="text-white font-semibold text-sm mb-1">
               For Project:
@@ -153,7 +151,6 @@ const RequestMentorModal = ({
             <p className="text-gray-300 text-sm">{project.shortDescription}</p>
           </div>
 
-          {/* Request Form */}
           <div className="space-y-4">
             <div>
               <label className="block text-white font-semibold mb-2">
@@ -181,7 +178,6 @@ const RequestMentorModal = ({
               </div>
             </div>
 
-            {/* Error Message */}
             {error && (
               <div className="bg-red-500/20 border border-red-500/30 rounded-xl p-3 flex items-center space-x-2">
                 <AlertCircle className="text-red-400 flex-shrink-0" size={16} />

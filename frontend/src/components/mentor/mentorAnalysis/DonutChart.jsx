@@ -80,7 +80,6 @@ const DonutChart = ({ data, title = "Project Distribution" }) => {
 
   return (
     <div className="bg-gradient-to-br from-purple-900/20 to-pink-900/20 backdrop-blur-sm rounded-3xl p-4 sm:p-6 md:p-8 border border-purple-500/20 hover:border-purple-400/30 transition-all duration-300">
-      {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 sm:mb-8 gap-4">
         <div className="flex items-center space-x-3">
           <div className="p-2 sm:p-3 bg-gradient-to-r from-purple-500 to-pink-600 rounded-2xl shadow-lg">
@@ -101,7 +100,6 @@ const DonutChart = ({ data, title = "Project Distribution" }) => {
         </div>
       </div>
 
-      {/* Chart Container */}
       <div className="relative">
         <div className="h-56 sm:h-64 md:h-72 lg:h-80 w-full">
           <ResponsiveContainer width="100%" height="100%">
@@ -134,7 +132,6 @@ const DonutChart = ({ data, title = "Project Distribution" }) => {
           </ResponsiveContainer>
         </div>
 
-        {/* Center Content */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
           <div className="text-center">
             <div className="text-xl sm:text-2xl md:text-4xl font-bold text-white mb-1">
@@ -147,7 +144,6 @@ const DonutChart = ({ data, title = "Project Distribution" }) => {
         </div>
       </div>
 
-      {/* Legend */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6 sm:mt-8">
         {animatedData.map((item, idx) => {
           const percentage =
@@ -184,7 +180,6 @@ const DonutChart = ({ data, title = "Project Distribution" }) => {
         })}
       </div>
 
-      {/* Progress Bars */}
       <div className="mt-4 sm:mt-6 space-y-2 sm:space-y-3">
         {animatedData.map((item, idx) => {
           const percentage = total > 0 ? (item.value / total) * 100 : 0;

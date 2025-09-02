@@ -50,12 +50,10 @@ const RoomListSidebar = ({
         showRoomList ? "flex" : "hidden"
       } md:flex flex-col ${getSidebarWidth()} bg-gradient-to-b from-slate-900/95 via-slate-900/90 to-gray-900/95 backdrop-blur-xl border-r border-slate-700/50 transition-all duration-500 shadow-2xl relative overflow-hidden`}
     >
-      {/* Ambient Background Effects */}
       <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 via-transparent to-blue-500/5 pointer-events-none" />
       <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-radial from-cyan-400/10 to-transparent rounded-full blur-xl" />
       <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-radial from-blue-400/10 to-transparent rounded-full blur-xl" />
 
-      {/* Mobile Header */}
       <div className="md:hidden relative z-10 bg-gradient-to-r from-slate-900/95 to-gray-900/95 backdrop-blur-sm border-b border-slate-700/50 p-4 sticky top-0">
         <div className="flex items-center justify-between">
           <button
@@ -85,7 +83,6 @@ const RoomListSidebar = ({
         </div>
       </div>
 
-      {/* Desktop Collapse Toggle */}
       {setRoomListCollapsed && (
         <div className="hidden lg:flex justify-end p-3 border-b border-slate-700/30 relative z-10">
           <button
@@ -111,7 +108,6 @@ const RoomListSidebar = ({
         </div>
       )}
 
-      {/* Header - Hidden when collapsed on large screens */}
       <div
         className={`p-4 border-b border-slate-700/30 relative z-10 ${
           roomListCollapsed ? "hidden lg:hidden" : "block"
@@ -145,7 +141,6 @@ const RoomListSidebar = ({
           </button>
         </div>
 
-        {/* Search */}
         <div className="relative group">
           <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 to-blue-500/10 rounded-2xl opacity-0 group-focus-within:opacity-100 transition-opacity duration-300" />
           <Search
@@ -163,7 +158,6 @@ const RoomListSidebar = ({
         </div>
       </div>
 
-      {/* Collapsed State - Show only icons */}
       {roomListCollapsed && (
         <div className="hidden lg:flex flex-col items-center py-6 space-y-4 relative z-10">
           <button
@@ -184,7 +178,6 @@ const RoomListSidebar = ({
             <div className="absolute inset-0 bg-gradient-to-r from-cyan-400/10 to-blue-400/10 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
           </button>
 
-          {/* Show first few room avatars */}
           {filteredRooms.slice(0, 4).map((room, index) => (
             <button
               key={room._id}
@@ -234,7 +227,6 @@ const RoomListSidebar = ({
         </div>
       )}
 
-      {/* Room List - Hidden when collapsed */}
       <div
         className={`flex-1 overflow-y-auto custom-scrollbar relative z-10 ${
           roomListCollapsed ? "hidden lg:hidden" : "block"
@@ -277,7 +269,6 @@ const RoomListSidebar = ({
                 } border border-transparent hover:border-slate-600/30`}
                 style={{ animationDelay: `${index * 50}ms` }}
               >
-                {/* Ambient glow effect for selected room */}
                 {selectedRoom?._id === room._id && (
                   <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/5 via-blue-500/5 to-cyan-500/5 rounded-2xl" />
                 )}
@@ -293,7 +284,6 @@ const RoomListSidebar = ({
                       <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-transparent to-white/10 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                     </div>
 
-                    {/* Status indicators */}
                     <div
                       className={`absolute -top-1 -left-1 w-4 h-4 rounded-full border-2 border-slate-800 shadow-lg ${
                         room.status === "open"
@@ -310,7 +300,6 @@ const RoomListSidebar = ({
                   </div>
 
                   <div className="flex-1 min-w-0">
-                    {/* Header with name and time */}
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center space-x-2">
                         <h3 className="text-white font-bold truncate text-sm group-hover:text-cyan-100 transition-colors duration-300">
@@ -326,7 +315,6 @@ const RoomListSidebar = ({
                       )}
                     </div>
 
-                    {/* Message preview and unread count */}
                     <div className="flex items-center justify-between mb-2">
                       <p className="text-sm text-slate-300 truncate leading-relaxed flex-1 group-hover:text-slate-200 transition-colors duration-300">
                         {room.lastMessage?.content || room.roomName || (
@@ -344,7 +332,6 @@ const RoomListSidebar = ({
                       )}
                     </div>
 
-                    {/* Status and project info */}
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-2">
                         <span
@@ -370,7 +357,6 @@ const RoomListSidebar = ({
                   </div>
                 </div>
 
-                {/* Hover effect overlay */}
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-cyan-500/5 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
               </div>
             ))}
@@ -378,7 +364,6 @@ const RoomListSidebar = ({
         )}
       </div>
 
-      {/* Bottom indicator when collapsed */}
       {roomListCollapsed && (
         <div className="hidden lg:flex flex-col items-center py-4 border-t border-slate-700/30 relative z-10">
           <div className="flex items-center justify-center w-8 h-8 rounded-2xl bg-gradient-to-r from-slate-800/60 to-slate-700/60 border border-slate-600/30 mb-2">

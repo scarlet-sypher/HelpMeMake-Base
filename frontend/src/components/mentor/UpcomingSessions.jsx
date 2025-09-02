@@ -76,28 +76,23 @@ const SessionCard = ({ session }) => {
 
   return (
     <div className="group relative bg-gradient-to-r from-white/5 to-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/10 hover:border-white/20 transition-all duration-300 hover:shadow-2xl hover:shadow-cyan-500/10 hover:scale-[1.02] hover:bg-white/15">
-      {/* Subtle glow effect */}
       <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-cyan-500/5 to-teal-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
 
-      {/* Content */}
       <div className="relative z-10">
         <div className="flex items-start justify-between mb-3">
-          {/* Left side - Student info */}
           <div className="flex items-start space-x-3 flex-1">
-            {/* Student image with glow */}
             <div className="relative flex-shrink-0">
               <img
                 src={getAvatarUrl(learner?.avatar)}
                 alt={learner?.name || "Learner"}
                 className="w-12 h-12 rounded-full object-cover border-2 border-white/20 shadow-lg group-hover:border-white/40 transition-all duration-300"
               />
-              {/* Online indicator */}
+
               <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full border-2 border-white/50 animate-pulse"></div>
-              {/* Subtle glow around image */}
+
               <div className="absolute inset-0 rounded-full bg-gradient-to-r from-cyan-400/20 to-teal-400/20 blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             </div>
 
-            {/* Session details */}
             <div className="flex-1 min-w-0">
               <div className="flex items-center justify-between mb-1">
                 <div className="flex items-center space-x-2">
@@ -115,7 +110,6 @@ const SessionCard = ({ session }) => {
                 {sessionTitle}
               </p>
 
-              {/* Session metadata */}
               <div className="flex items-center space-x-4 text-xs">
                 <div className="flex items-center space-x-1 text-cyan-300 group-hover:text-cyan-200 transition-colors duration-200">
                   <Calendar size={12} />
@@ -133,7 +127,6 @@ const SessionCard = ({ session }) => {
             </div>
           </div>
 
-          {/* Right side - Status */}
           <span
             className={`px-3 py-1 rounded-full text-xs font-medium border ${getStatusStyles(
               session.status
@@ -143,7 +136,6 @@ const SessionCard = ({ session }) => {
           </span>
         </div>
 
-        {/* Action buttons */}
         <div className="flex items-center justify-between pt-3 border-t border-white/10">
           <div className="flex items-center space-x-2">
             <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
@@ -192,7 +184,6 @@ const SessionCard = ({ session }) => {
         </div>
       </div>
 
-      {/* Animated border gradient */}
       <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-cyan-500/20 via-teal-500/20 to-purple-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10 blur-sm"></div>
     </div>
   );
@@ -305,7 +296,6 @@ const UpcomingSessions = () => {
   if (!hasActiveProject) {
     return (
       <div className="bg-white/10 backdrop-blur-sm rounded-3xl shadow-2xl p-6 border border-white/20 relative overflow-hidden">
-        {/* Background decoration */}
         <div className="absolute -top-10 -right-10 w-20 h-20 bg-cyan-400/20 rounded-full blur-xl animate-pulse"></div>
         <div className="absolute -bottom-10 -left-10 w-16 h-16 bg-teal-400/20 rounded-full blur-xl animate-pulse"></div>
 
@@ -342,7 +332,6 @@ const UpcomingSessions = () => {
   if (upcomingSessions.length === 0) {
     return (
       <div className="bg-white/10 backdrop-blur-sm rounded-3xl shadow-2xl p-6 border border-white/20 relative overflow-hidden">
-        {/* Background decoration */}
         <div className="absolute -top-10 -right-10 w-20 h-20 bg-cyan-400/20 rounded-full blur-xl animate-pulse"></div>
         <div className="absolute -bottom-10 -left-10 w-16 h-16 bg-teal-400/20 rounded-full blur-xl animate-pulse"></div>
 
@@ -378,7 +367,6 @@ const UpcomingSessions = () => {
 
   return (
     <div className="bg-white/10 backdrop-blur-sm rounded-3xl shadow-2xl p-6 border border-white/20 relative overflow-hidden">
-      {/* Background decoration */}
       <div className="absolute -top-10 -right-10 w-20 h-20 bg-cyan-400/20 rounded-full blur-xl animate-pulse"></div>
       <div className="absolute -bottom-10 -left-10 w-16 h-16 bg-teal-400/20 rounded-full blur-xl animate-pulse"></div>
 

@@ -149,9 +149,7 @@ const FinalCTA = () => {
 
   return (
     <section className="relative min-h-screen py-8 sm:py-12 md:py-16 lg:py-20 overflow-hidden">
-      {/* Enhanced Background with Mouse Tracking */}
       <div className="absolute inset-0 bg-gradient-to-l from-slate-900 via-purple-900 to-slate-900">
-        {/* Enhanced floating background elements - responsive sizing */}
         <div className="absolute top-10 sm:top-20 left-4 sm:left-10 w-16 h-16 sm:w-32 sm:h-32 bg-gradient-to-r from-emerald-400/20 to-blue-400/20 rounded-full blur-2xl sm:blur-3xl animate-pulse-slow"></div>
         <div className="absolute top-20 sm:top-40 right-8 sm:right-20 w-20 h-20 sm:w-40 sm:h-40 bg-gradient-to-r from-purple-400/20 to-pink-400/20 rounded-full blur-2xl sm:blur-3xl animate-pulse-slow animation-delay-1000"></div>
         <div className="absolute bottom-16 sm:bottom-32 left-1/4 w-18 h-18 sm:w-36 sm:h-36 bg-gradient-to-r from-blue-400/20 to-cyan-400/20 rounded-full blur-2xl sm:blur-3xl animate-pulse-slow animation-delay-500"></div>
@@ -159,12 +157,10 @@ const FinalCTA = () => {
         <div className="absolute bottom-10 sm:bottom-20 right-4 sm:right-10 w-12 h-12 sm:w-24 sm:h-24 bg-gradient-to-r from-pink-400/20 to-purple-400/20 rounded-full blur-2xl sm:blur-3xl animate-pulse-slow animation-delay-2000"></div>
         <div className="absolute top-5 sm:top-10 left-1/2 w-10 h-10 sm:w-20 sm:h-20 bg-gradient-to-r from-cyan-400/20 to-blue-400/20 rounded-full blur-2xl sm:blur-3xl animate-pulse-slow animation-delay-750"></div>
 
-        {/* Animated geometric shapes - responsive sizing */}
         <div className="absolute top-10 sm:top-20 right-4 sm:right-10 w-8 h-8 sm:w-16 sm:h-16 border-2 border-emerald-400/20 rotate-45 animate-spin-slow"></div>
         <div className="absolute bottom-20 sm:bottom-40 left-6 sm:left-16 w-6 h-6 sm:w-12 sm:h-12 border-2 border-blue-400/20 rounded-full animate-ping animation-delay-1000"></div>
         <div className="absolute top-1/2 left-8 sm:left-20 w-4 h-4 sm:w-8 sm:h-8 bg-gradient-to-r from-purple-400/30 to-pink-400/30 transform rotate-45 animate-pulse animation-delay-2000"></div>
 
-        {/* Floating animated icons - responsive sizing */}
         {floatingElements.map((element, index) => (
           <div
             key={index}
@@ -175,12 +171,10 @@ const FinalCTA = () => {
           </div>
         ))}
 
-        {/* Enhanced gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-slate-900/50 via-transparent to-slate-900/50"></div>
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
-        {/* Main CTA Section */}
         <div
           id="hero-section"
           className={`text-center mb-8 sm:mb-12 md:mb-16 lg:mb-20 transform transition-all duration-1000 ${
@@ -196,7 +190,7 @@ const FinalCTA = () => {
                 Fuel Your Dev Journey
               </span>
             </div>
-            {/* Animated background text - responsive sizing */}
+
             <div className="absolute inset-0 text-3xl sm:text-4xl md:text-6xl lg:text-7xl xl:text-8xl 2xl:text-9xl font-black text-white/5 select-none animate-pulse-slow flex items-center justify-center">
               BUILD
             </div>
@@ -213,7 +207,6 @@ const FinalCTA = () => {
             your ideas into reality with personalized mentorship.
           </p>
 
-          {/* Enhanced CTA Button */}
           <div
             id="cta-section"
             className={`mb-4 sm:mb-6 md:mb-8 transform transition-all duration-800 ${
@@ -225,21 +218,17 @@ const FinalCTA = () => {
           >
             <div className="relative inline-block">
               <button className="relative group w-full sm:w-auto inline-flex items-center justify-center px-4 sm:px-6 md:px-8 py-3 sm:py-4 text-sm sm:text-base md:text-lg font-semibold text-white bg-gradient-to-r from-violet-500 to-fuchsia-500 rounded-2xl shadow-2xl hover:shadow-violet-500/25 transition-all duration-300 hover:scale-105 hover:-translate-y-1 overflow-hidden min-w-[200px] sm:min-w-[250px] md:min-w-[300px]">
-                {/* Animated background */}
                 <div className="absolute inset-0 bg-gradient-to-r from-violet-400 to-fuchsia-400 opacity-0 group-hover:opacity-20 transition-opacity duration-300 rounded-2xl"></div>
 
-                {/* Sparkle icon with enhanced animation */}
                 <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 mr-2 sm:mr-3 group-hover:rotate-12 transition-transform duration-300 animate-pulse" />
 
                 <span className="relative z-10">Find My Mentor</span>
 
-                {/* Enhanced shine effect */}
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 transform -skew-x-12 group-hover:translate-x-full"></div>
               </button>
             </div>
           </div>
 
-          {/* Animated arrow with enhanced styling - updated colors */}
           <div
             className={`mb-6 sm:mb-8 md:mb-12 transform transition-all duration-800 ${
               ctaVisible && scrollAnimations.cta
@@ -259,7 +248,6 @@ const FinalCTA = () => {
           </div>
         </div>
 
-        {/* Enhanced Trust Features */}
         <div
           id="trust-section"
           className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6 mb-8 sm:mb-12 md:mb-16 transform transition-all duration-1000 ${
@@ -275,12 +263,10 @@ const FinalCTA = () => {
               className={`group relative bg-gradient-to-br ${feature.cardBg} backdrop-blur-xl rounded-2xl p-3 sm:p-4 md:p-6 border ${feature.cardBorder} ${feature.cardHoverBorder} text-center transition-all duration-300 hover:-translate-y-2 shadow-xl hover:shadow-2xl animate-fade-in-up`}
               style={{ animationDelay: `${index * 200}ms` }}
             >
-              {/* Animated background glow */}
               <div
                 className={`absolute inset-0 bg-gradient-to-r ${feature.color} opacity-0 group-hover:opacity-10 transition-opacity duration-300 rounded-2xl`}
               ></div>
 
-              {/* Enhanced icon with pulse ring */}
               <div className="relative mb-3 sm:mb-4 flex justify-center">
                 <div
                   className={`absolute inset-0 bg-gradient-to-r ${feature.iconBg} rounded-xl blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300`}
@@ -294,7 +280,6 @@ const FinalCTA = () => {
                 </div>
               </div>
 
-              {/* Content */}
               <h3
                 className={`text-white font-semibold mb-2 text-sm sm:text-base ${feature.titleColor} transition-colors duration-300`}
               >
@@ -304,7 +289,6 @@ const FinalCTA = () => {
                 {feature.description}
               </p>
 
-              {/* Animated corner decorations */}
               <div
                 className={`absolute top-2 right-2 w-2 h-2 bg-gradient-to-r ${feature.iconBg} rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 animate-pulse`}
               ></div>
@@ -315,7 +299,6 @@ const FinalCTA = () => {
           ))}
         </div>
 
-        {/* Enhanced Testimonial */}
         <div
           id="testimonial-section"
           className={`transform transition-all duration-1000 ${
@@ -326,10 +309,8 @@ const FinalCTA = () => {
           style={{ transitionDelay: "1000ms" }}
         >
           <div className="relative bg-gradient-to-br from-indigo-900/20 to-purple-900/15 backdrop-blur-xl rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 border border-indigo-400/30 shadow-2xl max-w-5xl mx-auto group hover:border-indigo-400/50 transition-all duration-300">
-            {/* Animated background */}
             <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/8 to-purple-500/8 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl sm:rounded-3xl"></div>
 
-            {/* Enhanced quote bubble */}
             <div className="absolute -top-4 sm:-top-6 left-1/2 transform -translate-x-1/2">
               <div className="relative">
                 <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full blur-md opacity-50"></div>
@@ -339,7 +320,6 @@ const FinalCTA = () => {
               </div>
             </div>
 
-            {/* Quote content */}
             <div className="relative text-center pt-2 sm:pt-4">
               <blockquote className="text-sm sm:text-base md:text-lg lg:text-xl font-medium text-white/90 italic mb-4 sm:mb-6 leading-relaxed px-2">
                 "HelpMeMake changed how I learn and build. It's like having a
@@ -382,7 +362,6 @@ const FinalCTA = () => {
               </div>
             </div>
 
-            {/* Enhanced sparkle decorations with different colors */}
             <div className="absolute top-3 sm:top-4 left-3 sm:left-4 w-1.5 h-1.5 sm:w-2 sm:h-2 bg-rose-400 rounded-full opacity-60 animate-pulse"></div>
             <div className="absolute top-4 sm:top-8 right-4 sm:right-8 w-1 h-1 bg-amber-400 rounded-full opacity-60 animate-pulse animation-delay-500"></div>
             <div className="absolute bottom-4 sm:bottom-6 left-4 sm:left-8 w-1 h-1 bg-emerald-400 rounded-full opacity-60 animate-pulse animation-delay-1000"></div>
@@ -391,7 +370,6 @@ const FinalCTA = () => {
           </div>
         </div>
 
-        {/* Additional animated elements for empty space - responsive sizing */}
         <div className="absolute top-5 sm:top-10 left-4 sm:left-10 w-2 h-2 sm:w-3 sm:h-3 bg-gradient-to-r from-emerald-400/30 to-blue-400/30 rounded-full animate-ping animation-delay-1000"></div>
         <div className="absolute bottom-10 sm:bottom-20 right-8 sm:right-20 w-1.5 h-1.5 sm:w-2 sm:h-2 bg-gradient-to-r from-purple-400/30 to-pink-400/30 rounded-full animate-ping animation-delay-2000"></div>
       </div>

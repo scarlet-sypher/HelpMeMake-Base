@@ -41,7 +41,6 @@ const LearnerProjectProfile = ({ activeProject }) => {
 
   return (
     <div className="bg-gradient-to-r from-white/10 to-white/5 backdrop-blur-sm rounded-3xl shadow-2xl p-4 sm:p-6 border border-white/20 relative overflow-hidden mx-2 sm:mx-0">
-      {/* Background decoration */}
       <div className="absolute -top-10 -right-10 w-32 h-32 bg-cyan-400/10 rounded-full blur-xl"></div>
       <div className="absolute -bottom-10 -left-10 w-24 h-24 bg-teal-400/10 rounded-full blur-xl"></div>
 
@@ -61,7 +60,6 @@ const LearnerProjectProfile = ({ activeProject }) => {
             </div>
           </div>
 
-          {/* Project Status Badge */}
           <div className="flex items-center space-x-2 px-3 sm:px-4 py-2 bg-emerald-500/20 text-emerald-300 rounded-xl border border-emerald-500/30 self-start lg:self-auto">
             <CheckCircle size={14} className="sm:w-4 sm:h-4" />
             <span className="font-medium text-sm sm:text-base capitalize">
@@ -71,7 +69,6 @@ const LearnerProjectProfile = ({ activeProject }) => {
         </div>
 
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6">
-          {/* Learner Profile */}
           <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-4 sm:p-6 border border-white/10">
             <div className="flex flex-col sm:flex-row items-center sm:items-start space-y-3 sm:space-y-0 sm:space-x-4 mb-4">
               <div className="relative flex-shrink-0">
@@ -106,7 +103,6 @@ const LearnerProjectProfile = ({ activeProject }) => {
             </div>
           </div>
 
-          {/* Project Details */}
           <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-4 sm:p-6 border border-white/10">
             <div className="flex items-start space-x-3 mb-4">
               <div className="p-2 bg-teal-500/20 rounded-lg flex-shrink-0">
@@ -123,7 +119,6 @@ const LearnerProjectProfile = ({ activeProject }) => {
             </div>
 
             <div className="space-y-3">
-              {/* Progress Bar */}
               <div>
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-xs sm:text-sm text-gray-300">
@@ -141,7 +136,6 @@ const LearnerProjectProfile = ({ activeProject }) => {
                 </div>
               </div>
 
-              {/* Project Stats */}
               <div className="grid grid-cols-2 gap-4">
                 <div className="text-center">
                   <div className="text-lg sm:text-2xl font-bold text-cyan-300">
@@ -168,7 +162,6 @@ const LearnerProjectProfile = ({ activeProject }) => {
           </div>
         </div>
 
-        {/* Project Timeline */}
         <div className="mt-4 sm:mt-6 flex flex-col lg:flex-row items-start lg:items-center justify-between space-y-3 lg:space-y-0 text-xs sm:text-sm">
           <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-6">
             <div className="flex items-center space-x-2">
@@ -185,7 +178,6 @@ const LearnerProjectProfile = ({ activeProject }) => {
             </div>
           </div>
 
-          {/* Quick Actions */}
           <div className="flex items-center space-x-2 w-full sm:w-auto">
             <button className="flex-1 sm:flex-initial px-3 py-1 text-xs bg-white/10 hover:bg-white/20 text-cyan-300 rounded-lg transition-colors">
               View Project

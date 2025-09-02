@@ -292,7 +292,6 @@ const SessionCard = ({
         isUpcoming() ? "ring-2 ring-cyan-500/50" : ""
       }`}
     >
-      {/* Upcoming session indicator */}
       {isUpcoming() && (
         <div className="absolute -top-2 -right-2 px-2 sm:px-3 py-1 bg-gradient-to-r from-cyan-500 to-teal-500 text-white text-xs font-bold rounded-full animate-pulse">
           <span className="hidden xs:inline">Starting Soon!</span>
@@ -300,19 +299,15 @@ const SessionCard = ({
         </div>
       )}
 
-      {/* Content */}
       <div className="relative z-10">
-        {/* Header */}
         <div className="flex items-start justify-between mb-4">
           <div className="flex items-start space-x-3 sm:space-x-4 flex-1 min-w-0">
-            {/* Learner Avatar */}
             <img
               src={getAvatarUrl(learner?.avatar)}
               alt={learner?.name || "Learner"}
               className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover border-2 border-white/20 shadow-lg flex-shrink-0"
             />
 
-            {/* Session Info */}
             <div className="flex-1 min-w-0">
               <h3 className="text-base sm:text-lg font-bold text-white mb-1 line-clamp-1">
                 {session.title}
@@ -337,7 +332,6 @@ const SessionCard = ({
             </div>
           </div>
 
-          {/* Status Badge */}
           <div
             className={`flex items-center space-x-1 sm:space-x-2 px-2 sm:px-3 py-1 rounded-full text-xs font-medium border backdrop-blur-sm flex-shrink-0 ml-2 ${getStatusStyle(
               session.status
@@ -345,21 +339,18 @@ const SessionCard = ({
           >
             {getStatusIcon(session.status)}
 
-            {/* Status text — visible on all screen sizes, truncated if too long */}
             <span className="capitalize truncate max-w-[100px] sm:max-w-[150px] md:max-w-[200px]">
               {session.status}
             </span>
           </div>
         </div>
 
-        {/* Description */}
         {session.description && (
           <p className="text-gray-300 text-sm mb-4 line-clamp-2">
             {session.description}
           </p>
         )}
 
-        {/* Session Details */}
         <div className="grid grid-cols-1 xs:grid-cols-2 gap-3 sm:gap-4 mb-4 p-3 sm:p-4 bg-white/5 rounded-xl border border-white/10">
           <div className="flex items-center space-x-2">
             <Calendar className="text-cyan-400 flex-shrink-0" size={14} />
@@ -381,7 +372,6 @@ const SessionCard = ({
           </div>
         </div>
 
-        {/* Prerequisites */}
         {session.prerequisites && (
           <div className="mb-4 p-3 bg-amber-500/10 rounded-lg border border-amber-500/20">
             <div className="text-amber-300 text-sm font-medium mb-1">
@@ -393,10 +383,8 @@ const SessionCard = ({
           </div>
         )}
 
-        {/* Action Buttons */}
         <div className="flex flex-col xs:flex-row items-start xs:items-center justify-between space-y-3 xs:space-y-0 pt-4 border-t border-white/10">
           <div className="flex items-center space-x-2 w-full xs:w-auto">
-            {/* Join Button */}
             {shouldShowJoinButton() && (
               <div className="relative group flex-1 xs:flex-initial">
                 <button
@@ -412,7 +400,6 @@ const SessionCard = ({
                   <span>Join</span>
                 </button>
 
-                {/* Custom Tooltip */}
                 {(actionLoading || !canJoinSession()) && (
                   <span className="absolute -top-9 left-1/2 -translate-x-1/2 px-3 py-1 text-xs text-white bg-gray-800 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap shadow-lg">
                     {actionLoading
@@ -423,7 +410,6 @@ const SessionCard = ({
               </div>
             )}
 
-            {/* Recording Button */}
             {session.status === "completed" && session.recordingLink && (
               <button
                 onClick={() => window.open(session.recordingLink, "_blank")}
@@ -434,7 +420,6 @@ const SessionCard = ({
               </button>
             )}
 
-            {/* Add Recording Button */}
             {session.status === "completed" && !session.recordingLink && (
               <button
                 onClick={() => setShowRecordingModal(true)}
@@ -445,7 +430,6 @@ const SessionCard = ({
               </button>
             )}
 
-            {/* Update Recording Button */}
             {session.status === "completed" && session.recordingLink && (
               <button
                 onClick={() => {
@@ -459,7 +443,6 @@ const SessionCard = ({
               </button>
             )}
 
-            {/* Mentor Reason Button */}
             {needsMentorReason() && (
               <button
                 onClick={() => setShowMentorReasonModal(true)}
@@ -471,10 +454,8 @@ const SessionCard = ({
             )}
           </div>
 
-          {/* Action Menu */}
           {!isPastOnly && (
             <div className="flex items-center space-x-2 w-full xs:w-auto justify-end">
-              {/* Edit Button - Only for scheduled sessions */}
               {session.status === "scheduled" && (
                 <button
                   onClick={() => onEdit(session)}
@@ -485,7 +466,6 @@ const SessionCard = ({
                 </button>
               )}
 
-              {/* Reschedule Button */}
               {(session.status === "scheduled" ||
                 session.status === "expired") && (
                 <button
@@ -497,7 +477,6 @@ const SessionCard = ({
                 </button>
               )}
 
-              {/* Cancel Button - Not available for ongoing sessions */}
               {(session.status === "scheduled" ||
                 session.status === "rescheduled") && (
                 <button
@@ -509,7 +488,6 @@ const SessionCard = ({
                 </button>
               )}
 
-              {/* Delete Button */}
               {(session.status === "cancelled" ||
                 session.status === "expired") && (
                 <button
@@ -525,7 +503,6 @@ const SessionCard = ({
           )}
         </div>
 
-        {/* Absence Reasons */}
         {session.status === "expired" && (
           <div className="mt-4 p-3 bg-red-500/10 rounded-lg border border-red-500/20">
             {session.mentorReason && (
@@ -548,7 +525,6 @@ const SessionCard = ({
           </div>
         )}
 
-        {/* Recording Link Modal */}
         {showRecordingModal && (
           <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
             <div className="bg-gradient-to-br from-slate-950 via-blue-950 to-indigo-950 rounded-2xl p-6 border border-white/20 max-w-md w-full shadow-2xl">
@@ -598,7 +574,6 @@ const SessionCard = ({
           </div>
         )}
 
-        {/* Mentor Reason Modal */}
         {showMentorReasonModal && (
           <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
             <div className="bg-gradient-to-br from-slate-950 via-blue-950 to-indigo-950 rounded-2xl p-6 border border-white/20 max-w-md w-full shadow-2xl">
@@ -710,7 +685,6 @@ const SessionList = ({ sessions, onRefresh, isPastOnly, onToast }) => {
         ))}
       </div>
 
-      {/* Edit Session Modal */}
       {editingSession && (
         <EditSessionModal
           session={editingSession}
@@ -723,7 +697,6 @@ const SessionList = ({ sessions, onRefresh, isPastOnly, onToast }) => {
         />
       )}
 
-      {/* Reschedule Modal */}
       {reschedulingSession && (
         <RescheduleModal
           session={reschedulingSession}
@@ -735,7 +708,6 @@ const SessionList = ({ sessions, onRefresh, isPastOnly, onToast }) => {
         />
       )}
 
-      {/* Cancel Confirmation Modal */}
       {cancellingSession && (
         <CancelConfirmModal
           session={cancellingSession}

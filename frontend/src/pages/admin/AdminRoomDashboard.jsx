@@ -200,7 +200,6 @@ export default function AdminRoomDashboard({ onReturn }) {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 p-4 md:p-8">
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
         <div className="flex justify-between items-center mb-8">
           <div className="flex items-center gap-4">
             <button
@@ -229,7 +228,6 @@ export default function AdminRoomDashboard({ onReturn }) {
           </button>
         </div>
 
-        {/* Statistics Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
           <div className="bg-gradient-to-r from-blue-500 to-cyan-500 rounded-2xl shadow-lg p-6 text-white">
             <div className="flex items-center justify-between mb-4">
@@ -279,10 +277,8 @@ export default function AdminRoomDashboard({ onReturn }) {
           </div>
         </div>
 
-        {/* Search and Filter Controls */}
         <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Search Bar */}
             <div className="relative">
               <Search
                 className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400"
@@ -297,7 +293,6 @@ export default function AdminRoomDashboard({ onReturn }) {
               />
             </div>
 
-            {/* Status Filter */}
             <div className="relative">
               <Filter
                 className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400"
@@ -321,7 +316,6 @@ export default function AdminRoomDashboard({ onReturn }) {
             </div>
           </div>
 
-          {/* Results Summary */}
           <div className="mt-4 flex items-center justify-between text-sm text-white/60">
             <span>
               Showing {filteredRooms.length} of {rooms.length} rooms
@@ -337,7 +331,6 @@ export default function AdminRoomDashboard({ onReturn }) {
           </div>
         </div>
 
-        {/* Rooms Grid */}
         {filteredRooms.length === 0 ? (
           <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-12 text-center">
             <MessageSquare className="mx-auto mb-4 text-white/40" size={64} />

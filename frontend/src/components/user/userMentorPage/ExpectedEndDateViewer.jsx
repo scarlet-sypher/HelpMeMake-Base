@@ -85,9 +85,7 @@ const ExpectedEndDateViewer = ({ projectData, onUpdate }) => {
         </div>
       </div>
 
-      {/* Date Information Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        {/* Start Date */}
         <div className="bg-white/5 rounded-2xl p-4 border border-white/10">
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm font-medium text-gray-300">
@@ -101,7 +99,6 @@ const ExpectedEndDateViewer = ({ projectData, onUpdate }) => {
           <div className="text-xs text-green-300 mt-1">Project Started</div>
         </div>
 
-        {/* Expected End Date */}
         <div className="bg-white/5 rounded-2xl p-4 border border-white/10">
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm font-medium text-gray-300">
@@ -127,7 +124,6 @@ const ExpectedEndDateViewer = ({ projectData, onUpdate }) => {
           )}
         </div>
 
-        {/* Actual End Date */}
         <div className="bg-white/5 rounded-2xl p-4 border border-white/10">
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm font-medium text-gray-300">
@@ -148,7 +144,6 @@ const ExpectedEndDateViewer = ({ projectData, onUpdate }) => {
         </div>
       </div>
 
-      {/* Mentor's Proposed Date Section */}
       {tempEndDate && (
         <div className="bg-gradient-to-r from-yellow-500/20 to-orange-500/20 rounded-2xl p-6 border border-yellow-400/30 mb-6">
           <div className="flex items-center justify-between mb-4">
@@ -193,7 +188,6 @@ const ExpectedEndDateViewer = ({ projectData, onUpdate }) => {
         </div>
       )}
 
-      {/* Progress Bar */}
       {expectedEndDate && (
         <div className="mb-4">
           <div className="flex justify-between items-center mb-2">
@@ -238,7 +232,6 @@ const ExpectedEndDateViewer = ({ projectData, onUpdate }) => {
         </div>
       )}
 
-      {/* Status Information */}
       <div className="bg-white/5 rounded-xl p-4 border border-white/10">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">

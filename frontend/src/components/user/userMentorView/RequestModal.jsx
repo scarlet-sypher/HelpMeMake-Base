@@ -89,10 +89,8 @@ const RequestModal = ({ mentor, project, onClose, onRequestSent, API_URL }) => {
           : "bg-black/0 backdrop-blur-none"
       }`}
     >
-      {/* Enhanced backdrop with animated overlay */}
       <div className="absolute inset-0 bg-gradient-to-br from-slate-900/20 via-blue-900/20 to-purple-900/20" />
 
-      {/* Modal container with enhanced styling */}
       <div
         className={`relative w-full max-w-lg transform transition-all duration-500 ${
           isVisible
@@ -100,12 +98,9 @@ const RequestModal = ({ mentor, project, onClose, onRequestSent, API_URL }) => {
             : "scale-95 translate-y-8 opacity-0"
         }`}
       >
-        {/* Glow effect */}
         <div className="absolute -inset-1 bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-cyan-500/20 rounded-3xl blur-lg opacity-70" />
 
-        {/* Main modal */}
         <div className="relative bg-gradient-to-br from-slate-900/95 via-slate-800/95 to-slate-900/95 backdrop-blur-xl rounded-3xl border border-white/20 shadow-2xl overflow-hidden">
-          {/* Header with enhanced design */}
           <div className="relative p-6 border-b border-white/10">
             <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-purple-500/5" />
             <div className="relative flex items-center justify-between">
@@ -130,7 +125,6 @@ const RequestModal = ({ mentor, project, onClose, onRequestSent, API_URL }) => {
           </div>
 
           <div className="p-6 space-y-6">
-            {/* Enhanced mentor info card */}
             <div className="relative group">
               <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-2xl opacity-0 group-hover:opacity-100 transition-all duration-300 blur-sm" />
               <div className="relative p-4 bg-gradient-to-br from-slate-800/50 to-slate-700/50 rounded-2xl border border-white/10">
@@ -173,7 +167,6 @@ const RequestModal = ({ mentor, project, onClose, onRequestSent, API_URL }) => {
               </div>
             </div>
 
-            {/* Enhanced project info */}
             <div className="p-4 bg-gradient-to-br from-cyan-500/10 to-blue-500/10 rounded-2xl border border-cyan-500/20">
               <div className="flex items-center space-x-3">
                 <div className="w-8 h-8 bg-cyan-500/20 rounded-xl flex items-center justify-center border border-cyan-500/30">
@@ -190,7 +183,6 @@ const RequestModal = ({ mentor, project, onClose, onRequestSent, API_URL }) => {
               </div>
             </div>
 
-            {/* Enhanced form */}
             <form onSubmit={handleSendRequest} className="space-y-6">
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
@@ -233,7 +225,6 @@ const RequestModal = ({ mentor, project, onClose, onRequestSent, API_URL }) => {
                 </div>
               </div>
 
-              {/* Enhanced action buttons */}
               <div className="flex flex-col sm:flex-row gap-3 pt-2">
                 <button
                   type="button"
@@ -265,7 +256,6 @@ const RequestModal = ({ mentor, project, onClose, onRequestSent, API_URL }) => {
             </form>
           </div>
 
-          {/* Bottom gradient accent */}
           <div className="h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-cyan-500" />
         </div>
       </div>

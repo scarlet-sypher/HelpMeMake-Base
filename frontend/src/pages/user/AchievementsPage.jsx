@@ -196,7 +196,6 @@ const AchievementsPage = () => {
     <>
       <style>{customStyles}</style>
       <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-indigo-950 flex w-full overflow-x-hidden">
-        {/* Sidebar */}
         <Sidebar
           isOpen={sidebarOpen}
           toggleSidebar={toggleSidebar}
@@ -204,9 +203,7 @@ const AchievementsPage = () => {
           setActiveItem={setActiveItem}
         />
 
-        {/* Main Content */}
         <div className="flex-1 w-full min-w-0 lg:ml-64">
-          {/* Mobile Header */}
           <div className="lg:hidden bg-gradient-to-r from-slate-900/80 to-blue-900/80 backdrop-blur-sm border-b border-white/10 p-4">
             <div className="flex items-center justify-between">
               <button
@@ -225,7 +222,6 @@ const AchievementsPage = () => {
             </div>
           </div>
 
-          {/* Animated background elements */}
           <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
             <div className="absolute -top-40 -right-40 w-80 h-80 bg-yellow-500/20 rounded-full blur-3xl animate-pulse"></div>
             <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-500/20 rounded-full blur-3xl animate-pulse"></div>
@@ -233,7 +229,6 @@ const AchievementsPage = () => {
           </div>
 
           <div className="relative z-10 p-3 sm:p-4 lg:p-6 space-y-4 sm:space-y-6 w-full">
-            {/* Hero Section with Welcome */}
             <div className="relative group w-full">
               <div className="absolute -inset-0.5 bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 rounded-2xl sm:rounded-3xl blur opacity-20 group-hover:opacity-30 transition duration-500"></div>
               <div className="relative bg-gradient-to-r from-yellow-500/20 to-orange-600/20 backdrop-blur-sm rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 border border-yellow-400/30 w-full">
@@ -276,7 +271,6 @@ const AchievementsPage = () => {
                     </div>
                   </div>
 
-                  {/* Action Buttons */}
                   <div className="flex flex-wrap gap-2 sm:gap-4 justify-center">
                     <button
                       onClick={recalculateAchievements}
@@ -304,7 +298,6 @@ const AchievementsPage = () => {
               </div>
             </div>
 
-            {/* XP Progress Tracker */}
             {learnerData && achievementData && (
               <XPProgressTracker
                 learnerData={learnerData}
@@ -312,7 +305,6 @@ const AchievementsPage = () => {
               />
             )}
 
-            {/* Achievement Categories */}
             {achievementData && (
               <div className="bg-white/10 backdrop-blur-sm rounded-2xl sm:rounded-3xl shadow-2xl p-4 sm:p-6 border border-white/20 w-full">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 sm:mb-6 space-y-2 sm:space-y-0">
@@ -339,7 +331,6 @@ const AchievementsPage = () => {
               </div>
             )}
 
-            {/* Motivation Section */}
             <div className="bg-gradient-to-r from-emerald-500/20 to-blue-500/20 backdrop-blur-sm rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-emerald-400/30 w-full">
               <div className="flex items-center justify-between mb-3 sm:mb-4">
                 <h3 className="text-lg sm:text-xl font-bold text-white flex items-center">

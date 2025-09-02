@@ -111,7 +111,6 @@ export default function RoomView() {
     return (
       <div key={message._id} className={`flex ${alignmentClass} mb-3`}>
         <div className="flex items-end gap-2 max-w-xs">
-          {/* Avatar - only show for mentor (left side) */}
           {!isLearner && (
             <img
               src={
@@ -125,7 +124,6 @@ export default function RoomView() {
           )}
 
           <div className={`px-4 py-2 shadow-sm ${messageClass}`}>
-            {/* Message content */}
             {message.messageType === "text" ? (
               <div className="text-sm whitespace-pre-wrap break-words">
                 {message.message}
@@ -145,7 +143,6 @@ export default function RoomView() {
               </div>
             )}
 
-            {/* Time and read status */}
             <div
               className={`text-xs mt-2 ${
                 isLearner ? "text-green-100" : "text-slate-500"
@@ -156,7 +153,6 @@ export default function RoomView() {
             </div>
           </div>
 
-          {/* Avatar for learner (right side) */}
           {isLearner && (
             <img
               src={
@@ -208,11 +204,9 @@ export default function RoomView() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950">
-      {/* Fixed Header */}
       <div className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-slate-200 shadow-sm">
         <div className="max-w-6xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            {/* Return Button */}
             <button
               onClick={() => navigate("/admin/rooms")}
               className="flex items-center gap-2 text-slate-600 hover:text-slate-800 font-medium transition-colors"
@@ -221,7 +215,6 @@ export default function RoomView() {
               Back to Rooms
             </button>
 
-            {/* Room Info */}
             <div className="flex-1 text-center">
               <h1 className="text-xl font-bold text-slate-800">
                 {roomData.roomName}
@@ -229,9 +222,7 @@ export default function RoomView() {
               <p className="text-sm text-slate-600">{roomData.project.name}</p>
             </div>
 
-            {/* Participants */}
             <div className="flex items-center gap-4">
-              {/* Mentor Info */}
               <div className="flex items-center gap-2 px-3 py-2 bg-purple-50 rounded-lg">
                 <img
                   src={
@@ -254,7 +245,6 @@ export default function RoomView() {
                 </div>
               </div>
 
-              {/* Learner Info */}
               <div className="flex items-center gap-2 px-3 py-2 bg-green-50 rounded-lg">
                 <img
                   src={
@@ -281,7 +271,6 @@ export default function RoomView() {
         </div>
       </div>
 
-      {/* Chat Content */}
       <div className="max-w-6xl mx-auto px-4 py-6">
         <div
           className="bg-white/10 backdrop-blur-sm rounded-2xl shadow-xl overflow-hidden"
@@ -296,7 +285,6 @@ export default function RoomView() {
             `,
           }}
         >
-          {/* Chat Messages Container */}
           <div className="h-full overflow-y-auto p-6 space-y-4">
             {chats.length === 0 ? (
               <div className="flex items-center justify-center h-full">
@@ -308,7 +296,6 @@ export default function RoomView() {
             ) : (
               Object.entries(messageGroups).map(([dateKey, messages]) => (
                 <div key={dateKey}>
-                  {/* Date Separator */}
                   <div className="flex items-center justify-center my-6">
                     <div className="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full">
                       <span className="text-sm font-medium text-white">
@@ -317,18 +304,15 @@ export default function RoomView() {
                     </div>
                   </div>
 
-                  {/* Messages for this date */}
                   {messages.map((message) => renderMessage(message))}
                 </div>
               ))
             )}
 
-            {/* Auto-scroll anchor */}
             <div ref={messagesEndRef} />
           </div>
         </div>
 
-        {/* Room Statistics Footer */}
         <div className="mt-6 grid grid-cols-1 md:grid-cols-4 gap-4">
           <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 text-center">
             <div className="text-2xl font-bold text-white">

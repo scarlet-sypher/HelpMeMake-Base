@@ -316,7 +316,6 @@ const ProjectEdit = ({ onReturn }) => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 p-4 md:p-8">
       <div className="max-w-4xl mx-auto">
-        {/* Header */}
         <div className="flex justify-between items-center mb-8">
           <div className="flex items-center space-x-4">
             <button
@@ -331,13 +330,11 @@ const ProjectEdit = ({ onReturn }) => {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-8">
-          {/* Project Participants (Non-editable) */}
           <div className="bg-white rounded-2xl shadow-lg p-8">
             <h2 className="text-2xl font-bold text-gray-900 mb-6">
               Project Participants
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Learner */}
               <div className="p-4 bg-blue-50 rounded-lg">
                 <div className="flex items-center space-x-3 mb-3">
                   <GraduationCap className="text-blue-600" size={24} />
@@ -366,7 +363,6 @@ const ProjectEdit = ({ onReturn }) => {
                 )}
               </div>
 
-              {/* Mentor */}
               <div className="p-4 bg-purple-50 rounded-lg">
                 <div className="flex items-center space-x-3 mb-3">
                   <User className="text-purple-600" size={24} />
@@ -397,13 +393,11 @@ const ProjectEdit = ({ onReturn }) => {
             </div>
           </div>
 
-          {/* Basic Information */}
           <div className="bg-white rounded-2xl shadow-lg p-8">
             <h2 className="text-2xl font-bold text-gray-900 mb-6">
               Basic Information
             </h2>
             <div className="space-y-6">
-              {/* Project Name */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Project Name *
@@ -426,7 +420,6 @@ const ProjectEdit = ({ onReturn }) => {
                 )}
               </div>
 
-              {/* Short Description */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Short Description *
@@ -458,7 +451,6 @@ const ProjectEdit = ({ onReturn }) => {
                 </div>
               </div>
 
-              {/* Full Description */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Full Description *
@@ -490,7 +482,6 @@ const ProjectEdit = ({ onReturn }) => {
                 </div>
               </div>
 
-              {/* Project Thumbnail */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Project Thumbnail
@@ -529,13 +520,11 @@ const ProjectEdit = ({ onReturn }) => {
             </div>
           </div>
 
-          {/* Project Details */}
           <div className="bg-white rounded-2xl shadow-lg p-8">
             <h2 className="text-2xl font-bold text-gray-900 mb-6">
               Project Details
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Category */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Category *
@@ -563,7 +552,6 @@ const ProjectEdit = ({ onReturn }) => {
                 )}
               </div>
 
-              {/* Difficulty Level */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Difficulty Level *
@@ -593,7 +581,6 @@ const ProjectEdit = ({ onReturn }) => {
                 )}
               </div>
 
-              {/* Duration */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Duration *
@@ -616,7 +603,6 @@ const ProjectEdit = ({ onReturn }) => {
                 )}
               </div>
 
-              {/* Status */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Project Status
@@ -635,7 +621,6 @@ const ProjectEdit = ({ onReturn }) => {
                 </select>
               </div>
 
-              {/* Knowledge Level */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Required Knowledge Level *
@@ -663,7 +648,6 @@ const ProjectEdit = ({ onReturn }) => {
                 )}
               </div>
 
-              {/* Currency */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Currency
@@ -681,7 +665,6 @@ const ProjectEdit = ({ onReturn }) => {
               </div>
             </div>
 
-            {/* Tech Stack */}
             <div className="mt-6">
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Technology Stack
@@ -698,7 +681,6 @@ const ProjectEdit = ({ onReturn }) => {
               </p>
             </div>
 
-            {/* Tags */}
             <div className="mt-6">
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Tags
@@ -715,7 +697,6 @@ const ProjectEdit = ({ onReturn }) => {
               </p>
             </div>
 
-            {/* Prerequisites */}
             <div className="mt-6">
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Prerequisites
@@ -735,13 +716,11 @@ const ProjectEdit = ({ onReturn }) => {
             </div>
           </div>
 
-          {/* Pricing */}
           <div className="bg-white rounded-2xl shadow-lg p-8">
             <h2 className="text-2xl font-bold text-gray-900 mb-6">
               Pricing Information
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {/* Opening Price */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Opening Price *
@@ -765,7 +744,6 @@ const ProjectEdit = ({ onReturn }) => {
                 )}
               </div>
 
-              {/* Negotiated Price */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Negotiated Price
@@ -781,7 +759,6 @@ const ProjectEdit = ({ onReturn }) => {
                 />
               </div>
 
-              {/* Closing Price */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Final/Closing Price
@@ -799,13 +776,11 @@ const ProjectEdit = ({ onReturn }) => {
             </div>
           </div>
 
-          {/* Project Goals */}
           <div className="bg-white rounded-2xl shadow-lg p-8">
             <h2 className="text-2xl font-bold text-gray-900 mb-6">
               Project Goals & Context
             </h2>
             <div className="space-y-6">
-              {/* Project Outcome */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Expected Project Outcome *
@@ -828,7 +803,6 @@ const ProjectEdit = ({ onReturn }) => {
                 )}
               </div>
 
-              {/* Motivation */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Project Motivation *
@@ -853,7 +827,6 @@ const ProjectEdit = ({ onReturn }) => {
             </div>
           </div>
 
-          {/* References */}
           <div className="bg-white rounded-2xl shadow-lg p-8">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-2xl font-bold text-gray-900">
@@ -946,7 +919,6 @@ const ProjectEdit = ({ onReturn }) => {
             )}
           </div>
 
-          {/* Submit Button */}
           <div className="flex justify-end space-x-4">
             <button
               type="button"

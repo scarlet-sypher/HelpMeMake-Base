@@ -143,7 +143,6 @@ const ProjectProgressSetter = ({ projectData, onDataRefresh }) => {
           </button>
         </div>
 
-        {/* Current Progress Display */}
         <div className="mb-6">
           <div className="flex justify-between items-center mb-3">
             <span className="text-gray-300 font-medium">Current Progress</span>
@@ -159,7 +158,6 @@ const ProjectProgressSetter = ({ projectData, onDataRefresh }) => {
           </div>
         </div>
 
-        {/* Progress Setter */}
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-2">
@@ -236,7 +234,6 @@ const ProjectProgressSetter = ({ projectData, onDataRefresh }) => {
           </button>
         </div>
 
-        {/* Progress History */}
         {showHistory && (
           <div className="mt-6 pt-6 border-t border-gray-700">
             <h4 className="text-lg font-semibold text-white mb-4 flex items-center">
@@ -277,7 +274,7 @@ const ProjectProgressSetter = ({ projectData, onDataRefresh }) => {
                         <p className="text-gray-300 text-sm">{update.note}</p>
                       </div>
                     </div>
-                    {/* Connecting line */}
+
                     {index < progressHistory.length - 1 && (
                       <div className="absolute left-4 top-8 w-0.5 h-4 bg-gray-600"></div>
                     )}

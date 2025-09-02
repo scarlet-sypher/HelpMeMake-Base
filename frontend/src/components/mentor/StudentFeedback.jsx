@@ -100,7 +100,6 @@ const StudentFeedback = () => {
   if (error || feedbackData.length === 0) {
     return (
       <div className="bg-white/10 backdrop-blur-sm rounded-3xl shadow-2xl p-6 border border-white/20 relative overflow-hidden">
-        {/* Animated background elements */}
         <div className="absolute -top-10 -right-10 w-20 h-20 bg-yellow-400/20 rounded-full blur-xl animate-pulse"></div>
         <div className="absolute -bottom-10 -left-10 w-16 h-16 bg-orange-400/20 rounded-full blur-xl animate-pulse"></div>
 
@@ -125,7 +124,6 @@ const StudentFeedback = () => {
 
   return (
     <div className="bg-white/10 backdrop-blur-sm rounded-3xl shadow-2xl p-6 border border-white/20 relative overflow-hidden">
-      {/* Animated background elements */}
       <div className="absolute -top-10 -right-10 w-20 h-20 bg-yellow-400/20 rounded-full blur-xl animate-pulse"></div>
       <div className="absolute -bottom-10 -left-10 w-16 h-16 bg-orange-400/20 rounded-full blur-xl animate-pulse"></div>
 
@@ -143,7 +141,6 @@ const StudentFeedback = () => {
           </div>
         </div>
 
-        {/* Overall Rating Summary */}
         <div className="bg-gradient-to-r from-yellow-500/10 to-orange-500/10 rounded-2xl p-4 border border-yellow-400/20 mb-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
@@ -182,7 +179,6 @@ const StudentFeedback = () => {
           </div>
         </div>
 
-        {/* Recent Feedback */}
         <div className="space-y-4">
           {feedbackData.map((feedback, index) => (
             <div
@@ -190,7 +186,6 @@ const StudentFeedback = () => {
               className="group bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 rounded-2xl p-4 transition-all duration-300 shadow-lg hover:shadow-xl"
             >
               <div className="flex items-start space-x-3">
-                {/* Profile Image */}
                 <div className="relative flex-shrink-0">
                   <img
                     src={feedback.image}
@@ -208,7 +203,6 @@ const StudentFeedback = () => {
                 </div>
 
                 <div className="flex-1 min-w-0">
-                  {/* Header */}
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center space-x-2">
                       <h4 className="text-sm font-semibold text-white">
@@ -228,7 +222,6 @@ const StudentFeedback = () => {
                     </div>
                   </div>
 
-                  {/* Rating */}
                   <div className="flex items-center space-x-2 mb-3">
                     <div className="flex items-center space-x-1">
                       {[...Array(5)].map((_, i) => (
@@ -248,7 +241,6 @@ const StudentFeedback = () => {
                     </span>
                   </div>
 
-                  {/* Comment */}
                   <p className="text-sm text-gray-300 leading-relaxed mb-3">
                     {feedback.comment}
                   </p>
@@ -258,7 +250,6 @@ const StudentFeedback = () => {
           ))}
         </div>
 
-        {/* View All Button */}
         <div className="mt-6 text-center">
           <button
             onClick={handleViewAllReviews}

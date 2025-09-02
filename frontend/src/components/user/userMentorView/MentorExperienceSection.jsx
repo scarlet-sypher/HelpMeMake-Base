@@ -45,7 +45,6 @@ const MentorExperienceSection = ({ mentorData }) => {
 
   return (
     <div className="relative bg-gradient-to-br from-white/10 via-white/5 to-transparent backdrop-blur-md rounded-3xl shadow-2xl p-6 sm:p-8 border border-white/20 overflow-hidden group">
-      {/* Background pattern */}
       <div
         className="absolute inset-0 opacity-[0.02]"
         style={{
@@ -54,11 +53,9 @@ const MentorExperienceSection = ({ mentorData }) => {
         }}
       ></div>
 
-      {/* Animated background */}
       <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-purple-500/5 to-cyan-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
 
       <div className="relative z-10">
-        {/* Enhanced Header */}
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center space-x-3">
             <div className="p-2 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-xl border border-blue-400/30">
@@ -76,9 +73,7 @@ const MentorExperienceSection = ({ mentorData }) => {
           <div className="hidden sm:block w-16 h-px bg-gradient-to-r from-blue-400/50 to-transparent"></div>
         </div>
 
-        {/* Experience Overview */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-          {/* Total Experience Card */}
           <div className="bg-gradient-to-br from-blue-500/10 to-purple-500/10 rounded-2xl p-6 border border-blue-400/30 text-center group/card hover:scale-105 transition-all duration-300">
             <div className="p-3 bg-blue-500/20 rounded-xl inline-flex mb-3 group-hover/card:scale-110 transition-transform duration-300">
               <Shield className="text-blue-400" size={24} />
@@ -91,7 +86,6 @@ const MentorExperienceSection = ({ mentorData }) => {
             </div>
           </div>
 
-          {/* Companies Count */}
           <div className="bg-gradient-to-br from-emerald-500/10 to-green-500/10 rounded-2xl p-6 border border-emerald-400/30 text-center group/card hover:scale-105 transition-all duration-300">
             <div className="p-3 bg-emerald-500/20 rounded-xl inline-flex mb-3 group-hover/card:scale-110 transition-transform duration-300">
               <Briefcase className="text-emerald-400" size={24} />
@@ -104,7 +98,6 @@ const MentorExperienceSection = ({ mentorData }) => {
             </div>
           </div>
 
-          {/* Average Duration */}
           <div className="bg-gradient-to-br from-amber-500/10 to-orange-500/10 rounded-2xl p-6 border border-amber-400/30 text-center group/card hover:scale-105 transition-all duration-300 sm:col-span-2 lg:col-span-1">
             <div className="p-3 bg-amber-500/20 rounded-xl inline-flex mb-3 group-hover/card:scale-110 transition-transform duration-300">
               <Clock className="text-amber-400" size={24} />
@@ -125,7 +118,6 @@ const MentorExperienceSection = ({ mentorData }) => {
           </div>
         </div>
 
-        {/* Companies Experience */}
         {companies && companies.length > 0 ? (
           <div className="space-y-6">
             <div className="flex items-center space-x-3">
@@ -150,7 +142,6 @@ const MentorExperienceSection = ({ mentorData }) => {
                     key={index}
                     className="group/company relative bg-gradient-to-br from-white/5 to-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20 hover:border-white/40 transition-all duration-300 hover:shadow-xl hover:shadow-white/10"
                   >
-                    {/* Company header */}
                     <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4 mb-4">
                       <div className="flex items-start space-x-4 flex-1">
                         <div className="p-3 bg-white/10 rounded-xl group-hover/company:scale-110 transition-transform duration-300">
@@ -187,7 +178,6 @@ const MentorExperienceSection = ({ mentorData }) => {
                       </div>
                     </div>
 
-                    {/* Duration visualization */}
                     <div className="mb-4">
                       <div className="flex items-center justify-between text-xs text-gray-400 mb-1">
                         <span>Duration</span>
@@ -201,7 +191,6 @@ const MentorExperienceSection = ({ mentorData }) => {
                       </div>
                     </div>
 
-                    {/* Description */}
                     {company.description && (
                       <div className="bg-white/5 rounded-lg p-4 border border-white/10">
                         <p className="text-gray-200 text-sm leading-relaxed">
@@ -210,7 +199,6 @@ const MentorExperienceSection = ({ mentorData }) => {
                       </div>
                     )}
 
-                    {/* Hover effect */}
                     <div className="absolute inset-0 bg-gradient-to-br from-white/0 to-white/5 rounded-2xl opacity-0 group-hover/company:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
                   </div>
                 );

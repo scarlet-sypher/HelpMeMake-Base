@@ -138,10 +138,8 @@ const MentorHeroSection = ({
 
   return (
     <div className="relative bg-gradient-to-br from-white/10 via-white/5 to-transparent backdrop-blur-md rounded-3xl shadow-2xl p-6 sm:p-8 border border-white/20 mb-8 overflow-hidden group">
-      {/* Enhanced animated background gradient */}
       <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 via-blue-500/10 to-cyan-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
 
-      {/* Subtle grid pattern */}
       <div
         className="absolute inset-0 opacity-[0.03]"
         style={{
@@ -152,9 +150,7 @@ const MentorHeroSection = ({
 
       <div className="relative z-10">
         <div className="flex flex-col xl:flex-row xl:items-start xl:justify-between gap-8">
-          {/* Mentor Info Section */}
           <div className="flex flex-col sm:flex-row items-center sm:items-start space-y-6 sm:space-y-0 sm:space-x-8 flex-1">
-            {/* Enhanced Avatar Section */}
             <div className="relative group/avatar">
               <div className="relative">
                 <div className="w-28 h-28 sm:w-36 sm:h-36 bg-gradient-to-br from-violet-500 via-purple-500 to-pink-500 rounded-2xl flex items-center justify-center shadow-2xl shadow-purple-500/30 group-hover/avatar:shadow-purple-500/50 transition-all duration-500 transform group-hover/avatar:scale-105">
@@ -173,7 +169,6 @@ const MentorHeroSection = ({
                   )}
                 </div>
 
-                {/* Enhanced online status */}
                 <div className="absolute -bottom-2 -right-2 flex items-center justify-center">
                   <div
                     className={`w-8 h-8 rounded-full border-3 border-white shadow-lg ${
@@ -190,14 +185,12 @@ const MentorHeroSection = ({
                 </div>
               </div>
 
-              {/* Floating badge */}
               <div className="absolute -top-2 -left-2 bg-gradient-to-r from-amber-400 to-orange-500 text-white text-xs font-bold px-2 py-1 rounded-lg shadow-lg">
                 <Award size={12} className="inline mr-1" />
                 Mentor
               </div>
             </div>
 
-            {/* Enhanced Info Section */}
             <div className="flex-1 text-center sm:text-left space-y-4">
               <div className="space-y-2">
                 <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-white via-gray-100 to-gray-300 bg-clip-text text-transparent leading-tight">
@@ -216,7 +209,6 @@ const MentorHeroSection = ({
                 {mentorData.description}
               </p>
 
-              {/* Enhanced Stats Grid */}
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
                 <div className="bg-gradient-to-br from-amber-500/20 to-yellow-500/20 rounded-xl p-3 border border-amber-400/30 text-center group/stat hover:scale-105 transition-transform duration-300">
                   <div className="flex items-center justify-center space-x-2 mb-1">
@@ -260,7 +252,6 @@ const MentorHeroSection = ({
                 </div>
               </div>
 
-              {/* Enhanced Details */}
               <div className="flex flex-wrap justify-center sm:justify-start gap-2 sm:gap-3">
                 <div className="flex items-center space-x-2 bg-white/10 backdrop-blur-sm rounded-lg px-3 py-2 border border-white/20 text-sm hover:bg-white/15 transition-colors">
                   <MapPin size={14} className="text-pink-400" />
@@ -282,7 +273,6 @@ const MentorHeroSection = ({
             </div>
           </div>
 
-          {/* Enhanced Action Section */}
           <div className="flex flex-col space-y-4 w-full xl:w-80">
             {selectedProject && (
               <div className="bg-gradient-to-br from-indigo-500/10 to-purple-500/10 rounded-xl p-4 border border-indigo-400/20">

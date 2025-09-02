@@ -193,7 +193,6 @@ const ProjectView = ({ onReturn, onEdit, onDelete }) => {
     <>
       <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 p-4 md:p-8">
         <div className="max-w-6xl mx-auto">
-          {/* Header */}
           <div className="flex justify-between items-center mb-8">
             <div className="flex items-center space-x-4">
               <button
@@ -228,14 +227,10 @@ const ProjectView = ({ onReturn, onEdit, onDelete }) => {
             </div>
           </div>
 
-          {/* Main Content */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Left Column - Main Details */}
             <div className="lg:col-span-2 space-y-8">
-              {/* Project Header */}
               <div className="bg-white rounded-2xl shadow-lg p-8">
                 <div className="flex items-start space-x-6">
-                  {/* Project Thumbnail */}
                   <div className="flex-shrink-0">
                     <div className="w-24 h-24 rounded-xl overflow-hidden bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center">
                       {project.thumbnail ? (
@@ -250,7 +245,6 @@ const ProjectView = ({ onReturn, onEdit, onDelete }) => {
                     </div>
                   </div>
 
-                  {/* Project Info */}
                   <div className="flex-1">
                     <div className="flex items-center space-x-3 mb-4">
                       <h1 className="text-3xl font-bold text-gray-900">
@@ -285,7 +279,6 @@ const ProjectView = ({ onReturn, onEdit, onDelete }) => {
                 </div>
               </div>
 
-              {/* Project Details */}
               <div className="bg-white rounded-2xl shadow-lg p-8">
                 <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
                   <FileText className="mr-2" />
@@ -376,7 +369,6 @@ const ProjectView = ({ onReturn, onEdit, onDelete }) => {
                   </div>
                 </div>
 
-                {/* Full Description */}
                 <div className="mb-8">
                   <label className="block text-sm font-medium text-gray-500 mb-3">
                     Full Description
@@ -388,7 +380,6 @@ const ProjectView = ({ onReturn, onEdit, onDelete }) => {
                   </div>
                 </div>
 
-                {/* Project Outcome & Motivation */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                   <div>
                     <label className="block text-sm font-medium text-gray-500 mb-3">
@@ -412,7 +403,6 @@ const ProjectView = ({ onReturn, onEdit, onDelete }) => {
                   </div>
                 </div>
 
-                {/* Tech Stack */}
                 {project.techStack && project.techStack.length > 0 && (
                   <div className="mb-8">
                     <label className="block text-sm font-medium text-gray-500 mb-3">
@@ -431,7 +421,6 @@ const ProjectView = ({ onReturn, onEdit, onDelete }) => {
                   </div>
                 )}
 
-                {/* Tags */}
                 {project.tags && project.tags.length > 0 && (
                   <div className="mb-8">
                     <label className="block text-sm font-medium text-gray-500 mb-3">
@@ -450,7 +439,6 @@ const ProjectView = ({ onReturn, onEdit, onDelete }) => {
                   </div>
                 )}
 
-                {/* Prerequisites */}
                 {project.prerequisites && project.prerequisites.length > 0 && (
                   <div>
                     <label className="block text-sm font-medium text-gray-500 mb-3">
@@ -471,7 +459,6 @@ const ProjectView = ({ onReturn, onEdit, onDelete }) => {
                 )}
               </div>
 
-              {/* References */}
               {project.references && project.references.length > 0 && (
                 <div className="bg-white rounded-2xl shadow-lg p-8">
                   <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
@@ -504,15 +491,12 @@ const ProjectView = ({ onReturn, onEdit, onDelete }) => {
               )}
             </div>
 
-            {/* Right Column - People & Timeline */}
             <div className="space-y-8">
-              {/* Learner & Mentor */}
               <div className="bg-white rounded-2xl shadow-lg p-6">
                 <h2 className="text-xl font-bold text-gray-900 mb-6">
                   Project Participants
                 </h2>
 
-                {/* Learner */}
                 <div className="mb-6 p-4 bg-blue-50 rounded-lg">
                   <div className="flex items-center space-x-3 mb-3">
                     <GraduationCap className="text-blue-600" size={24} />
@@ -541,7 +525,6 @@ const ProjectView = ({ onReturn, onEdit, onDelete }) => {
                   )}
                 </div>
 
-                {/* Mentor */}
                 <div className="p-4 bg-purple-50 rounded-lg">
                   <div className="flex items-center space-x-3 mb-3">
                     <User className="text-purple-600" size={24} />
@@ -571,7 +554,6 @@ const ProjectView = ({ onReturn, onEdit, onDelete }) => {
                 </div>
               </div>
 
-              {/* Project Timeline */}
               <div className="bg-white rounded-2xl shadow-lg p-6">
                 <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center">
                   <Calendar className="mr-2" />
@@ -627,7 +609,6 @@ const ProjectView = ({ onReturn, onEdit, onDelete }) => {
                 </div>
               </div>
 
-              {/* Project Stats */}
               <div className="bg-white rounded-2xl shadow-lg p-6">
                 <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center">
                   <TrendingUp className="mr-2" />
@@ -693,7 +674,6 @@ const ProjectView = ({ onReturn, onEdit, onDelete }) => {
         </div>
       </div>
 
-      {/* Delete Confirmation Modal */}
       {showDeleteModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl p-8 max-w-md w-full">

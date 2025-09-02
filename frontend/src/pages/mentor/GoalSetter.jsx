@@ -161,7 +161,6 @@ const GoalSetter = () => {
   return (
     <div className="relative min-h-screen w-full bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 flex">
       <div className="fixed inset-y-0 left-0 z-30 lg:static lg:inset-auto">
-        {/* Sidebar */}
         <Sidebar
           isOpen={sidebarOpen}
           toggleSidebar={toggleSidebar}
@@ -171,9 +170,7 @@ const GoalSetter = () => {
         />
       </div>
 
-      {/* Main Content */}
       <div className="flex-1 w-full lg:ml-64">
-        {/* Mobile Header */}
         <div className="lg:hidden bg-gradient-to-r from-slate-900/80 to-gray-900/80 backdrop-blur-sm border-b border-white/10 p-4">
           <div className="flex items-center justify-between">
             <button
@@ -187,7 +184,6 @@ const GoalSetter = () => {
           </div>
         </div>
 
-        {/* Animated background elements */}
         <div className="fixed inset-0 overflow-hidden pointer-events-none">
           <div className="absolute -top-40 -right-40 w-80 h-80 bg-cyan-500/20 rounded-full blur-3xl animate-pulse"></div>
           <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-teal-500/20 rounded-full blur-3xl animate-pulse"></div>
@@ -195,7 +191,6 @@ const GoalSetter = () => {
         </div>
 
         <div className="relative z-10 p-4 lg:p-6 space-y-6">
-          {/* Header Section */}
           <div className="relative group">
             <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-500 to-teal-600 rounded-2xl blur opacity-20 group-hover:opacity-30 transition duration-500"></div>
             <div className="relative bg-gradient-to-r from-slate-800/90 to-gray-800/90 backdrop-blur-sm rounded-2xl p-6 border border-white/10">
@@ -236,7 +231,6 @@ const GoalSetter = () => {
             </div>
           </div>
 
-          {/* Tab Navigation */}
           <div className="relative group">
             <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-500/20 to-teal-600/20 rounded-xl blur opacity-50"></div>
             <div className="relative bg-slate-800/50 backdrop-blur-sm rounded-xl p-1 border border-white/10">
@@ -267,7 +261,6 @@ const GoalSetter = () => {
             </div>
           </div>
 
-          {/* Tab Content */}
           {activeTab === "goals" && (
             <div className="space-y-6">
               <GoalView goal={goalData} />

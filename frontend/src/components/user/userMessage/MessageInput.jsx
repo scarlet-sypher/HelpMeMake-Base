@@ -26,7 +26,6 @@ const MessageInput = ({
         </div>
       ) : (
         <div className="flex items-end space-x-2">
-          {/* Image Upload Button */}
           <input
             type="file"
             accept="image/*"

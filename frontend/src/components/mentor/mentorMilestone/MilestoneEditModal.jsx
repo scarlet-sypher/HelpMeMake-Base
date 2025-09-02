@@ -48,7 +48,6 @@ const MilestoneEditModal = ({ milestone, onClose, onUpdate, saving }) => {
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
       <div className="bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 rounded-3xl shadow-2xl border border-white/20 w-full max-w-2xl max-h-[90vh] overflow-hidden">
-        {/* Header */}
         <div className="p-6 border-b border-white/10">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
@@ -71,10 +70,8 @@ const MilestoneEditModal = ({ milestone, onClose, onUpdate, saving }) => {
           </div>
         </div>
 
-        {/* Form */}
         <form onSubmit={handleSubmit} className="p-6">
           <div className="space-y-4">
-            {/* Title */}
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">
                 Milestone Title *
@@ -95,7 +92,6 @@ const MilestoneEditModal = ({ milestone, onClose, onUpdate, saving }) => {
               </div>
             </div>
 
-            {/* Description */}
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">
                 Description
@@ -115,7 +111,6 @@ const MilestoneEditModal = ({ milestone, onClose, onUpdate, saving }) => {
               </div>
             </div>
 
-            {/* Due Date */}
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">
                 Due Date
@@ -134,7 +129,6 @@ const MilestoneEditModal = ({ milestone, onClose, onUpdate, saving }) => {
               </div>
             </div>
 
-            {/* Warning for completed milestones */}
             {milestone.learnerVerification?.isVerified &&
               milestone.mentorVerification?.isVerified && (
                 <div className="p-4 bg-amber-500/20 backdrop-blur-sm rounded-xl border border-amber-400/30">
@@ -146,7 +140,6 @@ const MilestoneEditModal = ({ milestone, onClose, onUpdate, saving }) => {
               )}
           </div>
 
-          {/* Action Buttons */}
           <div className="flex justify-end space-x-3 mt-6 pt-4 border-t border-white/10">
             <button
               type="button"

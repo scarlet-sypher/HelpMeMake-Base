@@ -29,7 +29,6 @@ const WallpaperModal = ({
         </div>
 
         <div className="space-y-4">
-          {/* URL Input Section */}
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-2">
               Enter Custom URL
@@ -43,7 +42,6 @@ const WallpaperModal = ({
             />
           </div>
 
-          {/* Preset Wallpapers */}
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-2">
               Preset Wallpapers
@@ -113,10 +111,8 @@ const WallpaperModal = ({
                       title={`Wallpaper ${index + 1}`}
                       aria-label={`Select wallpaper ${index + 1}`}
                     >
-                      {/* Overlay for better visibility */}
                       <div className="absolute inset-0 bg-black/10 group-hover:bg-black/5 transition-all"></div>
 
-                      {/* Selection indicator */}
                       {wallpaperUrl === wallpaper && (
                         <div className="absolute inset-0 flex items-center justify-center">
                           <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
@@ -135,7 +131,6 @@ const WallpaperModal = ({
                         </div>
                       )}
 
-                      {/* Preview label */}
                       <div className="absolute bottom-1 left-1 right-1">
                         <span className="text-xs text-white bg-black/50 px-2 py-0.5 rounded text-center block">
                           {index === 0 ? "Default" : `Style ${index}`}

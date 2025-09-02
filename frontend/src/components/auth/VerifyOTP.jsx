@@ -236,7 +236,6 @@ export default function VerifyOTP() {
         onClose={hideToast}
       />
 
-      {/* Animated Background */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-2 left-2 w-8 h-8 sm:w-16 sm:h-16 md:w-24 md:h-24 lg:w-32 lg:h-32 bg-emerald-500/10 rounded-full blur-2xl animate-pulse"></div>
         <div
@@ -265,10 +264,8 @@ export default function VerifyOTP() {
         ))}
       </div>
 
-      {/* Main Content */}
       <div className="relative z-10 w-full flex items-center justify-center p-2 sm:p-4">
         <div className="bg-slate-800/30 backdrop-blur-xl rounded-lg sm:rounded-2xl shadow-2xl w-full max-w-[95vw] sm:max-w-md border border-slate-700/50 hover:border-emerald-500/30 hover:shadow-emerald-500/10 transition-all duration-300 max-h-[96vh] flex flex-col">
-          {/* Header */}
           <div className="text-center p-3 sm:p-6 space-y-2 sm:space-y-4 flex-shrink-0">
             <div className="inline-flex items-center gap-1 sm:gap-2 px-2 py-1 sm:px-3 sm:py-1.5 bg-emerald-500/10 rounded-full border border-emerald-500/20 mb-2 sm:mb-3">
               <div className="w-1 h-1 sm:w-1.5 sm:h-1.5 bg-emerald-400 rounded-full animate-pulse"></div>
@@ -308,7 +305,6 @@ export default function VerifyOTP() {
               </span>
             </div>
 
-            {/* Feature Icons */}
             <div className="flex justify-center gap-3 sm:gap-6 mt-3 sm:mt-4">
               {[
                 { icon: Mail, color: "purple", label: "Secure" },
@@ -334,16 +330,13 @@ export default function VerifyOTP() {
             </div>
           </div>
 
-          {/* OTP Form */}
           <div className="bg-slate-800/40 rounded-xl m-3 sm:m-6 p-3 sm:p-4 border border-slate-700/50 backdrop-blur-sm hover:border-emerald-500/30 transition-all duration-300 flex-1 flex flex-col justify-center min-h-0">
             <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
-              {/* OTP Input Fields */}
               <div className="space-y-2 sm:space-y-3">
                 <label className="block text-xs sm:text-sm font-semibold text-slate-200 text-center">
                   Enter Verification Code
                 </label>
 
-                {/* Paste instruction */}
                 <div className="text-center">
                   <p className="text-[10px] sm:text-xs text-slate-400 mb-1 sm:mb-2">
                     Paste the code with Ctrl+V (Cmd+V on Mac)
@@ -382,7 +375,6 @@ export default function VerifyOTP() {
                 </div>
               </div>
 
-              {/* Submit Button */}
               <button
                 type="submit"
                 disabled={isSubmitting || otp.join("").length !== 6}
@@ -406,7 +398,6 @@ export default function VerifyOTP() {
             </form>
           </div>
 
-          {/* Resend Section */}
           <div className="text-center p-3 sm:p-6 space-y-2 sm:space-y-3 flex-shrink-0">
             <div className="flex items-center">
               <div className="flex-1 border-t border-slate-700/50"></div>
@@ -440,7 +431,6 @@ export default function VerifyOTP() {
               )}
             </button>
 
-            {/* Footer */}
             <div className="pt-2 sm:pt-3 mt-2 sm:mt-3 border-t border-slate-700/50">
               <p className="text-slate-400 text-xs">
                 Wrong email address?{" "}

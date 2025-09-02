@@ -356,7 +356,6 @@ const MentorForm = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 p-4">
       <div className="max-w-4xl mx-auto">
-        {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center space-x-4">
             <button
@@ -394,9 +393,7 @@ const MentorForm = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Left Column - Profile & Basic Info */}
           <div className="space-y-6">
-            {/* Profile Picture */}
             <div className="bg-slate-800/60 rounded-xl p-6 border border-slate-700/50">
               <h3 className="text-lg font-semibold text-white mb-4 flex items-center">
                 <User className="w-5 h-5 mr-2" />
@@ -431,7 +428,6 @@ const MentorForm = () => {
               </div>
             </div>
 
-            {/* Basic Information */}
             <div className="bg-slate-800/60 rounded-xl p-6 border border-slate-700/50">
               <h3 className="text-lg font-semibold text-white mb-4 flex items-center">
                 <User className="w-5 h-5 mr-2" />
@@ -495,7 +491,6 @@ const MentorForm = () => {
               </div>
             </div>
 
-            {/* Status Settings */}
             <div className="bg-slate-800/60 rounded-xl p-6 border border-slate-700/50">
               <h3 className="text-lg font-semibold text-white mb-4">
                 Status & Availability
@@ -566,9 +561,7 @@ const MentorForm = () => {
             </div>
           </div>
 
-          {/* Middle Column - Professional Details */}
           <div className="space-y-6">
-            {/* Description & Bio */}
             <div className="bg-slate-800/60 rounded-xl p-6 border border-slate-700/50">
               <h3 className="text-lg font-semibold text-white mb-4 flex items-center">
                 <FileText className="w-5 h-5 mr-2" />
@@ -623,14 +616,12 @@ const MentorForm = () => {
               </div>
             </div>
 
-            {/* Expertise */}
             <div className="bg-slate-800/60 rounded-xl p-6 border border-slate-700/50">
               <h3 className="text-lg font-semibold text-white mb-4 flex items-center">
                 <Award className="w-5 h-5 mr-2" />
                 Expertise
               </h3>
 
-              {/* Add New Expertise */}
               <div className="grid grid-cols-3 gap-2 mb-4">
                 <input
                   type="text"
@@ -667,7 +658,6 @@ const MentorForm = () => {
                 </button>
               </div>
 
-              {/* Expertise List */}
               <div className="space-y-2 max-h-40 overflow-y-auto">
                 {formData.expertise.map((exp, index) => (
                   <div
@@ -693,13 +683,11 @@ const MentorForm = () => {
               </div>
             </div>
 
-            {/* Specializations */}
             <div className="bg-slate-800/60 rounded-xl p-6 border border-slate-700/50">
               <h3 className="text-lg font-semibold text-white mb-4">
                 Specializations
               </h3>
 
-              {/* Add New Specialization */}
               <div className="flex gap-2 mb-4">
                 <input
                   type="text"
@@ -716,7 +704,6 @@ const MentorForm = () => {
                 </button>
               </div>
 
-              {/* Specializations List */}
               <div className="flex flex-wrap gap-2">
                 {formData.specializations.map((spec, index) => (
                   <span
@@ -738,9 +725,7 @@ const MentorForm = () => {
             </div>
           </div>
 
-          {/* Right Column - Metrics & Settings */}
           <div className="space-y-6">
-            {/* Performance Metrics */}
             <div className="bg-slate-800/60 rounded-xl p-6 border border-slate-700/50">
               <h3 className="text-lg font-semibold text-white mb-4 flex items-center">
                 <Star className="w-5 h-5 mr-2" />
@@ -860,7 +845,6 @@ const MentorForm = () => {
               </div>
             </div>
 
-            {/* Pricing */}
             <div className="bg-slate-800/60 rounded-xl p-6 border border-slate-700/50">
               <h3 className="text-lg font-semibold text-white mb-4 flex items-center">
                 <DollarSign className="w-5 h-5 mr-2" />
@@ -928,7 +912,6 @@ const MentorForm = () => {
               </div>
             </div>
 
-            {/* Social Links */}
             <div className="bg-slate-800/60 rounded-xl p-6 border border-slate-700/50">
               <h3 className="text-lg font-semibold text-white mb-4 flex items-center">
                 <Link className="w-5 h-5 mr-2" />
@@ -959,7 +942,6 @@ const MentorForm = () => {
               </div>
             </div>
 
-            {/* Profile Completion */}
             <div className="bg-slate-800/60 rounded-xl p-6 border border-slate-700/50">
               <h3 className="text-lg font-semibold text-white mb-4">
                 Profile Completion

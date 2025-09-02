@@ -94,7 +94,6 @@ const SecurityTab = ({
     <div className="space-y-8 animate-fade-in">
       <NotificationComponent notification={notifications.password} />
 
-      {/* OAuth User Notice - Password Change Not Allowed */}
       {isOAuthUser() && (
         <div className="relative group/oauth-notice">
           <div className="absolute -inset-0.5 bg-gradient-to-r from-amber-600 to-orange-600 rounded-2xl blur opacity-15 group-hover/oauth-notice:opacity-20 transition duration-500"></div>
@@ -131,7 +130,6 @@ const SecurityTab = ({
         </div>
       )}
 
-      {/* Security Notice for Local Users */}
       {!isOAuthUser() && (
         <div className="relative group/notice">
           <div className="absolute -inset-0.5 bg-gradient-to-r from-slate-600 to-blue-700 rounded-2xl blur opacity-15 group-hover/notice:opacity-20 transition duration-500"></div>
@@ -152,7 +150,6 @@ const SecurityTab = ({
         </div>
       )}
 
-      {/* Password Change Form - Only show for local users */}
       {canChangePassword() && !isOAuthUser() && (
         <div className="relative group/security">
           <div className="absolute -inset-0.5 bg-gradient-to-r from-slate-700 to-slate-600 rounded-2xl blur opacity-15 group-hover/security:opacity-20 transition duration-500"></div>
@@ -166,7 +163,6 @@ const SecurityTab = ({
             </div>
 
             <form onSubmit={handlePasswordChange} className="space-y-6">
-              {/* Current Password Field - Only show if not temp password */}
               {!userData.tempPassword && (
                 <div className="space-y-2">
                   <label className="block text-sm font-semibold text-gray-300 mb-3 flex items-center">
@@ -305,7 +301,6 @@ const SecurityTab = ({
         </div>
       )}
 
-      {/* Account Information Section */}
       <div className="relative group/account-info">
         <div className="absolute -inset-0.5 bg-gradient-to-r from-slate-600 to-blue-700 rounded-2xl blur opacity-15 group-hover/account-info:opacity-20 transition duration-500"></div>
         <div className="relative bg-gradient-to-br from-white/10 to-white/5 rounded-2xl p-6 lg:p-8 border border-white/20">

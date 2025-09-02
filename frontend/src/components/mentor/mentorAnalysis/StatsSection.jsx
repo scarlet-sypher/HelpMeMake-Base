@@ -123,18 +123,14 @@ const StatCard = ({
 
   return (
     <div className="group relative">
-      {/* Animated gradient background */}
       <div
         className={`absolute -inset-0.5 bg-gradient-to-r ${colorClasses.gradient} rounded-2xl blur opacity-20 group-hover:opacity-30 transition duration-500`}
       ></div>
 
-      {/* Main card */}
       <div
         className={`relative bg-gradient-to-br ${colorClasses.bg} backdrop-blur-sm rounded-2xl p-4 sm:p-6 border ${colorClasses.border} transform transition-all duration-300 hover:scale-105 hover:shadow-xl`}
       >
-        {/* Mobile Layout (small screens) */}
         <div className="block lg:hidden">
-          {/* Icon at top center */}
           <div className="flex justify-center mb-3">
             <div
               className={`p-2.5 bg-gradient-to-r ${colorClasses.gradient} rounded-xl shadow-lg`}
@@ -143,7 +139,6 @@ const StatCard = ({
             </div>
           </div>
 
-          {/* Value and Label stacked on right side */}
           <div className="flex justify-end mb-3">
             <div className="flex flex-col items-end">
               <div className="flex items-baseline space-x-1">
@@ -162,7 +157,6 @@ const StatCard = ({
             </div>
           </div>
 
-          {/* Progress bar for mobile */}
           {(showProgress || percentage !== null) && (
             <div className="mb-3">
               <div className="w-full bg-white/10 rounded-full h-1.5 overflow-hidden">
@@ -177,7 +171,6 @@ const StatCard = ({
             </div>
           )}
 
-          {/* Trend indicator for mobile */}
           {trend !== null && (
             <div className="flex justify-center">
               <div
@@ -198,7 +191,6 @@ const StatCard = ({
           )}
         </div>
 
-        {/* Desktop Layout (large screens and up) */}
         <div className="hidden lg:block">
           <div className="flex items-start justify-between mb-4">
             <div
@@ -241,7 +233,6 @@ const StatCard = ({
               )}
             </div>
 
-            {/* Progress bar */}
             {(showProgress || percentage !== null) && (
               <div className="space-y-2">
                 <div className="flex justify-between items-center">
@@ -264,7 +255,6 @@ const StatCard = ({
           </div>
         </div>
 
-        {/* Sparkle animation on hover */}
         <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
           <div className="absolute top-4 right-4 w-1 h-1 bg-white rounded-full animate-ping"></div>
           <div className="absolute top-8 right-12 w-1 h-1 bg-white rounded-full animate-ping delay-75"></div>
@@ -344,7 +334,6 @@ const StatsSection = ({ analyticsData }) => {
 
   return (
     <div className="space-y-6">
-      {/* Mobile/Tablet Layout - Simple 2x2 grid that flows naturally */}
       <div className="lg:hidden">
         <div className="grid grid-cols-2 gap-3 sm:gap-4">
           {statsConfig.map((stat, index) => (
@@ -362,16 +351,13 @@ const StatsSection = ({ analyticsData }) => {
         </div>
       </div>
 
-      {/* Desktop Layout - 4+3 layout */}
       <div className="hidden lg:block space-y-6">
-        {/* Top Row - 4 Cards */}
         <div className="grid grid-cols-4 gap-6">
           {statsConfig.slice(0, 4).map((stat, index) => (
             <StatCard key={`top-${index}`} {...stat} />
           ))}
         </div>
 
-        {/* Bottom Row - 3 Cards */}
         <div className="grid grid-cols-3 gap-6">
           {statsConfig.slice(4, 7).map((stat, index) => (
             <StatCard key={`bottom-${index}`} {...stat} />

@@ -253,7 +253,6 @@ const MentorDashboard = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 flex">
-      {/* Sidebar - Reuse existing component but with mentor context */}
       <Sidebar
         isOpen={sidebarOpen}
         toggleSidebar={toggleSidebar}
@@ -262,9 +261,7 @@ const MentorDashboard = () => {
         userRole="mentor"
       />
 
-      {/* Main Content */}
       <div className="flex-1 lg:ml-64">
-        {/* Mobile Header */}
         <div className="lg:hidden bg-gradient-to-r from-slate-900/80 to-gray-900/80 backdrop-blur-sm border-b border-white/10 p-4">
           <div className="flex items-center justify-between">
             <button
@@ -278,7 +275,6 @@ const MentorDashboard = () => {
           </div>
         </div>
 
-        {/* Animated background elements */}
         <div className="fixed inset-0 overflow-hidden pointer-events-none">
           <div className="absolute -top-40 -right-40 w-80 h-80 bg-cyan-500/20 rounded-full blur-3xl animate-pulse"></div>
           <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-teal-500/20 rounded-full blur-3xl animate-pulse"></div>
@@ -286,10 +282,8 @@ const MentorDashboard = () => {
         </div>
 
         <div className="relative z-10 p-4 lg:p-6 space-y-6">
-          {/* Hero Profile Section - Using new MentorHeroProfile */}
           <MentorHeroProfile mentor={mentorProfileData} />
 
-          {/* Stats Grid Component */}
           <StatsGrid
             mentorData={{
               ...mentorData,
@@ -307,32 +301,22 @@ const MentorDashboard = () => {
             }}
           />
 
-          {/* Quick Actions Component */}
           <QuickActions />
 
-          {/* Main Content Grid */}
           <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-            {/* Left Column */}
             <div className="xl:col-span-2 space-y-6">
-              {/* Upcoming Sessions Component */}
               <UpcomingSessions upcomingSessions={upcomingSessions} />
 
-              {/* Mentorship Progress Tracker Component */}
               <ProgressTracker userImg={userImg} />
 
-              {/* Earnings Overview Component */}
               <EarningsOverview />
             </div>
 
-            {/* Right Column */}
             <div className="space-y-6">
-              {/* Recent Messages Component */}
               <RecentMessages recentMessages={recentMessages} />
 
-              {/* Activity Timeline Component */}
               <ActivityTimeline />
 
-              {/* Student Feedback Component */}
               <StudentFeedback userImg={userImg} />
             </div>
           </div>

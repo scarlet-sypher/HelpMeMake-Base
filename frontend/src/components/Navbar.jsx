@@ -115,7 +115,6 @@ const Navbar = () => {
               : "bg-slate-900/90 backdrop-blur-md shadow-xl border border-emerald-500/20"
           } rounded-full overflow-hidden`}
         >
-          {/* Dynamic gradient overlay based on mouse position */}
           <div
             className="absolute inset-0 opacity-30 transition-all duration-1000"
             style={{
@@ -127,7 +126,6 @@ const Navbar = () => {
             }}
           />
 
-          {/* Animated particles */}
           <div className="absolute inset-0 overflow-hidden rounded-full">
             {[...Array(5)].map((_, i) => (
               <div
@@ -146,7 +144,6 @@ const Navbar = () => {
           </div>
 
           <div className="relative flex items-center justify-between px-6 py-3">
-            {/* Enhanced Logo */}
             <div
               className="flex items-center group cursor-pointer"
               onClick={scrollToTop}
@@ -165,7 +162,6 @@ const Navbar = () => {
               </div>
             </div>
 
-            {/* Desktop Navigation with 3D Flip Animation */}
             <div className="hidden lg:flex items-center space-x-1">
               {navItems.map((item, index) => {
                 const IconComponent = item.icon;
@@ -191,17 +187,15 @@ const Navbar = () => {
                     ></div>
                     <div className="absolute inset-0 bg-white/5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
 
-                    {/* 3D Flip Container */}
                     <div className="relative z-10">
                       <div className="flip-container inline-block">
                         <div className="flipper transition-transform duration-500 group-hover:rotate-y-180 preserve-3d">
-                          {/* Front Side - Text */}
                           <div className="flip-front backface-hidden">
                             <span className="whitespace-nowrap inline-block">
                               {item.name}
                             </span>
                           </div>
-                          {/* Back Side - Icon */}
+
                           <div className="flip-back backface-hidden rotate-y-180 absolute inset-0 flex items-center justify-center">
                             <IconComponent className="w-4 h-4" />
                           </div>
@@ -221,7 +215,6 @@ const Navbar = () => {
               })}
             </div>
 
-            {/* Enhanced CTA Buttons */}
             <div className="hidden md:flex items-center space-x-3">
               <button
                 onClick={() => navigate("/login")}
@@ -244,7 +237,6 @@ const Navbar = () => {
               </button>
             </div>
 
-            {/* Enhanced Mobile menu button */}
             <div className="md:hidden">
               <button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -263,7 +255,6 @@ const Navbar = () => {
           </div>
         </div>
 
-        {/* Enhanced Mobile Navigation */}
         <div
           className={`md:hidden transition-all duration-500 ease-out ${
             isMenuOpen
@@ -272,10 +263,8 @@ const Navbar = () => {
           }`}
         >
           <div className="relative bg-slate-900/95 backdrop-blur-xl shadow-2xl border border-purple-500/30 rounded-3xl p-6 overflow-hidden">
-            {/* Background effects */}
             <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 via-blue-500/10 to-purple-500/10"></div>
 
-            {/* Animated background particles */}
             <div className="absolute inset-0 overflow-hidden rounded-3xl">
               {[...Array(3)].map((_, i) => (
                 <div
@@ -323,15 +312,13 @@ const Navbar = () => {
                       }`}
                     ></div>
 
-                    {/* Mobile 3D Flip Container */}
                     <div className="relative z-10 flex items-center">
                       <div className="flip-container h-5 flex items-center mr-3">
                         <div className="flipper transition-transform duration-500 group-hover:rotate-y-180 preserve-3d">
-                          {/* Front Side - Icon */}
                           <div className="flip-front absolute inset-0 backface-hidden flex items-center justify-center">
                             <IconComponent className="w-4 h-4" />
                           </div>
-                          {/* Back Side - Icon (same for mobile) */}
+
                           <div className="flip-back absolute inset-0 backface-hidden rotate-y-180 flex items-center justify-center">
                             <IconComponent className="w-4 h-4" />
                           </div>

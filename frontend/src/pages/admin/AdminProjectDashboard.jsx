@@ -187,7 +187,6 @@ const AdminProjectDashboard = ({ onReturn }) => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 p-4 md:p-8">
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
         <div className="flex justify-between items-center mb-8">
           <div className="flex items-center space-x-4">
             <button
@@ -214,7 +213,6 @@ const AdminProjectDashboard = ({ onReturn }) => {
           </div>
         </div>
 
-        {/* Statistics Cards */}
         {stats && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             <div className="bg-gradient-to-r from-blue-500 to-cyan-500 rounded-2xl shadow-lg p-6 text-white">
@@ -273,10 +271,8 @@ const AdminProjectDashboard = ({ onReturn }) => {
           </div>
         )}
 
-        {/* Search and Filters */}
         <div className="bg-white rounded-2xl shadow-lg p-6 mb-8">
           <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
-            {/* Search */}
             <div className="flex-1 max-w-md">
               <div className="relative">
                 <Search
@@ -293,7 +289,6 @@ const AdminProjectDashboard = ({ onReturn }) => {
               </div>
             </div>
 
-            {/* Status Filter */}
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-2">
                 <Filter size={20} className="text-gray-500" />
@@ -316,14 +311,12 @@ const AdminProjectDashboard = ({ onReturn }) => {
               </div>
             </div>
 
-            {/* Results Count */}
             <div className="text-gray-600">
               Showing {projects.length} of {totalProjects} projects
             </div>
           </div>
         </div>
 
-        {/* Projects Grid */}
         {loading ? (
           <div className="flex justify-center items-center py-12">
             <div className="text-white text-xl">Loading projects...</div>
@@ -356,7 +349,6 @@ const AdminProjectDashboard = ({ onReturn }) => {
           </div>
         ) : (
           <>
-            {/* Projects Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
               {projects.map((project) => (
                 <ProjectCard
@@ -369,7 +361,6 @@ const AdminProjectDashboard = ({ onReturn }) => {
               ))}
             </div>
 
-            {/* Pagination */}
             {totalPages > 1 && (
               <div className="flex justify-center items-center space-x-4">
                 <button

@@ -234,7 +234,6 @@ const PersonalTab = ({
       <NotificationComponent notification={notifications.personal} />
 
       <form onSubmit={handlePersonalUpdate} className="space-y-8">
-        {/* Professional Experience Section */}
         <div className="relative group/experience">
           <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-600 to-teal-700 rounded-2xl blur opacity-15 group-hover/experience:opacity-20 transition duration-500"></div>
           <div className="relative bg-gradient-to-br from-white/10 to-white/5 rounded-2xl p-6 lg:p-8 border border-white/20">
@@ -281,7 +280,6 @@ const PersonalTab = ({
               </div>
             </div>
 
-            {/* Company Experience List */}
             <div className="space-y-4">
               {personalData.experience?.companies?.map((company, index) => (
                 <div
@@ -344,7 +342,6 @@ const PersonalTab = ({
           </div>
         </div>
 
-        {/* Expertise & Skills Section */}
         <div className="relative group/expertise">
           <div className="absolute -inset-0.5 bg-gradient-to-r from-teal-600 to-cyan-700 rounded-2xl blur opacity-15 group-hover/expertise:opacity-20 transition duration-500"></div>
           <div className="relative bg-gradient-to-br from-white/10 to-white/5 rounded-2xl p-6 lg:p-8 border border-white/20">
@@ -433,7 +430,6 @@ const PersonalTab = ({
           </div>
         </div>
 
-        {/* Specializations Section */}
         <div className="relative group/specializations">
           <div className="absolute -inset-0.5 bg-gradient-to-r from-indigo-600 to-purple-700 rounded-2xl blur opacity-15 group-hover/specializations:opacity-20 transition duration-500"></div>
           <div className="relative bg-gradient-to-br from-white/10 to-white/5 rounded-2xl p-6 lg:p-8 border border-white/20">
@@ -503,7 +499,6 @@ const PersonalTab = ({
           </div>
         </div>
 
-        {/* Teaching Preferences Section */}
         <div className="relative group/teaching">
           <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-600 to-pink-700 rounded-2xl blur opacity-15 group-hover/teaching:opacity-20 transition duration-500"></div>
           <div className="relative bg-gradient-to-br from-white/10 to-white/5 rounded-2xl p-6 lg:p-8 border border-white/20">
@@ -578,7 +573,6 @@ const PersonalTab = ({
               </div>
             </div>
 
-            {/* Languages */}
             <div className="mt-6">
               <label className="block text-sm font-semibold text-gray-300 mb-3">
                 <Languages className="inline mr-2" size={16} />
@@ -624,7 +618,6 @@ const PersonalTab = ({
           </div>
         </div>
 
-        {/* Availability Section */}
         <div className="relative group/availability">
           <div className="absolute -inset-0.5 bg-gradient-to-r from-green-600 to-emerald-700 rounded-2xl blur opacity-15 group-hover/availability:opacity-20 transition duration-500"></div>
           <div className="relative bg-gradient-to-br from-white/10 to-white/5 rounded-2xl p-6 lg:p-8 border border-white/20">
@@ -671,7 +664,6 @@ const PersonalTab = ({
           </div>
         </div>
 
-        {/* Submit Button */}
         <div className="flex justify-end">
           <button
             type="submit"

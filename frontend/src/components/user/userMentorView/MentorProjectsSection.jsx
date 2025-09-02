@@ -16,12 +16,9 @@ const MentorProjectsSection = ({
 }) => {
   return (
     <div className="relative group">
-      {/* Enhanced container with modern styling */}
       <div className="bg-slate-900/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-slate-700/50 overflow-hidden relative">
-        {/* Subtle gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-purple-500/5 pointer-events-none" />
 
-        {/* Header section with enhanced styling */}
         <div className="relative p-6 sm:p-8 border-b border-slate-700/50">
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div className="flex items-center space-x-4">
@@ -43,7 +40,6 @@ const MentorProjectsSection = ({
               </div>
             </div>
 
-            {/* Enhanced project count badge */}
             <div className="flex items-center space-x-3">
               <div className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-2xl border border-blue-500/30">
                 <TrendingUp className="w-4 h-4 text-blue-400" />
@@ -56,7 +52,6 @@ const MentorProjectsSection = ({
           </div>
         </div>
 
-        {/* Content section */}
         <div className="relative p-6 sm:p-8">
           {projectsLoading ? (
             <div className="text-center py-16">
@@ -75,7 +70,6 @@ const MentorProjectsSection = ({
             </div>
           ) : mentorProjects.length > 0 ? (
             <div className="space-y-6">
-              {/* Projects grid with enhanced responsive layout */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 gap-6">
                 {mentorProjects.map((project, index) => (
                   <div
@@ -86,7 +80,6 @@ const MentorProjectsSection = ({
                       animation: "fadeInUp 0.6s ease-out forwards",
                     }}
                   >
-                    {/* Enhanced project card wrapper */}
                     <div className="relative group/card">
                       <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-2xl opacity-0 group-hover/card:opacity-100 transition-all duration-300 blur-sm"></div>
                       <div className="relative">
@@ -97,11 +90,9 @@ const MentorProjectsSection = ({
                 ))}
               </div>
 
-              {/* Summary stats if multiple projects */}
               {mentorProjects.length > 3 && (
                 <div className="mt-8 p-6 bg-gradient-to-r from-slate-800/50 to-slate-700/50 rounded-2xl border border-slate-600/50">
                   <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                    {/* Left: Heading */}
                     <div className="flex items-center space-x-3">
                       <Star className="w-5 h-5 text-yellow-400 shrink-0" />
                       <span className="text-white font-medium text-lg sm:text-base">
@@ -109,7 +100,6 @@ const MentorProjectsSection = ({
                       </span>
                     </div>
 
-                    {/* Right: Stats */}
                     <div className="flex flex-wrap items-center gap-4 text-sm">
                       <div className="flex items-center space-x-1">
                         <div className="w-2 h-2 bg-green-400 rounded-full"></div>
@@ -155,7 +145,6 @@ const MentorProjectsSection = ({
         </div>
       </div>
 
-      {/* Custom animation keyframes */}
       <style>{`
         @keyframes fadeInUp {
           from {

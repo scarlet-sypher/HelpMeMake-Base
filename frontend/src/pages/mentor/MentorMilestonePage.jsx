@@ -218,13 +218,11 @@ const MentorMilestonePage = () => {
 
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 flex overflow-x-hidden">
-      {/* Animated background elements */}
       <div className="fixed inset-0 w-full h-full overflow-hidden pointer-events-none">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-cyan-500/20 rounded-full blur-3xl animate-pulse"></div>
         <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-teal-500/20 rounded-full blur-3xl animate-pulse"></div>
       </div>
 
-      {/* Sidebar */}
       <Sidebar
         isOpen={sidebarOpen}
         toggleSidebar={toggleSidebar}
@@ -233,9 +231,7 @@ const MentorMilestonePage = () => {
         userRole="mentor"
       />
 
-      {/* Main Content */}
       <div className="flex-1 lg:ml-64 min-h-screen w-full max-w-full bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800">
-        {/* Mobile Header */}
         <div className="lg:hidden bg-gradient-to-r from-slate-900/80 to-gray-900/80 backdrop-blur-sm border-b border-white/10 p-4 w-full">
           <div className="flex items-center justify-between">
             <button
@@ -250,7 +246,6 @@ const MentorMilestonePage = () => {
         </div>
 
         <div className="relative z-10 p-4 lg:p-6 space-y-6 w-full max-w-full">
-          {/* Header */}
           <div className="flex flex-col lg:flex-row lg:items-center justify-between">
             <div>
               <h1 className="text-3xl lg:text-4xl font-bold text-white flex items-center">
@@ -263,7 +258,6 @@ const MentorMilestonePage = () => {
             </div>
           </div>
 
-          {/* Error Display */}
           {error && (
             <div className="bg-red-500/20 backdrop-blur-sm rounded-2xl p-4 border border-red-400/30 flex items-center space-x-3">
               <AlertCircle className="text-red-400" size={24} />
@@ -298,7 +292,6 @@ const MentorMilestonePage = () => {
             </div>
           ) : (
             <div className="space-y-6">
-              {/* Projects List */}
               {projects.map((project) => (
                 <MentorProjectCard
                   key={project._id}

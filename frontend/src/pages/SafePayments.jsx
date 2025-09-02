@@ -385,9 +385,7 @@ const SafePayments = () => {
 
   return (
     <section className="relative min-h-screen py-12 sm:py-16 lg:py-20 overflow-hidden">
-      {/* Enhanced Background with parallax effect */}
       <div className="absolute inset-0 bg-gradient-to-l from-slate-900 via-purple-900 to-slate-900">
-        {/* Enhanced floating elements with parallax */}
         <div
           className="absolute top-20 left-10 w-24 sm:w-32 lg:w-40 h-24 sm:h-32 lg:h-40 bg-gradient-to-r from-emerald-400/20 to-blue-400/20 rounded-full blur-3xl animate-pulse"
           style={{ transform: `translateY(${scrollY * 0.1}px)` }}
@@ -413,7 +411,6 @@ const SafePayments = () => {
           style={{ transform: `translateY(${scrollY * -0.05}px)` }}
         ></div>
 
-        {/* Enhanced animated particles */}
         <div className="absolute inset-0">
           {[...Array(30)].map((_, i) => (
             <div
@@ -434,13 +431,10 @@ const SafePayments = () => {
           ))}
         </div>
 
-        {/* Enhanced gradient overlays */}
         <div className="absolute inset-0 bg-gradient-to-t from-slate-900/50 via-transparent to-slate-900/50"></div>
-        {/* <div className="absolute inset-0 bg-gradient-to-r from-slate-900/30 via-transparent to-slate-900/30"></div> */}
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Enhanced Header */}
         <div
           ref={headerRef}
           className={`text-center mb-12 sm:mb-16 lg:mb-20 transform transition-all duration-1200 ease-out ${
@@ -472,9 +466,7 @@ const SafePayments = () => {
           </p>
         </div>
 
-        {/* Enhanced Steps Container */}
         <div className="mb-12 sm:mb-16 lg:mb-20">
-          {/* Desktop Layout */}
           <div className="hidden lg:flex items-center justify-center space-x-6 xl:space-x-8">
             {steps.map((step, index) => (
               <React.Fragment key={index}>
@@ -497,7 +489,6 @@ const SafePayments = () => {
             ))}
           </div>
 
-          {/* Tablet Layout */}
           <div className="hidden md:flex lg:hidden flex-col items-center space-y-8">
             {steps.map((step, index) => (
               <React.Fragment key={index}>
@@ -520,7 +511,6 @@ const SafePayments = () => {
             ))}
           </div>
 
-          {/* Mobile Layout */}
           <div className="md:hidden space-y-6 sm:space-y-8">
             {steps.map((step, index) => (
               <React.Fragment key={index}>
@@ -544,7 +534,6 @@ const SafePayments = () => {
           </div>
         </div>
 
-        {/* Enhanced Testimonial Quote */}
         <div
           ref={testimonialRef}
           className={`max-w-5xl mx-auto mb-12 sm:mb-16 lg:mb-20 transform transition-all duration-1200 ease-out ${
@@ -554,13 +543,10 @@ const SafePayments = () => {
           }`}
         >
           <div className="relative bg-gradient-to-br from-indigo-900/25 to-indigo-800/15 backdrop-blur-xl rounded-3xl sm:rounded-4xl p-8 sm:p-12 lg:p-16 border border-indigo-500/30 shadow-2xl hover:shadow-3xl transition-all duration-700 group hover:border-indigo-400/50">
-            {/* Enhanced quote icon */}
             <div className="absolute -top-6 sm:-top-8 left-1/2 transform -translate-x-1/2 w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-r from-indigo-600 to-indigo-500 rounded-full flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform duration-500">
               <Quote className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
-              {/* <div className="absolute inset-0 bg-gradient-to-r from-indigo-400 to-indigo-300 rounded-full opacity-50"></div> */}
             </div>
 
-            {/* Enhanced quote content */}
             <div className="text-center">
               <blockquote className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-medium text-white mb-6 sm:mb-8 leading-relaxed">
                 "I built my first project without worrying about getting
@@ -595,16 +581,13 @@ const SafePayments = () => {
               </div>
             </div>
 
-            {/* Enhanced decorative elements */}
             <div className="absolute top-4 right-4 w-16 sm:w-20 lg:w-24 h-16 sm:h-20 lg:h-24 bg-gradient-to-r from-indigo-500/15 to-indigo-600/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
             <div className="absolute bottom-4 left-4 w-12 sm:w-16 lg:w-20 h-12 sm:h-16 lg:h-20 bg-gradient-to-r from-indigo-400/10 to-indigo-500/15 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
 
-            {/* Animated border effect */}
             <div className="absolute inset-0 rounded-3xl sm:rounded-4xl border-2 border-transparent group-hover:border-indigo-500/40 transition-all duration-700"></div>
           </div>
         </div>
 
-        {/* Enhanced Additional Security Features */}
         <div
           ref={featuresRef}
           className={`grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 lg:gap-10 transform transition-all duration-1200 ease-out ${
@@ -698,7 +681,6 @@ const SafePayments = () => {
                 {feature.description}
               </p>
 
-              {/* Hover effect elements */}
               <div
                 className={`absolute top-3 right-3 w-2 h-2 rounded-full opacity-60 group-hover:opacity-100 group-hover:scale-150 transition-all duration-500 ${
                   feature.colorScheme === "orange"

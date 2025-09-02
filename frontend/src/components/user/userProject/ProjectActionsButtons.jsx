@@ -43,7 +43,6 @@ const ProjectActionsButtons = ({
 
   return (
     <div className="space-y-4 sm:space-y-6">
-      {/* Action Buttons - Only show if project is Open and no mentor assigned */}
       {project.status === "Open" && !project.mentorId && (
         <div className="group bg-gradient-to-br from-white/10 via-white/5 to-white/0 backdrop-blur-xl rounded-2xl sm:rounded-3xl shadow-2xl p-4 sm:p-6 border border-white/20 hover:border-white/30 transition-all duration-500 hover:shadow-purple-500/20">
           <div className="flex items-center mb-4">
@@ -111,7 +110,6 @@ const ProjectActionsButtons = ({
         </div>
       )}
 
-      {/* Project Status Updates */}
       {project.mentorId && (
         <div className="bg-gradient-to-br from-white/10 via-white/5 to-white/0 backdrop-blur-xl rounded-2xl sm:rounded-3xl shadow-2xl p-4 sm:p-6 border border-white/20 hover:border-green-400/30 transition-all duration-500">
           <div className="flex items-center mb-4">
@@ -190,7 +188,6 @@ const ProjectActionsButtons = ({
         </div>
       )}
 
-      {/* Applications */}
       {project.applications && project.applications.length > 0 && (
         <div className="bg-gradient-to-br from-white/10 via-white/5 to-white/0 backdrop-blur-xl rounded-2xl sm:rounded-3xl shadow-2xl p-4 sm:p-6 border border-white/20">
           <div className="flex items-center justify-between mb-4">
@@ -276,7 +273,6 @@ const ProjectActionsButtons = ({
         </div>
       )}
 
-      {/* Pitches */}
       {project.pitches && project.pitches.length > 0 && (
         <div className="bg-gradient-to-br from-white/10 via-white/5 to-white/0 backdrop-blur-xl rounded-2xl sm:rounded-3xl shadow-2xl p-4 sm:p-6 border border-white/20">
           <div className="flex items-center justify-between mb-4">
@@ -342,7 +338,6 @@ const ProjectActionsButtons = ({
         </div>
       )}
 
-      {/* Project Overview Stats */}
       <div className="bg-gradient-to-br from-white/10 via-white/5 to-white/0 backdrop-blur-xl rounded-2xl sm:rounded-3xl shadow-2xl p-4 sm:p-6 border border-white/20">
         <div className="flex items-center mb-4">
           <div className="p-2 sm:p-3 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-xl shadow-lg">

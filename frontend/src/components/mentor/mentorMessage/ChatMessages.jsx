@@ -161,10 +161,8 @@ const ChatMessages = ({
   if (isLoading) {
     return (
       <div className="flex-1 relative overflow-hidden">
-        {/* Animated gradient background */}
         <div className="absolute inset-0 bg-gradient-to-br from-slate-900/50 via-slate-800/50 to-slate-900/50 animate-pulse"></div>
 
-        {/* Loading skeleton with better animations and responsive design */}
         <div className="relative z-10 h-full p-3 sm:p-4 md:p-6 space-y-4 sm:space-y-6">
           {[...Array(4)].map((_, i) => (
             <div
@@ -212,7 +210,6 @@ const ChatMessages = ({
 
   return (
     <div className="flex-1 relative overflow-hidden">
-      {/* Enhanced wallpaper with overlay */}
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-all duration-500"
         style={{
@@ -222,10 +219,8 @@ const ChatMessages = ({
         }}
       />
 
-      {/* Improved overlay with gradient */}
       <div className="absolute inset-0 bg-gradient-to-b from-slate-900/70 via-slate-900/60 to-slate-900/80 backdrop-blur-[1px]"></div>
 
-      {/* Messages container with improved responsiveness */}
       <div
         ref={messagesContainerRef}
         className="relative z-10 h-full overflow-y-auto p-2 sm:p-3 md:p-4 lg:p-6 space-y-1 hide-scrollbar-general"
@@ -295,7 +290,6 @@ const ChatMessages = ({
                         : ""
                     }`}
                   >
-                    {/* Enhanced Avatar with improved responsiveness */}
                     {!isCurrentUserMessage && showAvatar && (
                       <div className="relative flex-shrink-0">
                         <img
@@ -310,7 +304,6 @@ const ChatMessages = ({
                       <div className="w-7 sm:w-8 md:w-9 flex-shrink-0"></div>
                     )}
 
-                    {/* Enhanced Message Bubble with improved mobile responsiveness */}
                     <div
                       className={`px-2.5 sm:px-3 md:px-4 py-2 sm:py-2.5 md:py-3 rounded-2xl max-w-full transition-all duration-200 group relative ${
                         isCurrentUserMessage
@@ -324,7 +317,6 @@ const ChatMessages = ({
                           : ""
                       }`}
                     >
-                      {/* Enhanced Image Message with improved mobile handling */}
                       {message.messageType === "image" && message.imageUrl && (
                         <div className="mb-2 sm:mb-3">
                           <div className="relative group/image">
@@ -334,9 +326,7 @@ const ChatMessages = ({
                               className="max-w-full h-auto rounded-xl transition-transform duration-200 hover:scale-[1.02] max-h-[25vh] sm:max-h-[30vh] md:max-h-[35vh]"
                             />
 
-                            {/* Enhanced Image Action Buttons with mobile optimization */}
                             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/20 opacity-0 group-hover/image:opacity-100 transition-all duration-300 rounded-xl flex items-center justify-center space-x-2 sm:space-x-3">
-                              {/* View Button */}
                               <button
                                 onClick={() =>
                                   window.open(message.imageUrl, "_blank")
@@ -347,7 +337,6 @@ const ChatMessages = ({
                                 <Eye className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                               </button>
 
-                              {/* Download Button */}
                               <button
                                 onClick={() => {
                                   const link = document.createElement("a");
@@ -366,7 +355,6 @@ const ChatMessages = ({
                             </div>
                           </div>
 
-                          {/* Enhanced Image Info with responsive text */}
                           {message.imageName && (
                             <div className="mt-2 text-xs opacity-70 bg-black/20 rounded px-2 py-1">
                               <div className="truncate">
@@ -377,14 +365,12 @@ const ChatMessages = ({
                         </div>
                       )}
 
-                      {/* Enhanced Text Message with responsive typography */}
                       {message.message && message.message.trim() && (
                         <p className="text-xs sm:text-sm md:text-base leading-relaxed break-words whitespace-pre-wrap">
                           {message.message}
                         </p>
                       )}
 
-                      {/* Enhanced Time + Status with responsive spacing */}
                       <div
                         className={`flex items-center justify-end mt-1.5 sm:mt-2 space-x-1 sm:space-x-2 ${
                           isCurrentUserMessage
@@ -416,11 +402,9 @@ const ChatMessages = ({
         )}
       </div>
 
-      {/* Enhanced Scroll to Bottom Button with Progress Indicator and improved mobile positioning */}
       {showScrollButton && (
         <div className="fixed bottom-16 sm:bottom-20 md:bottom-24 right-3 sm:right-4 md:right-6 z-20">
           <div className="relative">
-            {/* Progress ring */}
             <svg
               className="absolute inset-0 w-10 h-10 sm:w-12 sm:h-12 transform -rotate-90"
               viewBox="0 0 36 36"
@@ -443,7 +427,6 @@ const ChatMessages = ({
               />
             </svg>
 
-            {/* Button with responsive sizing */}
             <button
               onClick={() => scrollToBottom(true)}
               className="relative w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-cyan-500 to-teal-500 hover:from-cyan-600 hover:to-teal-600 text-white rounded-full shadow-lg shadow-cyan-500/30 hover:shadow-cyan-500/50 transition-all duration-300 transform hover:scale-110 backdrop-blur-sm border border-white/10 flex items-center justify-center group"
@@ -454,7 +437,6 @@ const ChatMessages = ({
                 className="transition-transform duration-200 group-hover:animate-bounce"
               />
 
-              {/* Ripple effect on click */}
               <span className="absolute inset-0 rounded-full opacity-0 group-active:opacity-25 group-active:animate-ping bg-white"></span>
             </button>
           </div>

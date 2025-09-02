@@ -209,9 +209,7 @@ const LiveCollabPage = () => {
 
   return (
     <section className="relative min-h-screen py-10 sm:py-16 lg:py-20 overflow-hidden">
-      {/* Seamless Background */}
       <div className="absolute inset-0 bg-gradient-to-l from-slate-900 via-purple-900 to-slate-900">
-        {/* Continuous floating background elements */}
         <div className="absolute top-10 sm:top-20 left-5 sm:left-10 w-20 sm:w-32 h-20 sm:h-32 bg-gradient-to-r from-emerald-400/20 to-blue-400/20 rounded-full blur-3xl animate-pulse"></div>
         <div className="absolute top-20 sm:top-40 right-10 sm:right-20 w-24 sm:w-40 h-24 sm:h-40 bg-gradient-to-r from-purple-400/20 to-pink-400/20 rounded-full blur-3xl animate-pulse animation-delay-1000"></div>
         <div className="absolute bottom-16 sm:bottom-32 left-1/4 w-20 sm:w-36 h-20 sm:h-36 bg-gradient-to-r from-blue-400/20 to-cyan-400/20 rounded-full blur-3xl animate-pulse animation-delay-500"></div>
@@ -219,7 +217,6 @@ const LiveCollabPage = () => {
         <div className="absolute bottom-10 sm:bottom-20 right-5 sm:right-10 w-12 sm:w-24 h-12 sm:h-24 bg-gradient-to-r from-pink-400/20 to-purple-400/20 rounded-full blur-3xl animate-pulse animation-delay-2000"></div>
         <div className="absolute top-5 sm:top-10 left-1/2 w-10 sm:w-20 h-10 sm:h-20 bg-gradient-to-r from-cyan-400/20 to-blue-400/20 rounded-full blur-3xl animate-pulse animation-delay-750"></div>
 
-        {/* Animated particles for continuity */}
         <div className="absolute inset-0">
           {[...Array(25)].map((_, i) => (
             <div
@@ -237,12 +234,10 @@ const LiveCollabPage = () => {
           ))}
         </div>
 
-        {/* Gradient overlay for seamless blending */}
         <div className="absolute inset-0 bg-gradient-to-t from-slate-900/50 via-transparent to-slate-900/50"></div>
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-3 sm:px-4 lg:px-8">
-        {/* Header */}
         <div
           ref={headerRef}
           data-animate="header"
@@ -269,11 +264,8 @@ const LiveCollabPage = () => {
           </p>
         </div>
 
-        {/* Main Collaboration Interface */}
         <div className="grid grid-cols-1 xl:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
-          {/* Video Call Section */}
           <div className="xl:col-span-3 space-y-4 sm:space-y-6">
-            {/* Video Grid */}
             <div
               ref={videoSectionRef}
               data-animate="videoSection"
@@ -314,7 +306,6 @@ const LiveCollabPage = () => {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
 
-                    {/* Participant Info */}
                     <div className="absolute bottom-2 sm:bottom-3 left-2 sm:left-3 right-2 sm:right-3 flex items-center justify-between">
                       <div className="flex items-center space-x-1 sm:space-x-2">
                         <span className="text-white font-medium text-xs sm:text-sm">
@@ -359,7 +350,6 @@ const LiveCollabPage = () => {
                 ))}
               </div>
 
-              {/* Control Bar */}
               <div className="flex items-center justify-center space-x-2 sm:space-x-4">
                 <button className="p-2 sm:p-3 rounded-full bg-green-500/20 hover:bg-green-500/30 text-green-400 transition-all duration-300 group">
                   <Mic className="w-4 sm:w-5 h-4 sm:h-5 group-hover:scale-110" />
@@ -386,7 +376,6 @@ const LiveCollabPage = () => {
               </div>
             </div>
 
-            {/* Screen Share Preview */}
             {isScreenSharing && (
               <div
                 ref={screenShareRef}
@@ -443,7 +432,6 @@ const LiveCollabPage = () => {
             )}
           </div>
 
-          {/* AI Assistant Sidebar */}
           <div className="xl:col-span-1">
             <div
               ref={aiSidebarRef}
@@ -518,7 +506,6 @@ const LiveCollabPage = () => {
           </div>
         </div>
 
-        {/* Chat Interface */}
         <div
           ref={chatRef}
           data-animate="chat"

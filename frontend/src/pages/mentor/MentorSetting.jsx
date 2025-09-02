@@ -501,13 +501,11 @@ const MentorSetting = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 relative overflow-hidden">
-      {/* Enhanced Background Elements */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-40 -right-40 w-96 h-96 bg-gradient-to-br from-cyan-600/15 to-teal-800/15 rounded-full blur-3xl animate-float"></div>
         <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-br from-teal-800/15 to-slate-700/15 rounded-full blur-3xl animate-float-reverse"></div>
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-r from-cyan-700/8 to-teal-700/8 rounded-full blur-3xl animate-pulse"></div>
 
-        {/* Floating particles */}
         <div
           className="absolute top-20 left-20 w-2 h-2 bg-cyan-400/40 rounded-full animate-bounce opacity-30"
           style={{ animationDelay: "0s", animationDuration: "4s" }}
@@ -526,7 +524,6 @@ const MentorSetting = () => {
         ></div>
       </div>
 
-      {/* Sidebar */}
       <Sidebar
         isOpen={sidebarOpen}
         toggleSidebar={toggleSidebar}
@@ -535,9 +532,7 @@ const MentorSetting = () => {
         userRole="mentor"
       />
 
-      {/* Main Content */}
       <div className="flex-1 lg:ml-64 relative z-10">
-        {/* Enhanced Mobile Header */}
         <div className="lg:hidden bg-gradient-to-r from-slate-900/90 to-gray-900/90 backdrop-blur-xl border-b border-white/10 p-4 sticky top-0 z-50">
           <div className="flex items-center justify-between">
             <button
@@ -557,7 +552,6 @@ const MentorSetting = () => {
         </div>
 
         <div className="p-4 lg:p-8 space-y-8 max-w-6xl mx-auto">
-          {/* Enhanced Header */}
           <div className="relative group">
             <div className="absolute -inset-1 bg-gradient-to-r from-cyan-600 via-teal-700 to-slate-700 rounded-3xl blur opacity-15 group-hover:opacity-25 transition duration-1000"></div>
             <div className="relative bg-white/10 backdrop-blur-xl rounded-3xl shadow-2xl p-6 lg:p-8 border border-white/20">
@@ -582,11 +576,9 @@ const MentorSetting = () => {
             </div>
           </div>
 
-          {/* Enhanced Tabs Container */}
           <div className="relative group">
             <div className="absolute -inset-1 bg-gradient-to-r from-cyan-600 via-teal-700 to-slate-700 rounded-3xl blur opacity-15 group-hover:opacity-20 transition duration-1000"></div>
             <div className="relative bg-white/10 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 overflow-hidden">
-              {/* Enhanced Tab Navigation */}
               <div className="relative">
                 <div className="flex overflow-x-auto scrollbar-hide bg-gradient-to-r from-white/5 to-white/10 backdrop-blur-sm">
                   {tabs.map((tab, index) => (
@@ -626,9 +618,7 @@ const MentorSetting = () => {
                 </div>
               </div>
 
-              {/* Tab Content */}
               <div className="p-6 lg:p-8">
-                {/* Profile Tab */}
                 {activeTab === "profile" && (
                   <ProfileTab
                     profileData={profileData}
@@ -647,7 +637,6 @@ const MentorSetting = () => {
                   />
                 )}
 
-                {/* Social Links Tab */}
                 {activeTab === "social" && (
                   <SocialTab
                     socialLinksData={socialLinksData}
@@ -658,7 +647,6 @@ const MentorSetting = () => {
                   />
                 )}
 
-                {/* Security Tab */}
                 {activeTab === "security" && (
                   <SecurityTab
                     userData={mentorData}
@@ -676,7 +664,6 @@ const MentorSetting = () => {
                   />
                 )}
 
-                {/* Personal Tab */}
                 {activeTab === "personal" && (
                   <PersonalTab
                     personalData={personalData}

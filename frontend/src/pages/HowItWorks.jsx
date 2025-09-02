@@ -331,9 +331,7 @@ const HowItWorks = () => {
       id="how-it-works"
       className="relative min-h-screen py-16 sm:py-20 lg:py-24 xl:py-28 overflow-hidden"
     >
-      {/* Enhanced Background */}
       <div className="absolute inset-0 bg-gradient-to-l from-slate-900 via-purple-900 to-slate-900">
-        {/* Dynamic floating elements with scroll parallax */}
         <div
           className="absolute top-10 sm:top-20 left-5 sm:left-10 w-32 h-32 sm:w-40 sm:h-40 lg:w-48 lg:h-48 bg-gradient-to-r from-emerald-400/20 to-blue-400/20 rounded-full blur-3xl animate-pulse"
           style={{ transform: `translateY(${scrollY * 0.1}px)` }}
@@ -351,7 +349,6 @@ const HowItWorks = () => {
           style={{ transform: `translateY(${scrollY * -0.12}px)` }}
         ></div>
 
-        {/* Enhanced Animated Particles */}
         <div className="absolute inset-0">
           {[...Array(25)].map((_, i) => (
             <div
@@ -376,7 +373,6 @@ const HowItWorks = () => {
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Enhanced Header */}
         <div
           id="header"
           data-animate
@@ -408,7 +404,6 @@ const HowItWorks = () => {
           </p>
         </div>
 
-        {/* Enhanced Interactive Step Process */}
         <div
           id="steps"
           data-animate
@@ -418,7 +413,6 @@ const HowItWorks = () => {
               : "translate-y-12 opacity-0"
           }`}
         >
-          {/* Enhanced Progress Bar */}
           <div className="flex justify-center mb-12 sm:mb-16 px-2 sm:px-4">
             <div className="flex items-center space-x-1 sm:space-x-2 md:space-x-4 lg:space-x-6 overflow-x-auto pb-4 max-w-full scrollbar-hide">
               {steps.map((step, index) => (
@@ -453,13 +447,11 @@ const HowItWorks = () => {
             </div>
           </div>
 
-          {/* Enhanced Current Step Display */}
           <div className="max-w-7xl mx-auto px-2 sm:px-0">
             <div
               className={`bg-gradient-to-r ${steps[activeStep].bgColor} backdrop-blur-xl rounded-3xl sm:rounded-4xl p-4 sm:p-6 md:p-8 lg:p-10 border border-white/20 shadow-2xl min-h-[700px] sm:min-h-[800px] md:min-h-[900px] lg:min-h-[1000px] transition-all duration-500`}
             >
               <div className="flex flex-col lg:grid lg:grid-cols-2 lg:grid-rows-2 gap-6 sm:gap-8 md:gap-10 h-full">
-                {/* Enhanced Step Content - Header Section */}
                 <div className="order-1 lg:order-1 lg:col-start-1 lg:col-end-2 lg:row-start-1 lg:row-end-3 space-y-4 sm:space-y-6 flex flex-col justify-start">
                   <div
                     className={`inline-flex items-center px-4 py-2 sm:px-5 sm:py-3 rounded-full text-sm sm:text-base font-medium bg-gradient-to-r ${steps[activeStep].bgColor} text-white border border-white/20 backdrop-blur-sm shadow-lg`}
@@ -488,7 +480,6 @@ const HowItWorks = () => {
                     </p>
                   </div>
 
-                  {/* Enhanced Process Details */}
                   <div className="space-y-3 sm:space-y-4">
                     {steps[activeStep].processDetails.map((detail, index) => (
                       <div
@@ -508,21 +499,17 @@ const HowItWorks = () => {
                   </div>
                 </div>
 
-                {/* Enhanced Visual Representation */}
                 <div className="order-2 lg:order-2 lg:col-start-2 lg:col-end-3 lg:row-start-1 lg:row-end-2 flex items-start justify-center pt-4 lg:pt-8">
                   <div className="relative w-full max-w-sm sm:max-w-md lg:max-w-lg">
-                    {/* Enhanced Main Visual Container */}
                     <div
                       className={`relative bg-gradient-to-r from-white/20 to-white/10 backdrop-blur-xl rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 border border-white/20 shadow-2xl transform transition-all duration-500 hover:scale-105 hover:shadow-3xl min-h-[300px] sm:min-h-[350px] md:min-h-[400px] flex flex-col w-full`}
                     >
-                      {/* Enhanced Icon Display */}
                       <div
                         className={`w-20 h-20 sm:w-24 sm:h-24 lg:w-28 lg:h-28 rounded-2xl sm:rounded-3xl bg-gradient-to-r ${steps[activeStep].color} flex items-center justify-center mb-6 sm:mb-8 mx-auto text-white shadow-xl`}
                       >
                         {steps[activeStep].icon}
                       </div>
 
-                      {/* Enhanced Step-specific Visual Content */}
                       {activeStep === 0 && (
                         <div className="space-y-4 sm:space-y-6">
                           <div className="bg-white/10 rounded-xl p-4 sm:p-6 border border-white/20 backdrop-blur-sm">
@@ -676,7 +663,6 @@ const HowItWorks = () => {
                       )}
                     </div>
 
-                    {/* Enhanced Floating Action Button */}
                     <div
                       className={`absolute -top-3 sm:-top-4 -right-3 sm:-right-4 w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-r ${steps[activeStep].color} rounded-full flex items-center justify-center animate-bounce shadow-xl transition-all duration-500`}
                     >
@@ -705,7 +691,6 @@ const HowItWorks = () => {
           </div>
         </div>
 
-        {/* Enhanced Benefits Section */}
         <div
           id="benefits"
           data-animate
@@ -754,7 +739,6 @@ const HowItWorks = () => {
           </div>
         </div>
 
-        {/* Enhanced Stats Section */}
         <div
           id="stats"
           data-animate
@@ -778,19 +762,16 @@ const HowItWorks = () => {
                   }`}
                   style={{ transitionDelay: `${index * 120}ms` }}
                 >
-                  {/* Icon container */}
                   <div
                     className={`w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 bg-gradient-to-r ${stat.iconColor} rounded-lg sm:rounded-xl flex items-center justify-center mx-auto mb-3 sm:mb-4 shadow-md hover:scale-110 transition-transform duration-300 text-white`}
                   >
                     {stat.icon}
                   </div>
 
-                  {/* Number */}
                   <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-1 sm:mb-2 leading-tight text-center">
                     {stat.number}
                   </div>
 
-                  {/* Label */}
                   <div className="text-white/80 text-sm sm:text-base md:text-lg font-medium text-center">
                     {stat.label}
                   </div>
@@ -800,7 +781,6 @@ const HowItWorks = () => {
           </div>
         </div>
 
-        {/* Enhanced Call to Action */}
         <div
           id="cta"
           data-animate
@@ -811,20 +791,16 @@ const HowItWorks = () => {
           }`}
         >
           <div className="bg-gradient-to-r from-indigo-500/10 via-purple-500/10 to-pink-500/10 backdrop-blur-xl rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-10 border border-white/20 shadow-xl hover:shadow-2xl transition-all duration-500">
-            {/* Heading */}
             <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-4 sm:mb-6 leading-snug tracking-tight">
               Ready to Build Something Amazing?
             </h3>
 
-            {/* Paragraph */}
             <p className="text-white/80 text-base sm:text-lg md:text-xl mb-6 sm:mb-8 max-w-2xl mx-auto leading-relaxed">
               Join thousands of builders who've transformed their ideas into
               reality with expert mentorship.
             </p>
 
-            {/* Buttons */}
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-5 justify-center max-w-xl mx-auto">
-              {/* Primary CTA */}
               <button
                 onClick={() => navigate("/signup")}
                 className="group relative bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white px-6 sm:px-8 md:px-10 py-3 sm:py-4 md:py-5 rounded-full font-semibold text-sm sm:text-base md:text-lg hover:from-indigo-600 hover:via-purple-600 hover:to-pink-600 transition-all duration-300 transform hover:scale-105 hover:shadow-xl flex items-center justify-center overflow-hidden shadow-lg"
@@ -836,7 +812,6 @@ const HowItWorks = () => {
                 </span>
               </button>
 
-              {/* Secondary CTA */}
               <button className="group border-2 border-white/30 text-white px-6 sm:px-8 md:px-10 py-3 sm:py-4 md:py-5 rounded-full font-semibold text-sm sm:text-base md:text-lg hover:bg-white/10 hover:border-white/50 transition-all duration-300 flex items-center justify-center backdrop-blur-sm shadow-md">
                 <MessageSquare className="mr-2 sm:mr-3 w-4 h-4 sm:w-5 sm:h-5 group-hover:scale-110 transition-transform" />
                 <span>Talk to Our Team</span>

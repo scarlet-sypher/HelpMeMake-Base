@@ -53,10 +53,8 @@ const MentorProjectCard = ({
 
   return (
     <div className="bg-white/10 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/20 overflow-hidden">
-      {/* Project Header */}
       <div className="p-6 border-b border-white/10">
         <div className="flex flex-col lg:flex-row lg:items-center gap-6">
-          {/* Project Image */}
           <div className="flex-shrink-0">
             {project.thumbnail ? (
               <img
@@ -71,7 +69,6 @@ const MentorProjectCard = ({
             )}
           </div>
 
-          {/* Project Info */}
           <div className="flex-1 min-w-0">
             <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
               <div className="flex-1 min-w-0">
@@ -82,9 +79,7 @@ const MentorProjectCard = ({
                   {project.shortDescription}
                 </p>
 
-                {/* Project Meta Info */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                  {/* Student Info */}
                   <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 border border-white/20">
                     <div className="flex items-center space-x-2 mb-1">
                       <User className="text-cyan-400" size={14} />
@@ -106,7 +101,6 @@ const MentorProjectCard = ({
                     </div>
                   </div>
 
-                  {/* Due Date */}
                   <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 border border-white/20">
                     <div className="flex items-center space-x-2 mb-1">
                       <Calendar className="text-green-400" size={14} />
@@ -121,7 +115,6 @@ const MentorProjectCard = ({
                     </span>
                   </div>
 
-                  {/* Price */}
                   <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 border border-white/20">
                     <div className="flex items-center space-x-2 mb-1">
                       <DollarSign className="text-yellow-400" size={14} />
@@ -134,7 +127,6 @@ const MentorProjectCard = ({
                     </span>
                   </div>
 
-                  {/* Progress */}
                   <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 border border-white/20">
                     <div className="flex items-center space-x-2 mb-1">
                       <Star className="text-purple-400" size={14} />
@@ -156,7 +148,6 @@ const MentorProjectCard = ({
                   </div>
                 </div>
 
-                {/* Skills */}
                 {project.skills && project.skills.length > 0 && (
                   <div className="mt-4">
                     <div className="flex flex-wrap gap-2">
@@ -178,7 +169,6 @@ const MentorProjectCard = ({
                 )}
               </div>
 
-              {/* Expand/Collapse Button */}
               <button
                 onClick={() => setIsExpanded(!isExpanded)}
                 className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-cyan-500/20 to-teal-600/20 backdrop-blur-sm rounded-xl border border-cyan-400/30 text-cyan-300 hover:from-cyan-500/30 hover:to-teal-600/30 transition-all flex-shrink-0"
@@ -197,7 +187,6 @@ const MentorProjectCard = ({
         </div>
       </div>
 
-      {/* Milestones Section */}
       {isExpanded && (
         <div className="p-6">
           <MentorMilestoneList

@@ -29,12 +29,10 @@ const TimelineItem = ({
 }) => {
   return (
     <div className="relative flex items-start space-x-3 group">
-      {/* Timeline Line */}
       {!isLast && (
         <div className="absolute left-4 top-10 w-0.5 h-6 bg-gradient-to-b from-white/20 to-white/5"></div>
       )}
 
-      {/* Icon Container - matching attached file sizing */}
       <div className="relative z-10 flex-shrink-0">
         <div
           className={`p-2 rounded-lg bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-sm border border-white/20 shadow-lg group-hover:shadow-xl transition-all duration-300`}
@@ -45,7 +43,6 @@ const TimelineItem = ({
           />
         </div>
 
-        {/* Subtle glow effect */}
         <div
           className={`absolute inset-0 rounded-lg bg-gradient-to-br ${color
             .replace("text-", "from-")
@@ -56,7 +53,6 @@ const TimelineItem = ({
         ></div>
       </div>
 
-      {/* Content - matching attached file styling */}
       <div className="flex-1 min-w-0 pb-4">
         <div className="bg-white/5 backdrop-blur-sm rounded-lg p-3 border border-white/10 shadow-lg hover:shadow-xl transition-all duration-300 group-hover:bg-white/10 group-hover:border-white/20">
           <p className="text-sm font-medium text-white group-hover:text-cyan-200 transition-colors duration-300">
@@ -66,7 +62,6 @@ const TimelineItem = ({
             {subtitle}
           </p>
 
-          {/* Animated accent line */}
           <div className="mt-2 h-0.5 bg-gradient-to-r from-transparent via-cyan-400/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
         </div>
       </div>
@@ -201,7 +196,6 @@ const ActivityTimeline = () => {
 
   return (
     <div className="bg-white/10 backdrop-blur-sm rounded-3xl shadow-2xl p-6 border border-white/20 relative overflow-hidden">
-      {/* Background decoration */}
       <div className="absolute -top-10 -right-10 w-20 h-20 bg-purple-400/20 rounded-full blur-xl animate-pulse"></div>
       <div className="absolute -bottom-10 -left-10 w-16 h-16 bg-teal-400/20 rounded-full blur-xl animate-pulse"></div>
 
@@ -219,7 +213,6 @@ const ActivityTimeline = () => {
           </div>
         </div>
 
-        {/* Error State */}
         {error && (
           <div className="text-center py-8">
             <div className="text-red-400 text-sm mb-2">
@@ -235,7 +228,6 @@ const ActivityTimeline = () => {
           </div>
         )}
 
-        {/* Empty State */}
         {!error && timelineData.length === 0 && !loading && (
           <div className="text-center py-12">
             <div className="text-6xl mb-4">🎯</div>
@@ -249,7 +241,6 @@ const ActivityTimeline = () => {
           </div>
         )}
 
-        {/* Timeline Events */}
         {!error && timelineData.length > 0 && (
           <div
             className="space-y-1 timeline-scroll"
@@ -277,7 +268,6 @@ const ActivityTimeline = () => {
         )}
       </div>
 
-      {/* Custom Scrollbar Styles */}
       <style>{`
         .timeline-scroll::-webkit-scrollbar {
           width: 4px;

@@ -52,7 +52,6 @@ const ProjectInfo = ({ projectData }) => {
 
   return (
     <div className="bg-white/10 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/20 overflow-hidden">
-      {/* Header Section */}
       <div className="bg-gradient-to-r from-purple-600/20 to-blue-600/20 p-4 sm:p-6 border-b border-white/10">
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
           <div className="flex-1">
@@ -73,7 +72,6 @@ const ProjectInfo = ({ projectData }) => {
               </p>
             )}
 
-            {/* Status Badge */}
             <div className="flex items-center gap-2 mb-4">
               <div
                 className={`flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r ${getStatusColor(
@@ -90,10 +88,8 @@ const ProjectInfo = ({ projectData }) => {
         </div>
       </div>
 
-      {/* Stats Grid */}
       <div className="p-4 sm:p-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-          {/* Progress Card */}
           <div className="bg-gradient-to-br from-purple-500/20 to-pink-500/20 backdrop-blur-sm rounded-2xl p-4 border border-purple-400/30 hover:border-purple-400/50 transition-all duration-300 group">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
@@ -116,7 +112,6 @@ const ProjectInfo = ({ projectData }) => {
             </div>
           </div>
 
-          {/* End Date Card */}
           <div className="bg-gradient-to-br from-green-500/20 to-emerald-500/20 backdrop-blur-sm rounded-2xl p-4 border border-green-400/30 hover:border-green-400/50 transition-all duration-300 group">
             <div className="flex items-center gap-2 mb-2">
               <div className="p-2 bg-gradient-to-r from-green-500 to-emerald-500 rounded-lg group-hover:scale-110 transition-transform">
@@ -141,7 +136,6 @@ const ProjectInfo = ({ projectData }) => {
           </div>
         </div>
 
-        {/* Mentor Information Section */}
         {projectData.mentorId && typeof projectData.mentorId === "object" && (
           <div className="bg-gradient-to-r from-amber-500/10 to-orange-500/10 backdrop-blur-sm rounded-2xl p-4 sm:p-6 border border-amber-400/20 hover:border-amber-400/40 transition-all duration-300">
             <div className="flex items-center gap-3 mb-6">
@@ -154,7 +148,6 @@ const ProjectInfo = ({ projectData }) => {
             </div>
 
             <div className="flex flex-col lg:flex-row gap-6">
-              {/* Profile Picture Section */}
               <div className="flex justify-center lg:justify-start">
                 <div className="relative group">
                   <div className="w-32 h-32 sm:w-40 sm:h-40 lg:w-48 lg:h-48 bg-gradient-to-r from-amber-500 to-orange-500 rounded-2xl flex items-center justify-center overflow-hidden shadow-2xl border-4 border-amber-400/30 group-hover:border-amber-400/60 transition-all duration-300">
@@ -172,14 +165,12 @@ const ProjectInfo = ({ projectData }) => {
                       />
                     )}
                   </div>
-                  {/* Online indicator (optional) */}
+
                   <div className="absolute -bottom-2 -right-2 w-6 h-6 bg-green-500 rounded-full border-4 border-white/20 shadow-lg"></div>
                 </div>
               </div>
 
-              {/* Mentor Information Grid */}
               <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* Left Column */}
                 <div className="space-y-4">
                   <div className="flex flex-col gap-2">
                     <div className="flex items-center gap-2">
@@ -220,7 +211,6 @@ const ProjectInfo = ({ projectData }) => {
                   )}
                 </div>
 
-                {/* Right Column */}
                 <div className="space-y-4">
                   {projectData.mentorId.location && (
                     <div className="flex flex-col gap-2">
@@ -236,7 +226,6 @@ const ProjectInfo = ({ projectData }) => {
                     </div>
                   )}
 
-                  {/* Experience Level or Rating could go here if available */}
                   <div className="flex flex-col gap-2">
                     <div className="flex items-center gap-2">
                       <Star size={16} className="text-amber-400" />
@@ -253,7 +242,6 @@ const ProjectInfo = ({ projectData }) => {
               </div>
             </div>
 
-            {/* Mentor Description */}
             {projectData.mentorId.description && (
               <div className="mt-6 pt-6 border-t border-amber-400/20">
                 <div className="flex items-center gap-2 mb-3">

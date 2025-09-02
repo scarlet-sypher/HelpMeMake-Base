@@ -125,7 +125,6 @@ const EarningsOverview = () => {
 
   return (
     <div className="bg-white/10 backdrop-blur-sm rounded-3xl shadow-2xl p-6 border border-white/20 relative overflow-hidden">
-      {/* Animated background elements */}
       <div className="absolute -top-10 -right-10 w-20 h-20 bg-cyan-400/20 rounded-full blur-xl animate-pulse"></div>
       <div className="absolute -bottom-10 -left-10 w-16 h-16 bg-teal-400/20 rounded-full blur-xl animate-pulse"></div>
 
@@ -143,9 +142,7 @@ const EarningsOverview = () => {
           </div>
         </div>
 
-        {/* Main Progress Section */}
         <div className="bg-gradient-to-r from-cyan-500/20 to-teal-500/20 rounded-2xl p-6 border border-white/10 mb-6">
-          {/* Goal Progress Header */}
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center space-x-2">
               <Target className="text-cyan-300" size={18} />
@@ -163,17 +160,15 @@ const EarningsOverview = () => {
             </div>
           </div>
 
-          {/* Enhanced Progress Bar */}
           <div className="mb-4">
             <div className="w-full bg-white/20 rounded-full h-4 overflow-hidden relative">
               <div
                 className="bg-gradient-to-r from-cyan-400 via-teal-400 to-blue-500 h-full rounded-full transition-all duration-1000 ease-out shadow-lg relative"
                 style={{ width: `${Math.min(progressPercentage, 100)}%` }}
               >
-                {/* Inner glow effect */}
                 <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent rounded-full"></div>
               </div>
-              {/* Progress indicator */}
+
               {progressPercentage < 100 && (
                 <div
                   className="absolute top-1/2 transform -translate-y-1/2 w-3 h-3 bg-white rounded-full shadow-lg border-2 border-cyan-400 transition-all duration-1000"
@@ -190,7 +185,6 @@ const EarningsOverview = () => {
             </div>
           </div>
 
-          {/* Milestone Indicators */}
           <div className="flex justify-between items-center mb-4">
             <div className="text-center">
               <div
@@ -235,7 +229,6 @@ const EarningsOverview = () => {
           </div>
         </div>
 
-        {/* Stats Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20 text-center group hover:bg-white/20 transition-all duration-300">
             <div className="flex items-center justify-center mb-2">
@@ -283,7 +276,6 @@ const EarningsOverview = () => {
           </div>
         </div>
 
-        {/* Additional Insights */}
         <div className="mt-6 bg-gradient-to-r from-cyan-500/10 to-blue-500/10 rounded-xl p-4 border border-cyan-400/20">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
@@ -315,7 +307,6 @@ const EarningsOverview = () => {
           </div>
         </div>
 
-        {/* Progress Summary */}
         <div className="mt-4 flex justify-between text-xs text-blue-200">
           <span>Goal: {formatCurrency(monthlyGoal)}</span>
           <span>Remaining: {formatCurrency(remaining)}</span>

@@ -144,7 +144,6 @@ const TechnicalDetails = ({ formData, setFormData, errors, onToast }) => {
       </div>
 
       <div className="space-y-6">
-        {/* Tech Stack */}
         <div>
           <label className="block text-white font-medium mb-2">
             Tech Stack *
@@ -190,7 +189,6 @@ const TechnicalDetails = ({ formData, setFormData, errors, onToast }) => {
           )}
         </div>
 
-        {/* Tags */}
         <div>
           <label className="block text-white font-medium mb-2">Tags</label>
           <div className="flex flex-wrap gap-2 mb-4">
@@ -231,13 +229,11 @@ const TechnicalDetails = ({ formData, setFormData, errors, onToast }) => {
           </div>
         </div>
 
-        {/* Thumbnail Upload */}
         <div>
           <label className="block text-white font-medium mb-2">
             Project Thumbnail
           </label>
 
-          {/* Image Preview */}
           {thumbnailPreview && (
             <div className="mb-4">
               <div className="relative w-full max-w-md mx-auto">
@@ -265,7 +261,6 @@ const TechnicalDetails = ({ formData, setFormData, errors, onToast }) => {
             </div>
           )}
 
-          {/* Upload Input */}
           <div className="relative">
             <input
               type="file"
@@ -301,7 +296,6 @@ const TechnicalDetails = ({ formData, setFormData, errors, onToast }) => {
             </label>
           </div>
 
-          {/* Fallback URL Input */}
           <div className="mt-4">
             <label className="block text-white/70 font-medium mb-2 text-sm">
               Or enter image URL

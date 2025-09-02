@@ -84,7 +84,6 @@ const GoalForm = ({ goal, onGoalUpdate, showToast }) => {
             </p>
           </div>
 
-          {/* Goal Suggestions */}
           <div>
             <p className="text-sm font-medium text-gray-300 mb-3">
               Quick Select:
@@ -109,7 +108,6 @@ const GoalForm = ({ goal, onGoalUpdate, showToast }) => {
             </div>
           </div>
 
-          {/* Current vs New Goal Comparison */}
           {goal &&
             goal.monthlyGoal &&
             monthlyGoal &&
@@ -190,7 +188,6 @@ const GoalForm = ({ goal, onGoalUpdate, showToast }) => {
           </div>
         </div>
 
-        {/* Tips */}
         <div className="mt-6 p-4 bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-blue-400/20 rounded-xl">
           <h4 className="font-bold text-blue-300 mb-2">💡 Goal Setting Tips</h4>
           <ul className="text-blue-200 text-sm space-y-1">

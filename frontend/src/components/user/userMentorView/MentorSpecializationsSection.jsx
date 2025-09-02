@@ -63,7 +63,6 @@ const MentorSpecializationsSection = ({ mentorData }) => {
 
   return (
     <div className="bg-white/5 backdrop-blur-xl rounded-3xl shadow-2xl p-6 border border-white/10 hover:border-white/20 transition-all duration-500 group">
-      {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div className="flex items-center space-x-3">
           <div className="relative">
@@ -83,21 +82,17 @@ const MentorSpecializationsSection = ({ mentorData }) => {
         </div>
       </div>
 
-      {/* Specializations Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-4">
         {mentorData.specializations.map((spec, index) => {
           const scheme = getColorScheme(index);
 
           return (
             <div key={index} className="group/spec relative overflow-hidden">
-              {/* Background card */}
               <div
                 className={`relative p-4 bg-gradient-to-br ${scheme.bg} rounded-2xl border ${scheme.border} ${scheme.hover} ${scheme.glow} transition-all duration-300 cursor-default`}
               >
-                {/* Shine effect */}
                 <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-transparent opacity-0 group-hover/spec:opacity-100 transition-opacity duration-300"></div>
 
-                {/* Content */}
                 <div className="relative flex items-center justify-between">
                   <div className="flex items-center space-x-3 flex-1 min-w-0">
                     <div className="relative flex-shrink-0">
@@ -122,7 +117,6 @@ const MentorSpecializationsSection = ({ mentorData }) => {
                     </span>
                   </div>
 
-                  {/* Trending icon for popular specializations */}
                   {[
                     "React",
                     "JavaScript",
@@ -144,7 +138,6 @@ const MentorSpecializationsSection = ({ mentorData }) => {
         })}
       </div>
 
-      {/* Footer stats */}
       <div className="mt-8 pt-6 border-t border-white/10">
         <div className="flex items-center justify-between text-xs text-gray-400">
           <div className="flex items-center space-x-2">

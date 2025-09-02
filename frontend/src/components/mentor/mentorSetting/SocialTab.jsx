@@ -142,7 +142,6 @@ const SocialTab = ({
     <div className="space-y-8 animate-fade-in">
       <NotificationComponent notification={notifications.socialLinks} />
 
-      {/* Header Section */}
       <div className="relative group/header">
         <div className="absolute -inset-0.5 bg-gradient-to-r from-teal-600 to-cyan-700 rounded-2xl blur opacity-15 group-hover/header:opacity-20 transition duration-500"></div>
         <div className="relative bg-gradient-to-br from-teal-500/20 to-cyan-600/20 border border-teal-400/40 rounded-2xl p-6 flex items-start space-x-4 backdrop-blur-sm">
@@ -170,7 +169,6 @@ const SocialTab = ({
         </div>
       </div>
 
-      {/* Social Links Form */}
       <form onSubmit={handleSocialLinksUpdate} className="space-y-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {socialPlatforms.map((platform) => {
@@ -187,7 +185,6 @@ const SocialTab = ({
                   className={`absolute -inset-0.5 bg-gradient-to-r ${platform.color} rounded-2xl blur opacity-15 group-hover/platform:opacity-20 transition duration-500`}
                 ></div>
                 <div className="relative bg-gradient-to-br from-white/10 to-white/5 rounded-2xl p-6 border border-white/20">
-                  {/* Platform Header */}
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center space-x-3">
                       <div
@@ -217,7 +214,6 @@ const SocialTab = ({
                     )}
                   </div>
 
-                  {/* URL Input */}
                   <div className="space-y-2">
                     <div className="relative group">
                       <input
@@ -236,10 +232,8 @@ const SocialTab = ({
                         }`}
                         placeholder={platform.placeholder}
                       />
-                      {/* <div className={`absolute inset-0 rounded-xl bg-gradient-to-r ${platform.color.replace('from-', 'from-').replace('to-', 'to-')}/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none`}></div> */}
                     </div>
 
-                    {/* Validation Message */}
                     {!isValidUrl && socialLinksData[platform.id] && (
                       <p className="text-red-400 text-sm flex items-center space-x-2">
                         <div className="w-1 h-1 bg-red-400 rounded-full"></div>
@@ -248,7 +242,6 @@ const SocialTab = ({
                     )}
                   </div>
 
-                  {/* Status Indicator */}
                   <div className="flex items-center justify-between mt-4 pt-4 border-t border-white/10">
                     <div className="flex items-center space-x-2 text-sm">
                       {hasValue && isValidUrl ? (
@@ -281,7 +274,6 @@ const SocialTab = ({
           })}
         </div>
 
-        {/* Tips Section */}
         <div className="relative group/tips">
           <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-600 to-teal-700 rounded-2xl blur opacity-15 group-hover/tips:opacity-20 transition duration-500"></div>
           <div className="relative bg-gradient-to-br from-cyan-500/20 to-teal-600/20 border border-cyan-400/40 rounded-2xl p-6 backdrop-blur-sm">
@@ -314,7 +306,6 @@ const SocialTab = ({
           </div>
         </div>
 
-        {/* Save Button */}
         <div className="flex justify-end">
           <button
             type="submit"

@@ -221,14 +221,12 @@ const UserSession = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-indigo-950 flex relative overflow-hidden">
-      {/* Background elements */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-500/20 to-cyan-500/10 rounded-full blur-3xl animate-pulse"></div>
         <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-br from-purple-500/20 to-indigo-500/10 rounded-full blur-3xl animate-pulse"></div>
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-r from-blue-500/5 to-purple-500/5 rounded-full blur-3xl"></div>
       </div>
 
-      {/* Sidebar */}
       <Sidebar
         isOpen={sidebarOpen}
         toggleSidebar={toggleSidebar}
@@ -237,9 +235,7 @@ const UserSession = () => {
         userRole="user"
       />
 
-      {/* Main Content */}
       <div className="flex-1 lg:ml-64 relative z-10">
-        {/* Mobile Header */}
         <div className="lg:hidden bg-gradient-to-r from-slate-900/90 to-blue-900/90 backdrop-blur-xl border-b border-white/10 p-4 sticky top-0 z-30">
           <div className="flex items-center justify-between">
             <button
@@ -259,7 +255,6 @@ const UserSession = () => {
         </div>
 
         <div className="p-4 md:p-6 space-y-6">
-          {/* Header Section */}
           <div className="bg-gradient-to-r from-white/10 via-white/5 to-white/10 backdrop-blur-xl rounded-2xl shadow-xl p-4 md:p-6 border border-white/20 relative overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-transparent to-purple-500/5 rounded-2xl"></div>
             <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-blue-400/10 to-transparent rounded-full blur-xl"></div>
@@ -283,7 +278,6 @@ const UserSession = () => {
                   </p>
                 </div>
 
-                {/* Stats Cards */}
                 <div className="flex flex-wrap gap-3 md:gap-4">
                   <div className="group bg-gradient-to-br from-blue-500/20 to-cyan-500/10 backdrop-blur-sm rounded-xl p-3 md:p-4 border border-blue-400/20 hover:border-blue-400/40 transition-all duration-300 hover:shadow-lg hover:scale-105">
                     <div className="text-center">
@@ -313,7 +307,6 @@ const UserSession = () => {
             </div>
           </div>
 
-          {/* Sessions Content */}
           {renderContent()}
         </div>
       </div>

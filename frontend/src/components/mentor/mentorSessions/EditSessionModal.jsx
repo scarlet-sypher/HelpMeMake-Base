@@ -113,7 +113,6 @@ const EditSessionModal = ({ session, onClose, onSuccess, onToast }) => {
       tabIndex={-1}
     >
       <div className="bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 rounded-3xl shadow-2xl w-full max-w-2xl max-h-[95vh] sm:max-h-[90vh] overflow-y-auto border border-white/20">
-        {/* Header */}
         <div className="flex items-center justify-between p-4 sm:p-6 border-b border-white/10">
           <div className="flex items-center space-x-3">
             <div className="p-2 bg-gradient-to-r from-amber-500 to-orange-600 rounded-xl">
@@ -136,12 +135,10 @@ const EditSessionModal = ({ session, onClose, onSuccess, onToast }) => {
           </button>
         </div>
 
-        {/* Form */}
         <form
           onSubmit={handleSubmit}
           className="p-4 sm:p-6 space-y-4 sm:space-y-6"
         >
-          {/* Session Title */}
           <div>
             <label className="block text-sm font-medium text-white mb-2">
               Session Title <span className="text-red-400">*</span>
@@ -168,7 +165,6 @@ const EditSessionModal = ({ session, onClose, onSuccess, onToast }) => {
             )}
           </div>
 
-          {/* Session Topic */}
           <div>
             <label className="block text-sm font-medium text-white mb-2">
               Topic <span className="text-red-400">*</span>
@@ -192,7 +188,6 @@ const EditSessionModal = ({ session, onClose, onSuccess, onToast }) => {
             )}
           </div>
 
-          {/* Session Type */}
           <div>
             <label className="block text-sm font-medium text-white mb-2">
               Session Type
@@ -218,7 +213,6 @@ const EditSessionModal = ({ session, onClose, onSuccess, onToast }) => {
             </select>
           </div>
 
-          {/* Description */}
           <div>
             <label className="block text-sm font-medium text-white mb-2">
               Description
@@ -233,7 +227,6 @@ const EditSessionModal = ({ session, onClose, onSuccess, onToast }) => {
             />
           </div>
 
-          {/* Prerequisites */}
           <div>
             <label className="block text-sm font-medium text-white mb-2">
               Prerequisites/Notes for Learner
@@ -254,7 +247,6 @@ const EditSessionModal = ({ session, onClose, onSuccess, onToast }) => {
             </div>
           </div>
 
-          {/* Meeting Link */}
           <div>
             <label className="block text-sm font-medium text-white mb-2">
               Meeting Link
@@ -275,7 +267,6 @@ const EditSessionModal = ({ session, onClose, onSuccess, onToast }) => {
             </div>
           </div>
 
-          {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row items-center space-y-3 sm:space-y-0 sm:space-x-4 pt-4 sm:pt-6">
             <button
               type="button"
