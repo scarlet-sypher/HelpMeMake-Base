@@ -5,7 +5,6 @@ const fs = require("fs");
 const path = require("path");
 const cloudinary = require("../utils/cloudinary");
 
-// Initialize Gemini AI
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 const aiMilestoneController = {
@@ -21,7 +20,6 @@ const aiMilestoneController = {
         });
       }
 
-      // Verify project exists and user has access
       const project = await Project.findById(projectId);
       if (!project) {
         return res.status(404).json({
@@ -38,7 +36,6 @@ const aiMilestoneController = {
         });
       }
 
-      // Get previous suggestions if regenerating
       let previousSuggestions = [];
       if (
         regenerate &&
@@ -50,13 +47,11 @@ const aiMilestoneController = {
         );
       }
 
-      // Generate AI milestones
       const aiSuggestions = await generateMilestonesWithGemini(
         project,
         previousSuggestions
       );
 
-      // Update project with AI suggestions
       const updatedProject = await Project.findByIdAndUpdate(
         projectId,
         {
@@ -166,7 +161,6 @@ const aiMilestoneController = {
         });
       }
 
-      // Toggle the completion status
       if (project.aiResponse && project.aiResponse.suggestions[index]) {
         project.aiResponse.suggestions[index].isCompleted =
           !project.aiResponse.suggestions[index].isCompleted;
@@ -186,7 +180,6 @@ const aiMilestoneController = {
     }
   },
 
-  // NEW: Generate image from text prompt
   async generateRealImage(req, res) {
     try {
       const { prompt } = req.body;
@@ -198,15 +191,12 @@ const aiMilestoneController = {
         });
       }
 
-      // Initialize Gemini with new image generation model
       const model = genAI.getGenerativeModel({
         model: "gemini-2.0-flash-preview-image-generation",
       });
 
-      // Modify prompt to ensure only image generation (no text)
       const finalPrompt = `Please generate a realistic, high-quality image based on the following description. Do not provide any text explanation or description — only return an image.\n\n${prompt.trim()}`;
 
-      // Generate image using Gemini with new API structure
       const result = await model.generateContent({
         contents: [{ role: "user", parts: [{ text: finalPrompt }] }],
         generationConfig: { responseModalities: ["TEXT", "IMAGE"] },
@@ -214,7 +204,6 @@ const aiMilestoneController = {
 
       const parts = result.response.candidates[0].content.parts;
 
-      // Find the image part in the response
       const imagePart = parts.find((p) => p.inlineData && p.inlineData.data);
 
       if (!imagePart) {
@@ -224,38 +213,32 @@ const aiMilestoneController = {
         });
       }
 
-      // Extract base64 image data
       const base64Image = imagePart.inlineData.data;
       const buffer = Buffer.from(base64Image, "base64");
 
-      // Create temp directory if it doesn't exist
       const tempDir = path.join(__dirname, "../uploads/temp");
       if (!fs.existsSync(tempDir)) {
         fs.mkdirSync(tempDir, { recursive: true });
       }
 
-      // Generate unique filename
       const fileName = `ai-generated-${Date.now()}-${Math.random()
         .toString(36)
         .substr(2, 9)}.png`;
       const filePath = path.join(tempDir, fileName);
 
-      // Save temp file
       fs.writeFileSync(filePath, buffer);
 
       try {
-        // Upload to Cloudinary (overwrite previous if exists)
         const uploadResult = await cloudinary.uploader.upload(filePath, {
           folder: "temp-ai-images",
           public_id: `ai-temp-${Date.now()}`,
           overwrite: true,
           resource_type: "image",
           format: "png",
-          // Set expiration for temp images (24 hours)
+
           expires_at: Math.floor(Date.now() / 1000) + 86400,
         });
 
-        // Clean up temp file
         fs.unlinkSync(filePath);
 
         res.status(200).json({
@@ -266,7 +249,6 @@ const aiMilestoneController = {
           message: "Image generated successfully",
         });
       } catch (uploadError) {
-        // Clean up temp file even if upload fails
         if (fs.existsSync(filePath)) {
           fs.unlinkSync(filePath);
         }
@@ -276,7 +258,6 @@ const aiMilestoneController = {
     } catch (error) {
       console.error("Real image generation failed:", error);
 
-      // Handle specific Gemini API errors
       if (
         error.message?.includes("safety") ||
         error.message?.includes("policy")
@@ -320,7 +301,6 @@ const aiMilestoneController = {
     }
   },
 
-  // NEW: Generate description from text prompt
   async generateDescriptionFromPrompt(req, res) {
     try {
       const { prompt, type = "both" } = req.body;
@@ -384,13 +364,11 @@ Requirements:
       let longDescription = "";
 
       if (type === "both") {
-        // Parse the response to extract short and long descriptions
         const parts = generatedText.split("LONG DESCRIPTION:");
         if (parts.length === 2) {
           shortDescription = parts[0].replace("SHORT DESCRIPTION:", "").trim();
           longDescription = parts[1].trim();
         } else {
-          // Fallback if parsing fails
           shortDescription = generatedText.substring(0, 200) + "...";
           longDescription = generatedText;
         }
@@ -480,7 +458,6 @@ Return exactly 5 milestone strings in the JSON array.`;
     const result = await model.generateContent(prompt);
     const response = await result.response.text();
 
-    // Clean up response
     let cleanResponse = response.trim();
     if (cleanResponse.startsWith("```json")) {
       cleanResponse = cleanResponse
@@ -506,7 +483,6 @@ Return exactly 5 milestone strings in the JSON array.`;
   } catch (error) {
     console.error("Gemini AI error:", error);
 
-    // Fallback milestones
     return [
       "Set up project foundation and development environment",
       "Design and create basic user interface components",

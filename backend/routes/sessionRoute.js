@@ -6,11 +6,10 @@ const {
   requireUserOrMentor,
 } = require("../middleware/roleAuth");
 
-// Import session controller
 const {
   createSession,
   getMentorSessions,
-  getLearnerSessions, // NEW: Import the new function
+  getLearnerSessions,
   updateSession,
   deleteSession,
   markAttendance,
@@ -23,7 +22,6 @@ const {
   updateRecordingLink,
 } = require("../controller/sessionController");
 
-// Mentor routes (require mentor authentication)
 router.post("/mentor", requireMentor, createSession);
 router.get("/mentor", requireMentor, getMentorSessions);
 router.patch("/mentor/:sessionId", requireMentor, updateSession);
@@ -38,9 +36,8 @@ router.patch(
   updateRecordingLink
 );
 
-// User routes (require user authentication)
 router.get("/user", requireUser, getUserSessions);
-router.get("/learner", requireUser, getLearnerSessions); // NEW: Add the new route
+router.get("/learner", requireUser, getLearnerSessions);
 router.patch("/:sessionId/user-attendance", requireUser, markUserAttendance);
 router.patch("/:sessionId/user-reason", requireUser, submitLearnerReason);
 

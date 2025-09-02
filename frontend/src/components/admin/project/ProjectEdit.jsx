@@ -44,7 +44,6 @@ const ProjectEdit = ({ onReturn }) => {
   const [thumbnailPreview, setThumbnailPreview] = useState(null);
   const [errors, setErrors] = useState({});
 
-  // Form options
   const categories = [
     "Web Development",
     "Mobile Development",
@@ -104,7 +103,6 @@ const ProjectEdit = ({ onReturn }) => {
       const data = await response.json();
       const projectData = data.data;
 
-      // Set form data with project details
       setFormData({
         name: projectData.name || "",
         shortDescription: projectData.shortDescription || "",
@@ -174,7 +172,6 @@ const ProjectEdit = ({ onReturn }) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
 
-    // Clear error when user starts typing
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: "" }));
     }
@@ -191,7 +188,6 @@ const ProjectEdit = ({ onReturn }) => {
   const handleThumbnailChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      // Validate file type
       const allowedTypes = [
         "image/jpeg",
         "image/jpg",
@@ -203,7 +199,6 @@ const ProjectEdit = ({ onReturn }) => {
         return;
       }
 
-      // Validate file size (5MB)
       if (file.size > 5 * 1024 * 1024) {
         toast.error("File size must be less than 5MB");
         return;
@@ -211,7 +206,6 @@ const ProjectEdit = ({ onReturn }) => {
 
       setThumbnailFile(file);
 
-      // Create preview
       const reader = new FileReader();
       reader.onload = (e) => {
         setThumbnailPreview(e.target.result);
@@ -256,7 +250,6 @@ const ProjectEdit = ({ onReturn }) => {
       const adminToken = localStorage.getItem("admin_token");
       const submitData = new FormData();
 
-      // Add all form fields
       Object.keys(formData).forEach((key) => {
         if (Array.isArray(formData[key])) {
           if (key === "references") {
@@ -269,7 +262,6 @@ const ProjectEdit = ({ onReturn }) => {
         }
       });
 
-      // Add thumbnail if selected
       if (thumbnailFile) {
         submitData.append("thumbnail", thumbnailFile);
       }
@@ -292,7 +284,6 @@ const ProjectEdit = ({ onReturn }) => {
 
       toast.success("Project updated successfully!");
 
-      // Navigate back
       if (onReturn) {
         onReturn();
       } else {

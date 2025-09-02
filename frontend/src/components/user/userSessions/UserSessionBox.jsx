@@ -15,7 +15,6 @@ import {
 const UserSessionBox = ({ projectData, onSessionUpdate }) => {
   const { project, mentor, sessions } = projectData;
 
-  // Calculate session statistics
   const completedSessions = sessions.filter(
     (s) => s.status === "completed"
   ).length;
@@ -24,11 +23,9 @@ const UserSessionBox = ({ projectData, onSessionUpdate }) => {
   ).length;
   const totalSessions = sessions.length;
 
-  // Calculate completion percentage
   const completionPercentage =
     totalSessions > 0 ? (completedSessions / totalSessions) * 100 : 0;
 
-  // Format project status for display
   const getProjectStatusColor = (status) => {
     switch (status) {
       case "In Progress":

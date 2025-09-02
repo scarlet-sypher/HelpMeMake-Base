@@ -3,12 +3,10 @@ const Project = require("../Model/Project");
 const Mentor = require("../Model/Mentor");
 const Learner = require("../Model/Learner");
 
-// Send Request (Learner → Mentor)
 const sendRequest = async (req, res) => {
   try {
     const { projectId, mentorId, message } = req.body;
 
-    // Validation
     if (!projectId || !mentorId || !message) {
       return res.status(400).json({
         success: false,
@@ -23,10 +21,8 @@ const sendRequest = async (req, res) => {
       });
     }
 
-    // Get the authenticated user
     const userId = req.user._id;
 
-    // Find the learner profile for this user
     const learner = await Learner.findOne({ userId });
     if (!learner) {
       return res.status(403).json({
@@ -35,7 +31,6 @@ const sendRequest = async (req, res) => {
       });
     }
 
-    // Check if project exists and is open
     const project = await Project.findById(projectId);
     if (!project) {
       return res.status(404).json({
@@ -51,7 +46,6 @@ const sendRequest = async (req, res) => {
       });
     }
 
-    // Verify the learner owns this project
     if (project.learnerId.toString() !== learner._id.toString()) {
       return res.status(403).json({
         success: false,
@@ -59,7 +53,6 @@ const sendRequest = async (req, res) => {
       });
     }
 
-    // Check if mentor exists and is available
     const mentor = await Mentor.findById(mentorId).populate(
       "userId",
       "name email avatar"
@@ -78,7 +71,6 @@ const sendRequest = async (req, res) => {
       });
     }
 
-    // Check if request already exists
     const existingRequest = await Request.requestExists(
       projectId,
       mentorId,
@@ -93,18 +85,16 @@ const sendRequest = async (req, res) => {
       });
     }
 
-    // Create new request
     const newRequest = new Request({
       projectId,
       mentorId,
       learnerId: learner._id,
       message: message.trim(),
-      status: "pending", // default status
+      status: "pending",
     });
 
     await newRequest.save();
 
-    // Populate the saved request for response
     const populatedRequest = await Request.findById(newRequest._id)
       .populate({
         path: "mentorProfile",
@@ -129,7 +119,6 @@ const sendRequest = async (req, res) => {
   } catch (error) {
     console.error("Send request error:", error);
 
-    // Handle duplicate key error
     if (error.code === 11000) {
       return res.status(409).json({
         success: false,
@@ -138,7 +127,6 @@ const sendRequest = async (req, res) => {
       });
     }
 
-    // Handle validation errors
     if (error.name === "ValidationError") {
       const errorMessages = Object.values(error.errors).map(
         (err) => err.message
@@ -149,7 +137,6 @@ const sendRequest = async (req, res) => {
       });
     }
 
-    // Handle cast errors (invalid ObjectId)
     if (error.name === "CastError") {
       return res.status(400).json({
         success: false,
@@ -164,13 +151,11 @@ const sendRequest = async (req, res) => {
   }
 };
 
-// Get Requests for Project (used to check what requests learner has already sent)
 const getProjectRequests = async (req, res) => {
   try {
     const { projectId } = req.params;
     const userId = req.user._id;
 
-    // Validation
     if (!projectId) {
       return res.status(400).json({
         success: false,
@@ -178,7 +163,6 @@ const getProjectRequests = async (req, res) => {
       });
     }
 
-    // Find the learner profile for this user
     const learner = await Learner.findOne({ userId });
     if (!learner) {
       return res.status(403).json({
@@ -187,7 +171,6 @@ const getProjectRequests = async (req, res) => {
       });
     }
 
-    // Check if project exists and learner owns it
     const project = await Project.findById(projectId);
     if (!project) {
       return res.status(404).json({
@@ -203,7 +186,6 @@ const getProjectRequests = async (req, res) => {
       });
     }
 
-    // Get all requests for this project by this learner
     const requests = await Request.find({
       projectId,
       learnerId: learner._id,
@@ -217,13 +199,12 @@ const getProjectRequests = async (req, res) => {
       })
       .sort({ createdAt: -1 });
 
-    // Create a simple map for frontend to check which mentors have been requested
     const requestedMentorIds = requests.map((req) => req.mentorId.toString());
 
     res.json({
       success: true,
       requests,
-      requestedMentorIds, // Array of mentor IDs that have been requested
+      requestedMentorIds,
       totalRequests: requests.length,
     });
   } catch (error) {
@@ -243,12 +224,10 @@ const getProjectRequests = async (req, res) => {
   }
 };
 
-// Get all requests sent by a learner (optional - for learner dashboard)
 const getLearnerRequests = async (req, res) => {
   try {
     const userId = req.user._id;
 
-    // Find the learner profile for this user
     const learner = await Learner.findOne({ userId });
     if (!learner) {
       return res.status(403).json({
@@ -282,12 +261,10 @@ const getLearnerRequests = async (req, res) => {
   }
 };
 
-// NEW: Get all requests sent to a mentor (MENTOR SIDE)
 const getMentorRequests = async (req, res) => {
   try {
     const userId = req.user._id;
 
-    // Find the mentor profile for this user
     const mentor = await Mentor.findOne({ userId });
     if (!mentor) {
       return res.status(403).json({
@@ -296,7 +273,6 @@ const getMentorRequests = async (req, res) => {
       });
     }
 
-    // Get all requests sent to this mentor
     const requests = await Request.find({ mentorId: mentor._id })
       .populate({
         path: "learnerUser",
@@ -322,14 +298,12 @@ const getMentorRequests = async (req, res) => {
   }
 };
 
-// NEW: Respond to a request (Accept/Reject)
 const respondToRequest = async (req, res) => {
   try {
     const { requestId } = req.params;
-    const { status, response } = req.body; // status: 'accepted' | 'rejected', response: optional message
+    const { status, response } = req.body;
     const userId = req.user._id;
 
-    // Validation
     if (!["accepted", "rejected"].includes(status)) {
       return res.status(400).json({
         success: false,
@@ -337,7 +311,6 @@ const respondToRequest = async (req, res) => {
       });
     }
 
-    // Find the mentor profile for this user
     const mentor = await Mentor.findOne({ userId });
     if (!mentor) {
       return res.status(403).json({
@@ -346,7 +319,6 @@ const respondToRequest = async (req, res) => {
       });
     }
 
-    // Find the request and verify it belongs to this mentor
     const request = await Request.findById(requestId)
       .populate({
         path: "learnerUser",
@@ -378,7 +350,6 @@ const respondToRequest = async (req, res) => {
       });
     }
 
-    // Update request status
     request.status = status;
     request.mentorResponse = response || "";
     request.respondedAt = new Date();

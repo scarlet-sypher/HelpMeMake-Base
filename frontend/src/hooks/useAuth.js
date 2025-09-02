@@ -18,7 +18,6 @@ export const useAuth = () => {
       console.log("Document referrer:", document.referrer);
       console.log("Current URL:", window.location.href);
 
-      // Check if this is an OAuth redirect and add delay
       const isFromOAuth =
         document.referrer.includes("accounts.google.com") ||
         document.referrer.includes("github.com") ||
@@ -29,9 +28,8 @@ export const useAuth = () => {
         await new Promise((resolve) => setTimeout(resolve, 800));
       }
 
-      // Check for token in URL first (from OAuth)
       const urlParams = new URLSearchParams(window.location.search);
-      const urlToken = urlParams.get("authToken") || urlParams.get("token"); // Check both parameters
+      const urlToken = urlParams.get("authToken") || urlParams.get("token");
 
       console.log("URL search params:", window.location.search);
       console.log("URL token found:", urlToken ? "Yes" : "No");
@@ -39,7 +37,6 @@ export const useAuth = () => {
       let token = urlToken || localStorage.getItem("access_token");
 
       if (urlToken) {
-        // Store token and clean URL
         console.log("Storing token from URL to localStorage");
         localStorage.setItem("access_token", urlToken);
         urlParams.delete("authToken");
@@ -82,7 +79,7 @@ export const useAuth = () => {
       if (response.ok) {
         const data = await response.json();
         console.log("Auth success:", data);
-        console.log("Full auth response data:", data); // Added for debugging
+        console.log("Full auth response data:", data);
         setUser(data.user);
         setIsAuthenticated(true);
       } else {
@@ -105,7 +102,7 @@ export const useAuth = () => {
 
   const setAuthToken = (token) => {
     localStorage.setItem("access_token", token);
-    checkAuth(); // Recheck auth status
+    checkAuth();
   };
 
   const logout = async () => {

@@ -5,10 +5,9 @@ const streamifier = require("streamifier");
 const multer = require("multer");
 const path = require("path");
 
-// Configure multer for file upload
 const upload = multer({
   storage: multer.memoryStorage(),
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+  limits: { fileSize: 5 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
     const allowedTypes = /jpeg|jpg|png|webp/;
     const extname = allowedTypes.test(
@@ -24,12 +23,10 @@ const upload = multer({
   },
 }).single("avatar");
 
-// Get all learners with their user details
 const getAllLearners = async (req, res) => {
   try {
     const { search, page = 1, limit = 20 } = req.query;
 
-    // Build search query
     let userSearchQuery = {};
     if (search) {
       userSearchQuery = {
@@ -40,7 +37,6 @@ const getAllLearners = async (req, res) => {
       };
     }
 
-    // First get users with learner role
     const users = await User.find({
       role: "user",
       ...userSearchQuery,
@@ -62,17 +58,14 @@ const getAllLearners = async (req, res) => {
       });
     }
 
-    // Get learner data for these users
     const userIds = users.map((user) => user._id);
     const learners = await Learner.find({ userId: { $in: userIds } });
 
-    // Create a map for quick lookup
     const learnerMap = new Map();
     learners.forEach((learner) => {
       learnerMap.set(learner.userId.toString(), learner);
     });
 
-    // Combine user and learner data
     const combinedData = users.map((user) => {
       const learnerData = learnerMap.get(user._id.toString());
       return {
@@ -81,7 +74,6 @@ const getAllLearners = async (req, res) => {
       };
     });
 
-    // Apply pagination
     const startIndex = (page - 1) * limit;
     const endIndex = startIndex + parseInt(limit);
     const paginatedData = combinedData.slice(startIndex, endIndex);
@@ -108,12 +100,10 @@ const getAllLearners = async (req, res) => {
   }
 };
 
-// Get single learner by ID
 const getLearnerById = async (req, res) => {
   try {
     const { learnerId } = req.params;
 
-    // Get user data
     const user = await User.findById(learnerId).select(
       "-password -otp -otpExpires -profileOTP -profileOTPExpires"
     );
@@ -125,10 +115,8 @@ const getLearnerById = async (req, res) => {
       });
     }
 
-    // Get learner data
     let learnerData = await Learner.findOne({ userId: user._id });
 
-    // Create default learner data if doesn't exist
     if (!learnerData) {
       learnerData = new Learner({
         userId: user._id,
@@ -163,7 +151,6 @@ const getLearnerById = async (req, res) => {
   }
 };
 
-// Update learner data
 const updateLearner = async (req, res) => {
   try {
     const { learnerId } = req.params;
@@ -179,7 +166,6 @@ const updateLearner = async (req, res) => {
       isOnline,
     } = req.body;
 
-    // Verify user exists and is a learner
     const user = await User.findById(learnerId);
     if (!user || user.role !== "user") {
       return res.status(404).json({
@@ -188,7 +174,6 @@ const updateLearner = async (req, res) => {
       });
     }
 
-    // Update user data
     const updatedUser = await User.findByIdAndUpdate(
       learnerId,
       {
@@ -201,7 +186,6 @@ const updateLearner = async (req, res) => {
       }
     );
 
-    // Update learner data
     const learnerUpdateData = {};
     if (title !== undefined) learnerUpdateData.title = title;
     if (description !== undefined) learnerUpdateData.description = description;
@@ -244,7 +228,6 @@ const updateLearner = async (req, res) => {
   }
 };
 
-// Update learner avatar
 const updateLearnerAvatar = async (req, res) => {
   upload(req, res, async (err) => {
     if (err) {
@@ -264,7 +247,6 @@ const updateLearnerAvatar = async (req, res) => {
     try {
       const { learnerId } = req.params;
 
-      // Verify user exists and is a learner
       const user = await User.findById(learnerId);
       if (!user || user.role !== "user") {
         return res.status(404).json({
@@ -273,7 +255,6 @@ const updateLearnerAvatar = async (req, res) => {
         });
       }
 
-      // Upload to Cloudinary
       const streamUpload = (req) => {
         return new Promise((resolve, reject) => {
           const stream = cloudinary.uploader.upload_stream(
@@ -294,7 +275,6 @@ const updateLearnerAvatar = async (req, res) => {
       const result = await streamUpload(req);
       const avatarUrl = result.secure_url;
 
-      // Update user avatar
       const updatedUser = await User.findByIdAndUpdate(
         learnerId,
         { avatar: avatarUrl },
@@ -322,13 +302,11 @@ const updateLearnerAvatar = async (req, res) => {
   });
 };
 
-// Delete learner (soft delete by deactivating account)
 const deleteLearner = async (req, res) => {
   try {
     const { learnerId } = req.params;
     const { confirmationText } = req.body;
 
-    // Get user data first to validate confirmation
     const user = await User.findById(learnerId);
     if (!user || user.role !== "user") {
       return res.status(404).json({
@@ -337,7 +315,6 @@ const deleteLearner = async (req, res) => {
       });
     }
 
-    // Validate confirmation text
     const expectedText = `I want to delete ${user.name || user.email}`;
     if (confirmationText !== expectedText) {
       return res.status(400).json({
@@ -348,10 +325,8 @@ const deleteLearner = async (req, res) => {
       });
     }
 
-    // Delete learner data
     await Learner.findOneAndDelete({ userId: learnerId });
 
-    // Delete user account
     await User.findByIdAndDelete(learnerId);
 
     res.json({
@@ -367,7 +342,6 @@ const deleteLearner = async (req, res) => {
   }
 };
 
-// Get learner statistics
 const getLearnerStats = async (req, res) => {
   try {
     const totalLearners = await User.countDocuments({ role: "user" });

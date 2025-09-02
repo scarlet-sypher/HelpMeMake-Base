@@ -20,7 +20,7 @@ const CompleteCancelBox = ({
   setShowReviewModal,
 }) => {
   const [loading, setLoading] = useState(false);
-  // const [showReviewModal, setShowReviewModal] = useState(false);
+
   const [reviewData, setReviewData] = useState({
     communication: 5,
     commitment: 5,
@@ -64,7 +64,6 @@ const CompleteCancelBox = ({
     }
   };
 
-  // Handle sending completion/cancellation request
   const handleSendRequest = async (type) => {
     try {
       setLoading(true);
@@ -73,7 +72,7 @@ const CompleteCancelBox = ({
       const token = localStorage.getItem("access_token");
 
       const response = await axios.post(
-        `${apiUrl}/api/sync/mentor-completion-request`, // ✅ CORRECT ROUTE
+        `${apiUrl}/api/sync/mentor-completion-request`,
         {
           projectId: projectData._id,
           type: type,
@@ -102,7 +101,6 @@ const CompleteCancelBox = ({
     }
   };
 
-  // ✅ NEW: Handle learner/apprentice request response
   const handleRequestResponse = async (response, notes = "") => {
     try {
       setLoading(true);
@@ -143,7 +141,6 @@ const CompleteCancelBox = ({
     }
   };
 
-  // Handle apprentice review submission
   const handleSubmitReview = async () => {
     try {
       setLoading(true);
@@ -168,10 +165,9 @@ const CompleteCancelBox = ({
 
       if (response.data.success) {
         toast.success("Review submitted successfully!");
-        setShowReviewModal(false); // This should close the modal
+        setShowReviewModal(false);
         console.log("📝 Review submitted, modal should be closed");
 
-        // POTENTIAL FIX: Add a delay before refreshing data
         setTimeout(() => {
           onDataRefresh();
         }, 100);
@@ -216,12 +212,10 @@ const CompleteCancelBox = ({
     ));
   };
 
-  // ✅ FIXED: Check project status and completion request
   if (!projectData) {
     return null;
   }
 
-  // Show completed state with review option
   if (
     projectData.status === "Completed" ||
     (projectData?.completionRequest?.status === "approved" &&
@@ -279,7 +273,6 @@ const CompleteCancelBox = ({
               className="fixed inset-0 z-50 flex items-center justify-center p-4"
               style={{ backgroundColor: "rgba(0, 0, 0, 0.4)" }}
               onClick={(e) => {
-                // Close modal when clicking the backdrop
                 if (e.target === e.currentTarget) {
                   setShowReviewModal(false);
                 }
@@ -287,7 +280,7 @@ const CompleteCancelBox = ({
             >
               <div
                 className="relative bg-slate-900 rounded-2xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto border border-white/10 shadow-2xl"
-                onClick={(e) => e.stopPropagation()} // Prevent closing when clicking modal content
+                onClick={(e) => e.stopPropagation()}
               >
                 <div className="flex items-center justify-between mb-6">
                   <h3 className="text-2xl font-bold text-white flex items-center">
@@ -432,12 +425,10 @@ const CompleteCancelBox = ({
     );
   }
 
-  // Don't show for non-active projects
   if (projectData.status !== "In Progress") {
     return null;
   }
 
-  // Check for pending completion request
   const hasPendingRequest =
     projectData?.completionRequest?.status === "pending";
   const isRequestFromMentor =

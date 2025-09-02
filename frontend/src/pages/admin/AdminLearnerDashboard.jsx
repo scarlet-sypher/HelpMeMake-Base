@@ -138,7 +138,7 @@ export default function AdminLearnerDashboard({ onReturn }) {
     setFilteredLearners((prev) =>
       prev.filter((learner) => learner._id !== deletedLearnerId)
     );
-    fetchStats(); // Refresh stats after deletion
+    fetchStats();
   };
 
   const handleReturn = () => {

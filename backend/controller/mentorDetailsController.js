@@ -3,12 +3,10 @@ const User = require("../Model/User");
 const Project = require("../Model/Project");
 const Learner = require("../Model/Learner");
 
-// Get mentor details by mentorId
 const getMentorDetails = async (req, res) => {
   try {
     const { mentorId } = req.params;
 
-    // Find mentor by _id and populate user details
     const mentor = await Mentor.findById(mentorId).populate({
       path: "userId",
       select: "name email avatar authProvider isEmailVerified",
@@ -21,7 +19,6 @@ const getMentorDetails = async (req, res) => {
       });
     }
 
-    // Calculate additional metrics if needed
     const mentorWithMetrics = {
       ...mentor.toObject(),
       successRate: mentor.successRate,
@@ -44,12 +41,10 @@ const getMentorDetails = async (req, res) => {
   }
 };
 
-// Get mentor's completed/cancelled projects
 const getMentorProjects = async (req, res) => {
   try {
     const { mentorId } = req.params;
 
-    // Verify mentor exists
     const mentor = await Mentor.findById(mentorId);
     if (!mentor) {
       return res.status(404).json({
@@ -58,7 +53,6 @@ const getMentorProjects = async (req, res) => {
       });
     }
 
-    // Find projects where this mentor was assigned and status is completed or cancelled
     const projects = await Project.find({
       mentorId: mentorId,
       status: { $in: ["Completed", "Cancelled"] },
@@ -71,7 +65,7 @@ const getMentorProjects = async (req, res) => {
           select: "name email avatar",
         },
       })
-      .sort({ actualEndDate: -1, updatedAt: -1 }); // Sort by completion date, most recent first
+      .sort({ actualEndDate: -1, updatedAt: -1 });
 
     res.json({
       success: true,
@@ -89,12 +83,10 @@ const getMentorProjects = async (req, res) => {
   }
 };
 
-// Get learner details by learnerId (for ProjectCard component)
 const getLearnerDetails = async (req, res) => {
   try {
     const { learnerId } = req.params;
 
-    // Find learner by _id and populate user details
     const learner = await Learner.findById(learnerId).populate({
       path: "userId",
       select: "name email avatar",
@@ -122,12 +114,10 @@ const getLearnerDetails = async (req, res) => {
   }
 };
 
-// Get mentor's statistics and analytics
 const getMentorAnalytics = async (req, res) => {
   try {
     const { mentorId } = req.params;
 
-    // Verify mentor exists
     const mentor = await Mentor.findById(mentorId);
     if (!mentor) {
       return res.status(404).json({
@@ -136,7 +126,6 @@ const getMentorAnalytics = async (req, res) => {
       });
     }
 
-    // Get project statistics
     const projectStats = await Project.aggregate([
       { $match: { mentorId: mongoose.Types.ObjectId(mentorId) } },
       {
@@ -149,7 +138,6 @@ const getMentorAnalytics = async (req, res) => {
       },
     ]);
 
-    // Get monthly completion trend (last 6 months)
     const sixMonthsAgo = new Date();
     sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
 

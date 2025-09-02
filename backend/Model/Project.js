@@ -4,7 +4,6 @@ const MessageRoom = require("./MessageRoom");
 
 const projectSchema = new mongoose.Schema(
   {
-    // Unique Project Identifier
     projectId: {
       type: String,
       required: true,
@@ -16,7 +15,6 @@ const projectSchema = new mongoose.Schema(
       },
     },
 
-    // Core Project Information
     name: {
       type: String,
       required: true,
@@ -36,7 +34,6 @@ const projectSchema = new mongoose.Schema(
       maxlength: 5000,
     },
 
-    // Technical Details
     techStack: [
       {
         type: String,
@@ -71,11 +68,10 @@ const projectSchema = new mongoose.Schema(
       enum: ["Beginner", "Intermediate", "Advanced"],
     },
 
-    // Project Metadata
     duration: {
       type: String,
       required: true,
-      trim: true, // e.g., "2 weeks", "1 month", "3-4 days"
+      trim: true,
     },
     status: {
       type: String,
@@ -94,7 +90,6 @@ const projectSchema = new mongoose.Schema(
       },
     ],
 
-    // Project Goals & Context
     projectOutcome: {
       type: String,
       required: true,
@@ -149,7 +144,6 @@ const projectSchema = new mongoose.Schema(
       },
     ],
 
-    // Relationships
     learnerId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Learner",
@@ -161,7 +155,6 @@ const projectSchema = new mongoose.Schema(
       default: null,
     },
 
-    // Pricing Information
     openingPrice: {
       type: Number,
       required: true,
@@ -200,7 +193,6 @@ const projectSchema = new mongoose.Schema(
       default: "INR",
     },
 
-    // Project Timeline
     startDate: {
       type: Date,
       default: null,
@@ -214,7 +206,6 @@ const projectSchema = new mongoose.Schema(
       default: null,
     },
 
-    // Project Progress & Milestones
     milestones: [
       {
         type: mongoose.Schema.Types.ObjectId,
@@ -225,7 +216,7 @@ const projectSchema = new mongoose.Schema(
     totalMilestones: {
       type: Number,
       default: 0,
-      max: 5, // Maximum 5 milestones per project
+      max: 5,
     },
 
     completedMilestones: {
@@ -233,7 +224,6 @@ const projectSchema = new mongoose.Schema(
       default: 0,
     },
 
-    // Communication & Feedback
     messages: [
       {
         senderId: {
@@ -262,7 +252,6 @@ const projectSchema = new mongoose.Schema(
       },
     ],
 
-    // Reviews & Ratings (after completion)
     learnerReview: {
       rating: {
         type: Number,
@@ -290,7 +279,6 @@ const projectSchema = new mongoose.Schema(
       reviewDate: Date,
     },
 
-    // Additional Metadata
     isVisible: {
       type: Boolean,
       default: true,
@@ -340,7 +328,7 @@ const projectSchema = new mongoose.Schema(
       {
         mentor: {
           type: mongoose.Schema.Types.ObjectId,
-          ref: "User", // Should reference User, not Mentor directly
+          ref: "User",
           required: true,
         },
         price: {
@@ -361,13 +349,11 @@ const projectSchema = new mongoose.Schema(
       },
     ],
 
-    // NEW: Notification flag for unread pitches
     hasUnreadPitch: {
       type: Boolean,
       default: false,
     },
 
-    // Expected End Date Management
     tempExpectedEndDate: {
       type: Date,
       default: null,
@@ -389,7 +375,6 @@ const projectSchema = new mongoose.Schema(
       default: null,
     },
 
-    // Progress History Tracking
     progressHistory: [
       {
         percentage: {
@@ -452,7 +437,6 @@ const projectSchema = new mongoose.Schema(
       default: null,
     },
 
-    // Completion Request Management
     completionRequest: {
       from: {
         type: String,
@@ -500,7 +484,6 @@ const projectSchema = new mongoose.Schema(
       },
     },
 
-    // Enhanced Review System
     learnerReview: {
       rating: {
         type: Number,
@@ -583,22 +566,16 @@ const projectSchema = new mongoose.Schema(
       },
     },
 
-    // Additional Project Tracking
-
     nextMilestoneDate: {
       type: Date,
       default: null,
     },
-    // isOverdue: {
-    //   type: Boolean,
-    //   default: false,
-    // },
+
     overduedays: {
       type: Number,
       default: 0,
     },
 
-    // Applications from mentors
     applications: [
       {
         mentorId: {
@@ -650,7 +627,6 @@ const projectSchema = new mongoose.Schema(
   }
 );
 
-// Indexes for better query performance
 projectSchema.index({ learnerId: 1 });
 projectSchema.index({ mentorId: 1 });
 projectSchema.index({ status: 1 });
@@ -661,41 +637,34 @@ projectSchema.index({ tags: 1 });
 projectSchema.index({ "applications.mentorId": 1 });
 projectSchema.index({ "pitches.mentor": 1 });
 projectSchema.index({ hasUnreadPitch: 1 });
-// projectSchema.index({ projectId: 1 });
 
-// Compound indexes for common queries
 projectSchema.index({ status: 1, category: 1 });
 projectSchema.index({ learnerId: 1, status: 1 });
 projectSchema.index({ mentorId: 1, status: 1 });
 
-// Indexes for better performance
 projectSchema.index({ "completionRequest.status": 1 });
 projectSchema.index({ tempExpectedEndDate: 1 });
 projectSchema.index({ lastProgressUpdate: -1 });
 projectSchema.index({ isOverdue: 1 });
 projectSchema.index({ "progressHistory.date": -1 });
 
-// Virtual for calculating project age
 projectSchema.virtual("projectAge").get(function () {
   if (!this.createdAt) return 0;
   const diffTime = Math.abs(new Date() - this.createdAt);
-  return Math.ceil(diffTime / (1000 * 60 * 60 * 24)); // days
+  return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 });
 
-// Virtual for checking if project is overdue
 projectSchema.virtual("isOverdue").get(function () {
   if (!this.expectedEndDate || this.status === "Completed") return false;
   return new Date() > this.expectedEndDate;
 });
 
-// Virtual for active price (returns the most relevant price)
 projectSchema.virtual("activePrice").get(function () {
   if (this.closedPrice !== null) return this.closedPrice;
   if (this.negotiatedPrice !== null) return this.negotiatedPrice;
   return this.openingPrice;
 });
 
-// Pre-save middleware to update applicationsCount
 projectSchema.pre("save", function (next) {
   if (this.isModified("applications")) {
     this.applicationsCount = this.applications.length;
@@ -703,7 +672,6 @@ projectSchema.pre("save", function (next) {
   next();
 });
 
-// Pre-save middleware to set project status based on mentor assignment
 projectSchema.pre("save", function (next) {
   if (this.isModified("mentorId")) {
     if (this.mentorId && this.status === "Idea") {
@@ -714,21 +682,17 @@ projectSchema.pre("save", function (next) {
   next();
 });
 
-// 4. Add a virtual to count pitches:
 projectSchema.virtual("pitchCount").get(function () {
   return this.pitches ? this.pitches.length : 0;
 });
 
-// 5. Pre-save middleware to update pitch count:
 projectSchema.pre("save", function (next) {
   if (this.isModified("pitches")) {
-    // You can add any logic here when pitches are modified
     console.log(`Project ${this.name} now has ${this.pitches.length} pitches`);
   }
   next();
 });
 
-// 6. Static method to find projects with unread pitches:
 projectSchema.statics.findProjectsWithUnreadPitches = function (learnerId) {
   return this.find({
     learnerId: learnerId,
@@ -736,7 +700,6 @@ projectSchema.statics.findProjectsWithUnreadPitches = function (learnerId) {
   }).populate("pitches.mentor", "name email avatar");
 };
 
-// 7. Instance method to get latest pitch:
 projectSchema.methods.getLatestPitch = function () {
   if (!this.pitches || this.pitches.length === 0) return null;
   return this.pitches.sort(
@@ -744,7 +707,6 @@ projectSchema.methods.getLatestPitch = function () {
   )[0];
 };
 
-// 8. Instance method to get pitch by mentor:
 projectSchema.methods.getPitchByMentor = function (mentorUserId) {
   if (!this.pitches || this.pitches.length === 0) return null;
   return this.pitches.find(
@@ -752,7 +714,6 @@ projectSchema.methods.getPitchByMentor = function (mentorUserId) {
   );
 };
 
-// 9. Make sure toJSON includes pitchCount virtual:
 projectSchema.set("toJSON", {
   virtuals: true,
   transform: function (doc, ret) {
@@ -761,28 +722,24 @@ projectSchema.set("toJSON", {
   },
 });
 
-// 10. Add validation for pitch data:
 projectSchema.path("pitches").validate(function (pitches) {
-  // Ensure no duplicate pitches from the same mentor
   const mentorIds = pitches.map((pitch) => pitch.mentor.toString());
   const uniqueMentorIds = [...new Set(mentorIds)];
   return mentorIds.length === uniqueMentorIds.length;
 }, "Duplicate pitches from the same mentor are not allowed");
-// Static method to find projects by learner
+
 projectSchema.statics.findByLearner = function (learnerId, status = null) {
   const query = { learnerId };
   if (status) query.status = status;
   return this.find(query).populate("learnerId mentorId");
 };
 
-// Static method to find projects by mentor
 projectSchema.statics.findByMentor = function (mentorId, status = null) {
   const query = { mentorId };
   if (status) query.status = status;
   return this.find(query).populate("learnerId mentorId");
 };
 
-// Static method to find available projects (no mentor assigned)
 projectSchema.statics.findAvailableProjects = function (filters = {}) {
   const query = {
     mentorId: null,
@@ -793,14 +750,12 @@ projectSchema.statics.findAvailableProjects = function (filters = {}) {
   return this.find(query).populate("learnerId");
 };
 
-// Instance method to add application
 projectSchema.methods.addApplication = function (
   mentorId,
   proposedPrice,
   coverLetter,
   estimatedDuration
 ) {
-  // Check if mentor already applied
   const existingApplication = this.applications.find(
     (app) => app.mentorId.toString() === mentorId.toString()
   );
@@ -819,23 +774,19 @@ projectSchema.methods.addApplication = function (
   return this.save();
 };
 
-// Instance method to accept application
 projectSchema.methods.acceptApplication = function (applicationId) {
   const application = this.applications.id(applicationId);
   if (!application) {
     throw new Error("Application not found");
   }
 
-  // Set mentor and negotiated price
   this.mentorId = application.mentorId;
   this.negotiatedPrice = application.proposedPrice;
   this.status = "In Progress";
   this.startDate = new Date();
 
-  // Update application status
   application.applicationStatus = "Accepted";
 
-  // Reject all other applications
   this.applications.forEach((app) => {
     if (
       app._id.toString() !== applicationId.toString() &&
@@ -855,7 +806,6 @@ projectSchema.virtual("learner", {
   justOne: true,
 });
 
-// Make sure virtual fields are included in JSON
 projectSchema.set("toJSON", {
   virtuals: true,
   transform: function (doc, ret) {
@@ -874,32 +824,27 @@ async function getProjects(req, res) {
 }
 
 projectSchema.methods.addOrUpdatePitch = function (mentorUserId, price, note) {
-  // Check if mentor already pitched (use mentor's User ID, not Mentor profile ID)
   const existingPitchIndex = this.pitches.findIndex(
     (pitch) => pitch.mentor.toString() === mentorUserId.toString()
   );
 
   if (existingPitchIndex >= 0) {
-    // Update existing pitch
     this.pitches[existingPitchIndex].price = price;
     this.pitches[existingPitchIndex].note = note;
     this.pitches[existingPitchIndex].timestamp = new Date();
   } else {
-    // Add new pitch
     this.pitches.push({
-      mentor: mentorUserId, // Store the User ID, not Mentor profile ID
+      mentor: mentorUserId,
       price,
       note,
       timestamp: new Date(),
     });
   }
 
-  // Set unread flag
   this.hasUnreadPitch = true;
   return this.save();
 };
 
-// Instance method to set closing price from pitch
 projectSchema.methods.setClosingPriceFromPitch = function (mentorId) {
   const pitch = this.pitches.find(
     (p) => p.mentor.toString() === mentorId.toString()
@@ -913,7 +858,6 @@ projectSchema.methods.setClosingPriceFromPitch = function (mentorId) {
   return this.save();
 };
 
-// Configure JSON output
 projectSchema.set("toJSON", {
   virtuals: true,
   transform: function (doc, ret) {
@@ -922,7 +866,6 @@ projectSchema.set("toJSON", {
   },
 });
 
-// Method to add progress update
 projectSchema.methods.addProgressUpdate = function (
   percentage,
   note,
@@ -959,7 +902,6 @@ projectSchema.methods.addTrackerUpdate = function (
   return this.save();
 };
 
-// Method to check if project is overdue
 projectSchema.methods.checkOverdue = function () {
   if (this.expectedEndDate && this.status === "In Progress") {
     const now = new Date();
@@ -976,7 +918,6 @@ projectSchema.methods.checkOverdue = function () {
   return this.isOverdue;
 };
 
-// Static method to get overdue projects
 projectSchema.statics.getOverdueProjects = function () {
   return this.find({
     status: "In Progress",
@@ -984,7 +925,6 @@ projectSchema.statics.getOverdueProjects = function () {
   }).populate("learnerId mentorId");
 };
 
-// Virtual for days until deadline
 projectSchema.virtual("daysUntilDeadline").get(function () {
   if (!this.expectedEndDate || this.status !== "In Progress") return null;
 
@@ -996,7 +936,6 @@ projectSchema.virtual("daysUntilDeadline").get(function () {
   return diffDays;
 });
 
-// Pre-save middleware to check overdue status
 projectSchema.pre("save", function (next) {
   if (this.isModified("expectedEndDate") || this.isNew) {
     this.checkOverdue();
@@ -1010,14 +949,12 @@ projectSchema.post("save", async function (doc, next) {
     console.log(`[MESSAGE_DEBUG] Project status: ${doc.status}`);
     console.log(`[MESSAGE_DEBUG] Modified paths:`, this.modifiedPaths());
 
-    // ✅ If project status changed to "In Progress"
     if (doc.status === "In Progress" && doc.mentorId && doc.learnerId) {
       console.log(`[MESSAGE_DEBUG] Project meets criteria for room creation`);
       console.log(
         `[MESSAGE_DEBUG] LearnerId: ${doc.learnerId}, MentorId: ${doc.mentorId}`
       );
 
-      // 🔹 Check if message room already exists
       const MessageRoom = require("./MessageRoom");
       const existingRoom = await MessageRoom.findOne({ projectId: doc._id });
 
@@ -1031,7 +968,6 @@ projectSchema.post("save", async function (doc, next) {
         );
 
         try {
-          // 🔹 Create message room directly here instead of calling controller
           const newRoom = new MessageRoom({
             learnerId: doc.learnerId,
             mentorId: doc.mentorId,
@@ -1059,7 +995,6 @@ projectSchema.post("save", async function (doc, next) {
         }
       }
 
-      // 🔹 Create initial milestone if none exist
       const Milestone = require("./Milestone");
       const existingMilestones = await Milestone.countDocuments({
         projectId: doc._id,
@@ -1097,9 +1032,6 @@ projectSchema.post("save", async function (doc, next) {
       console.log(`[MESSAGE_DEBUG] Has learnerId: ${!!doc.learnerId}`);
     }
 
-    // -------------------------------
-    // 2. When status = "Completed" or "Cancelled"
-    // -------------------------------
     if (doc.status === "Completed" || doc.status === "Cancelled") {
       console.log(
         `[MESSAGE_DEBUG] Closing room for project status: ${doc.status}`
@@ -1134,9 +1066,8 @@ projectSchema.post("save", async function (doc, next) {
     next(error);
   }
 });
-// Also add this pre-save middleware to update milestone project references if needed
+
 projectSchema.pre("save", function (next) {
-  // Update lastUpdated timestamp
   if (this.isModified()) {
     this.updatedAt = new Date();
   }

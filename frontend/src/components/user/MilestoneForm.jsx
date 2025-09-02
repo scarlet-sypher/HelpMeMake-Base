@@ -20,7 +20,6 @@ const MilestoneForm = ({
   addMilestone,
   saving,
 }) => {
-  // Calculate milestone statistics
   const completedMilestones = milestones.filter(
     (m) => m.status === "Completed"
   ).length;

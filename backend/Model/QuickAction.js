@@ -4,43 +4,42 @@ const quickActionSchema = new mongoose.Schema(
   {
     userId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User", // Reference to User schema
+      ref: "User",
       required: true,
     },
     selectedActions: [
       {
         icon: {
-          type: String, // e.g. "Calendar", "PlayCircle", "Send"
+          type: String,
           required: true,
         },
         label: {
-          type: String, // e.g. "Schedule Session"
+          type: String,
           required: true,
           trim: true,
         },
         color: {
-          type: String, // e.g. "from-blue-500 to-cyan-500"
+          type: String,
           required: true,
         },
         path: {
-          type: String, // e.g. "/user/sessions"
+          type: String,
           required: true,
         },
         ariaLabel: {
-          type: String, // e.g. "Navigate to schedule a new mentoring session"
+          type: String,
           required: true,
         },
       },
     ],
     isCustomized: {
       type: Boolean,
-      default: false, // false = using default actions, true = user customized
+      default: false,
     },
   },
   { timestamps: true }
 );
 
-// Ensure one quick action config per user
 quickActionSchema.index({ userId: 1 }, { unique: true });
 
 module.exports = mongoose.model("QuickAction", quickActionSchema);

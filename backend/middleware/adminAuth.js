@@ -3,7 +3,6 @@ const Admin = require("../Model/Admin");
 
 const authenticateAdmin = async (req, res, next) => {
   try {
-    // Get token from cookie or Authorization header
     let token = req.cookies?.admin_token;
 
     if (!token) {
@@ -20,10 +19,8 @@ const authenticateAdmin = async (req, res, next) => {
       });
     }
 
-    // Verify token with admin JWT secret
     const decoded = jwt.verify(token, process.env.ADMIN_JWT_SECRET);
 
-    // Verify token type is admin
     if (decoded.type !== "admin") {
       return res.status(403).json({
         success: false,
@@ -31,7 +28,6 @@ const authenticateAdmin = async (req, res, next) => {
       });
     }
 
-    // Verify admin still exists in database
     const admin = await Admin.findById(decoded.adminId).select("-password");
 
     if (!admin) {
@@ -41,7 +37,6 @@ const authenticateAdmin = async (req, res, next) => {
       });
     }
 
-    // Add admin info to request object
     req.admin = {
       adminId: admin._id,
       username: admin.username,

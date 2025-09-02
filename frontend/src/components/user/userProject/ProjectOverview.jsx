@@ -31,7 +31,6 @@ import {
 } from "lucide-react";
 
 const ProjectOverview = ({ project, API_URL, onToast }) => {
-  // Category icons mapping with enhanced icons
   const getCategoryIcon = (category) => {
     const icons = {
       "Web Development": Monitor,
@@ -53,7 +52,6 @@ const ProjectOverview = ({ project, API_URL, onToast }) => {
     return icons[category] || Code;
   };
 
-  // Difficulty level colors with enhanced gradients
   const getDifficultyColor = (level) => {
     const colors = {
       Beginner: "from-emerald-400 via-green-500 to-teal-600",
@@ -63,7 +61,6 @@ const ProjectOverview = ({ project, API_URL, onToast }) => {
     return colors[level] || "from-slate-400 via-gray-500 to-slate-600";
   };
 
-  // Status colors with enhanced gradients
   const getStatusColor = (status) => {
     const colors = {
       Open: "from-blue-400 via-cyan-500 to-teal-500",
@@ -74,7 +71,6 @@ const ProjectOverview = ({ project, API_URL, onToast }) => {
     return colors[status] || "from-gray-400 via-slate-500 to-stone-500";
   };
 
-  // Get difficulty icon
   const getDifficultyIcon = (level) => {
     const icons = {
       Beginner: Star,
@@ -84,7 +80,6 @@ const ProjectOverview = ({ project, API_URL, onToast }) => {
     return icons[level] || Star;
   };
 
-  // Format date with enhanced display
   const formatDate = (dateString) => {
     if (!dateString) return "Not set";
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -94,13 +89,11 @@ const ProjectOverview = ({ project, API_URL, onToast }) => {
     });
   };
 
-  // Format price with enhanced display
   const formatPrice = (price, currency = "INR") => {
     if (!price) return "Not set";
     return `₹${price.toLocaleString()}`;
   };
 
-  // Calculate progress color
   const getProgressColor = (percentage) => {
     if (percentage >= 80) return "from-emerald-400 to-green-500";
     if (percentage >= 60) return "from-blue-400 to-cyan-500";

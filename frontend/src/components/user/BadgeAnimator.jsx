@@ -10,7 +10,7 @@ const BadgeAnimator = ({
   onEnd,
 }) => {
   const [isAnimating, setIsAnimating] = useState(false);
-  // const [showComingUp, setShowComingUp] = useState(false);
+
   const controls = useAnimationControls();
   const badgeRef = useRef(null);
 
@@ -35,8 +35,6 @@ const BadgeAnimator = ({
           await animateOrbit();
           break;
         case "legendary":
-          // Legendary animation is handled by the overlay
-          // Just do a small initial scale for feedback
           await controls.start({
             scale: 1.15,
             transition: { duration: 0.2 },
@@ -48,7 +46,6 @@ const BadgeAnimator = ({
     } catch (error) {
       console.error("Animation error:", error);
     } finally {
-      // Reset any transforms and state
       await controls.start({
         x: 0,
         y: 0,
@@ -76,32 +73,25 @@ const BadgeAnimator = ({
   };
 
   const animateFallAndReturn = async () => {
-    // Fall down much farther - going outside the container bounds
     await controls.start({
-      y: [0, 40, 100, 180, 220], // Increased distance to go outside container
+      y: [0, 40, 100, 180, 220],
       opacity: [1, 1, 0.9, 0.8, 0.6],
-      scale: [1, 1, 0.95, 0.9, 0.85], // Slight shrinking as it falls
+      scale: [1, 1, 0.95, 0.9, 0.85],
       transition: { duration: 1.4, ease: "easeIn" },
     });
 
-    // Show "Coming up..." text
-    // setShowComingUp(true);
-
-    // Wait 5 seconds
     await new Promise((resolve) => setTimeout(resolve, 5000));
 
-    // Hide the text
     setShowComingUp(false);
 
-    // Rise back up with a bouncy effect
     await controls.start({
-      y: [220, 50, -10, 0], // Bouncy return with slight overshoot
+      y: [220, 50, -10, 0],
       opacity: [0.6, 0.8, 0.95, 1],
-      scale: [0.85, 0.95, 1.05, 1], // Scale back to normal with slight bounce
+      scale: [0.85, 0.95, 1.05, 1],
       transition: {
         duration: 1.8,
         ease: "backOut",
-        times: [0, 0.6, 0.9, 1], // Control timing of keyframes
+        times: [0, 0.6, 0.9, 1],
       },
     });
   };
@@ -112,23 +102,19 @@ const BadgeAnimator = ({
     const centerRect = centerRef.current.getBoundingClientRect();
     const badgeRect = badgeRef.current.getBoundingClientRect();
 
-    // Calculate relative positions
     const centerX = centerRect.left + centerRect.width / 2;
     const centerY = centerRect.top + centerRect.height / 2;
     const badgeX = badgeRect.left + badgeRect.width / 2;
     const badgeY = badgeRect.top + badgeRect.height / 2;
 
-    // Calculate orbit radius based on current distance
     const radius = Math.sqrt(
       Math.pow(centerX - badgeX, 2) + Math.pow(centerY - badgeY, 2)
     );
 
-    // Calculate starting angle
     const startAngle = Math.atan2(badgeY - centerY, badgeX - centerX);
 
-    // Create orbit path (4 full circles)
     const totalRotations = 4;
-    const steps = 60; // Steps per rotation for smooth animation
+    const steps = 60;
     const keyframes = [];
 
     for (let i = 0; i <= totalRotations * steps; i++) {
@@ -138,7 +124,6 @@ const BadgeAnimator = ({
       keyframes.push({ x, y });
     }
 
-    // Animate through all keyframes
     await controls.start({
       x: keyframes.map((k) => k.x),
       y: keyframes.map((k) => k.y),
@@ -159,7 +144,7 @@ const BadgeAnimator = ({
         className={`${isAnimating ? "pointer-events-none" : "cursor-pointer"}`}
         style={{
           pointerEvents: !unlocked || isAnimating ? "none" : "auto",
-          // For rare badge, ensure it can overflow the container
+
           zIndex: type === "rare" && isAnimating ? 1000 : "auto",
         }}
       >

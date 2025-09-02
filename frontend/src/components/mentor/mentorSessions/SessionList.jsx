@@ -19,7 +19,6 @@ import {
   MessageSquare,
 } from "lucide-react";
 
-// Import modal components
 import EditSessionModal from "./EditSessionModal";
 import RescheduleModal from "./RescheduleModal";
 import CancelConfirmModal from "./CancelConfirmModal";
@@ -41,7 +40,6 @@ const SessionCard = ({
   const [showMentorReasonModal, setShowMentorReasonModal] = useState(false);
   const [mentorReason, setMentorReason] = useState("");
 
-  // Format date and time
   const formatDateTime = (dateString) => {
     const date = new Date(dateString);
     return {
@@ -66,7 +64,6 @@ const SessionCard = ({
     };
   };
 
-  // Get status styling
   const getStatusStyle = (status) => {
     switch (status) {
       case "scheduled":
@@ -86,7 +83,6 @@ const SessionCard = ({
     }
   };
 
-  // Get status icon
   const getStatusIcon = (status) => {
     switch (status) {
       case "scheduled":
@@ -106,7 +102,6 @@ const SessionCard = ({
     }
   };
 
-  // Handle join session
   const handleJoinSession = async () => {
     if (!session.meetingLink) {
       onToast({
@@ -119,7 +114,6 @@ const SessionCard = ({
     try {
       setActionLoading(true);
 
-      // Mark attendance
       const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
       const token = localStorage.getItem("access_token");
 
@@ -134,7 +128,6 @@ const SessionCard = ({
         }
       );
 
-      // Open meeting link in new tab
       onToast({ message: "Joining session...", status: "success" });
       window.open(session.meetingLink, "_blank");
       onRefresh();
@@ -171,7 +164,6 @@ const SessionCard = ({
     );
   };
 
-  // Handle delete session
   const handleDeleteSession = async () => {
     if (!confirm("Are you sure you want to delete this session?")) return;
 
@@ -201,7 +193,6 @@ const SessionCard = ({
   const learner = session.learnerId?.userId || session.learnerId;
   const project = session.projectId;
 
-  // Get avatar URL
   const getAvatarUrl = (avatar) => {
     if (!avatar) return "/uploads/public/default.jpg";
     if (avatar.startsWith("/uploads/")) {
@@ -210,15 +201,13 @@ const SessionCard = ({
     return avatar;
   };
 
-  // Check if session is upcoming (within next 30 minutes)
   const isUpcoming = () => {
     const now = new Date();
     const sessionTime = new Date(session.scheduledAt);
     const timeDiff = sessionTime - now;
-    return timeDiff > 0 && timeDiff <= 30 * 60 * 1000; // 30 minutes in milliseconds
+    return timeDiff > 0 && timeDiff <= 30 * 60 * 1000;
   };
 
-  // Handle mentor reason submission
   const handleMentorReasonSubmit = async () => {
     if (!mentorReason.trim()) {
       onToast({
@@ -257,7 +246,6 @@ const SessionCard = ({
     }
   };
 
-  // Handle recording link update
   const handleRecordingUpdate = async () => {
     try {
       setActionLoading(true);
@@ -290,7 +278,6 @@ const SessionCard = ({
     }
   };
 
-  // Check if mentor needs to submit absence reason
   const needsMentorReason = () => {
     return (
       session.status === "expired" &&
@@ -687,21 +674,19 @@ const SessionList = ({ sessions, onRefresh, isPastOnly, onToast }) => {
     );
   }
 
-  // Sort sessions by date (upcoming first, then past)
   const sortedSessions = [...sessions].sort((a, b) => {
     const dateA = new Date(a.scheduledAt);
     const dateB = new Date(b.scheduledAt);
     const now = new Date();
 
-    // Upcoming sessions first (sorted by closest first)
     if (dateA > now && dateB > now) {
       return dateA - dateB;
     }
-    // Past sessions last (sorted by most recent first)
+
     if (dateA < now && dateB < now) {
       return dateB - dateA;
     }
-    // Upcoming before past
+
     if (dateA > now && dateB < now) return -1;
     if (dateA < now && dateB > now) return 1;
 

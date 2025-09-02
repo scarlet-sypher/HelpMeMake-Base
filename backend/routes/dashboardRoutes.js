@@ -8,10 +8,8 @@ const {
   getMentorDashboardData,
 } = require("../controller/mentorDashboardController");
 
-// Route for learner dashboard data
 router.get("/user/data", requireUser, getLearnerDashboardData);
 
-// Route for mentor dashboard data
 router.get("/mentor/data", requireMentor, getMentorDashboardData);
 
 module.exports = router;

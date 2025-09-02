@@ -79,7 +79,6 @@ const ActivityTimeline = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Map event types to icons
   const getIconComponent = (iconName) => {
     const iconMap = {
       Award: Award,
@@ -103,7 +102,6 @@ const ActivityTimeline = () => {
     return iconMap[iconName] || BookOpen;
   };
 
-  // Format time ago helper
   const formatTimeAgo = (dateString) => {
     const date = new Date(dateString);
     const now = new Date();
@@ -119,7 +117,6 @@ const ActivityTimeline = () => {
     return date.toLocaleDateString();
   };
 
-  // Fetch mentor timeline data
   const fetchMentorTimeline = async () => {
     try {
       setLoading(true);
@@ -156,7 +153,6 @@ const ActivityTimeline = () => {
     }
   };
 
-  // Update mentor timeline
   const updateMentorTimeline = async () => {
     try {
       const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
@@ -176,7 +172,6 @@ const ActivityTimeline = () => {
     }
   };
 
-  // Initial load and auto-refresh
   useEffect(() => {
     const loadTimeline = async () => {
       await updateMentorTimeline();

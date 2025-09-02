@@ -4,15 +4,12 @@ const Milestone = require("../Model/Milestone");
 const Session = require("../Model/Session");
 const Mentor = require("../Model/Mentor");
 
-// Get timeline data for mentor
 const getMentorTimeline = async (req, res) => {
   try {
     const userId = req.user.id;
 
     //debug - Print logged in user ID
-    // console.log("//debug - Mentor Logged in userId:", userId);
 
-    // Find mentor by userId
     const mentor = await Mentor.findOne({ userId });
     if (!mentor) {
       return res.status(404).json({
@@ -23,18 +20,11 @@ const getMentorTimeline = async (req, res) => {
 
     const mentorId = mentor._id;
     //debug - Print mentorId being fetched
-    // console.log("//debug - MentorId being fetched:", mentorId);
 
-    // Find or create timeline
     const timeline = await MentorTimeline.findOrCreateByMentor(mentorId);
 
     //debug - Print current timeline events count
-    // console.log(
-    //   "//debug - Mentor Current timeline events count:",
-    //   timeline.events.length
-    // );
 
-    // Get recent events (last 50)
     const recentEvents = timeline.events.slice(0, 50).map((event) => ({
       id: event._id,
       type: event.type,
@@ -48,13 +38,6 @@ const getMentorTimeline = async (req, res) => {
     }));
 
     //debug - Print selected timeline events
-    // console.log(
-    //   "//debug - Mentor Selected timeline events:",
-    //   recentEvents.length
-    // );
-    // recentEvents.slice(0, 5).forEach((event, index) => {
-    //   console.log(`//debug - Mentor Recent event ${index + 1}:`, event.message);
-    // });
 
     return res.status(200).json({
       success: true,
@@ -75,15 +58,12 @@ const getMentorTimeline = async (req, res) => {
   }
 };
 
-// Update timeline by checking all schemas for changes
 const updateMentorTimeline = async (req, res) => {
   try {
     const userId = req.user.id;
 
     //debug - Print logged in user ID
-    // console.log("//debug - Mentor Update timeline for userId:", userId);
 
-    // Find mentor by userId
     const mentor = await Mentor.findOne({ userId });
     if (!mentor) {
       return res.status(404).json({
@@ -94,29 +74,16 @@ const updateMentorTimeline = async (req, res) => {
 
     const mentorId = mentor._id;
     //debug - Print mentorId being updated
-    // console.log("//debug - MentorId being updated:", mentorId);
 
-    // Find or create timeline
     const timeline = await MentorTimeline.findOrCreateByMentor(mentorId);
 
-    // Get current counts from all schemas
     const newCounts = await getCurrentMentorCounts(mentorId);
 
     //debug - Print old and new counts
-    // console.log(
-    //   "//debug - Mentor Old counts from timeline:",
-    //   JSON.stringify(timeline.latestCounts, null, 2)
-    // );
-    // console.log(
-    //   "//debug - Mentor New counts calculated:",
-    //   JSON.stringify(newCounts, null, 2)
-    // );
 
-    // Update timeline and detect changes
     await timeline.updateAndDetectChanges(newCounts);
 
     //debug - Print created timeline events
-    // console.log("//debug - Mentor Timeline updated successfully");
 
     return res.status(200).json({
       success: true,
@@ -136,12 +103,10 @@ const updateMentorTimeline = async (req, res) => {
   }
 };
 
-// Force refresh timeline - recalculates everything from scratch
 const refreshMentorTimeline = async (req, res) => {
   try {
     const userId = req.user.id;
 
-    // Find mentor by userId
     const mentor = await Mentor.findOne({ userId });
     if (!mentor) {
       return res.status(404).json({
@@ -153,25 +118,17 @@ const refreshMentorTimeline = async (req, res) => {
     const mentorId = mentor._id;
 
     //debug - Print refresh operation
-    // console.log(
-    //   "//debug - Mentor Force refreshing timeline for mentorId:",
-    //   mentorId
-    // );
 
-    // Delete existing timeline to start fresh
     await MentorTimeline.deleteOne({ mentorId });
 
-    // Create new timeline with current counts
     const timeline = await MentorTimeline.findOrCreateByMentor(mentorId);
     const currentCounts = await getCurrentMentorCounts(mentorId);
 
-    // Update counts without creating events (since this is initial setup)
     timeline.latestCounts = currentCounts;
     timeline.lastUpdated = new Date();
     await timeline.save();
 
     //debug - Print refresh completion
-    // console.log("//debug - Mentor Timeline refreshed successfully");
 
     return res.status(200).json({
       success: true,
@@ -191,13 +148,10 @@ const refreshMentorTimeline = async (req, res) => {
   }
 };
 
-// Helper function to get current counts from all schemas
 const getCurrentMentorCounts = async (mentorId) => {
   try {
     //debug - Print mentorId for count calculation
-    // console.log("//debug - Mentor Calculating counts for mentorId:", mentorId);
 
-    // Get project counts
     const projectCounts = await Project.aggregate([
       { $match: { mentorId } },
       {
@@ -220,7 +174,6 @@ const getCurrentMentorCounts = async (mentorId) => {
       const status = item._id;
       let statusKey = status.toLowerCase().replace(/\s+/g, "");
 
-      // Map status names to our schema keys
       if (statusKey === "inprogress") statusKey = "inProgress";
 
       if (projects.hasOwnProperty(statusKey)) {
@@ -229,7 +182,6 @@ const getCurrentMentorCounts = async (mentorId) => {
       projects.total += item.count;
     });
 
-    // Get milestone counts
     const milestoneCounts = await Milestone.aggregate([
       { $match: { mentorId } },
       {
@@ -253,7 +205,6 @@ const getCurrentMentorCounts = async (mentorId) => {
       const status = item._id;
       let statusKey = status.toLowerCase().replace(/\s+/g, "");
 
-      // Map status names to our schema keys
       if (statusKey === "notstarted") statusKey = "notStarted";
       if (statusKey === "inprogress") statusKey = "inProgress";
       if (statusKey === "pendingreview") statusKey = "pendingReview";
@@ -264,7 +215,6 @@ const getCurrentMentorCounts = async (mentorId) => {
       milestones.total += item.count;
     });
 
-    // Get session counts
     const sessionCounts = await Session.aggregate([
       { $match: { mentorId } },
       {
@@ -301,9 +251,6 @@ const getCurrentMentorCounts = async (mentorId) => {
     };
 
     //debug - Print calculated counts
-    // console.log("//debug - Mentor Calculated project counts:", projects);
-    // console.log("//debug - Mentor Calculated milestone counts:", milestones);
-    // console.log("//debug - Mentor Calculated session counts:", sessions);
 
     return result;
   } catch (error) {

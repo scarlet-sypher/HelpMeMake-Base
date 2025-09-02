@@ -1,53 +1,56 @@
-const nodemailer = require('nodemailer');
-
+const nodemailer = require("nodemailer");
 
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
+  service: "gmail",
   auth: {
     user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS
-  }
+    pass: process.env.EMAIL_PASS,
+  },
 });
 
-// Verify transporter configuration
 transporter.verify((error, success) => {
   if (error) {
-    console.error('Email transporter verification failed:', error);
+    console.error("Email transporter verification failed:", error);
   } else {
-    console.log('✅ Email service is ready');
+    console.log("✅ Email service is ready");
   }
 });
 
-
-// Generate 6-digit OTP
 const generateOTP = () => {
   return Math.floor(100000 + Math.random() * 900000).toString();
 };
 
-// Send OTP email
-const sendOTPEmail = async (email, otp, name = 'User', type = 'verification') => {
+const sendOTPEmail = async (
+  email,
+  otp,
+  name = "User",
+  type = "verification"
+) => {
   try {
     let subject, title, message;
-    
+
     switch (type) {
-      case 'reset':
-        subject = 'Reset Your HelpMeMake Password - OTP Code';
-        title = '🔐 Password Reset Request';
-        message = 'We received a request to reset your password. Please use the following code to reset your password:';
+      case "reset":
+        subject = "Reset Your HelpMeMake Password - OTP Code";
+        title = "🔐 Password Reset Request";
+        message =
+          "We received a request to reset your password. Please use the following code to reset your password:";
         break;
-      case 'profile_verification':
-        subject = 'Verify Profile Update - HelpMeMake';
-        title = '👤 Profile Update Verification';
-        message = 'To confirm your profile changes, please verify your email address using the following 6-digit code:';
+      case "profile_verification":
+        subject = "Verify Profile Update - HelpMeMake";
+        title = "👤 Profile Update Verification";
+        message =
+          "To confirm your profile changes, please verify your email address using the following 6-digit code:";
         break;
       default:
-        subject = 'Verify Your HelpMeMake Account - OTP Code';
-        title = '🚀 Welcome to HelpMeMake!';
-        message = 'Thank you for joining our community! Please verify your email address by entering the following 6-digit code:';
+        subject = "Verify Your HelpMeMake Account - OTP Code";
+        title = "🚀 Welcome to HelpMeMake!";
+        message =
+          "Thank you for joining our community! Please verify your email address by entering the following 6-digit code:";
     }
 
-    const isPasswordReset = type === 'reset';
-    const isProfileUpdate = type === 'profile_verification';
+    const isPasswordReset = type === "reset";
+    const isProfileUpdate = type === "profile_verification";
 
     const mailOptions = {
       from: process.env.EMAIL_FROM,
@@ -75,7 +78,13 @@ const sendOTPEmail = async (email, otp, name = 'User', type = 'verification') =>
             
             <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 25px; border-radius: 15px; text-align: center; margin: 30px 0;">
               <p style="color: #ffffff; margin: 0 0 10px 0; font-size: 14px; font-weight: 500;">
-                Your ${isPasswordReset ? 'Password Reset' : isProfileUpdate ? 'Profile Verification' : 'Verification'} Code
+                Your ${
+                  isPasswordReset
+                    ? "Password Reset"
+                    : isProfileUpdate
+                    ? "Profile Verification"
+                    : "Verification"
+                } Code
               </p>
               <h1 style="color: #ffffff; margin: 0; font-size: 36px; font-weight: bold; letter-spacing: 8px; font-family: 'Courier New', monospace;">
                 ${otp}
@@ -89,11 +98,12 @@ const sendOTPEmail = async (email, otp, name = 'User', type = 'verification') =>
             </div>
             
             <p style="color: #64748b; font-size: 14px; line-height: 1.5; margin-bottom: 0;">
-              ${isPasswordReset 
-                ? 'If you did not request a password reset, please ignore this email. Your password will remain unchanged.'
-                : isProfileUpdate
-                ? 'If you did not request a profile update, please ignore this email. This verification code will expire automatically.'
-                : 'If you did not create an account with HelpMeMake, please ignore this email. This verification code will expire automatically.'
+              ${
+                isPasswordReset
+                  ? "If you did not request a password reset, please ignore this email. Your password will remain unchanged."
+                  : isProfileUpdate
+                  ? "If you did not request a profile update, please ignore this email. This verification code will expire automatically."
+                  : "If you did not create an account with HelpMeMake, please ignore this email. This verification code will expire automatically."
               }
             </p>
           </div>
@@ -112,20 +122,27 @@ const sendOTPEmail = async (email, otp, name = 'User', type = 'verification') =>
             </div>
           </div>
         </div>
-      `
+      `,
     };
 
     const info = await transporter.sendMail(mailOptions);
     console.log(`${type} email sent successfully:`, info.messageId);
     return { success: true, messageId: info.messageId };
-
   } catch (error) {
     console.error(`Failed to send ${type} email:`, error);
-    throw new Error(`Failed to send ${type === 'reset' ? 'password reset' : type === 'profile_verification' ? 'profile verification' : 'verification'} email`);
+    throw new Error(
+      `Failed to send ${
+        type === "reset"
+          ? "password reset"
+          : type === "profile_verification"
+          ? "profile verification"
+          : "verification"
+      } email`
+    );
   }
 };
 
 module.exports = {
   generateOTP,
-  sendOTPEmail
+  sendOTPEmail,
 };

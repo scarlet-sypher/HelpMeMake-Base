@@ -6,7 +6,6 @@ const Mentor = require("../../Model/Mentor");
 const Project = require("../../Model/Project");
 
 const roomController = {
-  // Get all chat rooms with populated data
   getAllRooms: async (req, res) => {
     try {
       const rooms = await MessageRoom.find()
@@ -29,7 +28,6 @@ const roomController = {
         .populate("projectId", "name thumbnail")
         .sort({ createdAt: -1 });
 
-      // Format the response to include all required fields
       const formattedRooms = rooms.map((room) => ({
         _id: room._id,
         roomId: room.roomId,
@@ -84,13 +82,11 @@ const roomController = {
     }
   },
 
-  // Get all chats for a specific room
   getRoomChats: async (req, res) => {
     try {
       const { roomId } = req.params;
       const { page = 1, limit = 100 } = req.query;
 
-      // First verify the room exists and get room details
       const room = await MessageRoom.findById(roomId)
         .populate({
           path: "learnerId",
@@ -117,26 +113,22 @@ const roomController = {
         });
       }
 
-      // Get all chats for this room
       const chats = await MessageChat.find({
         roomId: roomId,
         isDeleted: false,
       })
         .populate("senderId", "name email avatar")
         .populate("receiverId", "name email avatar")
-        .sort({ time: 1 }) // Ascending order for chronological display
+        .sort({ time: 1 })
         .limit(limit * 1)
         .skip((page - 1) * limit);
 
-      // Get total count for pagination
       const totalChats = await MessageChat.countDocuments({
         roomId: roomId,
         isDeleted: false,
       });
 
-      // Format chats with sender type identification
       const formattedChats = chats.map((chat) => {
-        // Determine if sender is learner or mentor by comparing user IDs
         const isLearner =
           chat.senderId._id.toString() === room.learnerId.userId._id.toString();
         const isMentor =
@@ -170,7 +162,6 @@ const roomController = {
         };
       });
 
-      // Format room details
       const roomDetails = {
         _id: room._id,
         roomId: room.roomId,
@@ -225,7 +216,6 @@ const roomController = {
     }
   },
 
-  // Get room statistics
   getRoomStats: async (req, res) => {
     try {
       const totalRooms = await MessageRoom.countDocuments();
@@ -235,12 +225,10 @@ const roomController = {
         isArchived: true,
       });
 
-      // Get total messages across all rooms
       const totalMessages = await MessageChat.countDocuments({
         isDeleted: false,
       });
 
-      // Get recent activity (messages in last 24 hours)
       const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000);
       const recentMessages = await MessageChat.countDocuments({
         createdAt: { $gte: yesterday },
@@ -268,13 +256,11 @@ const roomController = {
     }
   },
 
-  // Update room status
   updateRoomStatus: async (req, res) => {
     try {
       const { roomId } = req.params;
       const { status } = req.body;
 
-      // Validate status
       if (!status || !["open", "close"].includes(status)) {
         return res.status(400).json({
           success: false,
@@ -282,7 +268,6 @@ const roomController = {
         });
       }
 
-      // Find and update the room
       const room = await MessageRoom.findById(roomId);
 
       if (!room) {
@@ -292,7 +277,6 @@ const roomController = {
         });
       }
 
-      // Update the status
       room.status = status;
       await room.save();
 

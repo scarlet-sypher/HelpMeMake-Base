@@ -16,26 +16,26 @@ const TopLearnersList = ({ learners, title = "Top Apprentices" }) => {
   const getRankIcon = (index) => {
     switch (index) {
       case 0:
-        return <Trophy className="text-yellow-300 drop-shadow-md" size={20} />; // bright gold
+        return <Trophy className="text-yellow-300 drop-shadow-md" size={20} />;
       case 1:
-        return <Award className="text-slate-200 drop-shadow-md" size={20} />; // bright silver
+        return <Award className="text-slate-200 drop-shadow-md" size={20} />;
       case 2:
-        return <Award className="text-orange-500 drop-shadow-md" size={20} />; // richer bronze
+        return <Award className="text-orange-500 drop-shadow-md" size={20} />;
       default:
-        return <Star className="text-emerald-400 drop-shadow-md" size={20} />; // fresh green
+        return <Star className="text-emerald-400 drop-shadow-md" size={20} />;
     }
   };
 
   const getRankBadgeColor = (index) => {
     switch (index) {
       case 0:
-        return "from-yellow-300 to-yellow-500 text-black"; // gold gradient
+        return "from-yellow-300 to-yellow-500 text-black";
       case 1:
-        return "from-slate-300 to-slate-500 text-black"; // silver gradient
+        return "from-slate-300 to-slate-500 text-black";
       case 2:
-        return "from-orange-400 to-orange-600 text-white"; // bronze gradient
+        return "from-orange-400 to-orange-600 text-white";
       default:
-        return "from-emerald-400 to-teal-600 text-white"; // green/teal gradient
+        return "from-emerald-400 to-teal-600 text-white";
     }
   };
 

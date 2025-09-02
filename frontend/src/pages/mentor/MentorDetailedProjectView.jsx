@@ -111,7 +111,6 @@ const MentorDetailedProjectView = () => {
     return icons[category] || Code;
   };
 
-  // Difficulty level colors
   const getDifficultyColor = (level) => {
     const colors = {
       Beginner: "from-green-500 to-emerald-500",
@@ -165,12 +164,10 @@ const MentorDetailedProjectView = () => {
     }
   };
 
-  // NEW: Check for requests
   const checkProjectRequests = async () => {
     try {
       const token = localStorage.getItem("access_token");
 
-      // Get all mentor requests
       const response = await axios.get(`${API_URL}/requests/mentor`, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -178,7 +175,6 @@ const MentorDetailedProjectView = () => {
       });
 
       if (response.data.success) {
-        // Filter requests for this specific project (including all statuses)
         const projectRequests = response.data.requests.filter(
           (request) => request.projectId === id
         );
@@ -191,7 +187,6 @@ const MentorDetailedProjectView = () => {
     }
   };
 
-  // Status colors
   const getStatusColor = (status) => {
     const colors = {
       Open: "from-blue-500 to-cyan-500",
@@ -202,14 +197,12 @@ const MentorDetailedProjectView = () => {
     return colors[status] || "from-gray-500 to-slate-500";
   };
 
-  // Fetch project details
   useEffect(() => {
     const fetchProject = async () => {
       try {
         setLoading(true);
         const token = localStorage.getItem("access_token");
 
-        // Fetch project details
         const response = await axios.get(`${API_URL}/projects/${id}`, {
           headers: {
             "Content-Type": "application/json",
@@ -219,9 +212,9 @@ const MentorDetailedProjectView = () => {
 
         if (response.data.success) {
           setProject(response.data.project);
-          // Check mentor status after project is loaded
+
           await checkMentorActiveProject();
-          // NEW: Check for requests
+
           await checkProjectRequests();
         } else {
           setError("Failed to load project details");
@@ -241,7 +234,6 @@ const MentorDetailedProjectView = () => {
     }
   }, [id, API_URL]);
 
-  // Format date
   const formatDate = (dateString) => {
     if (!dateString) return "Not set";
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -251,7 +243,6 @@ const MentorDetailedProjectView = () => {
     });
   };
 
-  // Format price
   const formatPrice = (price, currency = "INR") => {
     if (!price) return "Not set";
     return `₹${price.toLocaleString()}`;
@@ -261,10 +252,8 @@ const MentorDetailedProjectView = () => {
     if (project?.learner?.userId?._id) {
       navigate(`/mentor/user/${project.learner.userId._id}`);
     } else if (project?.learner?.userId) {
-      // Handle case where userId is a string directly
       navigate(`/mentor/user/${project.learner.userId}`);
     } else {
-      // Show user-friendly error instead of console.error
       showToast({
         message: "Unable to view profile - user information not available",
         status: "error",
@@ -291,7 +280,6 @@ const MentorDetailedProjectView = () => {
     setShowPitchModal(true);
   };
 
-  // NEW: Handle show requests modal
   const handleShowRequests = () => {
     setShowRequestsModal(true);
   };
@@ -896,7 +884,7 @@ const MentorDetailedProjectView = () => {
                 {/* Take Project */}
                 <div className="relative group">
                   <button
-                    onClick={handleTakeProject} // This now shows confirmation modal
+                    onClick={handleTakeProject}
                     disabled={
                       !project.closingPrice || mentorStatus.isRestricted
                     }

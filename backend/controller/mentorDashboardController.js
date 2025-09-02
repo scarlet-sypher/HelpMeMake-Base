@@ -9,7 +9,6 @@ const getMentorDashboardData = async (req, res) => {
     const userId = req.user.id;
     console.log("Processing mentor dashboard for userId:", userId);
 
-    // Find the user and their mentor profile
     const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({
@@ -22,13 +21,11 @@ const getMentorDashboardData = async (req, res) => {
     console.log("Found mentor:", mentor ? "Yes" : "No");
 
     if (!mentor) {
-      // Create mentor profile if it doesn't exist
       mentor = new Mentor({ userId });
       await mentor.save();
       console.log("Created new mentor profile");
     }
 
-    // Store previous values for change calculation
     const previousValues = {
       mentorActiveStudents: mentor.mentorActiveStudents || 0,
       mentorSessionsCompleted: mentor.mentorSessionsCompleted || 0,
@@ -38,11 +35,9 @@ const getMentorDashboardData = async (req, res) => {
     };
     console.log("Previous values:", previousValues);
 
-    // Calculate REAL stats using USER ID (not mentor ID)
-    const stats = await calculateMentorStats(userId); // Using userId consistently
+    const stats = await calculateMentorStats(userId);
     console.log("Calculated stats:", stats);
 
-    // Calculate changes
     const changes = {
       mentorActiveStudentsChange:
         stats.mentorActiveStudents - previousValues.mentorActiveStudents,
@@ -61,9 +56,7 @@ const getMentorDashboardData = async (req, res) => {
     };
     console.log("Calculated changes:", changes);
 
-    // Prepare update data - only include fields that exist in Mentor schema
     const updateData = {
-      // Core stats
       mentorActiveStudents: stats.mentorActiveStudents,
       mentorSessionsCompleted: stats.mentorSessionsCompleted,
       mentorTotalEarnings: stats.mentorTotalEarnings,
@@ -74,26 +67,23 @@ const getMentorDashboardData = async (req, res) => {
       completedSessions: stats.completedSessions,
       rating: stats.rating,
 
-      // Changes
       mentorActiveStudentsChange: changes.mentorActiveStudentsChange,
       mentorSessionsCompletedChange: changes.mentorSessionsCompletedChange,
       mentorTotalEarningsChange: changes.mentorTotalEarningsChange,
       mentorSatisfactionRateChange: changes.mentorSatisfactionRateChange,
 
-      // Update timestamp
       updatedAt: new Date(),
     };
 
     console.log("Update data being saved:", updateData);
 
-    // Update mentor profile with explicit error handling
     const updatedMentor = await Mentor.findOneAndUpdate(
-      { userId: userId }, // Use userId to find the mentor
-      { $set: updateData }, // Use $set operator explicitly
+      { userId: userId },
+      { $set: updateData },
       {
         new: true,
-        upsert: false, // Don't create new, we already have one
-        runValidators: true, // Run schema validations
+        upsert: false,
+        runValidators: true,
       }
     );
 
@@ -113,7 +103,6 @@ const getMentorDashboardData = async (req, res) => {
       mentorSatisfactionRate: updatedMentor.mentorSatisfactionRate,
     });
 
-    // Calculate and update profile completeness
     const profileCompleteness = updatedMentor.calculateProfileCompleteness();
     if (profileCompleteness !== updatedMentor.profileCompleteness) {
       updatedMentor.profileCompleteness = profileCompleteness;
@@ -121,7 +110,6 @@ const getMentorDashboardData = async (req, res) => {
       console.log("Updated profile completeness:", profileCompleteness);
     }
 
-    // Prepare response data
     const responseData = {
       ...user.toObject(),
       ...updatedMentor.toObject(),
@@ -146,30 +134,26 @@ const calculateMentorStats = async (userId) => {
   try {
     console.log("Calculating mentor stats for userId:", userId);
 
-    // Convert userId to ObjectId if it's a string
     const userObjectId = mongoose.Types.ObjectId.isValid(userId)
       ? new mongoose.Types.ObjectId(userId)
       : userId;
 
-    // First, get the mentor profile to get the mentorId
     const mentor = await Mentor.findOne({ userId: userObjectId });
     const mentorId = mentor ? mentor._id : null;
 
     console.log("Found mentor profile:", !!mentor);
     console.log("Mentor ID:", mentorId);
 
-    // 1. mentorActiveStudents: Count active projects
     let mentorActiveStudents = 0;
     try {
-      // Try both userId and mentorId to see which one works
       const activeWithUserId = await Project.countDocuments({
-        mentorId: userObjectId, // If Project model uses userId as mentorId
+        mentorId: userObjectId,
         status: { $in: ["In Progress", "Open"] },
       });
 
       const activeWithMentorProfileId = mentorId
         ? await Project.countDocuments({
-            mentorId: mentorId, // If Project model references Mentor profile
+            mentorId: mentorId,
             status: { $in: ["In Progress", "Open"] },
           })
         : 0;
@@ -186,7 +170,6 @@ const calculateMentorStats = async (userId) => {
       mentorActiveStudents = 0;
     }
 
-    // 2. mentorSessionsCompleted: Count completed sessions
     let mentorSessionsCompleted = 0;
     try {
       const completedWithUserId = await Session.countDocuments({
@@ -216,10 +199,8 @@ const calculateMentorStats = async (userId) => {
       mentorSessionsCompleted = 0;
     }
 
-    // 3. mentorTotalEarnings: Sum of closingPrice of completed projects
     let mentorTotalEarnings = 0;
     try {
-      // Try both approaches
       const earningsWithUserId = await Project.find({
         mentorId: userObjectId,
         status: "Completed",
@@ -234,7 +215,6 @@ const calculateMentorStats = async (userId) => {
           })
         : [];
 
-      // Use whichever gives more results
       const completedProjectsWithEarnings =
         earningsWithUserId.length > 0
           ? earningsWithUserId
@@ -257,11 +237,9 @@ const calculateMentorStats = async (userId) => {
       mentorTotalEarnings = 0;
     }
 
-    // 4. mentorSatisfactionRate: Convert average rating (out of 5) → percentage
     let mentorSatisfactionRate = 0;
     let rating = 0;
     try {
-      // Try both approaches for completed projects with ratings
       const ratedWithUserId = await Project.find({
         mentorId: userObjectId,
         status: "Completed",
@@ -276,7 +254,6 @@ const calculateMentorStats = async (userId) => {
           })
         : [];
 
-      // Use whichever gives more results
       const completedProjectsWithRating =
         ratedWithUserId.length > 0 ? ratedWithUserId : ratedWithMentorProfileId;
 
@@ -304,7 +281,6 @@ const calculateMentorStats = async (userId) => {
       rating = 0;
     }
 
-    // 5. mentorSessionsScheduled: Count scheduled sessions
     let mentorSessionsScheduled = 0;
     try {
       const scheduledWithUserId = await Session.countDocuments({
@@ -334,10 +310,8 @@ const calculateMentorStats = async (userId) => {
       mentorSessionsScheduled = 0;
     }
 
-    // 6. responseTime: Calculate average response time
-    let responseTime = 30; // Default 30 minutes
+    let responseTime = 30;
     try {
-      // Try both approaches
       const projectsWithUserId = await Project.find({
         mentorId: userObjectId,
         createdAt: { $exists: true },
@@ -356,7 +330,6 @@ const calculateMentorStats = async (userId) => {
             .limit(10)
         : [];
 
-      // Use whichever gives more results
       const allProjects =
         projectsWithUserId.length > 0
           ? projectsWithUserId
@@ -373,7 +346,6 @@ const calculateMentorStats = async (userId) => {
             ) /
             (1000 * 60 * 60);
           if (responseTimeHours < 168) {
-            // Only count if less than a week
             totalResponseTime += responseTimeHours;
             responseCount++;
           }
@@ -382,20 +354,18 @@ const calculateMentorStats = async (userId) => {
 
       responseTime =
         responseCount > 0
-          ? Math.round((totalResponseTime / responseCount) * 60) // Convert to minutes
-          : 30; // Default 30 minutes
+          ? Math.round((totalResponseTime / responseCount) * 60)
+          : 30;
 
-      responseTime = Math.max(responseTime, 1); // Minimum 1 minute
+      responseTime = Math.max(responseTime, 1);
       console.log("Average response time (minutes):", responseTime);
     } catch (error) {
       console.error("Error calculating response time:", error);
       responseTime = 30;
     }
 
-    // 7. totalStudents: Count unique learners in mentor's projects
     let totalStudents = 0;
     try {
-      // Try both approaches
       const studentsWithUserId = await Project.aggregate([
         { $match: { mentorId: userObjectId } },
         { $group: { _id: "$learnerId" } },
@@ -427,7 +397,6 @@ const calculateMentorStats = async (userId) => {
       totalStudents = 0;
     }
 
-    // 8. completedSessions: Same as mentorSessionsCompleted
     const completedSessions = mentorSessionsCompleted;
 
     const finalStats = {
@@ -447,7 +416,7 @@ const calculateMentorStats = async (userId) => {
     return finalStats;
   } catch (error) {
     console.error("Error calculating mentor stats:", error);
-    // Return default values instead of throwing
+
     return {
       mentorActiveStudents: 0,
       mentorSessionsCompleted: 0,

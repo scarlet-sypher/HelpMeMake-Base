@@ -18,7 +18,6 @@ const LearnerProjectProfile = ({ activeProject }) => {
   const learner = activeProject.learnerId?.userId || activeProject.learnerId;
   const project = activeProject;
 
-  // Format date
   const formatDate = (dateString) => {
     if (!dateString) return "Not set";
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -28,7 +27,6 @@ const LearnerProjectProfile = ({ activeProject }) => {
     });
   };
 
-  // Get avatar URL
   const getAvatarUrl = (avatar) => {
     if (!avatar) return "/uploads/public/default.jpg";
     if (avatar.startsWith("/uploads/")) {
@@ -37,7 +35,6 @@ const LearnerProjectProfile = ({ activeProject }) => {
     return avatar;
   };
 
-  // Calculate progress
   const progressPercentage = project.progressPercentage || 0;
   const completedMilestones = project.completedMilestones || 0;
   const totalMilestones = project.totalMilestones || 0;

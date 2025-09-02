@@ -20,7 +20,6 @@ import saitama from "../../assets/LoginImages/saitama.jpg";
 
 const NUM_PARTICLES = 25;
 
-// Mock images for demonstration
 const heroImages = [
   {
     id: 1,
@@ -55,7 +54,6 @@ const heroImages = [
   },
 ];
 
-// Home Button Component
 const HomeButton = () => {
   const navigate = useNavigate();
 
@@ -79,7 +77,6 @@ const HomeButton = () => {
   );
 };
 
-// InputField component
 const InputField = ({
   label,
   name,
@@ -109,7 +106,6 @@ const InputField = ({
   </div>
 );
 
-// PasswordField component
 const PasswordField = ({
   label,
   name,
@@ -169,7 +165,6 @@ export default function Login() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Initialize particles
     setParticles(
       Array.from({ length: NUM_PARTICLES }, (_, i) => ({
         id: i,
@@ -185,7 +180,6 @@ export default function Login() {
     setIsVisible(true);
     setImageLoaded(true);
 
-    // Image carousel
     const imageInterval = setInterval(() => {
       setCurrentImageIndex((prev) => (prev + 1) % heroImages.length);
     }, 4500);
@@ -224,7 +218,6 @@ export default function Login() {
     return Object.keys(newErrors).length === 0;
   };
 
-  // Handle Enter key press
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
       e.preventDefault();
@@ -233,7 +226,7 @@ export default function Login() {
   };
 
   async function handleSubmit(e) {
-    if (e) e.preventDefault(); // Make preventDefault conditional
+    if (e) e.preventDefault();
 
     if (!validateForm()) {
       return;
@@ -244,7 +237,6 @@ export default function Login() {
     setMessageType("");
 
     try {
-      // Check if this is an admin login attempt
       const adminId = import.meta.env.VITE_ADMIN_ID;
 
       const isAdminLogin = form.username === adminId;
@@ -273,13 +265,11 @@ export default function Login() {
         setMessageType("success");
 
         if (isAdminLogin) {
-          // Admin login
           localStorage.setItem("admin_token", data.token);
           setTimeout(() => {
             navigate("/admindashboard");
           }, 2000);
         } else {
-          // Regular user login
           if (data.token) {
             localStorage.setItem("access_token", data.token);
           }
@@ -338,7 +328,6 @@ export default function Login() {
 
   function handleOAuth(provider) {
     if (provider === "Google") {
-      // Redirect to backend Google OAuth route
       window.location.href = `${import.meta.env.VITE_API_URL}/auth/google`;
     } else if (provider === "GitHub") {
       window.location.href = `${import.meta.env.VITE_API_URL}/auth/github`;

@@ -25,7 +25,6 @@ export default function RoomView() {
   }, [roomId]);
 
   useEffect(() => {
-    // Auto-scroll to bottom when new messages load
     scrollToBottom();
   }, [chats]);
 

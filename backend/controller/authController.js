@@ -12,19 +12,18 @@ const setTokenCookie = (res, token) => {
 
   res.cookie("access_token", token, {
     httpOnly: true,
-    secure: true, // Always true in production (HTTPS required)
-    sameSite: "none", // Required for cross-origin cookies
-    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    secure: true,
+    sameSite: "none",
+    maxAge: 7 * 24 * 60 * 60 * 1000,
     path: "/",
   });
 
-  // Also set a debug cookie to test if cookies work at all
   if (isProduction) {
     res.cookie("debug_cookie", "test", {
-      httpOnly: false, // Make this readable from frontend for debugging
+      httpOnly: false,
       secure: true,
       sameSite: "none",
-      maxAge: 60 * 1000, // 1 minute
+      maxAge: 60 * 1000,
       path: "/",
     });
   }
@@ -41,24 +40,19 @@ const authController = {
         );
       }
 
-      // Generate token and set cookie
       const token = generateToken(user._id);
       setTokenCookie(res, token);
 
-      // Determine redirect URL
       let redirectUrl = `${process.env.UI_URL}`;
 
       if (user.tempGeneratedPassword) {
-        // For new social users, redirect with generated password
         const encodedPassword = encodeURIComponent(user.tempGeneratedPassword);
         redirectUrl += user.role
           ? `/userdashboard?newPassword=${encodedPassword}&authToken=${token}`
           : `/select-role?newPassword=${encodedPassword}&authToken=${token}`;
 
-        // Clear the temporary password
         delete user.tempGeneratedPassword;
       } else {
-        // Existing user flow - add token to URL for immediate auth
         if (!user.role) {
           redirectUrl += `/select-role?authToken=${token}`;
         } else {
@@ -85,7 +79,6 @@ const authController = {
     }
   },
 
-  // Update githubCallback method
   githubCallback: async (req, res) => {
     try {
       const user = req.user;
@@ -96,24 +89,19 @@ const authController = {
         );
       }
 
-      // Generate token and set cookie
       const token = generateToken(user._id);
       setTokenCookie(res, token);
 
-      // Determine redirect URL
       let redirectUrl = `${process.env.UI_URL}`;
 
       if (user.tempGeneratedPassword) {
-        // For new GitHub users, redirect with generated password (same as Google flow)
         const encodedPassword = encodeURIComponent(user.tempGeneratedPassword);
         redirectUrl += user.role
           ? `/userdashboard?newPassword=${encodedPassword}&authToken=${token}`
           : `/select-role?newPassword=${encodedPassword}&authToken=${token}`;
 
-        // Clear the temporary password
         delete user.tempGeneratedPassword;
       } else {
-        // Existing user flow - add token to URL for immediate auth
         if (!user.role) {
           redirectUrl += `/select-role?authToken=${token}`;
         } else {
@@ -145,13 +133,11 @@ const authController = {
       const user = req.user;
       let roleSpecificData = null;
 
-      // Fetch role-specific data if user has a role
       if (user.role === "user") {
         try {
           const Learner = require("../Model/Learner");
           roleSpecificData = await Learner.findOne({ userId: user._id });
 
-          // Create learner profile if it doesn't exist
           if (!roleSpecificData) {
             roleSpecificData = new Learner({
               userId: user._id,
@@ -166,7 +152,6 @@ const authController = {
           const Mentor = require("../Model/Mentor");
           roleSpecificData = await Mentor.findOne({ userId: user._id });
 
-          // Create mentor profile if it doesn't exist
           if (!roleSpecificData) {
             roleSpecificData = new Mentor({
               userId: user._id,
@@ -189,7 +174,6 @@ const authController = {
         createdAt: user.createdAt,
       };
 
-      // Merge role-specific data if available
       if (roleSpecificData) {
         Object.assign(responseData, roleSpecificData.toObject());
       }
@@ -232,12 +216,10 @@ const authController = {
         });
       }
 
-      // Create role-specific profile
       try {
         if (role === "user") {
           const Learner = require("../Model/Learner");
 
-          // Check if learner profile already exists
           const existingLearner = await Learner.findOne({ userId: user._id });
           if (!existingLearner) {
             const learnerProfile = new Learner({
@@ -249,7 +231,6 @@ const authController = {
         } else if (role === "mentor") {
           const Mentor = require("../Model/Mentor");
 
-          // Check if mentor profile already exists
           const existingMentor = await Mentor.findOne({ userId: user._id });
           if (!existingMentor) {
             const mentorProfile = new Mentor({
@@ -261,8 +242,6 @@ const authController = {
         }
       } catch (profileError) {
         console.error("Profile creation error:", profileError);
-        // Don't fail the role setting if profile creation fails
-        // The profile will be created when they first access role-specific routes
       }
 
       res.json({
@@ -291,7 +270,6 @@ const authController = {
     try {
       const { email, password, name } = req.body;
 
-      // Validation
       if (!email || !password) {
         return res.status(400).json({
           success: false,
@@ -306,7 +284,6 @@ const authController = {
         });
       }
 
-      // Check if user already exists
       const existingUser = await User.findOne({ email });
       if (existingUser && existingUser.isAccountActive) {
         return res.status(400).json({
@@ -315,31 +292,27 @@ const authController = {
         });
       }
 
-      // Generate OTP
       const otp = generateOTP();
       const otpExpires = new Date(
         Date.now() + (parseInt(process.env.OTP_EXPIRES_IN) || 10) * 60 * 1000
       );
 
-      // Hash password
       const saltRounds = 12;
       const hashedPassword = await bcrypt.hash(password, saltRounds);
 
       if (existingUser && !existingUser.isAccountActive) {
-        // Update existing inactive user
         existingUser.password = hashedPassword;
         existingUser.name = name || existingUser.name;
         existingUser.otp = otp;
         existingUser.otpExpires = otpExpires;
         await existingUser.save();
       } else {
-        // Create new user (inactive until OTP verification)
         const newUser = new User({
           email,
           password: hashedPassword,
           name,
           authProvider: "local",
-          role: null, // Will be set after selecting role
+          role: null,
           isAccountActive: false,
           isEmailVerified: false,
           otp,
@@ -348,7 +321,6 @@ const authController = {
         await newUser.save();
       }
 
-      // Send OTP email
       await sendOTPEmail(email, otp, name);
 
       res.status(201).json({
@@ -375,7 +347,6 @@ const authController = {
     }
   },
 
-  // Verify OTP
   verifyOTP: async (req, res) => {
     try {
       const { email, otp } = req.body;
@@ -387,7 +358,6 @@ const authController = {
         });
       }
 
-      // Find user with matching email and OTP
       const user = await User.findOne({
         email,
         otp,
@@ -402,14 +372,12 @@ const authController = {
         });
       }
 
-      // Activate account and clear OTP
       user.isAccountActive = true;
       user.isEmailVerified = true;
       user.otp = null;
       user.otpExpires = null;
       await user.save();
 
-      // Generate JWT token
       const token = generateToken(user._id);
       setTokenCookie(res, token);
 
@@ -433,7 +401,6 @@ const authController = {
     }
   },
 
-  // Resend OTP
   resendOTP: async (req, res) => {
     try {
       const { email } = req.body;
@@ -445,7 +412,6 @@ const authController = {
         });
       }
 
-      // Find inactive user
       const user = await User.findOne({
         email,
         isAccountActive: false,
@@ -458,7 +424,6 @@ const authController = {
         });
       }
 
-      // Generate new OTP
       const otp = generateOTP();
       const otpExpires = new Date(
         Date.now() + (parseInt(process.env.OTP_EXPIRES_IN) || 10) * 60 * 1000
@@ -468,7 +433,6 @@ const authController = {
       user.otpExpires = otpExpires;
       await user.save();
 
-      // Send new OTP email
       await sendOTPEmail(email, otp, user.name);
 
       res.json({
@@ -495,7 +459,6 @@ const authController = {
         });
       }
 
-      // Find user by email
       const user = await User.findOne({ email });
       if (!user || user.authProvider !== "local") {
         return res.status(401).json({
@@ -504,7 +467,6 @@ const authController = {
         });
       }
 
-      // Check if account is active (OTP verified)
       if (!user.isAccountActive) {
         return res.status(401).json({
           success: false,
@@ -514,7 +476,6 @@ const authController = {
         });
       }
 
-      // Verify password
       const isValidPassword = await bcrypt.compare(password, user.password);
       if (!isValidPassword) {
         return res.status(401).json({
@@ -523,15 +484,13 @@ const authController = {
         });
       }
 
-      // Generate JWT token
       const token = generateToken(user._id);
       setTokenCookie(res, token);
 
-      // Return response with token (similar to OAuth flow)
       res.json({
         success: true,
         message: "Login successful",
-        token: token, // Include token in response for frontend
+        token: token,
         user: {
           _id: user._id,
           email: user.email,
@@ -584,7 +543,6 @@ const authController = {
         });
       }
 
-      // Find user by email
       const user = await User.findOne({
         email,
         isAccountActive: true,
@@ -597,7 +555,6 @@ const authController = {
         });
       }
 
-      // Only allow password reset for local auth users
       if (user.authProvider !== "local") {
         return res.status(400).json({
           success: false,
@@ -605,7 +562,6 @@ const authController = {
         });
       }
 
-      // Generate OTP for password reset
       const otp = generateOTP();
       const otpExpires = new Date(
         Date.now() + (parseInt(process.env.OTP_EXPIRES_IN) || 10) * 60 * 1000
@@ -615,7 +571,6 @@ const authController = {
       user.otpExpires = otpExpires;
       await user.save();
 
-      // Send OTP email
       await sendOTPEmail(email, otp, user.name, "reset");
 
       res.json({
@@ -649,7 +604,6 @@ const authController = {
         });
       }
 
-      // Find user with matching email and OTP
       const user = await User.findOne({
         email,
         otp,
@@ -665,11 +619,9 @@ const authController = {
         });
       }
 
-      // Hash new password
       const saltRounds = 12;
       const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
 
-      // Update password and clear OTP
       user.password = hashedPassword;
       user.otp = null;
       user.otpExpires = null;

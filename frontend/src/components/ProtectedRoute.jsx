@@ -1,7 +1,11 @@
-import { useAuth } from '../hooks/useAuth';
-import { useEffect } from 'react';
+import { useAuth } from "../hooks/useAuth";
+import { useEffect } from "react";
 
-const ProtectedRoute = ({ children, requiredRole = null, redirectTo = '/login' }) => {
+const ProtectedRoute = ({
+  children,
+  requiredRole = null,
+  redirectTo = "/login",
+}) => {
   const { user, loading, isAuthenticated } = useAuth();
 
   useEffect(() => {
@@ -12,17 +16,17 @@ const ProtectedRoute = ({ children, requiredRole = null, redirectTo = '/login' }
       }
 
       if (!user.role) {
-        window.location.href = '/select-role';
+        window.location.href = "/select-role";
         return;
       }
 
       if (requiredRole && user.role !== requiredRole) {
         const dashboardMap = {
-          user: '/userdashboard',
-          mentor: '/mentordashboard',
-          admin: '/admindashboard'
+          user: "/userdashboard",
+          mentor: "/mentordashboard",
+          admin: "/admindashboard",
         };
-        window.location.href = dashboardMap[user.role] || '/login';
+        window.location.href = dashboardMap[user.role] || "/login";
         return;
       }
     }
@@ -40,7 +44,7 @@ const ProtectedRoute = ({ children, requiredRole = null, redirectTo = '/login' }
   }
 
   if (!isAuthenticated || (requiredRole && user?.role !== requiredRole)) {
-    return null; // Redirect will happen in useEffect
+    return null;
   }
 
   return children;

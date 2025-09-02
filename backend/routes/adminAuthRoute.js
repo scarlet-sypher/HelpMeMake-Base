@@ -4,14 +4,11 @@ const { authenticateAdmin } = require("../middleware/adminAuth");
 
 const router = express.Router();
 
-// Admin authentication routes
 router.post("/login", adminAuthController.adminLogin);
 router.post("/logout", adminAuthController.adminLogout);
 
-// Protected admin routes
 router.get("/me", authenticateAdmin, adminAuthController.getAdminInfo);
 
-// Test route to verify admin authentication
 router.get("/test", authenticateAdmin, (req, res) => {
   res.json({
     success: true,

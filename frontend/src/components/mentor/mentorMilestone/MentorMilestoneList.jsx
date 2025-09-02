@@ -43,7 +43,6 @@ const MentorMilestoneList = ({
   };
 
   const canEdit = (milestone) => {
-    // Mentor can only edit if milestone is not completed by both parties
     return !(
       milestone.learnerVerification?.isVerified &&
       milestone.mentorVerification?.isVerified
@@ -51,7 +50,6 @@ const MentorMilestoneList = ({
   };
 
   const canVerify = (milestone) => {
-    // Mentor can verify only if learner has verified first
     return (
       milestone.learnerVerification?.isVerified &&
       !milestone.mentorVerification?.isVerified
@@ -59,7 +57,6 @@ const MentorMilestoneList = ({
   };
 
   const canUnverify = (milestone) => {
-    // Mentor can unverify only if they have verified and learner has also verified
     return (
       milestone.mentorVerification?.isVerified &&
       milestone.learnerVerification?.isVerified

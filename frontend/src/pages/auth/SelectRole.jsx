@@ -18,14 +18,13 @@ const SelectRole = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Verify user is authenticated and get user info
     const fetchUserInfo = async () => {
       try {
         const response = await fetch(
           `${import.meta.env.VITE_API_URL}/auth/user`,
           {
             method: "GET",
-            credentials: "include", // Include cookies
+            credentials: "include",
             headers: {
               "Content-Type": "application/json",
             },
@@ -36,7 +35,6 @@ const SelectRole = () => {
           const data = await response.json();
           setUser(data.user);
 
-          // If user already has a role, redirect them
           if (data.user.role) {
             const dashboardUrl =
               data.user.role === "mentor"
@@ -46,7 +44,6 @@ const SelectRole = () => {
             return;
           }
         } else {
-          // User not authenticated, redirect to login
           navigate("/login", {
             replace: true,
             state: {
@@ -80,15 +77,12 @@ const SelectRole = () => {
     const newPassword = urlParams.get("newPassword");
 
     if (newPassword) {
-      // Store in sessionStorage to persist across navigation
       sessionStorage.setItem("newPassword", newPassword);
 
-      // Clear URL params
       window.history.replaceState({}, document.title, window.location.pathname);
     }
   }, []);
 
-  // When user selects role and navigates to dashboard
   const handleRoleSelection = (role) => {
     const storedPassword = sessionStorage.getItem("newPassword");
     let redirectUrl = role === "user" ? "/userdashboard" : "/mentordashboard";
@@ -122,14 +116,11 @@ const SelectRole = () => {
       const data = await response.json();
 
       if (response.ok) {
-        // Check if there's a stored password (OAuth flow)
         const storedPassword = sessionStorage.getItem("newPassword");
 
         if (storedPassword) {
-          // OAuth flow - redirect to dashboard with password
           handleRoleSelection(selectedRole);
         } else {
-          // Regular signup flow - redirect to login with toast
           navigate("/login", {
             state: {
               toastMessage:

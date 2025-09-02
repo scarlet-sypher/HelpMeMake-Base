@@ -8,9 +8,6 @@ const {
   requireUser,
 } = require("../middleware/roleAuth");
 
-// Note: The /active-with-mentor route is handled in projectRoute.js for frontend compatibility
-
-// Milestone CRUD operations
 router.get(
   "/project/:projectId",
   requireUserOrMentor,
@@ -37,7 +34,6 @@ router.delete(
   milestoneController.deleteMilestone
 );
 
-// Verification routes
 router.patch(
   "/:milestoneId/learner-verify",
   authenticateJWT,
@@ -65,7 +61,7 @@ router.get(
   requireMentor,
   milestoneController.getMentorActiveProjectProgress
 );
-// Milestone CRUD operations
+
 router.get(
   "/project/:projectId",
   requireUserOrMentor,
@@ -96,7 +92,6 @@ router.delete(
   milestoneController.deleteMilestone
 );
 
-// Verification routes
 router.patch(
   "/:milestoneId/learner-verify",
   requireUser,
@@ -121,7 +116,6 @@ router.patch(
   milestoneController.mentorUnverifyMilestone
 );
 
-// Review system routes
 router.put(
   "/:milestoneId/review",
   requireMentor,

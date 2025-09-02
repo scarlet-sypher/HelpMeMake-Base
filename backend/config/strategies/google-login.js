@@ -19,21 +19,16 @@ const googleStrategy = new GoogleStrategy(
         displayName: profile.displayName,
       });
 
-      // Step 1: Check if user exists by googleId
       let user = await User.findOne({ googleId });
 
       if (user) {
-        // User exists with this Google ID, just return them
         console.log("Existing user found by Google ID:", user.email);
         return done(null, user);
       }
 
-      // Step 2: Check if user exists by email
       user = await User.findOne({ email });
 
       if (user) {
-        // User exists with same email but different provider
-        // Update their Google ID and log them in
         console.log(
           "Existing user found by email, linking Google account:",
           email
@@ -48,11 +43,9 @@ const googleStrategy = new GoogleStrategy(
         return done(null, user);
       }
 
-      // Step 3: Create new user if none exists
       console.log("Creating new user with Google OAuth:", email);
 
       try {
-        // Generate random password for Google users
         const crypto = require("crypto");
         const bcrypt = require("bcryptjs");
         const generatedPassword = crypto.randomBytes(8).toString("base64");
@@ -64,37 +57,33 @@ const googleStrategy = new GoogleStrategy(
           name: profile.displayName,
           avatar: profile.photos[0]?.value,
           authProvider: "google",
-          password: hashedPassword, // Store hashed generated password
+          password: hashedPassword,
           isEmailVerified: true,
           isAccountActive: true,
           tempPassword: generatedPassword,
-          isPasswordUpdated: false, // Flag for password update prompt
+          isPasswordUpdated: false,
           role: null,
         });
 
         await user.save();
 
-        // Store generated password temporarily for response
         user.tempGeneratedPassword = generatedPassword;
         console.log("Set tempGeneratedPassword:", generatedPassword);
 
         console.log("New user created successfully:", user.email);
         return done(null, user);
       } catch (error) {
-        // Handle duplicate key error gracefully
         if (
           error.code === 11000 &&
           error.keyPattern &&
           error.keyPattern.email
         ) {
-          // Another user was created with same email between our checks
-          // This is a race condition - redirect to user-exists page
           console.log("Race condition: User already exists with email:", email);
           const err = new Error("USER_EXISTS");
           err.email = email;
           return done(err, null);
         }
-        throw error; // Re-throw other errors
+        throw error;
       }
     } catch (error) {
       console.error("Google Strategy Error:", error);

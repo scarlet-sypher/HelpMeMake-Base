@@ -11,7 +11,6 @@ import {
 } from "lucide-react";
 
 const AssignedMentorSection = ({ project, API_URL, onToast }) => {
-  // Format price
   const formatPrice = (price, currency = "INR") => {
     if (!price) return "Not set";
     return `₹${price.toLocaleString()}`;

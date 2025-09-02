@@ -10,12 +10,10 @@ export const showToast = (message, type = "info") => {
   toast.textContent = message;
   document.body.appendChild(toast);
 
-  // Animate in
   setTimeout(() => {
     toast.style.transform = "translateX(0)";
   }, 100);
 
-  // Remove after 3 seconds
   setTimeout(() => {
     toast.style.transform = "translateX(100%)";
     setTimeout(() => {

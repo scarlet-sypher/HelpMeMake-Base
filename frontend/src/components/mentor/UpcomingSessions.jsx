@@ -1,4 +1,3 @@
-// Enhanced UpcomingSessions Component with Dynamic Data
 import React, { useState, useEffect } from "react";
 import {
   Clock,
@@ -17,12 +16,10 @@ import { useNavigate } from "react-router-dom";
 const SessionCard = ({ session }) => {
   const navigate = useNavigate();
 
-  // Extract data from session object
   const learner = session.learnerId?.userId || session.learnerId;
   const sessionTitle = session.title;
   const sessionTopic = session.topic;
 
-  // Format date and time
   const formatDateTime = (dateString) => {
     const date = new Date(dateString);
     return {
@@ -40,7 +37,6 @@ const SessionCard = ({ session }) => {
 
   const dateTime = formatDateTime(session.scheduledAt);
 
-  // Get avatar URL
   const getAvatarUrl = (avatar) => {
     if (!avatar) return "/uploads/public/default.jpg";
     if (avatar.startsWith("/uploads/")) {
@@ -49,7 +45,6 @@ const SessionCard = ({ session }) => {
     return avatar;
   };
 
-  // Enhanced status styling
   const getStatusStyles = (status) => {
     switch (status?.toLowerCase()) {
       case "scheduled":
@@ -63,7 +58,6 @@ const SessionCard = ({ session }) => {
     }
   };
 
-  // Handle navigation to sessions page
   const handleDetailsClick = () => {
     navigate("/mentor/sessions");
   };
@@ -210,7 +204,6 @@ const UpcomingSessions = () => {
   const [error, setError] = useState(null);
   const [hasActiveProject, setHasActiveProject] = useState(false);
 
-  // Fetch sessions data
   useEffect(() => {
     const fetchSessions = async () => {
       try {
@@ -232,7 +225,6 @@ const UpcomingSessions = () => {
           setHasActiveProject(projectExists);
 
           if (projectExists && sessions) {
-            // Filter for upcoming sessions only
             const upcomingStatuses = ["scheduled", "rescheduled", "ongoing"];
             const now = new Date();
 
@@ -245,7 +237,7 @@ const UpcomingSessions = () => {
                 );
               })
               .sort((a, b) => new Date(a.scheduledAt) - new Date(b.scheduledAt))
-              .slice(0, 3); // Limit to first 3 upcoming sessions
+              .slice(0, 3);
 
             setUpcomingSessions(filteredSessions);
           } else {
@@ -264,7 +256,6 @@ const UpcomingSessions = () => {
     fetchSessions();
   }, []);
 
-  // Render loading state
   if (loading) {
     return (
       <div className="bg-white/10 backdrop-blur-sm rounded-3xl shadow-2xl p-6 border border-white/20 relative overflow-hidden">
@@ -295,7 +286,6 @@ const UpcomingSessions = () => {
     );
   }
 
-  // Render error state
   if (error) {
     return (
       <div className="bg-white/10 backdrop-blur-sm rounded-3xl shadow-2xl p-6 border border-white/20 relative overflow-hidden">
@@ -312,7 +302,6 @@ const UpcomingSessions = () => {
     );
   }
 
-  // Render no active project state
   if (!hasActiveProject) {
     return (
       <div className="bg-white/10 backdrop-blur-sm rounded-3xl shadow-2xl p-6 border border-white/20 relative overflow-hidden">
@@ -350,7 +339,6 @@ const UpcomingSessions = () => {
     );
   }
 
-  // Render no sessions state
   if (upcomingSessions.length === 0) {
     return (
       <div className="bg-white/10 backdrop-blur-sm rounded-3xl shadow-2xl p-6 border border-white/20 relative overflow-hidden">
@@ -388,7 +376,6 @@ const UpcomingSessions = () => {
     );
   }
 
-  // Render sessions
   return (
     <div className="bg-white/10 backdrop-blur-sm rounded-3xl shadow-2xl p-6 border border-white/20 relative overflow-hidden">
       {/* Background decoration */}

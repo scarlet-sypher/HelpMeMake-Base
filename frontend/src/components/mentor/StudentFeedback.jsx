@@ -40,7 +40,6 @@ const StudentFeedback = () => {
         const { reviews, overallStats, totalReviews, hasMoreReviews } =
           response.data.data;
 
-        // Format the reviews data to match the expected structure
         const formattedReviews = reviews.map((review, index) => ({
           name: review.name,
           image: review.image?.startsWith("http")
@@ -49,8 +48,8 @@ const StudentFeedback = () => {
           rating: review.rating,
           comment: review.comment || "No comment provided",
           date: formatDate(review.date),
-          isRecent: index < 2, // Mark first 2 as recent
-          helpfulCount: Math.floor(Math.random() * 15) + 1, // Random helpful count for UI
+          isRecent: index < 2,
+          helpfulCount: Math.floor(Math.random() * 15) + 1,
           projectName: review.projectName,
           status: review.status,
         }));
@@ -85,7 +84,6 @@ const StudentFeedback = () => {
   };
 
   const handleViewAllReviews = () => {
-    // Navigate to mentor goals page with reviews tab active
     navigate("/mentor/goals?tab=reviews");
   };
 

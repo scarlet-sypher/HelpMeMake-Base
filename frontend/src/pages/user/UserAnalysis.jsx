@@ -30,14 +30,12 @@ const UserAnalysis = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Check authentication
   useEffect(() => {
     if (!loading && !isAuthenticated) {
       window.location.href = "/login";
     }
   }, [loading, isAuthenticated]);
 
-  // Fetch analytics data
   useEffect(() => {
     const fetchAnalyticsData = async () => {
       if (!isAuthenticated) return;
@@ -66,7 +64,6 @@ const UserAnalysis = () => {
           error.response?.data?.message || "Failed to fetch analytics data"
         );
 
-        // If unauthorized, redirect to login
         if (error.response?.status === 401) {
           window.location.href = "/login";
         }
@@ -82,7 +79,6 @@ const UserAnalysis = () => {
     setSidebarOpen(!sidebarOpen);
   };
 
-  // Show loading spinner
   if (loading || isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-indigo-950 flex items-center justify-center">
@@ -94,12 +90,10 @@ const UserAnalysis = () => {
     );
   }
 
-  // Don't render if not authenticated
   if (!isAuthenticated) {
     return null;
   }
 
-  // Error state
   if (error && !analyticsData) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-indigo-950 flex">
@@ -147,7 +141,6 @@ const UserAnalysis = () => {
 
   const data = analyticsData;
 
-  // Prepare stat cards data
   const statCards = [
     {
       icon: Folders,
@@ -192,7 +185,6 @@ const UserAnalysis = () => {
     },
   ];
 
-  // Additional stats
   const additionalStats = [
     {
       icon: Calendar,

@@ -12,7 +12,6 @@ const ProjectDetails = ({ formData, setFormData, errors, onToast }) => {
   const handleDescriptionChange = (field, value) => {
     setFormData({ ...formData, [field]: value });
 
-    // Show helpful feedback based on content length
     if (
       field === "fullDescription" &&
       value.length >= 200 &&

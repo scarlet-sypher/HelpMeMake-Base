@@ -8,26 +8,23 @@ const RescheduleModal = ({ session, onClose, onSuccess }) => {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    // Focus on the modal to scroll it into view
     const modalElement = document.querySelector('[data-modal="edit-session"]');
     if (modalElement) {
       modalElement.scrollIntoView({
         behavior: "smooth",
         block: "center",
       });
-      // Also focus for accessibility
+
       modalElement.focus();
     }
   }, []);
 
-  // Get minimum date/time (current time + 1 hour)
   const getMinDateTime = () => {
     const now = new Date();
     now.setHours(now.getHours() + 1);
     return now.toISOString().slice(0, 16);
   };
 
-  // Format current session time for display
   const formatCurrentDateTime = () => {
     const date = new Date(session.scheduledAt);
     return date.toLocaleString("en-US", {
@@ -41,7 +38,6 @@ const RescheduleModal = ({ session, onClose, onSuccess }) => {
     });
   };
 
-  // Handle input change
   const handleChange = (e) => {
     setScheduledAt(e.target.value);
     if (error) {
@@ -49,7 +45,6 @@ const RescheduleModal = ({ session, onClose, onSuccess }) => {
     }
   };
 
-  // Validate new time
   const validateDateTime = () => {
     if (!scheduledAt) {
       setError("New date and time is required");
@@ -68,7 +63,6 @@ const RescheduleModal = ({ session, onClose, onSuccess }) => {
     return true;
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 

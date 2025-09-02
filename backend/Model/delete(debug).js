@@ -3,7 +3,6 @@ const Milestone = require("./Milestone");
 
 const projectSchema = new mongoose.Schema(
   {
-    // Unique Project Identifier
     projectId: {
       type: String,
       required: true,
@@ -15,7 +14,6 @@ const projectSchema = new mongoose.Schema(
       },
     },
 
-    // Core Project Information
     name: {
       type: String,
       required: true,
@@ -35,7 +33,6 @@ const projectSchema = new mongoose.Schema(
       maxlength: 5000,
     },
 
-    // Technical Details
     techStack: [
       {
         type: String,
@@ -70,11 +67,10 @@ const projectSchema = new mongoose.Schema(
       enum: ["Beginner", "Intermediate", "Advanced"],
     },
 
-    // Project Metadata
     duration: {
       type: String,
       required: true,
-      trim: true, // e.g., "2 weeks", "1 month", "3-4 days"
+      trim: true,
     },
     status: {
       type: String,
@@ -93,7 +89,6 @@ const projectSchema = new mongoose.Schema(
       },
     ],
 
-    // Project Goals & Context
     projectOutcome: {
       type: String,
       required: true,
@@ -148,7 +143,6 @@ const projectSchema = new mongoose.Schema(
       },
     ],
 
-    // Relationships
     learnerId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Learner",
@@ -160,7 +154,6 @@ const projectSchema = new mongoose.Schema(
       default: null,
     },
 
-    // Pricing Information
     openingPrice: {
       type: Number,
       required: true,
@@ -199,7 +192,6 @@ const projectSchema = new mongoose.Schema(
       default: "INR",
     },
 
-    // Project Timeline
     startDate: {
       type: Date,
       default: null,
@@ -213,7 +205,6 @@ const projectSchema = new mongoose.Schema(
       default: null,
     },
 
-    // Project Progress & Milestones
     milestones: [
       {
         type: mongoose.Schema.Types.ObjectId,
@@ -224,7 +215,7 @@ const projectSchema = new mongoose.Schema(
     totalMilestones: {
       type: Number,
       default: 0,
-      max: 5, // Maximum 5 milestones per project
+      max: 5,
     },
 
     completedMilestones: {
@@ -232,7 +223,6 @@ const projectSchema = new mongoose.Schema(
       default: 0,
     },
 
-    // Communication & Feedback
     messages: [
       {
         senderId: {
@@ -261,7 +251,6 @@ const projectSchema = new mongoose.Schema(
       },
     ],
 
-    // Reviews & Ratings (after completion)
     learnerReview: {
       rating: {
         type: Number,
@@ -289,7 +278,6 @@ const projectSchema = new mongoose.Schema(
       reviewDate: Date,
     },
 
-    // Additional Metadata
     isVisible: {
       type: Boolean,
       default: true,
@@ -339,7 +327,7 @@ const projectSchema = new mongoose.Schema(
       {
         mentor: {
           type: mongoose.Schema.Types.ObjectId,
-          ref: "User", // Should reference User, not Mentor directly
+          ref: "User",
           required: true,
         },
         price: {
@@ -360,13 +348,11 @@ const projectSchema = new mongoose.Schema(
       },
     ],
 
-    // NEW: Notification flag for unread pitches
     hasUnreadPitch: {
       type: Boolean,
       default: false,
     },
 
-    // Expected End Date Management
     tempExpectedEndDate: {
       type: Date,
       default: null,
@@ -388,7 +374,6 @@ const projectSchema = new mongoose.Schema(
       default: null,
     },
 
-    // Progress History Tracking
     progressHistory: [
       {
         percentage: {
@@ -451,7 +436,6 @@ const projectSchema = new mongoose.Schema(
       default: null,
     },
 
-    // Completion Request Management
     completionRequest: {
       from: {
         type: String,
@@ -504,9 +488,8 @@ const projectSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
-// Also add this pre-save middleware to update milestone project references if needed
+
 projectSchema.pre("save", function (next) {
-  // Update lastUpdated timestamp
   if (this.isModified()) {
     this.updatedAt = new Date();
   }

@@ -1,97 +1,102 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-const userSchema = new mongoose.Schema({
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-    lowercase: true,
-    trim: true
+const userSchema = new mongoose.Schema(
+  {
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
+      trim: true,
+    },
+    password: {
+      type: String,
+    },
+    googleId: {
+      type: String,
+      sparse: true,
+    },
+    githubId: {
+      type: String,
+      sparse: true,
+    },
+    name: {
+      type: String,
+      trim: true,
+    },
+    avatar: {
+      type: String,
+      default: "/uploads/public/default.jpg",
+      required: true,
+    },
+    role: {
+      type: String,
+      enum: ["user", "mentor"],
+      default: null,
+    },
+    authProvider: {
+      type: String,
+      enum: ["local", "google", "github"],
+      default: "local",
+    },
+    isEmailVerified: {
+      type: Boolean,
+      default: false,
+    },
+    otp: {
+      type: String,
+      default: null,
+    },
+    otpExpires: {
+      type: Date,
+      default: null,
+    },
+    isAccountActive: {
+      type: Boolean,
+      default: false,
+    },
+    isPasswordUpdated: {
+      type: Boolean,
+      default: false,
+    },
+    tempPassword: {
+      type: String,
+      default: null,
+    },
+    profileOTP: {
+      type: String,
+      select: false,
+    },
+    profileOTPExpires: {
+      type: Date,
+      select: false,
+    },
   },
-  password: {
-    type: String,    
-  },
-  googleId: {
-    type: String,
-    sparse: true
-  },
-  githubId: {
-    type: String,
-    sparse: true
-  },
-  name: {
-    type: String,
-    trim: true
-  },
-  avatar: {
-    type: String,
-    default: '/uploads/public/default.jpg',
-    required: true
-  },
-  role: {
-    type: String,
-    enum: ['user', 'mentor'],
-    default: null ,
-  },
-  authProvider: {
-    type: String,
-    enum: ['local', 'google', 'github'],
-    default: 'local'
-  },
-  isEmailVerified: {
-    type: Boolean,
-    default: false
-  },
-  otp: {
-    type: String,
-    default: null
-  },
-  otpExpires: {
-    type: Date,
-    default: null
-  },
-  isAccountActive: {
-    type: Boolean,
-    default: false  // Only true after OTP verification
-  },
-  isPasswordUpdated: {
-    type: Boolean,
-    default: false  // New field for tracking password updates
-  },
-  tempPassword: {
-    type: String,
-    default: null
-  },
-  profileOTP: {
-    type: String,
-    select: false  // This ensures the OTP is not returned in queries by default
-  },
-  profileOTPExpires: {
-    type: Date,
-    select: false  // This ensures the OTP expiry is not returned in queries by default
+  {
+    timestamps: true,
   }
+);
 
-}, {
-  timestamps: true
+userSchema.index(
+  {
+    profileOTPExpires: 1,
+  },
+  {
+    expireAfterSeconds: 0,
+  }
+);
+
+userSchema.virtual("displayName").get(function () {
+  return this.name || this.email.split("@")[0];
 });
 
-userSchema.index({ 
-  profileOTPExpires: 1 
-}, { 
-  expireAfterSeconds: 0 // MongoDB will delete when profileOTPExpires date is reached
-});
-
-userSchema.virtual('displayName').get(function() {
-  return this.name || this.email.split('@')[0];
-});
-
-userSchema.set('toJSON', {
+userSchema.set("toJSON", {
   virtuals: true,
-  transform: function(doc, ret) {
+  transform: function (doc, ret) {
     delete ret.password;
     delete ret.__v;
     return ret;
-  }
+  },
 });
 
-module.exports = mongoose.model('User', userSchema);
+module.exports = mongoose.model("User", userSchema);

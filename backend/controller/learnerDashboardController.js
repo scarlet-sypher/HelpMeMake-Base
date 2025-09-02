@@ -9,7 +9,6 @@ const getLearnerDashboardData = async (req, res) => {
     const userId = req.user.id;
     console.log("Processing dashboard for userId:", userId);
 
-    // Find the user and their learner profile
     const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({
@@ -22,13 +21,11 @@ const getLearnerDashboardData = async (req, res) => {
     console.log("Found learner:", learner ? "Yes" : "No");
 
     if (!learner) {
-      // Create learner profile if it doesn't exist
       learner = new Learner({ userId });
       await learner.save();
       console.log("Created new learner profile");
     }
 
-    // Store previous values for change calculation
     const previousValues = {
       userActiveProjects: learner.userActiveProjects || 0,
       userSessionsScheduled: learner.userSessionsScheduled || 0,
@@ -37,11 +34,9 @@ const getLearnerDashboardData = async (req, res) => {
     };
     console.log("Previous values:", previousValues);
 
-    // Calculate REAL stats using USER ID (not learner ID)
-    const stats = await calculateLearnerStats(userId); // Changed from learner._id to userId
+    const stats = await calculateLearnerStats(userId);
     console.log("Calculated stats:", stats);
 
-    // Calculate changes
     const changes = {
       userActiveProjectsChange:
         stats.userActiveProjects - previousValues.userActiveProjects,
@@ -56,9 +51,7 @@ const getLearnerDashboardData = async (req, res) => {
     };
     console.log("Calculated changes:", changes);
 
-    // Prepare update data - only include fields that exist in Learner schema
     const updateData = {
-      // Core stats
       completedSessions: stats.completedSessions,
       rating: stats.rating,
       userActiveProjects: stats.userActiveProjects,
@@ -66,26 +59,23 @@ const getLearnerDashboardData = async (req, res) => {
       userTotalProjects: stats.userTotalProjects,
       userCompletionRate: stats.userCompletionRate,
 
-      // Changes
       userActiveProjectsChange: changes.userActiveProjectsChange,
       userSessionsScheduledChange: changes.userSessionsScheduledChange,
       userTotalProjectsChange: changes.userTotalProjectsChange,
       userCompletionRateChange: changes.userCompletionRateChange,
 
-      // Update timestamp
       updatedAt: new Date(),
     };
 
     console.log("Update data being saved:", updateData);
 
-    // Update learner profile with explicit error handling
     const updatedLearner = await Learner.findOneAndUpdate(
-      { userId: userId }, // Use userId to find the learner
-      { $set: updateData }, // Use $set operator explicitly
+      { userId: userId },
+      { $set: updateData },
       {
         new: true,
-        upsert: false, // Don't create new, we already have one
-        runValidators: true, // Run schema validations
+        upsert: false,
+        runValidators: true,
       }
     );
 
@@ -105,14 +95,12 @@ const getLearnerDashboardData = async (req, res) => {
       userCompletionRate: updatedLearner.userCompletionRate,
     });
 
-    // Update daily streak
     const streakUpdated = updatedLearner.updateDailyStreak();
     if (streakUpdated) {
       await updatedLearner.save();
       console.log("Updated daily streak");
     }
 
-    // Prepare response data
     const responseData = {
       ...user.toObject(),
       ...updatedLearner.toObject(),
@@ -137,33 +125,26 @@ const calculateLearnerStats = async (userId) => {
   try {
     console.log("Calculating stats for userId:", userId);
 
-    // Convert userId to ObjectId if it's a string
     const userObjectId = mongoose.Types.ObjectId.isValid(userId)
       ? new mongoose.Types.ObjectId(userId)
       : userId;
 
-    // First, get the learner profile to get the learnerId
     const learner = await Learner.findOne({ userId: userObjectId });
     const learnerId = learner ? learner._id : null;
 
     console.log("Found learner profile:", !!learner);
     console.log("Learner ID:", learnerId);
 
-    // Option 1: If your Project/Session models use userId (User reference)
-    // Use this approach if your models reference the User collection
-
-    // 1. completedSessions: Count all completed sessions using User ID
     let completedSessions = 0;
     try {
-      // Try both userId and learnerId to see which one works
       const sessionsWithUserId = await Session.countDocuments({
-        userId: userObjectId, // If Session model references User
+        userId: userObjectId,
         status: "completed",
       });
 
       const sessionsWithLearnerId = learnerId
         ? await Session.countDocuments({
-            learnerId: learnerId, // If Session model references Learner
+            learnerId: learnerId,
             status: "completed",
           })
         : 0;
@@ -177,25 +158,22 @@ const calculateLearnerStats = async (userId) => {
       completedSessions = 0;
     }
 
-    // 2. rating: Average rating from completed projects
     let rating = 0;
     try {
-      // Try both approaches
       const projectsWithUserId = await Project.find({
-        userId: userObjectId, // If Project model references User
+        userId: userObjectId,
         status: "Completed",
         "mentorReview.rating": { $exists: true },
       });
 
       const projectsWithLearnerId = learnerId
         ? await Project.find({
-            learnerId: learnerId, // If Project model references Learner
+            learnerId: learnerId,
             status: "Completed",
             "mentorReview.rating": { $exists: true },
           })
         : [];
 
-      // Use whichever gives more results
       const completedProjects =
         projectsWithUserId.length > 0
           ? projectsWithUserId
@@ -221,7 +199,6 @@ const calculateLearnerStats = async (userId) => {
       rating = 0;
     }
 
-    // 3. userActiveProjects: Count open projects
     let userActiveProjects = 0;
     try {
       const activeWithUserId = await Project.countDocuments({
@@ -245,7 +222,6 @@ const calculateLearnerStats = async (userId) => {
       userActiveProjects = 0;
     }
 
-    // 4. userSessionsScheduled: Count scheduled sessions
     let userSessionsScheduled = 0;
     try {
       const scheduledWithUserId = await Session.countDocuments({
@@ -272,7 +248,6 @@ const calculateLearnerStats = async (userId) => {
       userSessionsScheduled = 0;
     }
 
-    // 5. userTotalProjects: Count all projects
     let userTotalProjects = 0;
     try {
       const totalWithUserId = await Project.countDocuments({
@@ -294,7 +269,6 @@ const calculateLearnerStats = async (userId) => {
       userTotalProjects = 0;
     }
 
-    // 6. userCompletionRate: (completed projects / total projects) * 100
     let userCompletionRate = 0;
     try {
       const completedWithUserId = await Project.countDocuments({
@@ -342,7 +316,7 @@ const calculateLearnerStats = async (userId) => {
     return finalStats;
   } catch (error) {
     console.error("Error calculating learner stats:", error);
-    // Return default values instead of throwing
+
     return {
       completedSessions: 0,
       rating: 0,

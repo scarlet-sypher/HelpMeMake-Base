@@ -11,7 +11,6 @@ const AdminProtectedRoute = ({ children }) => {
 
   const checkAdminAuth = async () => {
     try {
-      // Get admin token from localStorage
       const adminToken = localStorage.getItem("admin_token");
 
       if (!adminToken) {
@@ -20,7 +19,6 @@ const AdminProtectedRoute = ({ children }) => {
         return;
       }
 
-      // Verify admin token with backend
       const response = await fetch(`${import.meta.env.VITE_API_URL}/admin/me`, {
         headers: {
           Authorization: `Bearer ${adminToken}`,
@@ -31,7 +29,6 @@ const AdminProtectedRoute = ({ children }) => {
       if (response.ok) {
         setIsAdminAuthenticated(true);
       } else {
-        // Token is invalid or expired
         localStorage.removeItem("admin_token");
         setIsAdminAuthenticated(false);
       }

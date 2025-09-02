@@ -29,7 +29,7 @@ const GoalForm = ({ goal, onGoalUpdate, showToast }) => {
 
   const handleInputChange = (e) => {
     const value = e.target.value;
-    // Allow only positive numbers
+
     if (value === "" || (parseFloat(value) >= 0 && !isNaN(parseFloat(value)))) {
       setMonthlyGoal(value);
     }

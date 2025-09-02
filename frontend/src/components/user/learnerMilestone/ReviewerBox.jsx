@@ -20,7 +20,7 @@ const ReviewerBox = ({ milestone, onClose, onMarkAsRead, saving }) => {
   const handleMarkAsRead = async () => {
     if (onMarkAsRead && !milestone.reviewReadByLearner) {
       await onMarkAsRead(milestone._id);
-      // Close modal after marking as read
+
       setTimeout(() => onClose(), 500);
     }
   };

@@ -9,9 +9,7 @@ const learnerTimelineSchema = new mongoose.Schema(
       unique: true,
     },
 
-    // Latest counts for tracking changes
     latestCounts: {
-      // Project counts by status
       projects: {
         total: { type: Number, default: 0 },
         open: { type: Number, default: 0 },
@@ -20,14 +18,12 @@ const learnerTimelineSchema = new mongoose.Schema(
         cancelled: { type: Number, default: 0 },
       },
 
-      // Achievement counts
       achievements: {
         total: { type: Number, default: 0 },
         level: { type: Number, default: 0 },
         xp: { type: Number, default: 0 },
       },
 
-      // Milestone counts by status
       milestones: {
         total: { type: Number, default: 0 },
         notStarted: { type: Number, default: 0 },
@@ -37,7 +33,6 @@ const learnerTimelineSchema = new mongoose.Schema(
         blocked: { type: Number, default: 0 },
       },
 
-      // Session counts by status
       sessions: {
         total: { type: Number, default: 0 },
         scheduled: { type: Number, default: 0 },
@@ -49,7 +44,6 @@ const learnerTimelineSchema = new mongoose.Schema(
       },
     },
 
-    // Timeline events
     events: [
       {
         type: {
@@ -143,13 +137,11 @@ const learnerTimelineSchema = new mongoose.Schema(
   }
 );
 
-// Indexes for better performance
 learnerTimelineSchema.index({ learnerId: 1 });
 learnerTimelineSchema.index({ "events.createdAt": -1 });
 learnerTimelineSchema.index({ "events.type": 1 });
 learnerTimelineSchema.index({ lastUpdated: -1 });
 
-// Static method to find or create timeline record
 learnerTimelineSchema.statics.findOrCreateByLearner = async function (
   learnerId
 ) {
@@ -194,7 +186,6 @@ learnerTimelineSchema.statics.findOrCreateByLearner = async function (
   return timeline;
 };
 
-// Instance method to add timeline event
 learnerTimelineSchema.methods.addEvent = function (
   type,
   message,
@@ -215,7 +206,6 @@ learnerTimelineSchema.methods.addEvent = function (
     createdAt: new Date(),
   });
 
-  // Keep only last 100 events to prevent unlimited growth
   if (this.events.length > 100) {
     this.events = this.events.slice(0, 100);
   }
@@ -224,7 +214,6 @@ learnerTimelineSchema.methods.addEvent = function (
   return this.save();
 };
 
-// Instance method to update counts and detect changes
 learnerTimelineSchema.methods.updateAndDetectChanges = async function (
   newCounts
 ) {
@@ -232,12 +221,8 @@ learnerTimelineSchema.methods.updateAndDetectChanges = async function (
   const events = [];
 
   //debug - Print counts being compared
-  //   console.log("//debug - Old counts:", JSON.stringify(oldCounts, null, 2));
-  //   console.log("//debug - New counts:", JSON.stringify(newCounts, null, 2));
 
-  // Check project changes
   if (newCounts.projects) {
-    // Total projects
     if (newCounts.projects.total > oldCounts.projects.total) {
       events.push({
         type: "project_added",
@@ -254,7 +239,6 @@ learnerTimelineSchema.methods.updateAndDetectChanges = async function (
       });
     }
 
-    // Project status changes
     if (newCounts.projects.completed > oldCounts.projects.completed) {
       events.push({
         type: "project_status_changed",
@@ -283,7 +267,6 @@ learnerTimelineSchema.methods.updateAndDetectChanges = async function (
     }
   }
 
-  // Check achievement changes
   if (newCounts.achievements) {
     if (newCounts.achievements.level > oldCounts.achievements.level) {
       events.push({
@@ -304,7 +287,6 @@ learnerTimelineSchema.methods.updateAndDetectChanges = async function (
     }
   }
 
-  // Check milestone changes
   if (newCounts.milestones) {
     if (newCounts.milestones.total > oldCounts.milestones.total) {
       events.push({
@@ -332,7 +314,6 @@ learnerTimelineSchema.methods.updateAndDetectChanges = async function (
     }
   }
 
-  // Check session changes
   if (newCounts.sessions) {
     if (newCounts.sessions.total > oldCounts.sessions.total) {
       events.push({
@@ -369,25 +350,16 @@ learnerTimelineSchema.methods.updateAndDetectChanges = async function (
     }
   }
 
-  //   //debug - Print detected events
-  //   console.log("//debug - Detected timeline events:", events.length);
-  //   events.forEach((event, index) => {
-  //     console.log(`//debug - Event ${index + 1}:`, event.message);
-  //   });
-
-  // Add all detected events
   for (const event of events) {
     await this.addEvent(event.type, event.message, event.icon, event.color);
   }
 
-  // Update counts
   this.latestCounts = newCounts;
   this.lastUpdated = new Date();
 
   return this.save();
 };
 
-// Configure JSON output
 learnerTimelineSchema.set("toJSON", {
   virtuals: true,
   transform: function (doc, ret) {

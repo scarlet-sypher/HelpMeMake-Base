@@ -12,7 +12,6 @@ const cookieExtractor = (req) => {
     }
   }
 
-  // Fallback to cookies
   if (!token && req && req.cookies && req.cookies.access_token) {
     token = req.cookies.access_token;
   }

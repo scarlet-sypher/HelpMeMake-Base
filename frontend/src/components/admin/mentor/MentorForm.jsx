@@ -29,36 +29,29 @@ const MentorForm = () => {
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
 
   const [formData, setFormData] = useState({
-    // User fields
     name: "",
     email: "",
     avatar: "",
 
-    // Mentor fields
     title: "",
     description: "",
     bio: "",
     location: "",
 
-    // Experience
     experience: {
       years: 0,
       companies: [],
     },
 
-    // Expertise
     expertise: [],
     specializations: [],
 
-    // Status
     isOnline: false,
     isAvailable: true,
 
-    // Ratings
     rating: 0,
     totalReviews: 0,
 
-    // Social Links
     socialLinks: {
       linkedin: "",
       github: "",
@@ -67,24 +60,20 @@ const MentorForm = () => {
       blog: "",
     },
 
-    // Metrics
     completedSessions: 0,
     totalStudents: 0,
     responseTime: 30,
     achievements: 0,
 
-    // Pricing
     pricing: {
       hourlyRate: 0,
       currency: "USD",
       freeSessionsOffered: 1,
     },
 
-    // Profile settings
     profileCompleteness: 20,
     onboardingCompleted: false,
 
-    // Notification preferences
     notificationPreferences: {
       email: true,
       push: true,
@@ -134,12 +123,10 @@ const MentorForm = () => {
       if (data.success) {
         const mentor = data.data;
         setFormData({
-          // User fields
           name: mentor.userId?.name || "",
           email: mentor.userId?.email || "",
           avatar: mentor.userId?.avatar || "",
 
-          // Mentor fields with defaults
           title: mentor.title || "Software Engineer",
           description:
             mentor.description ||

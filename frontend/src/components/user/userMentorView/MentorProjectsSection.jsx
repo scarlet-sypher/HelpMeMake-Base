@@ -127,7 +127,6 @@ const MentorProjectsSection = ({
               )}
             </div>
           ) : (
-            // Enhanced empty state
             <div className="text-center py-16">
               <div className="relative mb-8">
                 <div className="w-24 h-24 bg-gradient-to-br from-slate-700/50 to-slate-600/50 rounded-3xl mx-auto flex items-center justify-center border border-slate-600/50">

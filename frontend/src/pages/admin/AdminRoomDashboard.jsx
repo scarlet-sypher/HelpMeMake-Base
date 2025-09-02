@@ -103,21 +103,18 @@ export default function AdminRoomDashboard({ onReturn }) {
   };
 
   const handleRoomUpdate = (roomId, updatedData) => {
-    // Update the room in your rooms state
     setRooms((prevRooms) =>
       prevRooms.map((room) =>
         room._id === roomId ? { ...room, ...updatedData } : room
       )
     );
 
-    // Also update filteredRooms to reflect changes immediately
     setFilteredRooms((prevFilteredRooms) =>
       prevFilteredRooms.map((room) =>
         room._id === roomId ? { ...room, ...updatedData } : room
       )
     );
 
-    // Update stats if status changed
     if (updatedData.status) {
       fetchRoomStats();
     }
@@ -126,7 +123,6 @@ export default function AdminRoomDashboard({ onReturn }) {
   const filterRooms = () => {
     let filtered = rooms;
 
-    // Filter by search term
     if (searchTerm) {
       filtered = filtered.filter((room) => {
         const searchLower = searchTerm.toLowerCase();
@@ -142,7 +138,6 @@ export default function AdminRoomDashboard({ onReturn }) {
       });
     }
 
-    // Filter by status
     if (statusFilter !== "all") {
       filtered = filtered.filter((room) => room.status === statusFilter);
     }

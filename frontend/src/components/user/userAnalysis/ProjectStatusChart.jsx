@@ -6,42 +6,36 @@ const ProjectStatusChart = ({ data, isLoading = false }) => {
   const [animatedData, setAnimatedData] = useState([]);
   const [isAnimating, setIsAnimating] = useState(false);
 
-  // Color mapping for different project statuses
   const colors = {
-    completed: "#10b981", // emerald-500
-    ongoing: "#3b82f6", // blue-500
-    cancelled: "#ef4444", // red-500
-    open: "#f59e0b", // amber-500
+    completed: "#10b981",
+    ongoing: "#3b82f6",
+    cancelled: "#ef4444",
+    open: "#f59e0b",
   };
 
-  // Prepare chart data
   const chartData = [
     { name: "Completed", value: data?.completed || 0, color: colors.completed },
     { name: "Ongoing", value: data?.ongoing || 0, color: colors.ongoing },
     { name: "Open", value: data?.open || 0, color: colors.open },
     { name: "Cancelled", value: data?.cancelled || 0, color: colors.cancelled },
-  ].filter((item) => item.value > 0); // Only show segments with values > 0
+  ].filter((item) => item.value > 0);
 
   useEffect(() => {
     if (isLoading || !data) return;
 
     setIsAnimating(true);
 
-    // Start with zero values
     const startData = chartData.map((item) => ({ ...item, value: 0 }));
     setAnimatedData(startData);
 
-    // Animate to final values
     setTimeout(() => {
       setAnimatedData(chartData);
       setTimeout(() => setIsAnimating(false), 1000);
     }, 100);
   }, [data, isLoading]);
 
-  // Calculate total projects
   const totalProjects = chartData.reduce((sum, item) => sum + item.value, 0);
 
-  // Custom tooltip
   const CustomTooltip = ({ active, payload }) => {
     if (active && payload && payload.length) {
       const data = payload[0];
@@ -63,7 +57,6 @@ const ProjectStatusChart = ({ data, isLoading = false }) => {
     return null;
   };
 
-  // Loading skeleton
   if (isLoading) {
     return (
       <div className="relative group">
@@ -81,7 +74,6 @@ const ProjectStatusChart = ({ data, isLoading = false }) => {
     );
   }
 
-  // No data state
   if (totalProjects === 0) {
     return (
       <div className="relative group">
@@ -144,8 +136,8 @@ const ProjectStatusChart = ({ data, isLoading = false }) => {
                     data={animatedData}
                     cx="50%"
                     cy="50%"
-                    innerRadius="30%" // Increased inner radius slightly
-                    outerRadius="60%" // Increased outer radius for bigger circle
+                    innerRadius="30%"
+                    outerRadius="60%"
                     paddingAngle={2}
                     dataKey="value"
                     animationBegin={0}
@@ -164,9 +156,9 @@ const ProjectStatusChart = ({ data, isLoading = false }) => {
                   <Tooltip
                     content={<CustomTooltip />}
                     wrapperStyle={{
-                      zIndex: 50, // ensure tooltip stays above
+                      zIndex: 50,
                     }}
-                    position={{ y: 20 }} // pushes tooltip slightly away from center
+                    position={{ y: 20 }}
                   />
                 </PieChart>
               </ResponsiveContainer>

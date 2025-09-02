@@ -4,7 +4,6 @@ import { ChevronRight, Code, Mail, RefreshCw, Shield } from "lucide-react";
 
 const NUM_PARTICLES = 15;
 
-// Toast notification component
 const Toast = ({ message, type, isVisible, onClose }) => {
   useEffect(() => {
     if (isVisible) {
@@ -64,7 +63,6 @@ export default function VerifyOTP() {
       return;
     }
 
-    // Initialize particles
     setParticles(
       Array.from({ length: NUM_PARTICLES }, (_, i) => ({
         id: i,
@@ -101,7 +99,6 @@ export default function VerifyOTP() {
     newOtp[index] = value;
     setOtp(newOtp);
 
-    // Auto-focus next input
     if (value && index < 5) {
       const nextInput = document.getElementById(`otp-${index + 1}`);
       if (nextInput) nextInput.focus();
@@ -115,23 +112,19 @@ export default function VerifyOTP() {
     }
   };
 
-  // Handle paste functionality
   const handlePaste = (e, index) => {
     e.preventDefault();
     const pastedData = e.clipboardData.getData("text").replace(/[^0-9]/g, "");
 
     if (pastedData.length >= 6) {
-      // If pasted data has 6 or more digits, fill all inputs
       const newOtp = pastedData.slice(0, 6).split("");
       setOtp(newOtp);
 
-      // Focus the last filled input
       const lastInput = document.getElementById(`otp-5`);
       if (lastInput) lastInput.focus();
 
       showToast("OTP pasted successfully!", "success");
     } else if (pastedData.length > 0) {
-      // If pasted data has fewer than 6 digits, fill from current position
       const newOtp = [...otp];
       const remainingSlots = 6 - index;
       const digitsToFill = Math.min(pastedData.length, remainingSlots);
@@ -142,7 +135,6 @@ export default function VerifyOTP() {
 
       setOtp(newOtp);
 
-      // Focus the next empty input or the last filled one
       const nextFocusIndex = Math.min(index + digitsToFill, 5);
       const nextInput = document.getElementById(`otp-${nextFocusIndex}`);
       if (nextInput) nextInput.focus();
@@ -222,7 +214,7 @@ export default function VerifyOTP() {
 
       if (response.ok) {
         showToast("📧 New verification code sent!", "success");
-        setCountdown(60); // 60 second cooldown
+        setCountdown(60);
         setOtp(["", "", "", "", "", ""]);
       } else {
         showToast(data.message || "Failed to resend code", "error");
@@ -377,7 +369,6 @@ export default function VerifyOTP() {
                       onKeyDown={(e) => handleKeyDown(index, e)}
                       onPaste={(e) => handlePaste(e, index)}
                       onFocus={(e) => {
-                        // Prevent scroll on focus for number inputs
                         e.target.addEventListener(
                           "wheel",
                           (e) => e.preventDefault(),

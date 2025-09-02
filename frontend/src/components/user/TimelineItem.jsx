@@ -89,7 +89,6 @@ const Timeline = () => {
   const [error, setError] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
 
-  // Icon mapping for timeline events
   const getIconComponent = (iconName) => {
     const iconMap = {
       Award,
@@ -111,7 +110,6 @@ const Timeline = () => {
     return iconMap[iconName] || Award;
   };
 
-  // Format time helper
   const formatTimeAgo = (dateString) => {
     const date = new Date(dateString);
     const now = new Date();
@@ -131,7 +129,6 @@ const Timeline = () => {
     }
   };
 
-  // Fetch timeline data
   const fetchTimelineData = useCallback(async () => {
     try {
       setError(null);
@@ -160,7 +157,6 @@ const Timeline = () => {
       if (data.success) {
         const events = data.data.events || [];
 
-        // Create a Map to remove duplicates based on event ID or message+createdAt
         const eventMap = new Map();
         events.forEach((event) => {
           const key = event.id || `${event.message}-${event.createdAt}`;
@@ -176,7 +172,6 @@ const Timeline = () => {
       console.error("Error fetching timeline data:", err);
       setError(err.message);
 
-      // Set fallback data if API fails
       setTimelineEvents([
         {
           id: "fallback-1",
@@ -191,7 +186,6 @@ const Timeline = () => {
     }
   }, []);
 
-  // Update timeline by checking for changes
   const updateTimeline = async () => {
     try {
       setRefreshing(true);
@@ -231,7 +225,6 @@ const Timeline = () => {
     loadTimeline();
   }, []);
 
-  // Auto-update timeline every 10 seconds
   useEffect(() => {
     const interval = setInterval(() => {
       if (!refreshing) {

@@ -31,7 +31,6 @@ const ProjectCard = ({ project, API_URL }) => {
     try {
       setLoading(true);
 
-      // Fetch learner data using learnerId
       const learnerResponse = await axios.get(
         `${API_URL}/api/mentor-details/learner/${project.learnerId._id}`,
         { withCredentials: true }

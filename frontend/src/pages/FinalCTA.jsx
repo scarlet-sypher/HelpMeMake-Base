@@ -64,7 +64,6 @@ const FinalCTA = () => {
     window.addEventListener("mousemove", handleMouseMove);
     window.addEventListener("scroll", handleScroll, { passive: true });
 
-    // Initial check
     handleScroll();
 
     return () => {

@@ -8,7 +8,6 @@ import MessageInput from "../../components/user/userMessage/MessageInput";
 import WallpaperModal from "../../components/user/userMessage/WallpaperModal";
 import { Users, X } from "lucide-react";
 
-// Toast Component
 const Toast = ({ toast, onClose }) => {
   useEffect(() => {
     if (toast.open) {
@@ -70,7 +69,6 @@ const LearnerMessagesPage = () => {
   const [showRoomList, setShowRoomList] = useState(true);
   const [roomListCollapsed, setRoomListCollapsed] = useState(false);
 
-  // Toast state
   const [toast, setToast] = useState({
     open: false,
     message: "",
@@ -83,7 +81,6 @@ const LearnerMessagesPage = () => {
   const sendingRef = useRef(false);
   const lastSentMessageRef = useRef(null);
 
-  // Toast function
   const showToast = ({ message, status = "info" }) => {
     setToast({ open: true, message, status });
   };
@@ -92,7 +89,6 @@ const LearnerMessagesPage = () => {
     setToast({ open: false, message: "", status: "info" });
   };
 
-  // Auto-scroll to bottom when new messages arrive
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
@@ -101,14 +97,12 @@ const LearnerMessagesPage = () => {
     scrollToBottom();
   }, [messages]);
 
-  // Fetch user's active rooms on component mount
   useEffect(() => {
     if (isAuthenticated) {
       fetchActiveRooms();
     }
   }, [isAuthenticated]);
 
-  // Start polling when room is selected
   useEffect(() => {
     if (selectedRoom) {
       startPolling();
@@ -119,13 +113,12 @@ const LearnerMessagesPage = () => {
     return () => stopPolling();
   }, [selectedRoom, lastMessageTime]);
 
-  // Mobile responsive
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth >= 768) {
         setShowRoomList(true);
       }
-      // Auto-collapse room list on large screens if screen gets too narrow
+
       if (window.innerWidth >= 1024 && window.innerWidth < 1280) {
         setRoomListCollapsed(true);
       } else if (window.innerWidth >= 1280) {
@@ -133,7 +126,7 @@ const LearnerMessagesPage = () => {
       }
     };
 
-    handleResize(); // Initial check
+    handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
@@ -215,7 +208,6 @@ const LearnerMessagesPage = () => {
         const fetchedMessages = data.data.messages || [];
         setMessages(fetchedMessages);
 
-        // Set last message time for polling
         if (fetchedMessages.length > 0) {
           const lastMsg = fetchedMessages[fetchedMessages.length - 1];
           setLastMessageTime(lastMsg.time);
@@ -232,12 +224,10 @@ const LearnerMessagesPage = () => {
     setSelectedRoom(room);
     setShowMobileChat(true);
 
-    // On mobile, hide room list when room is selected
     if (window.innerWidth < 768) {
       setShowRoomList(false);
     }
 
-    // Fetch room details and messages
     const details = await fetchRoomDetails(room._id);
     if (details) {
       await fetchMessages(room._id);
@@ -247,7 +237,6 @@ const LearnerMessagesPage = () => {
   const sendMessage = async () => {
     if (!newMessage.trim() || !selectedRoom || sendingRef.current) return;
 
-    // Prevent duplicate sends of the same message content
     if (lastSentMessageRef.current === newMessage.trim()) {
       return;
     }
@@ -259,7 +248,6 @@ const LearnerMessagesPage = () => {
       const messageToSend = newMessage.trim();
       lastSentMessageRef.current = messageToSend;
 
-      // Clear input immediately to prevent re-sends
       setNewMessage("");
 
       const token = localStorage.getItem("access_token");
@@ -283,10 +271,8 @@ const LearnerMessagesPage = () => {
         const data = await response.json();
         console.log("Message sent:", data);
 
-        // Update last message time to prevent duplicate fetching
         setLastMessageTime(data.data.time);
 
-        // Add message to state with duplicate check
         setMessages((prev) => {
           const messageExists = prev.find((msg) => msg._id === data.data._id);
           if (!messageExists) {
@@ -295,20 +281,17 @@ const LearnerMessagesPage = () => {
           return prev;
         });
 
-        // Refresh rooms to update unread counts
         fetchActiveRooms();
 
-        // Focus back to input
         inputRef.current?.focus();
 
-        // Clear the last sent message reference after a delay
         setTimeout(() => {
           lastSentMessageRef.current = null;
         }, 1000);
       }
     } catch (error) {
       console.error("Error sending message:", error);
-      // Reset the input if there was an error
+
       setNewMessage(messageToSend);
     } finally {
       sendingRef.current = false;
@@ -338,7 +321,6 @@ const LearnerMessagesPage = () => {
       if (response.ok) {
         const data = await response.json();
         if (data.data.hasNewMessages && data.data.newMessages.length > 0) {
-          // Only add messages that don't already exist in our state
           setMessages((prev) => {
             const newUniqueMessages = data.data.newMessages.filter(
               (newMsg) =>
@@ -349,7 +331,7 @@ const LearnerMessagesPage = () => {
               const lastMsg =
                 data.data.newMessages[data.data.newMessages.length - 1];
               setLastMessageTime(lastMsg.time);
-              fetchActiveRooms(); // Update room list with new unread counts
+              fetchActiveRooms();
               return [...prev, ...newUniqueMessages];
             }
             return prev;
@@ -362,7 +344,7 @@ const LearnerMessagesPage = () => {
   };
 
   const startPolling = () => {
-    stopPolling(); // Clear any existing interval
+    stopPolling();
     pollingInterval.current = setInterval(checkNewMessages, 2000);
   };
 
@@ -396,7 +378,7 @@ const LearnerMessagesPage = () => {
 
       if (response.ok) {
         setShowWallpaperModal(false);
-        // Update room details
+
         await fetchRoomDetails(selectedRoom._id);
       }
     } catch (error) {
@@ -408,7 +390,6 @@ const LearnerMessagesPage = () => {
     const file = event.target.files[0];
     if (!file) return;
 
-    // Validate file size (10MB max)
     if (file.size > 10 * 1024 * 1024) {
       showToast({
         message: "File size must be less than 10MB",
@@ -417,7 +398,6 @@ const LearnerMessagesPage = () => {
       return;
     }
 
-    // Validate file type
     const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
     if (!allowedTypes.includes(file.type)) {
       showToast({
@@ -447,7 +427,6 @@ const LearnerMessagesPage = () => {
         const data = await response.json();
         setWallpaperUrl(data.wallpaperUrl);
 
-        // Automatically update the room wallpaper
         await updateWallpaper();
 
         showToast({
@@ -466,7 +445,7 @@ const LearnerMessagesPage = () => {
       showToast({ message: "Failed to upload wallpaper", status: "error" });
     } finally {
       setUploadingWallpaper(false);
-      // Reset the input
+
       event.target.value = "";
     }
   };
@@ -475,7 +454,6 @@ const LearnerMessagesPage = () => {
     const file = event.target.files[0];
     if (!file) return;
 
-    // Validate file size (10MB max)
     if (file.size > 10 * 1024 * 1024) {
       showToast({
         message: "File size must be less than 10MB",
@@ -484,7 +462,6 @@ const LearnerMessagesPage = () => {
       return;
     }
 
-    // Validate file type
     if (!file.type.startsWith("image/")) {
       showToast({ message: "Please select an image file", status: "error" });
       return;
@@ -571,7 +548,6 @@ const LearnerMessagesPage = () => {
         const file = item.getAsFile();
 
         if (file) {
-          // Create a fake event to reuse handleImageUpload
           const fakeEvent = {
             target: { files: [file], value: "" },
           };
@@ -633,7 +609,6 @@ const LearnerMessagesPage = () => {
         const data = await response.json();
         setCustomWallpaper(data.wallpaperUrl);
 
-        // Automatically update the room wallpaper
         await updateWallpaperInRoom(data.wallpaperUrl);
 
         showToast({
@@ -679,7 +654,7 @@ const LearnerMessagesPage = () => {
 
       if (response.ok) {
         setShowWallpaperModal(false);
-        // Update room details to reflect new wallpaper
+
         await fetchRoomDetails(selectedRoom._id);
       }
     } catch (error) {
@@ -723,7 +698,6 @@ const LearnerMessagesPage = () => {
     }
   };
 
-  // Predefined wallpapers
   const predefinedWallpapers = [
     `${import.meta.env.VITE_API_URL}/uploads/wallpapers/levi.jpg`,
     `${import.meta.env.VITE_API_URL}/uploads/wallpapers/strawhat.png`,

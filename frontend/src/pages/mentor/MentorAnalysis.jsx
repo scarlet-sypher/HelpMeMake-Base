@@ -1,5 +1,3 @@
-// ================================================New==================================================
-
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import axios from "axios";
@@ -21,14 +19,12 @@ const MentorAnalysis = () => {
   const [error, setError] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
 
-  // Redirect non-mentors
   useEffect(() => {
     if (!loading && (!isAuthenticated || (user && user.role !== "mentor"))) {
       window.location.href = "/login";
     }
   }, [loading, isAuthenticated, user]);
 
-  // Fetch analytics data
   const fetchAnalyticsData = async (showRefreshLoader = false) => {
     try {
       if (showRefreshLoader) {
@@ -94,7 +90,6 @@ const MentorAnalysis = () => {
     return avatar;
   };
 
-  // Show loading
   if (loading || analyticsLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 flex items-center justify-center">
@@ -108,12 +103,10 @@ const MentorAnalysis = () => {
     );
   }
 
-  // Don't render if not authenticated
   if (!isAuthenticated) {
     return null;
   }
 
-  // Show error state
   if (error && !analyticsData) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 flex items-center justify-center">

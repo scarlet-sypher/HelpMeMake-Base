@@ -3,14 +3,12 @@ const User = require("../Model/User");
 const Learner = require("../Model/Learner");
 const Mentor = require("../Model/Mentor");
 
-// Common function to handle completion/cancellation requests
 const handleCompletionRequestResponse = async (req, res) => {
   try {
     const { requestId, response, notes } = req.body;
     const userId = req.user._id;
     const userRole = req.user.role;
 
-    // Find the project
     const project = await Project.findOne({
       _id: requestId,
       "completionRequest.status": "pending",
@@ -23,7 +21,6 @@ const handleCompletionRequestResponse = async (req, res) => {
       });
     }
 
-    // Verify authorization based on who should respond
     const shouldMentorRespond = project.completionRequest.from === "learner";
     const shouldLearnerRespond = project.completionRequest.from === "mentor";
 
@@ -38,7 +35,6 @@ const handleCompletionRequestResponse = async (req, res) => {
     }
 
     if (response === "approve") {
-      // Mark as approved but don't change project status yet
       project.completionRequest.status = "approved";
       project.completionRequest.approvedAt = new Date();
 
@@ -47,10 +43,7 @@ const handleCompletionRequestResponse = async (req, res) => {
       } else {
         project.completionRequest.learnerNotes = notes;
       }
-
-      // Status will change only after both parties submit reviews
     } else {
-      // Reject and reset
       project.completionRequest.status = "rejected";
       project.completionRequest.rejectedAt = new Date();
 
@@ -60,7 +53,6 @@ const handleCompletionRequestResponse = async (req, res) => {
         project.completionRequest.learnerNotes = notes;
       }
 
-      // Clear completion request after rejection
       setTimeout(async () => {
         const proj = await Project.findById(requestId);
         if (proj && proj.completionRequest?.status === "rejected") {
@@ -86,7 +78,6 @@ const handleCompletionRequestResponse = async (req, res) => {
   }
 };
 
-// Function to finalize project status after both reviews are submitted
 const finalizeProjectCompletion = async (projectId) => {
   try {
     const project = await Project.findById(projectId);
@@ -98,7 +89,6 @@ const finalizeProjectCompletion = async (projectId) => {
     const hasLearnerReview = project.learnerReview?.rating;
     const hasMentorReview = project.mentorReview?.rating;
 
-    // Only finalize if both reviews are submitted
     if (hasLearnerReview && hasMentorReview) {
       if (project.completionRequest.type === "complete") {
         project.status = "Completed";
@@ -107,7 +97,7 @@ const finalizeProjectCompletion = async (projectId) => {
       }
 
       project.actualEndDate = new Date();
-      project.completionRequest = null; // Clear the request
+      project.completionRequest = null;
       await project.save();
     }
   } catch (error) {

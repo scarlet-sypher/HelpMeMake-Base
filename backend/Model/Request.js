@@ -21,10 +21,9 @@ const requestSchema = new mongoose.Schema(
       type: String,
       required: true,
       trim: true,
-      maxlength: 2000, // cover letter limit
+      maxlength: 2000,
     },
 
-    // NEW: Status tracking for mentor responses
     status: {
       type: String,
       enum: ["pending", "accepted", "rejected"],
@@ -32,7 +31,6 @@ const requestSchema = new mongoose.Schema(
       required: true,
     },
 
-    // NEW: Mentor's response message (optional)
     mentorResponse: {
       type: String,
       trim: true,
@@ -40,13 +38,11 @@ const requestSchema = new mongoose.Schema(
       default: "",
     },
 
-    // NEW: When mentor responded
     respondedAt: {
       type: Date,
       default: null,
     },
 
-    // NEW: Track if learner has seen the response
     isReadByLearner: {
       type: Boolean,
       default: false,
@@ -55,18 +51,16 @@ const requestSchema = new mongoose.Schema(
   {
     timestamps: {
       createdAt: true,
-      updatedAt: true, // Allow updates now for status changes
+      updatedAt: true,
     },
   }
 );
 
-// Compound unique index to ensure one request per (projectId + mentorId + learnerId) combination
 requestSchema.index(
   { projectId: 1, mentorId: 1, learnerId: 1 },
   { unique: true }
 );
 
-// Individual indexes for fast lookups
 requestSchema.index({ projectId: 1 });
 requestSchema.index({ mentorId: 1 });
 requestSchema.index({ learnerId: 1 });
@@ -74,7 +68,6 @@ requestSchema.index({ status: 1 });
 requestSchema.index({ createdAt: -1 });
 requestSchema.index({ respondedAt: -1 });
 
-// Virtual for learner population (uses learnerId -> Learner -> userId -> User)
 requestSchema.virtual("learnerUser", {
   ref: "Learner",
   localField: "learnerId",
@@ -82,7 +75,6 @@ requestSchema.virtual("learnerUser", {
   justOne: true,
 });
 
-// Virtual for mentor population (uses mentorId -> Mentor -> userId -> User)
 requestSchema.virtual("mentorProfile", {
   ref: "Mentor",
   localField: "mentorId",
@@ -90,7 +82,6 @@ requestSchema.virtual("mentorProfile", {
   justOne: true,
 });
 
-// Virtual for project population
 requestSchema.virtual("project", {
   ref: "Project",
   localField: "projectId",
@@ -98,7 +89,6 @@ requestSchema.virtual("project", {
   justOne: true,
 });
 
-// Static method to check if request already exists
 requestSchema.statics.requestExists = function (
   projectId,
   mentorId,
@@ -107,7 +97,6 @@ requestSchema.statics.requestExists = function (
   return this.findOne({ projectId, mentorId, learnerId });
 };
 
-// Static method to get requests for a project
 requestSchema.statics.getProjectRequests = function (projectId) {
   return this.find({ projectId })
     .populate({
@@ -127,12 +116,10 @@ requestSchema.statics.getProjectRequests = function (projectId) {
     .sort({ createdAt: -1 });
 };
 
-// NEW: Static method to get pending requests count for a mentor
 requestSchema.statics.getPendingRequestsCount = function (mentorId) {
   return this.countDocuments({ mentorId, status: "pending" });
 };
 
-// NEW: Static method to get requests by mentor with filtering
 requestSchema.statics.getMentorRequests = function (mentorId, status = null) {
   const query = { mentorId };
   if (status) query.status = status;
@@ -149,7 +136,6 @@ requestSchema.statics.getMentorRequests = function (mentorId, status = null) {
     .sort({ createdAt: -1 });
 };
 
-// NEW: Instance method to accept request
 requestSchema.methods.accept = function (response = "") {
   this.status = "accepted";
   this.mentorResponse = response;
@@ -157,7 +143,6 @@ requestSchema.methods.accept = function (response = "") {
   return this.save();
 };
 
-// NEW: Instance method to reject request
 requestSchema.methods.reject = function (response = "") {
   this.status = "rejected";
   this.mentorResponse = response;
@@ -165,17 +150,14 @@ requestSchema.methods.reject = function (response = "") {
   return this.save();
 };
 
-// NEW: Virtual to check if request is pending
 requestSchema.virtual("isPending").get(function () {
   return this.status === "pending";
 });
 
-// NEW: Virtual to check if request has been responded to
 requestSchema.virtual("hasResponse").get(function () {
   return this.status !== "pending";
 });
 
-// NEW: Virtual to format response time
 requestSchema.virtual("responseTime").get(function () {
   if (!this.respondedAt) return null;
   const diffTime = this.respondedAt - this.createdAt;

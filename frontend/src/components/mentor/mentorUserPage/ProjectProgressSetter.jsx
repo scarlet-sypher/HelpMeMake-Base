@@ -20,7 +20,6 @@ const ProjectProgressSetter = ({ projectData, onDataRefresh }) => {
     }
   }, [projectData]);
 
-  // Fetch progress history
   const fetchProgressHistory = async () => {
     try {
       setHistoryLoading(true);
@@ -103,7 +102,6 @@ const ProjectProgressSetter = ({ projectData, onDataRefresh }) => {
         setProgressNote("");
         onDataRefresh();
 
-        // Refresh history if it's being shown
         if (showHistory) {
           fetchProgressHistory();
         }

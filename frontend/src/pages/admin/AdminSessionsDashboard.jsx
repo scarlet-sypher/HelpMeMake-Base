@@ -157,10 +157,8 @@ const AdminSessionsDashboard = ({ onReturn }) => {
       const data = await response.json();
       toast.success("Session deleted successfully");
 
-      // Remove session from local state
       setSessions(sessions.filter((session) => session._id !== sessionId));
 
-      // Refresh stats
       fetchStats();
     } catch (error) {
       console.error("Failed to delete session:", error);

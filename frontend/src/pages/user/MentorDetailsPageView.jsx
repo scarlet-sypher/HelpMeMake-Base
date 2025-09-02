@@ -4,7 +4,6 @@ import axios from "axios";
 import { ArrowLeft, AlertCircle, Sparkles, Star } from "lucide-react";
 import { toast } from "../../utils/toastNew";
 
-// Import components
 import RequestModal from "../../components/user/userMentorView/RequestModal";
 import MentorHeroSection from "../../components/user/userMentorView/MentorHeroSection";
 import MentorAboutSection from "../../components/user/userMentorView/MentorAboutSection";
@@ -32,7 +31,6 @@ const MentorDetailsPageView = () => {
   );
   const [showRequestModal, setShowRequestModal] = useState(false);
 
-  // Request handling states
   const [requestStatus, setRequestStatus] = useState(null);
   const [mentorResponse, setMentorResponse] = useState("");
   const [respondedAt, setRespondedAt] = useState(null);
@@ -106,7 +104,6 @@ const MentorDetailsPageView = () => {
   }, [selectedProject?._id, mentorId]);
 
   useEffect(() => {
-    // Trigger page load animation
     const timer = setTimeout(() => setPageLoaded(true), 100);
     return () => clearTimeout(timer);
   }, []);

@@ -34,7 +34,6 @@ const ShowRequestsModal = ({ project, onClose, API_URL, showToast }) => {
       setLoading(true);
       const token = localStorage.getItem("access_token");
 
-      // Get all requests for this mentor
       const response = await axios.get(`${API_URL}/requests/mentor`, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -42,7 +41,6 @@ const ShowRequestsModal = ({ project, onClose, API_URL, showToast }) => {
       });
 
       if (response.data.success) {
-        // Filter requests for this specific project
         const projectRequests = response.data.requests.filter(
           (request) => request.projectId === project._id
         );
@@ -84,7 +82,6 @@ const ShowRequestsModal = ({ project, onClose, API_URL, showToast }) => {
       );
 
       if (response.data.success) {
-        // Update local state
         setRequests((prev) =>
           prev.map((req) =>
             req._id === currentRequest._id

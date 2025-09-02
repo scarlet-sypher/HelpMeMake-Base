@@ -75,7 +75,6 @@ const AdminUserDashboard = ({ onReturn }) => {
         throw new Error("Failed to delete user");
       }
 
-      // Refresh the users list
       await fetchUsers();
     } catch (error) {
       console.error("Error deleting user:", error);
@@ -98,12 +97,12 @@ const AdminUserDashboard = ({ onReturn }) => {
 
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
-    setCurrentPage(1); // Reset to first page when searching
+    setCurrentPage(1);
   };
 
   const handleRoleFilterChange = (e) => {
     setRoleFilter(e.target.value);
-    setCurrentPage(1); // Reset to first page when filtering
+    setCurrentPage(1);
   };
 
   const handlePageChange = (newPage) => {
@@ -122,7 +121,6 @@ const AdminUserDashboard = ({ onReturn }) => {
     return matchesSearch && matchesRole;
   });
 
-  // If editing a user, show the UserForm
   if (editingUserId) {
     return (
       <UserForm

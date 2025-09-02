@@ -11,19 +11,17 @@ const CancelConfirmModal = ({ session, onClose, onSuccess }) => {
   const CONFIRM_TEXT = "cancel";
 
   useEffect(() => {
-    // Focus on the modal to scroll it into view
     const modalElement = document.querySelector('[data-modal="edit-session"]');
     if (modalElement) {
       modalElement.scrollIntoView({
         behavior: "smooth",
         block: "center",
       });
-      // Also focus for accessibility
+
       modalElement.focus();
     }
   }, []);
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -66,7 +64,6 @@ const CancelConfirmModal = ({ session, onClose, onSuccess }) => {
     }
   };
 
-  // Handle input changes
   const handleConfirmTextChange = (e) => {
     setConfirmText(e.target.value);
     if (error) {

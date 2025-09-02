@@ -8,7 +8,7 @@ const goalSchema = new mongoose.Schema(
       required: true,
       index: true,
     },
-    // Core Goal Data
+
     monthlyGoal: {
       type: Number,
       required: true,
@@ -20,7 +20,7 @@ const goalSchema = new mongoose.Schema(
       default: 0,
       min: 0,
     },
-    // Progress Tracking
+
     sessionsCompleted: {
       type: Number,
       default: 0,
@@ -31,7 +31,7 @@ const goalSchema = new mongoose.Schema(
       default: 0,
       min: 0,
     },
-    // Time-bound Goal
+
     month: {
       type: Number,
       required: true,
@@ -42,7 +42,7 @@ const goalSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    // Comparisons / Insights
+
     lastMonthEarnings: {
       type: Number,
       default: 0,
@@ -51,7 +51,7 @@ const goalSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
-    // Achievement Tracking
+
     milestones: [
       {
         percentage: { type: Number, enum: [25, 50, 75, 100] },
@@ -62,18 +62,15 @@ const goalSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// Virtual: Progress Percentage
 goalSchema.virtual("progressPercentage").get(function () {
   if (!this.monthlyGoal || this.monthlyGoal === 0) return 0;
   return Math.round((this.currentEarnings / this.monthlyGoal) * 100);
 });
 
-// Virtual: Remaining Amount
 goalSchema.virtual("remaining").get(function () {
   return Math.max(this.monthlyGoal - this.currentEarnings, 0);
 });
 
-// Virtual: Sessions Needed to Hit Goal
 goalSchema.virtual("sessionsToGo").get(function () {
   if (this.avgPerSession <= 0) return null;
   return Math.ceil(this.remaining / this.avgPerSession);

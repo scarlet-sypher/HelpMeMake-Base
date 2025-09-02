@@ -2,14 +2,12 @@ const mongoose = require("mongoose");
 
 const messageChatSchema = new mongoose.Schema(
   {
-    // Room reference
     roomId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "MessageRoom",
       required: true,
     },
 
-    // Message participants (using User IDs for consistency)
     senderId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
@@ -21,7 +19,6 @@ const messageChatSchema = new mongoose.Schema(
       required: true,
     },
 
-    // Message content and type
     messageType: {
       type: String,
       enum: ["text", "image"],
@@ -37,7 +34,6 @@ const messageChatSchema = new mongoose.Schema(
       maxlength: 2000,
     },
 
-    // Image message fields
     imageUrl: {
       type: String,
       default: null,
@@ -61,7 +57,6 @@ const messageChatSchema = new mongoose.Schema(
       required: true,
     },
 
-    // Message status tracking
     isRead: {
       type: Boolean,
       default: false,
@@ -71,7 +66,6 @@ const messageChatSchema = new mongoose.Schema(
       default: null,
     },
 
-    // Message delivery status
     isDelivered: {
       type: Boolean,
       default: true,
@@ -81,7 +75,6 @@ const messageChatSchema = new mongoose.Schema(
       default: Date.now,
     },
 
-    // Optional: File attachments (for future use)
     attachments: [
       {
         filename: String,
@@ -92,7 +85,6 @@ const messageChatSchema = new mongoose.Schema(
       },
     ],
 
-    // Message reactions (for future use)
     reactions: [
       {
         userId: {
@@ -107,7 +99,6 @@ const messageChatSchema = new mongoose.Schema(
       },
     ],
 
-    // Soft delete capability
     isDeleted: {
       type: Boolean,
       default: false,
@@ -122,7 +113,6 @@ const messageChatSchema = new mongoose.Schema(
       default: null,
     },
 
-    // Message editing (for future use)
     isEdited: {
       type: Boolean,
       default: false,
@@ -141,32 +131,27 @@ const messageChatSchema = new mongoose.Schema(
   }
 );
 
-// Indexes for better performance
 messageChatSchema.index({ roomId: 1 });
 messageChatSchema.index({ senderId: 1 });
 messageChatSchema.index({ receiverId: 1 });
-messageChatSchema.index({ time: 1 }); // For chronological ordering
+messageChatSchema.index({ time: 1 });
 messageChatSchema.index({ isRead: 1 });
 messageChatSchema.index({ isDeleted: 1 });
 
-// Compound indexes for common queries
 messageChatSchema.index({ roomId: 1, time: 1 });
 messageChatSchema.index({ roomId: 1, isDeleted: 1, time: 1 });
 messageChatSchema.index({ senderId: 1, isRead: 1 });
 messageChatSchema.index({ receiverId: 1, isRead: 1 });
 
-// Virtual for checking if message is recent
 messageChatSchema.virtual("isRecent").get(function () {
   const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
   return this.time > fiveMinutesAgo;
 });
 
-// Virtual for message age in minutes
 messageChatSchema.virtual("ageInMinutes").get(function () {
   return Math.floor((Date.now() - this.time) / (1000 * 60));
 });
 
-// Instance method to mark as read
 messageChatSchema.methods.markAsRead = function (userId) {
   if (this.receiverId.toString() === userId.toString()) {
     this.isRead = true;
@@ -176,9 +161,7 @@ messageChatSchema.methods.markAsRead = function (userId) {
   throw new Error("Only receiver can mark message as read");
 };
 
-// Instance method to soft delete message
 messageChatSchema.methods.softDelete = function (userId) {
-  // Only sender can delete their message
   if (this.senderId.toString() === userId.toString()) {
     this.isDeleted = true;
     this.deletedAt = new Date();
@@ -188,7 +171,6 @@ messageChatSchema.methods.softDelete = function (userId) {
   throw new Error("Only sender can delete their message");
 };
 
-// Static method to get messages by room with pagination
 messageChatSchema.statics.getMessagesByRoom = function (
   roomId,
   page = 1,
@@ -203,13 +185,12 @@ messageChatSchema.statics.getMessagesByRoom = function (
   return this.find(query)
     .populate("senderId", "name avatar email")
     .populate("receiverId", "name avatar email")
-    .sort({ time: 1 }) // Ascending order for chat messages
+    .sort({ time: 1 })
     .limit(limit * 1)
     .skip((page - 1) * limit)
     .exec();
 };
 
-// Static method to get unread messages count
 messageChatSchema.statics.getUnreadCount = function (roomId, userId) {
   return this.countDocuments({
     roomId,
@@ -219,7 +200,6 @@ messageChatSchema.statics.getUnreadCount = function (roomId, userId) {
   });
 };
 
-// Static method to get messages after specific time (for polling)
 messageChatSchema.statics.getMessagesAfterTime = function (
   roomId,
   lastMessageTime
@@ -234,7 +214,6 @@ messageChatSchema.statics.getMessagesAfterTime = function (
     .sort({ time: 1 });
 };
 
-// Static method to mark all messages as read for a user in a room
 messageChatSchema.statics.markAllAsRead = function (roomId, userId) {
   return this.updateMany(
     {
@@ -252,15 +231,12 @@ messageChatSchema.statics.markAllAsRead = function (roomId, userId) {
   );
 };
 
-// Pre-save middleware for validation
 messageChatSchema.pre("save", function (next) {
-  // Ensure sender and receiver are different
   if (this.senderId.toString() === this.receiverId.toString()) {
     const error = new Error("Sender and receiver cannot be the same");
     return next(error);
   }
 
-  // Trim message content
   if (this.message) {
     this.message = this.message.trim();
   }
@@ -268,12 +244,11 @@ messageChatSchema.pre("save", function (next) {
   next();
 });
 
-// Configure JSON output
 messageChatSchema.set("toJSON", {
   virtuals: true,
   transform: function (doc, ret) {
     delete ret.__v;
-    // Hide deleted messages content for privacy
+
     if (ret.isDeleted) {
       ret.message = "[This message was deleted]";
       delete ret.attachments;

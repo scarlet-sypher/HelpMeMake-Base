@@ -4,7 +4,6 @@ import Sidebar from "../../components/user/Sidebar";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 
-// Import mentor apprentice page components
 import ExpectedEndDateSetter from "../../components/mentor/mentorUserPage/ExpectedEndDateSetter";
 import ProjectProgressSetter from "../../components/mentor/mentorUserPage/ProjectProgressSetter";
 import UserProjectCard from "../../components/mentor/mentorUserPage/UserProjectCard";
@@ -30,20 +29,17 @@ const MyApprentice = () => {
   const [activeItem, setActiveItem] = useState("myApprentice");
   const [showReviewModal, setShowReviewModal] = useState(false);
 
-  // Data states
   const [projectData, setProjectData] = useState(null);
   const [apprenticeData, setApprenticeData] = useState(null);
   const [dataLoading, setDataLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Redirect non-mentors
   useEffect(() => {
     if (!loading && (!isAuthenticated || (user && user.role !== "mentor"))) {
       window.location.href = "/login";
     }
   }, [loading, isAuthenticated, user]);
 
-  // Fetch apprentice project data
   useEffect(() => {
     const fetchApprenticeData = async () => {
       if (isAuthenticated) {
@@ -91,7 +87,6 @@ const MyApprentice = () => {
     fetchApprenticeData();
   }, [isAuthenticated]);
 
-  // Show loading
   if (loading || dataLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 flex items-center justify-center">
@@ -105,7 +100,6 @@ const MyApprentice = () => {
     );
   }
 
-  // Don't render if not authenticated
   if (!isAuthenticated) {
     return null;
   }
@@ -114,7 +108,6 @@ const MyApprentice = () => {
     setSidebarOpen(!sidebarOpen);
   };
 
-  // Handle data refresh for child components
   const handleDataRefresh = async () => {
     try {
       const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
@@ -140,7 +133,6 @@ const MyApprentice = () => {
     }
   };
 
-  // Error state
   if (error) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 flex">

@@ -18,7 +18,6 @@ const sessionSchema = new mongoose.Schema(
       required: true,
     },
 
-    // Session Details
     title: {
       type: String,
       required: true,
@@ -40,7 +39,6 @@ const sessionSchema = new mongoose.Schema(
       default: "one-on-one",
     },
     scheduledAt: {
-      // contains both date & time
       type: Date,
       required: true,
     },
@@ -70,7 +68,6 @@ const sessionSchema = new mongoose.Schema(
       type: String,
     },
 
-    // Meeting Info
     meetingLink: {
       type: String,
       trim: true,
@@ -80,7 +77,6 @@ const sessionSchema = new mongoose.Schema(
       trim: true,
     },
     prerequisites: {
-      // notes, required readings, links, etc.
       type: String,
       default: "",
     },
@@ -89,7 +85,6 @@ const sessionSchema = new mongoose.Schema(
       default: Date.now,
     },
 
-    // Attendance Tracking
     isLearnerPresent: {
       type: Boolean,
       default: false,
@@ -100,7 +95,7 @@ const sessionSchema = new mongoose.Schema(
     },
 
     duration: {
-      type: Number, // in minutes
+      type: Number,
       default: 60,
     },
 
@@ -118,7 +113,6 @@ const sessionSchema = new mongoose.Schema(
   }
 );
 
-// Indexes for faster querying
 sessionSchema.index({ learnerId: 1 });
 sessionSchema.index({ mentorId: 1 });
 sessionSchema.index({ projectId: 1 });

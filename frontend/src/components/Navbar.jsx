@@ -27,7 +27,6 @@ const Navbar = () => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const navigate = useNavigate();
 
-  // Navigation items mapping with their corresponding icons
   const navItems = [
     { name: "Process", sectionId: "how-it-works", icon: Workflow },
     { name: "Mentors", sectionId: "mentors", icon: UserCheck },
@@ -41,7 +40,6 @@ const Navbar = () => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
 
-      // Update active section based on scroll position
       const sections = [
         "hero",
         "how-it-works",
@@ -77,7 +75,6 @@ const Navbar = () => {
     window.addEventListener("scroll", handleScroll);
     window.addEventListener("mousemove", handleMouseMove);
 
-    // Initial call
     handleScroll();
 
     return () => {
@@ -86,12 +83,10 @@ const Navbar = () => {
     };
   }, []);
 
-  // Simplified scroll function - CSS scroll-margin-top handles navbar offset
   const scrollToSection = (sectionId) => {
     const element = document.getElementById(sectionId);
 
     if (element) {
-      // Simple scrollIntoView - CSS scroll-margin-top will handle the navbar offset
       element.scrollIntoView({
         behavior: "smooth",
         block: "start",
@@ -101,7 +96,6 @@ const Navbar = () => {
     setIsMenuOpen(false);
   };
 
-  // Handle logo click - scroll to top
   const scrollToTop = () => {
     window.scrollTo({
       top: 0,

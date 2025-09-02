@@ -27,7 +27,7 @@ const Sidebar = ({
 }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { logout, user } = useAuth(); // Move user here from useAuth
+  const { logout, user } = useAuth();
 
   const menuItems =
     userRole === "mentor"
@@ -152,12 +152,10 @@ const Sidebar = ({
   const handleItemClick = (itemId, path) => {
     setActiveItem(itemId);
 
-    // Navigate to the specified path
     if (path) {
       navigate(path);
     }
 
-    // Close sidebar on mobile after selection
     if (window.innerWidth < 1024) {
       toggleSidebar();
     }
@@ -167,7 +165,6 @@ const Sidebar = ({
     logout();
   };
 
-  // Auto-detect active item based on current path
   React.useEffect(() => {
     const currentPath = location.pathname;
     const currentItem = menuItems.find((item) => item.path === currentPath);

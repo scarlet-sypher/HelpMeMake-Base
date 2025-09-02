@@ -10,7 +10,6 @@ import MilestonePoint from "../../components/user/MilestonePoint";
 import HeroProfile from "../../components/user/HeroProfile";
 import Sidebar from "../../components/user/Sidebar";
 import QuickActions from "../../components/user/QuickActions";
-// Using fetch API instead of axios
 
 import { importAllUserImages } from "../../utils/importAllUserImages";
 const userImg = importAllUserImages();
@@ -56,14 +55,12 @@ const UserDashboard = () => {
 
   useEffect(() => {
     const handleOAuthRedirect = async () => {
-      // Check if this is an OAuth redirect by looking for specific patterns
       const isFromOAuth =
         document.referrer.includes("accounts.google.com") ||
         document.referrer.includes("github.com") ||
         window.location.search.includes("newPassword");
 
       if (isFromOAuth) {
-        // Give extra time for OAuth cookies to be set
         await new Promise((resolve) => setTimeout(resolve, 1000));
       }
 
@@ -75,23 +72,21 @@ const UserDashboard = () => {
     handleOAuthRedirect();
   }, [loading, isAuthenticated]);
 
-  // Fetch user data from API
   useEffect(() => {
     const fetchUserData = async () => {
       if (isAuthenticated && userDataLoading) {
-        // Changed: was !userDataLoading
         try {
           setUserDataLoading(true);
 
           const apiUrl =
             import.meta.env.VITE_API_URL || "http://localhost:5000";
-          const token = localStorage.getItem("access_token"); // Get token from localStorage
+          const token = localStorage.getItem("access_token");
 
           const response = await fetch(`${apiUrl}/user/data`, {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`, // Use Bearer token instead of cookies
+              Authorization: `Bearer ${token}`,
             },
           });
 
@@ -115,7 +110,6 @@ const UserDashboard = () => {
           console.error("Error fetching user data:", error);
           console.error("Error details:", error.message);
 
-          // If auth fails, redirect to login
           if (
             error.message.includes("401") ||
             error.message.includes("Unauthorized")
@@ -141,7 +135,6 @@ const UserDashboard = () => {
             import.meta.env.VITE_API_URL || "http://localhost:5000";
           const token = localStorage.getItem("access_token");
 
-          // Updated endpoint for dashboard
           const response = await fetch(`${apiUrl}/api/dashboard/user/data`, {
             method: "GET",
             headers: {
@@ -183,7 +176,6 @@ const UserDashboard = () => {
   }, [isAuthenticated, dashboardLoading]);
 
   useEffect(() => {
-    // Check URL params for generated password
     const urlParams = new URLSearchParams(window.location.search);
     const newPassword = urlParams.get("newPassword");
 
@@ -191,14 +183,12 @@ const UserDashboard = () => {
       setGeneratedPassword(newPassword);
       setShowPasswordBanner(true);
 
-      // Clear URL params
       window.history.replaceState({}, document.title, window.location.pathname);
     } else if (
       userData &&
       !userData.isPasswordUpdated &&
       userData.authProvider !== "local"
     ) {
-      // Show banner for social users who haven't updated password
       setShowPasswordBanner(true);
     }
   }, [userData]);
@@ -217,7 +207,7 @@ const UserDashboard = () => {
               method: "GET",
               headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`, // Use Bearer token
+                Authorization: `Bearer ${token}`,
               },
             }
           );
@@ -252,7 +242,7 @@ const UserDashboard = () => {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`, // Use Bearer token
+              Authorization: `Bearer ${token}`,
             },
           });
 
@@ -275,7 +265,6 @@ const UserDashboard = () => {
     fetchAchievements();
   }, [isAuthenticated, userData]);
 
-  // Show loading spinner while checking auth or fetching user data
   if (loading || userDataLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-indigo-950 flex items-center justify-center">
@@ -284,7 +273,6 @@ const UserDashboard = () => {
     );
   }
 
-  // Don't render dashboard if not authenticated
   if (!isAuthenticated || !userData) {
     return null;
   }
@@ -293,7 +281,6 @@ const UserDashboard = () => {
     setSidebarOpen(!sidebarOpen);
   };
 
-  // Format date helper
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     return date.toLocaleDateString("en-US", {
@@ -343,7 +330,6 @@ const UserDashboard = () => {
       ]
     : [];
 
-  // User profile data from API
   const userProfileData = {
     name: userData.name || userData.displayName || "User",
     title: userData.title,
@@ -371,7 +357,6 @@ const UserDashboard = () => {
 
   console.log(userProfileData.profileImage);
 
-  // Function to get the page title based on active item
   const getPageTitle = () => {
     const titles = {
       dashboard: "Dashboard",
@@ -393,7 +378,7 @@ const UserDashboard = () => {
         toggleSidebar={toggleSidebar}
         activeItem={activeItem}
         setActiveItem={setActiveItem}
-        userRole="user" // Add this prop
+        userRole="user"
       />
 
       {/* Main Content */}

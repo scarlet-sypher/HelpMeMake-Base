@@ -17,7 +17,6 @@ import {
   Info,
 } from "lucide-react";
 
-// Import modular components
 import BasicInformation from "./projectForm/BasicInformation";
 import TechnicalDetails from "./projectForm/TechnicalDetails";
 import ProjectDetails from "./projectForm/ProjectDetails";
@@ -42,7 +41,6 @@ const ProjectForm = ({
   const [errors, setErrors] = useState({});
   const [toast, setToast] = useState(null);
 
-  // Form state
   const [formData, setFormData] = useState({
     name: "",
     shortDescription: "",
@@ -63,7 +61,6 @@ const ProjectForm = ({
     references: [],
   });
 
-  // Load project data for edit mode
   useEffect(() => {
     if (mode === "edit" && projectId) {
       loadProject();
@@ -95,7 +92,7 @@ const ProjectForm = ({
           category: project.category || "",
           difficultyLevel: project.difficultyLevel || "",
           duration: project.duration || "",
-          status: "Open", // Always set to Open
+          status: "Open",
           thumbnail: project.thumbnail || "",
           tags: project.tags || [],
           openingPrice: project.openingPrice || "",
@@ -164,12 +161,12 @@ const ProjectForm = ({
         ...formData,
         learnerId: user._id,
         openingPrice: parseFloat(formData.openingPrice),
-        status: "Open", // Ensure status is always Open
+        status: "Open",
       };
 
       let response;
       if (mode === "edit" && projectId) {
-        const token = localStorage.getItem("access_token"); // Use consistent key
+        const token = localStorage.getItem("access_token");
         response = await axios.patch(
           `${import.meta.env.VITE_API_URL}/projects/${projectId}`,
           submitData,

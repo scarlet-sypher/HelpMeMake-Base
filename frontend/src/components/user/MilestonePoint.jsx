@@ -58,7 +58,6 @@ const MilestonePoint = ({ projectData }) => {
       );
 
       if (response.data.success) {
-        // Transform API milestones to match the existing component format
         const transformedMilestones = response.data.milestones
           .slice(0, 5)
           .map((milestone, index) => ({
@@ -68,7 +67,6 @@ const MilestonePoint = ({ projectData }) => {
             mentorVerified: milestone.mentorVerification?.isVerified || false,
           }));
 
-        // Fill up to 5 milestones with "Not Set" placeholders if needed
         while (transformedMilestones.length < 5) {
           transformedMilestones.push({
             id: `placeholder-${transformedMilestones.length}`,
@@ -81,7 +79,6 @@ const MilestonePoint = ({ projectData }) => {
 
         setMilestones(transformedMilestones);
 
-        // Calculate statistics
         const completed = transformedMilestones.filter(
           (m) => !m.isPlaceholder && m.userVerified && m.mentorVerified
         );
@@ -111,7 +108,6 @@ const MilestonePoint = ({ projectData }) => {
           progressPercentage: progressPercentage,
         });
 
-        // Extract mentor data from the first milestone if available
         if (response.data.milestones.length > 0) {
           const mentorInfo = response.data.milestones[0].mentorId;
           if (mentorInfo) {
@@ -185,7 +181,6 @@ const MilestonePoint = ({ projectData }) => {
       );
     };
 
-    // Truncate title if too long
     const truncateTitle = (text, maxLength = 12) => {
       if (text.length <= maxLength) return text;
       return text.substring(0, maxLength) + "...";
@@ -350,7 +345,6 @@ const MilestonePoint = ({ projectData }) => {
     );
   };
 
-  // Loading state
   if (loading) {
     return (
       <div className="bg-white/10 backdrop-blur-sm rounded-3xl shadow-2xl p-4 sm:p-6 border border-white/20 relative overflow-hidden">
@@ -362,7 +356,6 @@ const MilestonePoint = ({ projectData }) => {
     );
   }
 
-  // No project or error state
   if (!projectData || error || milestones.length === 0) {
     return (
       <div className="bg-white/10 backdrop-blur-sm rounded-3xl shadow-2xl p-4 sm:p-6 border border-white/20 relative overflow-hidden">

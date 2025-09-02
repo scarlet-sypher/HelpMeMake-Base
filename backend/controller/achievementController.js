@@ -5,22 +5,20 @@ const Session = require("../Model/Session");
 const Milestone = require("../Model/Milestone");
 const Achievement = require("../Model/Achievement");
 
-// Calculate XP from different sources
 const calculateXp = {
-  projectXp: (completedProjects) => completedProjects * 250, // 250 XP per completed project
+  projectXp: (completedProjects) => completedProjects * 250,
 
-  basicXp: (basicBadges) => basicBadges * 100, // 100 XP per basic badge
+  basicXp: (basicBadges) => basicBadges * 100,
 
-  commonXp: (commonBadges) => commonBadges * 200, // 200 XP per common badge
+  commonXp: (commonBadges) => commonBadges * 200,
 
-  rearXp: (rearBadges) => rearBadges * 350, // 350 XP per rare badge
+  rearXp: (rearBadges) => rearBadges * 350,
 
-  epicXp: (epicBadges) => epicBadges * 500, // 500 XP per epic badge
+  epicXp: (epicBadges) => epicBadges * 500,
 
-  legendaryXp: (legendaryBadges) => legendaryBadges * 1000, // 1000 XP per legendary badge
+  legendaryXp: (legendaryBadges) => legendaryBadges * 1000,
 };
 
-// Achievement thresholds
 const THRESHOLDS = {
   basic: 1,
   common: 5,
@@ -29,13 +27,10 @@ const THRESHOLDS = {
   legendary: 40,
 };
 
-// XP and Level constants
 const MAX_XP = 10000;
 const XP_PER_LEVEL = 1000;
 const MAX_LEVEL = 10;
 
-// Get or create achievement record for learner
-// Fix 1: Update the getOrCreateAchievement function
 const getOrCreateAchievement = async (learnerId) => {
   let achievement = await Achievement.findOne({ learner: learnerId });
 
@@ -122,11 +117,9 @@ const getOrCreateAchievement = async (learnerId) => {
   return achievement;
 };
 
-// Fix 2: Fix the updateBadgeAchievements function order
 const updateBadgeAchievements = (achievementCategory, currentCount) => {
   const newBadges = [];
 
-  // Check each threshold in descending order (highest to lowest)
   if (
     currentCount >= THRESHOLDS.legendary &&
     !achievementCategory.earnedBadges.includes("legendary")
@@ -167,13 +160,12 @@ const updateBadgeAchievements = (achievementCategory, currentCount) => {
   return newBadges;
 };
 
-// Calculate and update learner's daily streak (IST timezone)
 const updateDailyStreak = async (learnerId) => {
   const learner = await Learner.findById(learnerId);
   if (!learner) return 0;
 
   const now = new Date();
-  // Convert to IST (UTC + 5:30)
+
   const istOffset = 5.5 * 60 * 60 * 1000;
   const istNow = new Date(now.getTime() + istOffset);
   const today = istNow.toDateString();
@@ -184,20 +176,16 @@ const updateDailyStreak = async (learnerId) => {
   const lastLoginDate = lastLoginIST ? lastLoginIST.toDateString() : null;
 
   if (lastLoginDate !== today) {
-    // Check if yesterday
     const yesterday = new Date(istNow);
     yesterday.setDate(yesterday.getDate() - 1);
     const yesterdayStr = yesterday.toDateString();
 
     if (lastLoginDate === yesterdayStr) {
-      // Continue streak
       learner.streakDays = (learner.streakDays || 0) + 1;
     } else if (lastLoginDate !== today) {
-      // Reset streak if not yesterday and not today
       learner.streakDays = 1;
     }
 
-    // Update max streak
     learner.maxStreak = Math.max(learner.maxStreak || 0, learner.streakDays);
     learner.totalLogins = (learner.totalLogins || 0) + 1;
     learner.lastLoginDate = now;
@@ -208,12 +196,10 @@ const updateDailyStreak = async (learnerId) => {
   return learner.streakDays || 0;
 };
 
-// Main function to recalculate all achievements
 const recalculateAchievements = async (req, res) => {
   try {
     const userId = req.user._id;
 
-    // Get learner profile
     const learner = await Learner.findOne({ userId }).populate(
       "userId",
       "name avatar"
@@ -227,10 +213,8 @@ const recalculateAchievements = async (req, res) => {
 
     const learnerId = learner._id;
 
-    // Get or create achievement record
     const achievement = await getOrCreateAchievement(learnerId);
 
-    // Calculate all counts
     const completedProjects = await Project.countDocuments({
       learnerId,
       status: "Completed",
@@ -256,13 +240,10 @@ const recalculateAchievements = async (req, res) => {
       status: "Completed",
     });
 
-    // Update daily streak
     const currentStreak = await updateDailyStreak(learnerId);
 
-    // Update all achievement categories
     const newBadges = [];
 
-    // Project achievements
     const projectCompletedBadges = updateBadgeAchievements(
       achievement.project.completedProjects,
       completedProjects
@@ -272,7 +253,6 @@ const recalculateAchievements = async (req, res) => {
       projectsAdded
     );
 
-    // Social achievements
     const completedSessionBadges = updateBadgeAchievements(
       achievement.social.completedSessions,
       completedSessions
@@ -282,11 +262,10 @@ const recalculateAchievements = async (req, res) => {
       successfulSessions
     );
 
-    // Learner achievements
     if (!achievement.learnerStats.firstLogin && learner.totalLogins > 0) {
       achievement.learnerStats.firstLogin = true;
       newBadges.push({
-        category: "learnerStats", // Change this
+        category: "learnerStats",
         type: "firstLogin",
         level: "special",
       });
@@ -301,13 +280,11 @@ const recalculateAchievements = async (req, res) => {
       learner.totalLogins || 0
     );
 
-    // Milestone achievements
     const milestoneBadges = updateBadgeAchievements(
       achievement.milestone.completedMilestones,
       completedMilestones
     );
 
-    // Collect all new badges
     newBadges.push(
       ...projectCompletedBadges.map((level) => ({
         category: "project",
@@ -330,12 +307,12 @@ const recalculateAchievements = async (req, res) => {
         level,
       })),
       ...streakBadges.map((level) => ({
-        category: "learnerStats", // Change from "learner" to "learnerStats"
+        category: "learnerStats",
         type: "streakDays",
         level,
       })),
       ...loginBadges.map((level) => ({
-        category: "learnerStats", // Change from "learner" to "learnerStats"
+        category: "learnerStats",
         type: "totalLogins",
         level,
       })),
@@ -346,12 +323,10 @@ const recalculateAchievements = async (req, res) => {
       }))
     );
 
-    // Add new achievements to unlocked array
     for (const badge of newBadges) {
       if (badge.category && badge.type && badge.level) {
         const achievementName = `${badge.type} - ${badge.level}`;
 
-        // Check if already exists
         const exists = achievement.unlocked.find(
           (u) => u.name === achievementName && u.category === badge.category
         );
@@ -367,7 +342,6 @@ const recalculateAchievements = async (req, res) => {
       }
     }
 
-    // Calculate total XP
     const totalBadgesByLevel = {
       basic: 0,
       common: 0,
@@ -376,14 +350,12 @@ const recalculateAchievements = async (req, res) => {
       legendary: 0,
     };
 
-    // Count badges by level
     achievement.unlocked.forEach((unlock) => {
       if (totalBadgesByLevel.hasOwnProperty(unlock.level)) {
         totalBadgesByLevel[unlock.level]++;
       }
     });
 
-    // Calculate XP
     const badgeXp =
       calculateXp.basicXp(totalBadgesByLevel.basic) +
       calculateXp.commonXp(totalBadgesByLevel.common) +
@@ -397,20 +369,17 @@ const recalculateAchievements = async (req, res) => {
     const level = Math.min(Math.floor(totalXp / XP_PER_LEVEL), MAX_LEVEL);
     const nextLevelXp = (level + 1) * XP_PER_LEVEL;
 
-    // Update achievement record
     achievement.xp = totalXp;
     achievement.level = level;
     achievement.nextLevelXp = Math.min(nextLevelXp, MAX_XP);
     achievement.totalBadges = achievement.unlocked.length;
     achievement.totalAchievements = achievement.unlocked.length;
 
-    // Update learner record
     learner.xp = totalXp;
     learner.level = level;
     learner.nextLevelXp = Math.min(nextLevelXp, MAX_XP);
     learner.totalAchievement = achievement.unlocked.length;
 
-    // Save both records
     await achievement.save();
     await learner.save();
 
@@ -450,7 +419,6 @@ const recalculateAchievements = async (req, res) => {
   }
 };
 
-// Get achievement summary
 const getAchievementSummary = async (req, res) => {
   try {
     const userId = req.user._id;
@@ -469,7 +437,6 @@ const getAchievementSummary = async (req, res) => {
     const achievement = await Achievement.findOne({ learner: learner._id });
 
     if (!achievement) {
-      // Trigger recalculation if no achievement record exists
       return recalculateAchievements(req, res);
     }
 
@@ -499,7 +466,6 @@ const getAchievementSummary = async (req, res) => {
   }
 };
 
-// Test endpoint to manually update values (for debugging)
 const updateTestValues = async (req, res) => {
   try {
     const userId = req.user._id;
@@ -513,10 +479,8 @@ const updateTestValues = async (req, res) => {
       });
     }
 
-    // Handle different test operations
     switch (type) {
       case "addProject":
-        // Create a test completed project
         const newProject = new Project({
           name: `Test Project ${Date.now()}`,
           shortDescription: "Test project for achievement testing",
@@ -533,17 +497,16 @@ const updateTestValues = async (req, res) => {
           status: "Completed",
           startDate: new Date(),
           actualEndDate: new Date(),
-          duration: 30, // Add this required field (duration in days)
+          duration: 30,
         });
         await newProject.save();
         break;
 
       case "addSession":
-        // Create a test completed session
         const testSession = new Session({
           learnerId: learner._id,
-          mentorId: new mongoose.Types.ObjectId(), // Dummy mentor ID
-          projectId: new mongoose.Types.ObjectId(), // Dummy project ID
+          mentorId: new mongoose.Types.ObjectId(),
+          projectId: new mongoose.Types.ObjectId(),
           title: "Test Session",
           topic: "Test Topic",
           scheduledAt: new Date(),
@@ -554,7 +517,6 @@ const updateTestValues = async (req, res) => {
         break;
 
       case "addMilestone":
-        // Create a test completed milestone
         const testMilestone = new Milestone({
           title: "Test Milestone",
           description: "Test milestone for achievement testing",
@@ -590,7 +552,6 @@ const updateTestValues = async (req, res) => {
         });
     }
 
-    // Recalculate achievements after test update
     return recalculateAchievements(req, res);
   } catch (error) {
     console.error("Error updating test values:", error);
@@ -610,7 +571,6 @@ const getBadgesData = async (req, res) => {
     const userId = req.user._id;
     console.log("Extracted userId:", userId);
 
-    // Fetch learner profile
     const learner = await Learner.findOne({ userId }).populate(
       "userId",
       "name avatar"
@@ -625,14 +585,12 @@ const getBadgesData = async (req, res) => {
       });
     }
 
-    // Get or create achievement data
     const achievement = await getOrCreateAchievement(learner._id);
     console.log(
       "Achievement object fetched/created:",
       JSON.stringify(achievement, null, 2)
     );
 
-    // Define badge categories with metadata
     const badgeCategories = [
       {
         id: "completedProjects",
@@ -673,7 +631,6 @@ const getBadgesData = async (req, res) => {
       JSON.stringify(badgeCategories, null, 2)
     );
 
-    // Process badges for each category
     const processedBadges = badgeCategories.map((cat) => {
       console.log(`Processing category: ${cat.id}`);
       console.log("Category raw data:", JSON.stringify(cat.data, null, 2));
@@ -730,8 +687,6 @@ const getBadgesData = async (req, res) => {
   }
 };
 
-// Add this new function to your achievementController.js
-
 const getUserBadgesData = async (req, res) => {
   try {
     console.log("=== GET USER BADGES DATA DEBUG START ===");
@@ -740,7 +695,6 @@ const getUserBadgesData = async (req, res) => {
     const { userId } = req.params;
     console.log("Extracted userId:", userId);
 
-    // First, find the learner using the userId
     const learner = await Learner.findOne({ userId }).populate(
       "userId",
       "name avatar"
@@ -769,14 +723,12 @@ const getUserBadgesData = async (req, res) => {
       streakDays: learner.streakDays,
     });
 
-    // Get or create achievement data using learnerId
     const achievement = await Achievement.findOrCreateByLearner(learner._id);
     console.log(
       "Achievement object fetched/created:",
       JSON.stringify(achievement, null, 2)
     );
 
-    // Define badge categories with metadata
     const badgeCategories = [
       {
         id: "completedProjects",
@@ -817,7 +769,6 @@ const getUserBadgesData = async (req, res) => {
       JSON.stringify(badgeCategories, null, 2)
     );
 
-    // Process badges for each category
     const processedBadges = badgeCategories.map((cat) => {
       console.log(`Processing category: ${cat.id}`);
       console.log("Category raw data:", JSON.stringify(cat.data, null, 2));

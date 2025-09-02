@@ -18,7 +18,6 @@ const RequestModal = ({ mentor, project, onClose, onRequestSent, API_URL }) => {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    // Trigger entrance animation
     const timer = setTimeout(() => setIsVisible(true), 50);
     return () => clearTimeout(timer);
   }, []);

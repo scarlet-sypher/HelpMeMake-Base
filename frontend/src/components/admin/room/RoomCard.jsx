@@ -45,7 +45,6 @@ export default function RoomCard({ room, onRoomUpdate }) {
       const result = await response.json();
 
       if (result.success) {
-        // Update the room in parent component
         if (onRoomUpdate) {
           onRoomUpdate(room._id, { status: editingStatus });
         }

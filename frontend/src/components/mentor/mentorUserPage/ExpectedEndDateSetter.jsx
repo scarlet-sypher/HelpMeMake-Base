@@ -15,7 +15,6 @@ const ExpectedEndDateSetter = ({ projectData, onDataRefresh }) => {
   const [minDate, setMinDate] = useState("");
 
   useEffect(() => {
-    // Set minimum date to tomorrow
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     setMinDate(tomorrow.toISOString().split("T")[0]);
@@ -74,7 +73,6 @@ const ExpectedEndDateSetter = ({ projectData, onDataRefresh }) => {
     }
   };
 
-  // Check if expected end date is already confirmed
   const isDateConfirmed =
     projectData?.expectedEndDate && projectData?.isTempEndDateConfirmed;
   const hasPendingDate =

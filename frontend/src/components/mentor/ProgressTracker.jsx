@@ -29,7 +29,6 @@ const ProgressTracker = ({ userImg }) => {
 
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
-  // Fetch mentor's active project progress data
   const fetchMentorProgress = async () => {
     try {
       setLoading(true);
@@ -73,7 +72,6 @@ const ProgressTracker = ({ userImg }) => {
     fetchMentorProgress();
   }, []);
 
-  // Fallback data structure for when no active project exists
   const getDisplayData = () => {
     if (!projectData || !learnerData) {
       return {
@@ -95,7 +93,6 @@ const ProgressTracker = ({ userImg }) => {
       };
     }
 
-    // Fill up to 5 milestones with placeholders if needed
     const displayMilestones = [...milestones];
     while (displayMilestones.length < 5) {
       displayMilestones.push({
@@ -108,7 +105,7 @@ const ProgressTracker = ({ userImg }) => {
     }
 
     const avatar = learnerData.avatar;
-    // 👇 Console the avatar here
+
     console.log("Student Avatar:", avatar);
 
     return {
@@ -341,7 +338,6 @@ const ProgressTracker = ({ userImg }) => {
     );
   };
 
-  // Show loading state
   if (loading) {
     return (
       <div className="bg-white/10 backdrop-blur-sm rounded-3xl shadow-2xl p-4 sm:p-6 border border-white/20 relative overflow-hidden">
@@ -353,7 +349,6 @@ const ProgressTracker = ({ userImg }) => {
     );
   }
 
-  // Show error state
   if (error) {
     return (
       <div className="bg-white/10 backdrop-blur-sm rounded-3xl shadow-2xl p-4 sm:p-6 border border-white/20 relative overflow-hidden">

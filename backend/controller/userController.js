@@ -8,10 +8,8 @@ const cloudinary = require("../utils/cloudinary");
 const streamifier = require("streamifier");
 const { generateOTP, sendOTPEmail } = require("../config/emailService");
 
-// Get current user's full profile data
 const getUserData = async (req, res) => {
   try {
-    // Fetch the base user details
     const user = await User.findById(req.user._id).select(
       "-password -otp -otpExpires"
     );
@@ -23,7 +21,6 @@ const getUserData = async (req, res) => {
       });
     }
 
-    // Fetch learner-specific data
     let learnerData = await Learner.findOne({ userId: user._id });
 
     if (!learnerData) {
@@ -33,13 +30,12 @@ const getUserData = async (req, res) => {
       await learnerData.save();
     }
 
-    // Calculate profile completion score
     const profileScore = calculateProfileScore(user, learnerData);
 
     const combinedData = {
       ...user.toObject(),
       ...learnerData.toObject(),
-      userId: learnerData.userId, // Keep reference
+      userId: learnerData.userId,
       profileScore: profileScore,
       generatedPassword: user.tempPassword || null,
     };
@@ -64,18 +60,15 @@ const getUserData = async (req, res) => {
   }
 };
 
-// Helper function to calculate profile completion score
 const calculateProfileScore = (user, learner) => {
   let score = 0;
-  const totalFields = 8; // Total number of profile fields
+  const totalFields = 8;
 
-  // Check User fields (25 points each for name, email)
   if (user.name && user.name.trim()) score += 12.5;
   if (user.email && user.email.trim()) score += 12.5;
   if (user.avatar && user.avatar !== "/uploads/public/default.jpg")
     score += 12.5;
 
-  // Check Learner fields (25 points each for title, description, location)
   if (
     learner.title &&
     learner.title.trim() &&
@@ -95,7 +88,6 @@ const calculateProfileScore = (user, learner) => {
   )
     score += 12.5;
 
-  // Check Social Links (25 points total, distributed)
   const socialLinks = learner.socialLinks || {};
   let socialScore = 0;
   if (socialLinks.github && socialLinks.github !== "#") socialScore += 4.17;
@@ -141,13 +133,11 @@ const upload = multer({
   },
 }).single("avatar");
 
-// Update Profile
 const updateProfile = async (req, res) => {
   try {
     const { name, title, description, location, email } = req.body;
     const User = require("../Model/User");
 
-    // Update base user info
     const updatedUser = await User.findByIdAndUpdate(
       req.user._id,
       { name, email },
@@ -157,11 +147,9 @@ const updateProfile = async (req, res) => {
     let profileScore = 0;
     let updatedLearner = null;
 
-    // Update role-specific data
     if (req.user.role === "user") {
       const Learner = require("../Model/Learner");
 
-      // Get current learner data to check if this is first update
       const currentLearner = await Learner.findOne({ userId: req.user._id });
       const isFirstUpdate = currentLearner && !currentLearner.isProfileUpdated;
 
@@ -171,13 +159,12 @@ const updateProfile = async (req, res) => {
           title,
           description,
           location,
-          // Set to true only on first update
+
           ...(isFirstUpdate && { isProfileUpdated: true }),
         },
         { new: true, upsert: true }
       );
 
-      // Calculate profile completion score
       profileScore = calculateProfileScore(updatedUser, updatedLearner);
     } else if (req.user.role === "mentor") {
       const Mentor = require("../Model/Mentor");
@@ -203,7 +190,6 @@ const updateProfile = async (req, res) => {
   }
 };
 
-// Update Social Links
 const updateSocialLinks = async (req, res) => {
   try {
     const { github, linkedin, twitter } = req.body;
@@ -238,7 +224,6 @@ const updateSocialLinks = async (req, res) => {
   }
 };
 
-// Change Password
 const changePassword = async (req, res) => {
   try {
     const { currentPassword, newPassword } = req.body;
@@ -257,7 +242,6 @@ const changePassword = async (req, res) => {
       });
     }
 
-    // For social auth users with generated passwords, skip current password validation
     const skipCurrentPasswordCheck =
       user.authProvider !== "local" &&
       (user.tempPassword || user.isPasswordUpdated === false);
@@ -296,7 +280,6 @@ const changePassword = async (req, res) => {
   }
 };
 
-// Upload Avatar
 const uploadAvatar = async (req, res) => {
   upload(req, res, async (err) => {
     if (err) {
@@ -314,7 +297,6 @@ const uploadAvatar = async (req, res) => {
     }
 
     try {
-      // Upload to Cloudinary from buffer
       const streamUpload = (req) => {
         return new Promise((resolve, reject) => {
           const stream = cloudinary.uploader.upload_stream(
@@ -336,11 +318,8 @@ const uploadAvatar = async (req, res) => {
 
       const avatarUrl = result.secure_url;
 
-      // Delete old avatar if it existed (optional: check if it was Cloudinary or local)
       const user = await User.findById(req.user._id);
       if (user.avatar && !user.avatar.includes("default.jpg")) {
-        // optionally handle deletion of old Cloudinary image
-        // e.g., await cloudinary.uploader.destroy(public_id_from_url);
       }
 
       const updatedUser = await User.findByIdAndUpdate(
@@ -384,17 +363,14 @@ const sendProfileOTP = async (req, res) => {
       });
     }
 
-    // Generate OTP
     const otp = generateOTP();
-    const otpExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+    const otpExpires = new Date(Date.now() + 10 * 60 * 1000);
 
-    // Store OTP in user document
     await User.findByIdAndUpdate(req.user._id, {
       profileOTP: otp,
       profileOTPExpires: otpExpires,
     });
 
-    // Send OTP email
     await sendOTPEmail(
       user.email,
       otp,
@@ -415,7 +391,6 @@ const sendProfileOTP = async (req, res) => {
   }
 };
 
-// Verify OTP and update profile
 const verifyProfileUpdate = async (req, res) => {
   try {
     const { otp, profileData } = req.body;
@@ -430,7 +405,6 @@ const verifyProfileUpdate = async (req, res) => {
       });
     }
 
-    // FIXED: Include the OTP fields in the query with +select
     const user = await User.findById(req.user._id).select(
       "+profileOTP +profileOTPExpires"
     );
@@ -448,7 +422,6 @@ const verifyProfileUpdate = async (req, res) => {
       expires: user.profileOTPExpires,
     }); // Debug log
 
-    // Check if OTP exists and hasn't expired
     if (!user.profileOTP || !user.profileOTPExpires) {
       return res.status(400).json({
         success: false,
@@ -463,7 +436,6 @@ const verifyProfileUpdate = async (req, res) => {
       });
     }
 
-    // FIXED: Ensure both are strings for comparison
     if (user.profileOTP.toString() !== otp.toString()) {
       console.log("OTP mismatch:", { stored: user.profileOTP, received: otp });
       return res.status(400).json({
@@ -472,14 +444,12 @@ const verifyProfileUpdate = async (req, res) => {
       });
     }
 
-    // OTP is valid, proceed with profile update
-    // Update base user info and clear OTP fields
     const updatedUser = await User.findByIdAndUpdate(
       req.user._id,
       {
         name,
         email,
-        // Clear the OTP fields
+
         $unset: {
           profileOTP: 1,
           profileOTPExpires: 1,
@@ -491,11 +461,9 @@ const verifyProfileUpdate = async (req, res) => {
     let profileScore = 0;
     let updatedLearner = null;
 
-    // Update role-specific data
     if (req.user.role === "user") {
       const Learner = require("../Model/Learner");
 
-      // Get current learner data to check if this is first update
       const currentLearner = await Learner.findOne({ userId: req.user._id });
       const isFirstUpdate = currentLearner && !currentLearner.isProfileUpdated;
 
@@ -505,13 +473,12 @@ const verifyProfileUpdate = async (req, res) => {
           title,
           description,
           location,
-          // Set to true only on first update
+
           ...(isFirstUpdate && { isProfileUpdated: true }),
         },
         { new: true, upsert: true }
       );
 
-      // Calculate profile completion score
       profileScore = calculateProfileScore(updatedUser, updatedLearner);
     } else if (req.user.role === "mentor") {
       const Mentor = require("../Model/Mentor");
@@ -543,7 +510,6 @@ const getUserById = async (req, res) => {
   try {
     const { userId } = req.params;
 
-    // Validate userId
     if (!userId) {
       return res.status(400).json({
         success: false,
@@ -553,7 +519,6 @@ const getUserById = async (req, res) => {
 
     console.log("Searching for user with ID:", userId); // Debug log
 
-    // Fetch the base user details
     const user = await User.findById(userId).select(
       "-password -otp -otpExpires -profileOTP -profileOTPExpires"
     );
@@ -568,22 +533,19 @@ const getUserById = async (req, res) => {
 
     console.log("User found:", user.name, user.role); // Debug log
 
-    // Fetch learner-specific data if user role is 'user'
     let userData = { ...user.toObject() };
 
     if (user.role === "user") {
       const learnerData = await Learner.findOne({ userId: user._id });
 
       if (learnerData) {
-        // Merge learner data with user data
         userData = {
           ...userData,
           ...learnerData.toObject(),
-          userId: learnerData.userId, // Keep reference
+          userId: learnerData.userId,
         };
         console.log("Learner data found and merged"); // Debug log
       } else {
-        // Create default learner data if it doesn't exist
         console.log("No learner data found, creating default"); // Debug log
         const newLearnerData = new Learner({
           userId: user._id,
@@ -604,16 +566,14 @@ const getUserById = async (req, res) => {
       const mentorData = await Mentor.findOne({ userId: user._id });
 
       if (mentorData) {
-        // Merge mentor data with user data
         userData = {
           ...userData,
           ...mentorData.toObject(),
-          userId: mentorData.userId, // Keep reference
+          userId: mentorData.userId,
         };
       }
     }
 
-    // Remove sensitive information that shouldn't be public
     delete userData.tempPassword;
     delete userData.isEmailVerified;
     delete userData.isAccountActive;
@@ -627,7 +587,6 @@ const getUserById = async (req, res) => {
   } catch (error) {
     console.error("Get user by ID error:", error);
 
-    // Handle invalid ObjectId format
     if (error.name === "CastError") {
       return res.status(400).json({
         success: false,

@@ -8,7 +8,7 @@ const {
 const {
   handleCompletionRequestResponse,
 } = require("../controller/completionController");
-// Import controllers
+
 const {
   getMentorProjectData,
   confirmExpectedEndDate,
@@ -28,7 +28,6 @@ const {
   getCompletionRequests: mentorGetCompletionRequests,
 } = require("../controller/myApprenticeController");
 
-// User (Learner) routes for My Mentor page
 router.get("/mentor-project-data", requireUser, getMentorProjectData);
 router.post("/confirm-expected-end-date", requireUser, confirmExpectedEndDate);
 router.get("/tracker-history/:projectId", requireUser, getProgressHistory);
@@ -36,7 +35,6 @@ router.post("/completion-request", requireUser, sendCompletionRequest);
 router.post("/submit-review", requireUser, submitMentorReview);
 router.get("/completion-requests", requireUser, getCompletionRequests);
 
-// Mentor routes for My Apprentice page
 router.get("/apprentice-project-data", requireMentor, getApprenticeProjectData);
 router.post("/set-expected-end-date", requireMentor, setTempExpectedEndDate);
 router.post("/update-tracker", requireMentor, updateProjectProgress);

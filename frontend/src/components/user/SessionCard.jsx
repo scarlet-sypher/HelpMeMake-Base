@@ -28,7 +28,7 @@ const SessionCard = () => {
   const fetchUpcomingSessions = async () => {
     try {
       setLoading(true);
-      setError(null); // Reset error state
+      setError(null);
       const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
       const token = localStorage.getItem("access_token");
 
@@ -41,7 +41,6 @@ const SessionCard = () => {
       if (response.data.success) {
         const sessionsData = response.data.sessions || [];
 
-        // Ensure we only get unique sessions by ID
         const uniqueSessions = sessionsData.filter(
           (session, index, self) =>
             index === self.findIndex((s) => s._id === session._id)
@@ -53,7 +52,7 @@ const SessionCard = () => {
     } catch (error) {
       console.error("Error fetching sessions:", error);
       setError(error.response?.data?.message || "Failed to fetch sessions");
-      setSessions([]); // Clear sessions on error
+      setSessions([]);
     } finally {
       setLoading(false);
     }
@@ -163,7 +162,6 @@ const SessionCard = () => {
     );
   }
 
-  // Only take the first 3 sessions and ensure they're unique
   const displaySessions = sessions.slice(0, 3);
 
   return (
@@ -174,7 +172,7 @@ const SessionCard = () => {
 
         return (
           <div
-            key={session._id} // Make sure this is unique
+            key={session._id}
             className="group relative bg-gradient-to-r from-white/5 to-white/10 backdrop-blur-sm rounded-2xl p-3 sm:p-4 lg:p-5 border border-white/10 hover:border-white/20 transition-all duration-300 hover:shadow-2xl hover:shadow-blue-500/10 hover:scale-[1.02] hover:bg-white/15"
           >
             {/* Subtle glow effect */}

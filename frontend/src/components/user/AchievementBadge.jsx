@@ -23,7 +23,6 @@ const AchievementBadge = () => {
   const [legendaryOverlayOpen, setLegendaryOverlayOpen] = useState(false);
   const legendaryRef = useRef(null);
 
-  // Badge level configurations with positions
   const badgeLevels = {
     basic: {
       name: "Basic Badge",
@@ -82,7 +81,6 @@ const AchievementBadge = () => {
     fetchBadgeData();
   }, []);
 
-  // Deduplicate badges after data is fetched
   useEffect(() => {
     if (badgeData && badgeData.categories) {
       deduplicateBadges();
@@ -144,7 +142,6 @@ const AchievementBadge = () => {
     const deduped = {};
 
     badgeTypes.forEach((badgeType) => {
-      // Find the first unlocked badge of this type across all categories
       let unlockedBadge = null;
       let fallbackBadge = null;
 
@@ -168,16 +165,15 @@ const AchievementBadge = () => {
         }
       }
 
-      // Use unlocked badge if available, otherwise use the first occurrence (locked)
       const badgeToAdd = unlockedBadge || fallbackBadge;
 
       if (badgeToAdd) {
         deduped[badgeType] = {
           ...badgeToAdd,
           level: badgeType,
-          // If we're using a fallback (locked) badge, ensure it's marked as locked
+
           unlocked: unlockedBadge ? true : false,
-          // For locked badges, calculate combined progress from all categories
+
           current: unlockedBadge
             ? badgeToAdd.current
             : badgeData.categories.reduce((sum, cat) => {
@@ -200,7 +196,6 @@ const AchievementBadge = () => {
     const levelConfig = badgeLevels[badgeType];
     const IconComponent = levelConfig.icon;
 
-    // Calculate progress for locked badges
     const progress = badge.unlocked
       ? 100
       : Math.min((badge.current / badge.required) * 100, 100);
@@ -209,17 +204,15 @@ const AchievementBadge = () => {
       ? levelConfig.name
       : `${levelConfig.name} - Unlock at least one badge to display it here`;
 
-    // Handle legendary badge animation
     const handleLegendaryAnimation = () => {
       if (badgeType === "legendary" && badge.unlocked) {
-        // Scroll to center the badge
         if (legendaryRef.current) {
           legendaryRef.current.scrollIntoView({
             behavior: "smooth",
             block: "center",
           });
         }
-        // Small delay to let scroll complete, then open overlay
+
         setTimeout(() => {
           setLegendaryOverlayOpen(true);
         }, 500);
@@ -381,7 +374,6 @@ const AchievementBadge = () => {
     );
   }
 
-  // Calculate total unlocked badges
   const totalUnlocked = Object.values(deduplicatedBadges).filter(
     (badge) => badge.unlocked
   ).length;

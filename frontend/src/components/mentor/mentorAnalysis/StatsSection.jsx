@@ -275,12 +275,10 @@ const StatCard = ({
   );
 };
 
-// Stats Section Component with proper responsive layout
 const StatsSection = ({ analyticsData }) => {
   const overview = analyticsData?.overview || {};
   const sessions = analyticsData?.sessions || {};
 
-  // Define exactly 7 stat cards with live data
   const statsConfig = [
     {
       icon: Target,
@@ -353,7 +351,6 @@ const StatsSection = ({ analyticsData }) => {
             <div
               key={`mobile-${index}`}
               className={`${
-                // Make the last card span full width if odd number of cards
                 index === statsConfig.length - 1 && statsConfig.length % 2 === 1
                   ? "col-span-2"
                   : ""

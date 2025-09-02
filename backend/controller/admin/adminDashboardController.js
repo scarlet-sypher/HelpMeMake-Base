@@ -6,7 +6,6 @@ const Session = require("../../Model/Session");
 const MessageRoom = require("../../Model/MessageRoom");
 
 const adminDashboardController = {
-  // dashboard statistics
   getDashboardStats: async (req, res) => {
     try {
       const [

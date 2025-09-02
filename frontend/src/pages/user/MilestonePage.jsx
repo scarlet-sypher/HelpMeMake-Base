@@ -15,7 +15,6 @@ const MilestonePage = () => {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
-  // Project and milestone data
   const [projectData, setProjectData] = useState(null);
   const [milestones, setMilestones] = useState([]);
   const [newMilestone, setNewMilestone] = useState("");
@@ -33,7 +32,6 @@ const MilestonePage = () => {
       setLoading(true);
       setError("");
 
-      // Fetch user's active project with mentor
       const response = await fetch(
         `${API_URL}/api/project/active-with-mentor`,
         {
@@ -59,7 +57,6 @@ const MilestonePage = () => {
           console.log("Learner ID:", data.project.learnerId); // debug
           console.log("Mentor ID object:", data.project.mentorId); // debug
 
-          // Log mentor details if available
           if (
             data.project.mentorId &&
             typeof data.project.mentorId === "object"
@@ -80,7 +77,6 @@ const MilestonePage = () => {
             console.log("Mentor data not properly populated or missing"); // debug
           }
 
-          // Since backend now only returns projects with "In Progress" status
           console.log("Setting project data for In Progress project"); // debug
           setProjectData(data.project);
           await fetchMilestones(data.project._id);
@@ -90,7 +86,6 @@ const MilestonePage = () => {
           ); // debug
           console.log("Debug info from backend:", data.debug); // debug
 
-          // Check if there was a project but wrong status
           if (
             data.debug &&
             data.debug.projectExists &&
@@ -158,7 +153,6 @@ const MilestonePage = () => {
           });
         }
 
-        // Process milestones based on current project status
         let processedMilestones = milestonesData;
 
         if (projectData && projectData.status) {
@@ -185,7 +179,6 @@ const MilestonePage = () => {
               }`
             ); // debug
 
-            // Update status based on verification and project status
             if (projectData.status === "In Progress") {
               if (
                 milestone.learnerVerification?.isVerified &&
@@ -272,7 +265,6 @@ const MilestonePage = () => {
         console.log("New milestone created:", data.milestone); // debug
         console.log("Milestone status:", data.milestone.status); // debug
 
-        // Update milestone status based on project status
         let updatedMilestone = { ...data.milestone };
 
         if (projectData.status === "Completed") {
@@ -286,7 +278,6 @@ const MilestonePage = () => {
             "Setting milestone status to Cancelled due to project status"
           ); // debug
         } else if (projectData.status === "In Progress") {
-          // Check milestone progress percentage
           const progressPercentage = updatedMilestone.progressPercentage || 0;
           if (progressPercentage >= 100) {
             updatedMilestone.status = "Completed";
@@ -396,7 +387,6 @@ const MilestonePage = () => {
     }
   };
 
-  // NEW: Mark review as read function
   const markReviewAsRead = async (milestoneId) => {
     try {
       setSaving(true);
@@ -414,7 +404,6 @@ const MilestonePage = () => {
       const data = await response.json();
 
       if (data.success) {
-        // Update the milestone in state to mark review as read
         setMilestones(
           milestones.map((m) =>
             m._id === milestoneId ? { ...m, reviewReadByLearner: true } : m
@@ -433,7 +422,6 @@ const MilestonePage = () => {
     setSidebarOpen(!sidebarOpen);
   };
 
-  // Count unread reviews for notification
   const unreadReviewsCount = milestones.filter(
     (m) => m.reviewNote && !m.reviewReadByLearner
   ).length;
@@ -546,7 +534,6 @@ const MilestonePage = () => {
           )}
 
           {!projectData ? (
-            // No Project Message
             <div className="bg-white/10 backdrop-blur-sm rounded-3xl shadow-2xl p-8 border border-white/20 text-center">
               <div className="flex flex-col items-center space-y-6">
                 <div className="p-6 bg-gradient-to-r from-orange-500 to-red-600 rounded-full">

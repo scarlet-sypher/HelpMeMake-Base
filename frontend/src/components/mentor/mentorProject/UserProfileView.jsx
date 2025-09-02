@@ -63,7 +63,7 @@ const UserProfileView = () => {
       icon: Shield,
       color: "from-blue-500 to-cyan-500",
       borderColor: "border-blue-400/50",
-      progressColor: "bg-blue-200", // lighter blue for visibility
+      progressColor: "bg-blue-200",
       textColor: "text-white",
     },
     common: {
@@ -71,7 +71,7 @@ const UserProfileView = () => {
       icon: Star,
       color: "from-green-500 to-emerald-500",
       borderColor: "border-green-400/50",
-      progressColor: "bg-green-200", // soft green contrast
+      progressColor: "bg-green-200",
       textColor: "text-white",
     },
     rare: {
@@ -79,7 +79,7 @@ const UserProfileView = () => {
       icon: Zap,
       color: "from-purple-500 to-violet-500",
       borderColor: "border-purple-400/50",
-      progressColor: "bg-purple-200", // pastel purple
+      progressColor: "bg-purple-200",
       textColor: "text-white",
     },
     epic: {
@@ -87,7 +87,7 @@ const UserProfileView = () => {
       icon: Trophy,
       color: "from-orange-500 to-red-500",
       borderColor: "border-orange-400/50",
-      progressColor: "bg-orange-200", // soft orange
+      progressColor: "bg-orange-200",
       textColor: "text-white",
     },
     legendary: {
@@ -95,12 +95,11 @@ const UserProfileView = () => {
       icon: Crown,
       color: "from-yellow-400 to-amber-500",
       borderColor: "border-yellow-400/50",
-      progressColor: "bg-yellow-200", // pale yellow
+      progressColor: "bg-yellow-200",
       textColor: "text-white",
     },
   };
 
-  // Get current user data first to determine their role
   useEffect(() => {
     const getCurrentUser = async () => {
       try {
@@ -118,7 +117,6 @@ const UserProfileView = () => {
           console.log("✅ Current user data fetched:", data.user);
           setCurrentUserData(data.user);
 
-          // Only check mentor status if current user is a mentor
           if (data.user?.role === "mentor") {
             await checkMentorStatus();
           }
@@ -131,7 +129,6 @@ const UserProfileView = () => {
     getCurrentUser();
   }, [API_URL]);
 
-  // Check if current user is a mentor and get their status
   const checkMentorStatus = async () => {
     try {
       console.log("🔍 Checking mentor status...");
@@ -160,9 +157,7 @@ const UserProfileView = () => {
     }
   };
 
-  // Fetch user profile data
   useEffect(() => {
-    // Check if user data was passed via navigation state
     if (location.state?.userData && location.state?.fromProject) {
       console.log("📋 Using user data from navigation state");
       setUser(location.state.userData);
@@ -170,7 +165,6 @@ const UserProfileView = () => {
       return;
     }
 
-    // Otherwise, fetch user profile data from API
     const fetchUserProfile = async () => {
       try {
         console.log(`🔍 Fetching user profile for userId: ${userId}`);
@@ -206,7 +200,6 @@ const UserProfileView = () => {
     }
   }, [userId, API_URL, location.state]);
 
-  // Fetch user projects
   useEffect(() => {
     const fetchUserProjects = async () => {
       try {
@@ -243,7 +236,6 @@ const UserProfileView = () => {
     }
   }, [userId, API_URL]);
 
-  // Fetch user badges
   useEffect(() => {
     const fetchUserBadges = async () => {
       try {
@@ -269,11 +261,11 @@ const UserProfileView = () => {
           setBadges(data.data.categories || []);
         } else {
           console.log("⚠️ No badges found or error:", data.message);
-          setBadges([]); // Set empty array if no badges
+          setBadges([]);
         }
       } catch (error) {
         console.error("❌ Error fetching user badges:", error);
-        setBadges([]); // Set empty array on error
+        setBadges([]);
       } finally {
         setBadgesLoading(false);
       }
@@ -289,9 +281,7 @@ const UserProfileView = () => {
   };
 
   const handleApplyCallback = (projectId) => {
-    // Refresh projects or update UI after successful application
     console.log(`Applied to project: ${projectId}`);
-    // You can add additional logic here if needed
   };
 
   const getSocialIcon = (platform) => {
@@ -310,12 +300,10 @@ const UserProfileView = () => {
   const formatSocialUrl = (platform, url) => {
     if (!url || url === "#") return null;
 
-    // If URL already includes domain, return as is
     if (url.startsWith("http://") || url.startsWith("https://")) {
       return url;
     }
 
-    // Add appropriate domain based on platform
     switch (platform) {
       case "github":
         return url.startsWith("/")
@@ -334,23 +322,20 @@ const UserProfileView = () => {
     }
   };
 
-  // Group badges by level and check if user has unlocked any at each level
   const processGroupedBadges = () => {
     if (!badges || badges.length === 0) {
-      // Return empty state for all levels
       return Object.keys(badgeLevels).map((level) => ({
         level,
         config: badgeLevels[level],
         count: 0,
         unlocked: false,
-        totalAvailable: badges.length * 5, // Assuming 5 levels per category
+        totalAvailable: badges.length * 5,
         progress: 0,
       }));
     }
 
     const levelCounts = {};
 
-    // Initialize level counts
     Object.keys(badgeLevels).forEach((level) => {
       levelCounts[level] = {
         count: 0,
@@ -359,7 +344,6 @@ const UserProfileView = () => {
       };
     });
 
-    // Process each category and count badges by level
     badges.forEach((category) => {
       category.badges.forEach((badge) => {
         const level = badge.level;
@@ -373,7 +357,6 @@ const UserProfileView = () => {
       });
     });
 
-    // Convert to array format for rendering
     return Object.keys(badgeLevels).map((level) => ({
       level,
       config: badgeLevels[level],
@@ -387,7 +370,6 @@ const UserProfileView = () => {
     }));
   };
 
-  // Render enhanced badges section
   const renderBadges = () => {
     if (badgesLoading) {
       return (

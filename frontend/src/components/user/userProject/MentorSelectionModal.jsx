@@ -49,7 +49,6 @@ const MentorSelectionModal = ({
   const [showFilters, setShowFilters] = useState(false);
   const navigate = useNavigate();
 
-  // Enhanced filtering and sorting
   const filteredAndSortedMentors = React.useMemo(() => {
     let filtered = mentors.filter((mentor) => {
       const matchesSearch =
@@ -86,7 +85,6 @@ const MentorSelectionModal = ({
     });
   }, [mentors, searchQuery, sortBy, filterBy]);
 
-  // Fetch available mentors
   const fetchMentors = async () => {
     try {
       setMentorsLoading(true);
@@ -108,7 +106,6 @@ const MentorSelectionModal = ({
     }
   };
 
-  // Fetch existing requests for this project
   const fetchProjectRequests = async () => {
     if (!project?._id) return;
 
@@ -124,7 +121,6 @@ const MentorSelectionModal = ({
       if (response.data.success) {
         setRequestedMentorIds(response.data.requestedMentorIds || []);
 
-        // Create a map of mentor ID to request details
         const statusMap = {};
         response.data.requests.forEach((request) => {
           statusMap[request.mentorId.toString()] = {
@@ -143,7 +139,6 @@ const MentorSelectionModal = ({
     }
   };
 
-  // Handle showing mentor selection
   useEffect(() => {
     if (showMentorSelection) {
       if (mentors.length === 0) {
@@ -153,7 +148,6 @@ const MentorSelectionModal = ({
     }
   }, [showMentorSelection, project?._id]);
 
-  // Handle request sent callback
   const handleRequestSent = (mentorId) => {
     setRequestedMentorIds((prev) => [...prev, mentorId.toString()]);
     setShowMentorSelection(false);
@@ -165,12 +159,10 @@ const MentorSelectionModal = ({
     });
   };
 
-  // Check if mentor has been requested
   const isMentorRequested = (mentorId) => {
     return requestedMentorIds.includes(mentorId.toString());
   };
 
-  // Get status badge styling
   const getStatusBadgeStyle = (status) => {
     switch (status) {
       case "accepted":

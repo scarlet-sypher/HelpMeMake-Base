@@ -36,19 +36,16 @@ const ProjectsIndex = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeItem, setActiveItem] = useState("projects");
 
-  // Projects state
   const [projects, setProjects] = useState([]);
   const [filteredProjects, setFilteredProjects] = useState([]);
   const [projectsLoading, setProjectsLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Filter and search state
   const [searchQuery, setSearchQuery] = useState("");
-  const [sortBy, setSortBy] = useState("name"); // name, date, status
-  const [sortOrder, setSortOrder] = useState("asc"); // asc, desc
+  const [sortBy, setSortBy] = useState("name");
+  const [sortOrder, setSortOrder] = useState("asc");
   const [filterDropdownOpen, setFilterDropdownOpen] = useState(false);
 
-  // Toast state
   const [toastState, setToastState] = useState({
     isOpen: false,
     message: "",
@@ -122,7 +119,6 @@ const ProjectsIndex = () => {
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (filterDropdownOpen) {
-        // Check if click is outside the dropdown
         const dropdown = event.target.closest(".filter-dropdown-container");
         if (!dropdown) {
           setFilterDropdownOpen(false);
@@ -145,19 +141,17 @@ const ProjectsIndex = () => {
 
           console.log("Fetching projects for authenticated user");
 
-          // Use the correct API URL
           const apiUrl =
-            import.meta.env.VITE_API_URL || "http://localhost:5000"; // Fixed port
+            import.meta.env.VITE_API_URL || "http://localhost:5000";
           console.log("API URL:", apiUrl);
 
-          const token = localStorage.getItem("access_token"); // Get token from localStorage
+          const token = localStorage.getItem("access_token");
 
-          // Use fetch instead of axios for consistency
           const response = await fetch(`${apiUrl}/projects/user`, {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`, // Use Bearer token instead of cookies
+              Authorization: `Bearer ${token}`,
             },
           });
 
@@ -181,16 +175,13 @@ const ProjectsIndex = () => {
     fetchProjects();
   }, [isAuthenticated, user]);
 
-  // Filter and search logic
   useEffect(() => {
     let filtered = [...projects];
 
-    // Apply search filter safely
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
 
       filtered = filtered.filter((project) => {
-        // Safely check each property with fallbacks
         const title = project?.title || project?.name || "";
         const description =
           project?.description || project?.shortDescription || "";
@@ -208,7 +199,6 @@ const ProjectsIndex = () => {
       });
     }
 
-    // Apply sorting safely
     filtered.sort((a, b) => {
       let comparison = 0;
 
@@ -238,7 +228,6 @@ const ProjectsIndex = () => {
     setFilteredProjects(filtered);
   }, [projects, searchQuery, sortBy, sortOrder]);
 
-  // Show loading spinner
   if (loading || projectsLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-indigo-950 flex items-center justify-center">
@@ -250,7 +239,6 @@ const ProjectsIndex = () => {
     );
   }
 
-  // Don't render if not authenticated
   if (!isAuthenticated) {
     return null;
   }
@@ -521,12 +509,11 @@ const ProjectsIndex = () => {
                     project={project}
                     onToast={showToast}
                     onUpdate={() => {
-                      // Refresh projects after update
                       window.location.reload();
                     }}
                     onDelete={() => {
                       showToast("Project deleted successfully", "success");
-                      // Remove from state
+
                       setProjects(
                         projects.filter((p) => p._id !== project._id)
                       );

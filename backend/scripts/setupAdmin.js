@@ -5,11 +5,9 @@ require("dotenv").config();
 
 const setupAdmin = async () => {
   try {
-    // Connect to MongoDB
     await mongoose.connect(process.env.MONGO_URL);
     console.log("Connected to MongoDB");
 
-    // Get admin credentials from environment variables
     const adminId = process.env.ADMIN_ID;
     const adminPassword = process.env.ADMIN_PASSWORD;
 
@@ -20,27 +18,22 @@ const setupAdmin = async () => {
       process.exit(1);
     }
 
-    // Check if admin already exists
     const existingAdmin = await Admin.findOne({ username: adminId });
 
     if (existingAdmin) {
       console.log("Admin already exists. Updating password...");
 
-      // Hash the new password
       const saltRounds = 12;
       const hashedPassword = await bcrypt.hash(adminPassword, saltRounds);
 
-      // Update existing admin
       existingAdmin.password = hashedPassword;
       await existingAdmin.save();
 
       console.log("Admin password updated successfully!");
     } else {
-      // Hash the password
       const saltRounds = 12;
       const hashedPassword = await bcrypt.hash(adminPassword, saltRounds);
 
-      // Create new admin
       const admin = new Admin({
         username: adminId,
         password: hashedPassword,

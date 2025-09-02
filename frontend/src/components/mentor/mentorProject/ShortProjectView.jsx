@@ -32,7 +32,6 @@ const ShortProjectView = ({ project, onApply = null, onToast = null }) => {
     estimatedDuration: "",
   });
 
-  // Notification state
   const [hasNewRequests, setHasNewRequests] = useState(false);
   const [requestCount, setRequestCount] = useState(0);
 
@@ -102,12 +101,10 @@ const ShortProjectView = ({ project, onApply = null, onToast = null }) => {
     checkMentorPitchStatus();
   }, [project._id]);
 
-  // Check for requests function
   const checkProjectRequests = async () => {
     try {
       const token = localStorage.getItem("access_token");
 
-      // Get all mentor requests
       const response = await axios.get(`${API_URL}/requests/mentor`, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -115,7 +112,6 @@ const ShortProjectView = ({ project, onApply = null, onToast = null }) => {
       });
 
       if (response.data.success) {
-        // Filter requests for this specific project
         const projectRequests = response.data.requests.filter(
           (request) =>
             request.projectId === project._id && request.status === "pending"
@@ -129,7 +125,6 @@ const ShortProjectView = ({ project, onApply = null, onToast = null }) => {
     }
   };
 
-  // Get difficulty color
   const getDifficultyColor = (level) => {
     switch (level) {
       case "Beginner":
@@ -143,14 +138,12 @@ const ShortProjectView = ({ project, onApply = null, onToast = null }) => {
     }
   };
 
-  // Format price
   const formatPrice = (price) => {
     if (!price) return "Not set";
     return `₹${price.toLocaleString()}`;
   };
 
   const handleViewProject = () => {
-    // Clear notification when mentor views project
     setHasNewRequests(false);
     setRequestCount(0);
 

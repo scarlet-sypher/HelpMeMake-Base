@@ -21,9 +21,8 @@ const ReviewerBox = ({
   const [localSaving, setLocalSaving] = useState(false);
 
   useEffect(() => {
-    // Initialize with existing review note or empty
     setReviewText(milestone.reviewNote || "");
-    // Start in edit mode if there's no existing review
+
     setIsEditMode(!milestone.reviewNote);
   }, [milestone]);
 
@@ -47,7 +46,7 @@ const ReviewerBox = ({
 
   const handleCancel = () => {
     setReviewText(milestone.reviewNote || "");
-    setIsEditMode(!milestone.reviewNote); // Return to edit if no existing review
+    setIsEditMode(!milestone.reviewNote);
   };
 
   const handleTextChange = (e) => {
@@ -92,7 +91,6 @@ const ReviewerBox = ({
         <div className="p-6 overflow-y-auto max-h-[calc(90vh-200px)]">
           <div className="space-y-4">
             {isEditMode ? (
-              // Edit Mode - Text Area
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-cyan-300 mb-2">
@@ -140,7 +138,6 @@ const ReviewerBox = ({
                 </div>
               </div>
             ) : (
-              // Read Mode - Display Review
               <div className="space-y-4">
                 {hasExistingReview ? (
                   <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/20">
@@ -205,7 +202,6 @@ const ReviewerBox = ({
         <div className="p-6 border-t border-white/10">
           <div className="flex justify-end space-x-3">
             {isEditMode ? (
-              // Edit Mode Buttons
               <>
                 <button
                   onClick={handleCancel}
@@ -230,7 +226,6 @@ const ReviewerBox = ({
                 </button>
               </>
             ) : (
-              // Read Mode Buttons
               <>
                 <button
                   onClick={onClose}

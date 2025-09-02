@@ -9,9 +9,7 @@ const mentorTimelineSchema = new mongoose.Schema(
       unique: true,
     },
 
-    // Latest counts for tracking changes
     latestCounts: {
-      // Project counts by status
       projects: {
         total: { type: Number, default: 0 },
         open: { type: Number, default: 0 },
@@ -20,7 +18,6 @@ const mentorTimelineSchema = new mongoose.Schema(
         cancelled: { type: Number, default: 0 },
       },
 
-      // Milestone counts by status
       milestones: {
         total: { type: Number, default: 0 },
         notStarted: { type: Number, default: 0 },
@@ -30,7 +27,6 @@ const mentorTimelineSchema = new mongoose.Schema(
         blocked: { type: Number, default: 0 },
       },
 
-      // Session counts by status
       sessions: {
         total: { type: Number, default: 0 },
         scheduled: { type: Number, default: 0 },
@@ -42,7 +38,6 @@ const mentorTimelineSchema = new mongoose.Schema(
       },
     },
 
-    // Timeline events
     events: [
       {
         type: {
@@ -136,13 +131,11 @@ const mentorTimelineSchema = new mongoose.Schema(
   }
 );
 
-// Indexes for better performance
 mentorTimelineSchema.index({ mentorId: 1 });
 mentorTimelineSchema.index({ "events.createdAt": -1 });
 mentorTimelineSchema.index({ "events.type": 1 });
 mentorTimelineSchema.index({ lastUpdated: -1 });
 
-// Static method to find or create timeline record
 mentorTimelineSchema.statics.findOrCreateByMentor = async function (mentorId) {
   let timeline = await this.findOne({ mentorId });
 
@@ -184,7 +177,6 @@ mentorTimelineSchema.statics.findOrCreateByMentor = async function (mentorId) {
   return timeline;
 };
 
-// Instance method to add timeline event
 mentorTimelineSchema.methods.addEvent = function (
   type,
   message,
@@ -205,7 +197,6 @@ mentorTimelineSchema.methods.addEvent = function (
     createdAt: new Date(),
   });
 
-  // Keep only last 100 events to prevent unlimited growth
   if (this.events.length > 100) {
     this.events = this.events.slice(0, 100);
   }
@@ -214,7 +205,6 @@ mentorTimelineSchema.methods.addEvent = function (
   return this.save();
 };
 
-// Instance method to update counts and detect changes
 mentorTimelineSchema.methods.updateAndDetectChanges = async function (
   newCounts
 ) {
@@ -222,18 +212,8 @@ mentorTimelineSchema.methods.updateAndDetectChanges = async function (
   const events = [];
 
   //debug - Print counts being compared
-  //   console.log(
-  //     "//debug - Mentor Old counts:",
-  //     JSON.stringify(oldCounts, null, 2)
-  //   );
-  //   console.log(
-  //     "//debug - Mentor New counts:",
-  //     JSON.stringify(newCounts, null, 2)
-  //   );
 
-  // Check project changes
   if (newCounts.projects) {
-    // Total projects
     if (newCounts.projects.total > oldCounts.projects.total) {
       events.push({
         type: "project_added",
@@ -250,7 +230,6 @@ mentorTimelineSchema.methods.updateAndDetectChanges = async function (
       });
     }
 
-    // Project status changes
     if (newCounts.projects.completed > oldCounts.projects.completed) {
       events.push({
         type: "project_status_changed",
@@ -279,7 +258,6 @@ mentorTimelineSchema.methods.updateAndDetectChanges = async function (
     }
   }
 
-  // Check milestone changes
   if (newCounts.milestones) {
     if (newCounts.milestones.total > oldCounts.milestones.total) {
       events.push({
@@ -318,7 +296,6 @@ mentorTimelineSchema.methods.updateAndDetectChanges = async function (
     }
   }
 
-  // Check session changes
   if (newCounts.sessions) {
     if (newCounts.sessions.total > oldCounts.sessions.total) {
       events.push({
@@ -356,24 +333,17 @@ mentorTimelineSchema.methods.updateAndDetectChanges = async function (
   }
 
   //debug - Print detected events
-  //   console.log("//debug - Mentor Detected timeline events:", events.length);
-  //   events.forEach((event, index) => {
-  //     console.log(`//debug - Mentor Event ${index + 1}:`, event.message);
-  //   });
 
-  // Add all detected events
   for (const event of events) {
     await this.addEvent(event.type, event.message, event.icon, event.color);
   }
 
-  // Update counts
   this.latestCounts = newCounts;
   this.lastUpdated = new Date();
 
   return this.save();
 };
 
-// Configure JSON output
 mentorTimelineSchema.set("toJSON", {
   virtuals: true,
   transform: function (doc, ret) {

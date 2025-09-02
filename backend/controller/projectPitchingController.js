@@ -1,10 +1,9 @@
 const Project = require("../Model/Project");
 const Mentor = require("../Model/Mentor");
 
-// Check if mentor has already pitched on a project
 const checkMentorPitch = async (req, res) => {
   try {
-    const { id } = req.params; // project ID
+    const { id } = req.params;
 
     const project = await Project.findById(id);
     if (!project) {
@@ -14,7 +13,6 @@ const checkMentorPitch = async (req, res) => {
       });
     }
 
-    // Check if current user has pitched
     const hasPitched =
       project.pitches?.some(
         (pitch) => pitch.mentor.toString() === req.user._id.toString()
@@ -40,7 +38,6 @@ const checkMentorPitch = async (req, res) => {
   }
 };
 
-// Enhanced pitch creation with duplicate check
 const createPitchWithCheck = async (req, res) => {
   try {
     const { id } = req.params;
@@ -79,7 +76,6 @@ const createPitchWithCheck = async (req, res) => {
       });
     }
 
-    // Check if mentor already pitched - return 409 Conflict
     const existingPitch = project.pitches?.find(
       (pitch) => pitch.mentor.toString() === req.user._id.toString()
     );
@@ -91,7 +87,6 @@ const createPitchWithCheck = async (req, res) => {
       });
     }
 
-    // Add new pitch
     await project.addOrUpdatePitch(
       mentor.userId._id,
       parseFloat(price),
@@ -128,7 +123,6 @@ const createPitchWithCheck = async (req, res) => {
   }
 };
 
-// Get average pitch price for a project
 const getProjectAvgPitch = async (req, res) => {
   try {
     const { id } = req.params;

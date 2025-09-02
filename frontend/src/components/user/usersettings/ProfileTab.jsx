@@ -30,7 +30,6 @@ const ProfileTab = ({
   professionalTitles,
   showNotification,
 }) => {
-  // OTP verification state
   const [otpModal, setOtpModal] = useState({
     isOpen: false,
     otp: ["", "", "", "", "", ""],
@@ -40,13 +39,10 @@ const ProfileTab = ({
     pendingData: null,
   });
 
-  // Add sendingOTP state for loading feedback
   const [sendingOTP, setSendingOTP] = useState(false);
 
-  // Email tooltip state
   const [showEmailTooltip, setShowEmailTooltip] = useState(false);
 
-  // Start countdown timer
   const startCountdown = () => {
     setOtpModal((prev) => ({ ...prev, countdown: 60 }));
     const timer = setInterval(() => {
@@ -60,11 +56,9 @@ const ProfileTab = ({
     }, 1000);
   };
 
-  // Handle OTP change
   const handleOtpChange = (index, value) => {
-    if (value.length > 6) return; // max 6 digits
+    if (value.length > 6) return;
 
-    // If pasted multiple digits
     if (value.length > 1) {
       const pasteDigits = value.split("").slice(0, 6);
       const newOtp = [...otpModal.otp];
@@ -72,7 +66,7 @@ const ProfileTab = ({
         newOtp[i] = pasteDigits[i];
       }
       setOtpModal((prev) => ({ ...prev, otp: newOtp }));
-      // Focus the last filled input or the last box
+
       const nextIndex = pasteDigits.length < 6 ? pasteDigits.length : 5;
       const nextInput = document.getElementById(`profile-otp-${nextIndex}`);
       if (nextInput) nextInput.focus();
@@ -83,14 +77,12 @@ const ProfileTab = ({
     newOtp[index] = value;
     setOtpModal((prev) => ({ ...prev, otp: newOtp }));
 
-    // Auto-focus next input
     if (value && index < 5) {
       const nextInput = document.getElementById(`profile-otp-${index + 1}`);
       if (nextInput) nextInput.focus();
     }
   };
 
-  // Handle key down for backspace navigation
   const handleOtpKeyDown = (index, e) => {
     if (e.key === "Backspace" && !otpModal.otp[index] && index > 0) {
       const prevInput = document.getElementById(`profile-otp-${index - 1}`);
@@ -98,7 +90,6 @@ const ProfileTab = ({
     }
   };
 
-  // Send OTP for profile verification
   const sendProfileOTP = async (formData) => {
     setSendingOTP(true);
     try {
@@ -120,7 +111,7 @@ const ProfileTab = ({
           otp: ["", "", "", "", "", ""],
         }));
         startCountdown();
-        // Show notification only once when modal opens
+
         showNotification(
           "profile",
           "success",
@@ -135,7 +126,6 @@ const ProfileTab = ({
     }
   };
 
-  // Resend OTP
   const handleResendOTP = async () => {
     if (otpModal.countdown > 0) return;
 
@@ -168,7 +158,6 @@ const ProfileTab = ({
     }
   };
 
-  // Verify OTP and update profile
   const verifyOTPAndUpdate = async () => {
     const otpString = otpModal.otp.join("");
     if (otpString.length !== 6) {
@@ -223,15 +212,12 @@ const ProfileTab = ({
     }
   };
 
-  // Modified profile update handler
   const handleProfileUpdateWithOTP = async (e) => {
     e.preventDefault();
 
-    // Send OTP instead of directly updating
     await sendProfileOTP(profileData);
   };
 
-  // Close OTP modal
   const closeOtpModal = () => {
     setOtpModal({
       isOpen: false,

@@ -114,7 +114,6 @@ const MyMentor = () => {
   };
 
   const handleProjectUpdate = () => {
-    // Refresh project data after updates
     window.location.reload();
   };
 

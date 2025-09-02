@@ -33,7 +33,6 @@ import {
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-// Request Modal Component
 const RequestModal = ({ mentor, project, onClose, onRequestSent, API_URL }) => {
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -174,23 +173,20 @@ const ShowMentorDetails = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Get data from navigation state or initialize empty
   const [mentor, setMentor] = useState(location.state?.mentor || null);
   const [whyReason, setWhyReason] = useState(location.state?.whyReason || "");
   const [aiScore, setAiScore] = useState(location.state?.aiScore || 0);
   const [loading, setLoading] = useState(!mentor);
   const [project, setProject] = useState(location.state?.project || null);
 
-  // Request handling states
   const [showRequestModal, setShowRequestModal] = useState(false);
-  const [requestStatus, setRequestStatus] = useState(null); // null, 'pending', 'accepted', 'rejected'
+  const [requestStatus, setRequestStatus] = useState(null);
   const [mentorResponse, setMentorResponse] = useState("");
   const [respondedAt, setRespondedAt] = useState(null);
   const [checkingRequest, setCheckingRequest] = useState(false);
 
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
-  // Check if user has already sent a request to this mentor for the project
   const checkExistingRequest = async () => {
     if (!project?._id || !mentorId) return;
 
@@ -221,14 +217,12 @@ const ShowMentorDetails = () => {
     }
   };
 
-  // Fetch mentor details if not available from state
   useEffect(() => {
     const fetchMentorDetails = async () => {
       if (!mentor || !whyReason) {
         try {
           setLoading(true);
 
-          // Fetch mentor details
           const mentorResponse = await axios.get(
             `${API_URL}/mentor/${mentorId}`,
             {
@@ -240,9 +234,6 @@ const ShowMentorDetails = () => {
             setMentor(mentorResponse.data.mentor);
           }
 
-          // If we don't have AI reasoning, we can either:
-          // 1. Show a message that AI reasoning is not available
-          // 2. Create a backend endpoint to regenerate reasoning
           if (!whyReason) {
             setWhyReason(
               "AI reasoning not available. This mentor was recommended based on comprehensive analysis of skills, experience, and project compatibility."
@@ -263,12 +254,10 @@ const ShowMentorDetails = () => {
     }
   }, [mentorId, mentor, whyReason, API_URL, navigate]);
 
-  // Check for existing request when component mounts
   useEffect(() => {
     checkExistingRequest();
   }, [project?._id, mentorId]);
 
-  // Handle sending mentor request
   const handleSendRequest = () => {
     if (!project) {
       toast.error(
@@ -288,20 +277,17 @@ const ShowMentorDetails = () => {
     setShowRequestModal(true);
   };
 
-  // Handle request sent callback
   const handleRequestSent = (mentorId) => {
     setRequestStatus("pending");
     setMentorResponse("");
     setRespondedAt(null);
   };
 
-  // Format price helper
   const formatPrice = (price, currency = "INR") => {
     if (!price) return "Not set";
     return `${currency} ${price.toLocaleString()}`;
   };
 
-  // Format date helper
   const formatDate = (dateString) => {
     if (!dateString) return "Not specified";
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -310,16 +296,14 @@ const ShowMentorDetails = () => {
     });
   };
 
-  // Parse AI reasoning into bullet points
   const parseAIReasoning = (reason) => {
     if (!reason) return [];
 
-    // Split by common delimiters and clean up
     const points = reason
       .split(/[.!]+/)
       .map((point) => point.trim())
-      .filter((point) => point.length > 10) // Filter out very short fragments
-      .slice(0, 6); // Limit to 6 points max
+      .filter((point) => point.length > 10)
+      .slice(0, 6);
 
     return points;
   };

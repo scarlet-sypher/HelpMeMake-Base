@@ -15,7 +15,6 @@ const MentorBadgesSection = ({ mentorData }) => {
     return null;
   }
 
-  // Icon mapping for different badge types
   const getIconComponent = (iconName) => {
     const iconMap = {
       trophy: Trophy,
@@ -30,7 +29,6 @@ const MentorBadgesSection = ({ mentorData }) => {
     return iconMap[iconName?.toLowerCase()] || Award;
   };
 
-  // Color mapping for different badge categories
   const getBadgeColors = (category, index) => {
     const colorSchemes = [
       {
@@ -156,12 +154,10 @@ const MentorBadgesSection = ({ mentorData }) => {
                             {badge.icon &&
                             typeof badge.icon === "string" &&
                             badge.icon.match(/[\u{1F000}-\u{1F9FF}]/u) ? (
-                              // Emoji icon
                               <span className="text-3xl group-hover/badge:animate-bounce">
                                 {badge.icon}
                               </span>
                             ) : (
-                              // Lucide icon
                               <IconComponent
                                 className={`w-8 h-8 ${colors.icon} group-hover/badge:rotate-12 transition-transform duration-300`}
                               />

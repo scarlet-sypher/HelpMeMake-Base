@@ -4,12 +4,10 @@ const Mentor = require("../Model/Mentor");
 const User = require("../Model/User");
 const Project = require("../Model/Project");
 
-// Get mentor goal and reviews
 const getMentorGoalAndReviews = async (req, res) => {
   try {
     const userId = req.user._id;
 
-    // Find the mentor profile
     const mentor = await Mentor.findOne({ userId }).populate(
       "userId",
       "name avatar"
@@ -26,25 +24,21 @@ const getMentorGoalAndReviews = async (req, res) => {
     const currentMonth = currentDate.getMonth() + 1;
     const currentYear = currentDate.getFullYear();
 
-    // Get last month's data for comparison
     const lastMonth = currentMonth === 1 ? 12 : currentMonth - 1;
     const lastMonthYear = currentMonth === 1 ? currentYear - 1 : currentYear;
 
-    // Find current month's goal
     let currentGoal = await Goal.findOne({
       mentorId: mentor._id,
       month: currentMonth,
       year: currentYear,
     });
 
-    // Get last month's goal for comparison
     const lastMonthGoal = await Goal.findOne({
       mentorId: mentor._id,
       month: lastMonth,
       year: lastMonthYear,
     });
 
-    // Get all completed projects for this month
     const startOfMonth = new Date(currentYear, currentMonth - 1, 1);
     const endOfMonth = new Date(currentYear, currentMonth, 0, 23, 59, 59);
 
@@ -54,7 +48,6 @@ const getMentorGoalAndReviews = async (req, res) => {
       updatedAt: { $gte: startOfMonth, $lte: endOfMonth },
     });
 
-    // Calculate current month statistics
     const sessionsCompleted = currentMonthProjects.length;
     const currentEarnings = currentMonthProjects.reduce(
       (sum, project) => sum + (project.closingPrice || 0),
@@ -65,7 +58,6 @@ const getMentorGoalAndReviews = async (req, res) => {
         ? Math.round(currentEarnings / sessionsCompleted)
         : 0;
 
-    // Calculate comparison with last month
     const lastMonthEarnings = lastMonthGoal ? lastMonthGoal.currentEarnings : 0;
     const lastMonthSessions = lastMonthGoal
       ? lastMonthGoal.sessionsCompleted
@@ -74,7 +66,6 @@ const getMentorGoalAndReviews = async (req, res) => {
       ? lastMonthGoal.avgPerSession
       : 0;
 
-    // Calculate percentage changes
     const earningsChange =
       lastMonthEarnings > 0
         ? Math.round(
@@ -104,7 +95,6 @@ const getMentorGoalAndReviews = async (req, res) => {
         ? 100
         : 0;
 
-    // If no goal exists, create a default one
     if (!currentGoal) {
       currentGoal = new Goal({
         mentorId: mentor._id,
@@ -119,7 +109,6 @@ const getMentorGoalAndReviews = async (req, res) => {
       });
       await currentGoal.save();
     } else {
-      // Update current earnings and sessions data
       currentGoal.currentEarnings = currentEarnings;
       currentGoal.sessionsCompleted = sessionsCompleted;
       currentGoal.avgPerSession = avgPerSession;
@@ -128,7 +117,6 @@ const getMentorGoalAndReviews = async (req, res) => {
       await currentGoal.save();
     }
 
-    // Get projects where this mentor was assigned and status is completed/cancelled
     const completedProjects = await Project.find({
       mentorId: mentor._id,
       status: { $in: ["Completed", "Cancelled"] },
@@ -147,13 +135,11 @@ const getMentorGoalAndReviews = async (req, res) => {
       )
       .sort({ "learnerReview.reviewDate": -1 });
 
-    // Get ALL projects for totals calculation (not just those with reviews)
     const allProjects = await Project.find({
       mentorId: mentor._id,
       status: { $in: ["Completed", "Cancelled"] },
     }).select("status closingPrice");
 
-    // Calculate totals
     const completedProjectsTotal = allProjects
       .filter((project) => project.status === "Completed")
       .reduce((sum, project) => sum + (project.closingPrice || 0), 0);
@@ -164,12 +150,10 @@ const getMentorGoalAndReviews = async (req, res) => {
 
     const allProjectsTotal = completedProjectsTotal + cancelledProjectsTotal;
 
-    // Calculate days left in month
     const daysInMonth = new Date(currentYear, currentMonth, 0).getDate();
     const currentDay = new Date().getDate();
     const daysLeft = daysInMonth - currentDay;
 
-    // Format reviews data
     const reviews = completedProjects.map((project) => {
       let requestInfo = null;
 
@@ -218,7 +202,7 @@ const getMentorGoalAndReviews = async (req, res) => {
         },
         goal: {
           ...currentGoal.toJSON(),
-          // Add calculated comparison data
+
           earningsChange,
           sessionsChange,
           avgPerSessionChange,
@@ -242,13 +226,11 @@ const getMentorGoalAndReviews = async (req, res) => {
   }
 };
 
-// Set or update mentor goal
 const setMentorGoal = async (req, res) => {
   try {
     const userId = req.user._id;
     const { monthlyGoal } = req.body;
 
-    // Validate input
     if (!monthlyGoal || monthlyGoal < 0) {
       return res.status(400).json({
         success: false,
@@ -256,7 +238,6 @@ const setMentorGoal = async (req, res) => {
       });
     }
 
-    // Find the mentor profile
     const mentor = await Mentor.findOne({ userId });
 
     if (!mentor) {
@@ -270,7 +251,6 @@ const setMentorGoal = async (req, res) => {
     const currentMonth = currentDate.getMonth() + 1;
     const currentYear = currentDate.getFullYear();
 
-    // Find or create current month's goal
     let goal = await Goal.findOne({
       mentorId: mentor._id,
       month: currentMonth,
@@ -278,11 +258,9 @@ const setMentorGoal = async (req, res) => {
     });
 
     if (goal) {
-      // Update existing goal
       goal.monthlyGoal = monthlyGoal;
       goal.currentEarnings = mentor.mentorTotalEarnings || 0;
     } else {
-      // Create new goal
       goal = new Goal({
         mentorId: mentor._id,
         monthlyGoal,
@@ -309,12 +287,10 @@ const setMentorGoal = async (req, res) => {
   }
 };
 
-// Get mentor reviews only
 const getMentorReviews = async (req, res) => {
   try {
     const userId = req.user._id;
 
-    // Find the mentor profile
     const mentor = await Mentor.findOne({ userId });
 
     if (!mentor) {
@@ -324,7 +300,6 @@ const getMentorReviews = async (req, res) => {
       });
     }
 
-    // Get projects where this mentor was assigned and status is completed/cancelled
     const completedProjects = await Project.find({
       mentorId: mentor._id,
       status: { $in: ["Completed", "Cancelled"] },
@@ -340,7 +315,6 @@ const getMentorReviews = async (req, res) => {
       .select("name closingPrice learnerReview createdAt")
       .sort({ "learnerReview.reviewDate": -1 });
 
-    // Format reviews data
     const reviews = completedProjects.map((project) => ({
       projectName: project.name,
       closingPrice: project.closingPrice || 0,
@@ -367,12 +341,10 @@ const getMentorReviews = async (req, res) => {
   }
 };
 
-// Get recent mentor reviews for dashboard
 const getRecentMentorReviews = async (req, res) => {
   try {
     const userId = req.user._id;
 
-    // Find the mentor profile
     const mentor = await Mentor.findOne({ userId });
 
     if (!mentor) {
@@ -382,7 +354,6 @@ const getRecentMentorReviews = async (req, res) => {
       });
     }
 
-    // Get projects where this mentor was assigned and status is completed/cancelled
     const completedProjects = await Project.find({
       mentorId: mentor._id,
       status: { $in: ["Completed", "Cancelled"] },
@@ -397,16 +368,14 @@ const getRecentMentorReviews = async (req, res) => {
       })
       .select("name closingPrice learnerReview createdAt status")
       .sort({ "learnerReview.reviewDate": -1 })
-      .limit(4); // Get only 4 most recent reviews
+      .limit(4);
 
-    // Get total count of reviews for "View All" button
     const totalReviewsCount = await Project.countDocuments({
       mentorId: mentor._id,
       status: { $in: ["Completed", "Cancelled"] },
       "learnerReview.rating": { $exists: true },
     });
 
-    // Calculate overall stats
     const allReviewsForStats = await Project.find({
       mentorId: mentor._id,
       status: { $in: ["Completed", "Cancelled"] },
@@ -436,7 +405,6 @@ const getRecentMentorReviews = async (req, res) => {
       );
     }
 
-    // Format reviews data
     const reviews = completedProjects.map((project) => ({
       name: project.learnerId.userId.name,
       image: project.learnerId.userId.avatar,

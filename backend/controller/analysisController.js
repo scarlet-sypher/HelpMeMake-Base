@@ -6,12 +6,10 @@ const Session = require("../Model/Session");
 const Milestone = require("../Model/Milestone");
 const Learner = require("../Model/Learner");
 
-// Get comprehensive analytics for the logged-in mentor
 const getMentorAnalysis = async (req, res) => {
   try {
     const userId = req.user._id;
 
-    // First, get the mentor profile to get mentorId
     const mentor = await Mentor.findOne({ userId }).populate(
       "userId",
       "name email avatar"
@@ -27,7 +25,6 @@ const getMentorAnalysis = async (req, res) => {
     const mentorId = mentor._id;
     const userInfo = mentor.userId;
 
-    // Get all projects assigned to this mentor
     const allProjects = await Project.find({ mentorId })
       .populate("learnerId", "userId")
       .populate({
@@ -38,7 +35,6 @@ const getMentorAnalysis = async (req, res) => {
         },
       });
 
-    // Project statistics
     const totalProjects = allProjects.length;
     const completedProjects = allProjects.filter(
       (p) => p.status === "Completed"
@@ -51,7 +47,6 @@ const getMentorAnalysis = async (req, res) => {
     ).length;
     const openProjects = allProjects.filter((p) => p.status === "Open").length;
 
-    // Earnings calculation
     const totalEarnings = allProjects.reduce((sum, project) => {
       const price =
         project.closingPrice ||
@@ -68,7 +63,6 @@ const getMentorAnalysis = async (req, res) => {
         return sum + price;
       }, 0);
 
-    // Average completion time calculation
     const completedProjectsWithDates = allProjects.filter(
       (p) => p.status === "Completed" && p.startDate && p.actualEndDate
     );
@@ -87,7 +81,6 @@ const getMentorAnalysis = async (req, res) => {
       );
     }
 
-    // Top learners by project count
     const learnerProjectCounts = {};
     allProjects.forEach((project) => {
       if (project.learnerId && project.learnerId.userId) {
@@ -111,9 +104,8 @@ const getMentorAnalysis = async (req, res) => {
 
     const topLearners = Object.values(learnerProjectCounts)
       .sort((a, b) => b.totalProjects - a.totalProjects)
-      .slice(0, 5); // Top 5 learners
+      .slice(0, 5);
 
-    // Session statistics
     const allSessions = await Session.find({ mentorId });
     const totalSessions = allSessions.length;
     const completedSessions = allSessions.filter(
@@ -123,7 +115,6 @@ const getMentorAnalysis = async (req, res) => {
       (s) => s.status === "scheduled" && new Date(s.scheduledAt) > new Date()
     ).length;
 
-    // Milestone statistics
     const allMilestones = await Milestone.find({ mentorId });
     const totalMilestones = allMilestones.length;
     const completedMilestones = allMilestones.filter(
@@ -134,7 +125,6 @@ const getMentorAnalysis = async (req, res) => {
         m.learnerVerification.isVerified && !m.mentorVerification.isVerified
     ).length;
 
-    // Monthly project completion trend (last 6 months)
     const monthlyTrend = [];
     for (let i = 5; i >= 0; i--) {
       const date = new Date();
@@ -159,7 +149,6 @@ const getMentorAnalysis = async (req, res) => {
       });
     }
 
-    // Rating statistics
     const projectsWithRatings = allProjects.filter(
       (p) => p.learnerReview && p.learnerReview.rating
     );
@@ -171,16 +160,13 @@ const getMentorAnalysis = async (req, res) => {
           ) / projectsWithRatings.length
         : mentor.rating || 0;
 
-    // Success rate (completed vs total projects)
     const successRate =
       totalProjects > 0
         ? Math.round((completedProjects / totalProjects) * 100)
         : 0;
 
-    // Response time (from mentor profile)
     const responseTime = mentor.responseTime || 30;
 
-    // Project distribution for charts
     const projectDistribution = {
       completed: completedProjects,
       ongoing: ongoingProjects,
@@ -188,7 +174,6 @@ const getMentorAnalysis = async (req, res) => {
       open: openProjects,
     };
 
-    // Recent activity (last 10 projects)
     const recentProjects = allProjects
       .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt))
       .slice(0, 10)
@@ -252,7 +237,6 @@ const getMentorAnalysis = async (req, res) => {
   }
 };
 
-// Get detailed project analytics
 const getProjectAnalytics = async (req, res) => {
   try {
     const userId = req.user._id;
@@ -267,7 +251,6 @@ const getProjectAnalytics = async (req, res) => {
 
     const mentorId = mentor._id;
 
-    // Get projects with detailed analytics
     const projects = await Project.find({ mentorId })
       .populate("learnerId", "userId")
       .populate({
@@ -333,12 +316,10 @@ const getProjectAnalytics = async (req, res) => {
   }
 };
 
-// Get comprehensive analytics for the logged-in learner
 const getLearnerAnalysis = async (req, res) => {
   try {
     const userId = req.user._id;
 
-    // First, get the learner profile to get learnerId
     const learner = await Learner.findOne({ userId }).populate(
       "userId",
       "name email avatar"
@@ -354,7 +335,6 @@ const getLearnerAnalysis = async (req, res) => {
     const learnerId = learner._id;
     const userInfo = learner.userId;
 
-    // Get all projects for this learner
     const allProjects = await Project.find({ learnerId })
       .populate("mentorId", "userId")
       .populate({
@@ -365,7 +345,6 @@ const getLearnerAnalysis = async (req, res) => {
         },
       });
 
-    // Project statistics
     const totalProjects = allProjects.length;
     const completedProjects = allProjects.filter(
       (p) => p.status === "Completed"
@@ -378,7 +357,6 @@ const getLearnerAnalysis = async (req, res) => {
     ).length;
     const openProjects = allProjects.filter((p) => p.status === "Open").length;
 
-    // Average rating calculation from mentor reviews
     const projectsWithRatings = allProjects.filter(
       (p) => p.mentorReview && p.mentorReview.rating
     );
@@ -390,13 +368,11 @@ const getLearnerAnalysis = async (req, res) => {
           ) / projectsWithRatings.length
         : learner.rating || 0;
 
-    // Calculate success rate
     const successRate =
       totalProjects > 0
         ? Math.round((completedProjects / totalProjects) * 100)
         : 0;
 
-    // Most frequent mentor calculation
     const mentorProjectCounts = {};
     allProjects.forEach((project) => {
       if (
@@ -420,7 +396,6 @@ const getLearnerAnalysis = async (req, res) => {
       }
     });
 
-    // Add ongoing projects to mentor counts
     allProjects.forEach((project) => {
       if (
         project.mentorId &&
@@ -444,9 +419,8 @@ const getLearnerAnalysis = async (req, res) => {
 
     const topMentors = Object.values(mentorProjectCounts)
       .sort((a, b) => b.completedProjects - a.completedProjects)
-      .slice(0, 5); // Top 5 mentors
+      .slice(0, 5);
 
-    // Session statistics
     const allSessions = await Session.find({ learnerId });
     const totalSessions = allSessions.length;
     const completedSessions = allSessions.filter(
@@ -456,7 +430,6 @@ const getLearnerAnalysis = async (req, res) => {
       (s) => s.status === "scheduled" && new Date(s.scheduledAt) > new Date()
     ).length;
 
-    // Milestone statistics
     const allMilestones = await Milestone.find({ learnerId });
     const totalMilestones = allMilestones.length;
     const completedMilestones = allMilestones.filter(
@@ -467,7 +440,6 @@ const getLearnerAnalysis = async (req, res) => {
         m.learnerVerification.isVerified && !m.mentorVerification.isVerified
     ).length;
 
-    // Monthly project completion trend (last 6 months)
     const monthlyTrend = [];
     for (let i = 5; i >= 0; i--) {
       const date = new Date();
@@ -492,7 +464,6 @@ const getLearnerAnalysis = async (req, res) => {
       });
     }
 
-    // Project distribution for charts
     const projectDistribution = {
       completed: completedProjects,
       ongoing: ongoingProjects,
@@ -500,7 +471,6 @@ const getLearnerAnalysis = async (req, res) => {
       open: openProjects,
     };
 
-    // Recent activity (last 10 projects)
     const recentProjects = allProjects
       .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt))
       .slice(0, 10)
@@ -513,7 +483,6 @@ const getLearnerAnalysis = async (req, res) => {
         progressPercentage: project.progressPercentage || 0,
       }));
 
-    // Learning progress and achievements
     const learningStats = {
       currentLevel: learner.level,
       currentXp: learner.xp,
@@ -523,7 +492,6 @@ const getLearnerAnalysis = async (req, res) => {
       totalAchievements: learner.totalAchievement,
     };
 
-    // Category-wise project distribution
     const categoryDistribution = {};
     allProjects.forEach((project) => {
       const category = project.category || "Other";
@@ -531,7 +499,6 @@ const getLearnerAnalysis = async (req, res) => {
         (categoryDistribution[category] || 0) + 1;
     });
 
-    // Difficulty level distribution
     const difficultyDistribution = {};
     allProjects.forEach((project) => {
       const difficulty = project.difficultyLevel || "Beginner";

@@ -15,7 +15,6 @@ const RequestMentorModal = ({
   const [sendingRequest, setSendingRequest] = useState(false);
   const [error, setError] = useState("");
 
-  // Handle sending mentor request
   const handleSendMentorRequest = async () => {
     if (!message.trim()) {
       setError("Please enter a message");
@@ -51,7 +50,6 @@ const RequestMentorModal = ({
         setMessage("");
         setError("");
 
-        // Notify parent component that a request was sent
         if (onRequestSent) {
           onRequestSent(selectedMentor._id);
         }
@@ -77,7 +75,6 @@ const RequestMentorModal = ({
     }
   };
 
-  // Reset form when modal closes
   React.useEffect(() => {
     if (!selectedMentor) {
       setMessage("");
@@ -166,7 +163,7 @@ const RequestMentorModal = ({
                 value={message}
                 onChange={(e) => {
                   setMessage(e.target.value);
-                  setError(""); // Clear error when user starts typing
+                  setError("");
                 }}
                 rows={6}
                 className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-blue-400 resize-none"

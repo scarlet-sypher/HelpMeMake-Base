@@ -20,7 +20,6 @@ const References = ({ formData, setFormData, onToast }) => {
 
   const addReference = () => {
     if (newReference.title.trim() && newReference.url.trim()) {
-      // Check for duplicate URLs
       const existingRef = formData.references.find(
         (ref) => ref.url === newReference.url.trim()
       );

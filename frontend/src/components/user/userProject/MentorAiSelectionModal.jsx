@@ -68,7 +68,6 @@ const MentorAiSelectionModal = ({
     },
   ];
 
-  // Fetch existing requests for this project
   const fetchProjectRequests = async () => {
     if (!project?._id) return;
 
@@ -84,7 +83,6 @@ const MentorAiSelectionModal = ({
       if (response.data.success) {
         setRequestedMentorIds(response.data.requestedMentorIds || []);
 
-        // Create a map of mentor ID to request details
         const statusMap = {};
         response.data.requests.forEach((request) => {
           statusMap[request.mentorId.toString()] = {
@@ -107,14 +105,12 @@ const MentorAiSelectionModal = ({
     }
   };
 
-  // AI Analysis function
   const performAIAnalysis = async () => {
     try {
       setIsAnalyzing(true);
       setLoadingStep(0);
       setAnalysisComplete(false);
 
-      // Simulate loading steps with intervals
       const stepInterval = setInterval(() => {
         setLoadingStep((prev) => {
           if (prev < loadingSteps.length - 1) {
@@ -125,7 +121,6 @@ const MentorAiSelectionModal = ({
         });
       }, 1800);
 
-      // Prepare project metadata
       const projectMetaData = {
         id: project._id,
         name: project.name,
@@ -138,7 +133,6 @@ const MentorAiSelectionModal = ({
         prerequisites: project.prerequisites || [],
       };
 
-      // Prepare mentors metadata
       const mentorMetaDataList = mentors.map((mentor) => ({
         _id: mentor._id,
         name: mentor.userId?.name || "Anonymous Mentor",
@@ -165,7 +159,7 @@ const MentorAiSelectionModal = ({
         },
         {
           withCredentials: true,
-          timeout: 30000, // 30 seconds timeout
+          timeout: 30000,
         }
       );
 
@@ -195,7 +189,6 @@ const MentorAiSelectionModal = ({
     }
   };
 
-  // Start AI analysis and fetch requests when modal opens
   useEffect(() => {
     if (showAIMentorSelection) {
       if (!analysisComplete && !isAnalyzing) {
@@ -205,7 +198,6 @@ const MentorAiSelectionModal = ({
     }
   }, [showAIMentorSelection]);
 
-  // Handle see why mentor is best
   const handleSeeWhy = (mentorId, whyReason, aiScore, mentorData) => {
     navigate(`/user/mentors/${mentorId}/ai-reason`, {
       state: {
@@ -218,17 +210,14 @@ const MentorAiSelectionModal = ({
     });
   };
 
-  // Check if mentor has been requested
   const isMentorRequested = (mentorId) => {
     return requestedMentorIds.includes(mentorId.toString());
   };
 
-  // Handle request sent callback
   const handleRequestSent = (mentorId) => {
     setRequestedMentorIds((prev) => [...prev, mentorId.toString()]);
   };
 
-  // Get status badge styling
   const getStatusBadgeStyle = (status) => {
     switch (status) {
       case "accepted":
@@ -240,7 +229,6 @@ const MentorAiSelectionModal = ({
     }
   };
 
-  // Get status icon
   const getStatusIcon = (status) => {
     switch (status) {
       case "accepted":
@@ -252,7 +240,6 @@ const MentorAiSelectionModal = ({
     }
   };
 
-  // Get status text
   const getStatusText = (status) => {
     switch (status) {
       case "accepted":

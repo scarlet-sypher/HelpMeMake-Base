@@ -4,7 +4,6 @@ const User = require("../Model/User");
 const Learner = require("../Model/Learner");
 const Mentor = require("../Model/Mentor");
 
-// Get milestones for a specific project
 const getMilestonesByProject = async (req, res) => {
   try {
     console.log("=== GET MILESTONES DEBUG ===");
@@ -18,7 +17,6 @@ const getMilestonesByProject = async (req, res) => {
     console.log("Extracted userId:", userId);
     console.log("User role:", userRole);
 
-    // First, let's just find the project without access check to debug
     const project = await Project.findById(projectId);
     console.log("Project found:", project ? "YES" : "NO");
     if (project) {
@@ -27,11 +25,9 @@ const getMilestonesByProject = async (req, res) => {
       console.log("Project status:", project.status);
     }
 
-    // Verify user has access to this project based on role
     let accessProject = null;
 
     if (userRole === "user") {
-      // For learners, find their learner profile first
       const learnerProfile = await Learner.findOne({ userId });
       console.log("Learner profile found:", learnerProfile ? "YES" : "NO");
       if (learnerProfile) {
@@ -42,7 +38,6 @@ const getMilestonesByProject = async (req, res) => {
         });
       }
     } else if (userRole === "mentor") {
-      // For mentors, find their mentor profile first
       const mentorProfile = await Mentor.findOne({ userId });
       console.log("Mentor profile found:", mentorProfile ? "YES" : "NO");
       if (mentorProfile) {
@@ -96,7 +91,6 @@ const getMilestonesByProject = async (req, res) => {
   }
 };
 
-// Create a new milestone
 const createMilestone = async (req, res) => {
   try {
     console.log("=== CREATE MILESTONE DEBUG ===");
@@ -111,11 +105,9 @@ const createMilestone = async (req, res) => {
     console.log("Project ID from body:", projectId);
     console.log("User role:", userRole);
 
-    // Verify user has access to this project based on role
     let project = null;
 
     if (userRole === "user") {
-      // For learners, find their learner profile first
       const learnerProfile = await Learner.findOne({ userId });
       console.log("Learner profile found:", learnerProfile ? "YES" : "NO");
       if (learnerProfile) {
@@ -127,7 +119,6 @@ const createMilestone = async (req, res) => {
         });
       }
     } else if (userRole === "mentor") {
-      // For mentors, find their mentor profile first
       const mentorProfile = await Mentor.findOne({ userId });
       console.log("Mentor profile found:", mentorProfile ? "YES" : "NO");
       if (mentorProfile) {
@@ -151,7 +142,6 @@ const createMilestone = async (req, res) => {
     }
 
     if (!project) {
-      // Let's check if project exists but with different status
       const anyProject = await Project.findById(projectId);
       return res.status(403).json({
         success: false,
@@ -166,7 +156,6 @@ const createMilestone = async (req, res) => {
       });
     }
 
-    // Check if user already has 5 milestones
     const existingMilestones = await Milestone.countDocuments({ projectId });
     console.log("Existing milestones count:", existingMilestones);
 
@@ -200,7 +189,6 @@ const createMilestone = async (req, res) => {
 
     await milestone.save();
 
-    // Populate the milestone before sending response
     const populatedMilestone = await Milestone.findById(milestone._id)
       .populate("learnerId", "name email avatar")
       .populate("mentorId", "name email avatar")
@@ -224,7 +212,6 @@ const createMilestone = async (req, res) => {
   }
 };
 
-// Get active project with mentor for the logged-in user
 const getActiveProjectWithMentor = async (req, res) => {
   try {
     console.log("=== GET ACTIVE PROJECT DEBUG ===");
@@ -235,11 +222,9 @@ const getActiveProjectWithMentor = async (req, res) => {
     console.log("Extracted userId:", userId);
     console.log("User role:", userRole);
 
-    // Find the user's active project that's "In Progress" based on role
     let project = null;
 
     if (userRole === "user") {
-      // For learners, find their learner profile first
       const learnerProfile = await Learner.findOne({ userId });
       if (learnerProfile) {
         project = await Project.findOne({
@@ -251,7 +236,6 @@ const getActiveProjectWithMentor = async (req, res) => {
           .lean();
       }
     } else if (userRole === "mentor") {
-      // For mentors, find their mentor profile first
       const mentorProfile = await Mentor.findOne({ userId });
       if (mentorProfile) {
         project = await Project.findOne({
@@ -278,13 +262,12 @@ const getActiveProjectWithMentor = async (req, res) => {
       });
     }
 
-    // Auto-create milestone entry if it doesn't exist for this project
     const existingMilestones = await Milestone.find({ projectId: project._id });
     console.log("Existing milestones for project:", existingMilestones.length);
 
     if (existingMilestones.length === 0) {
       console.log("Creating initial milestone...");
-      // Create initial milestone structure for the project
+
       await createInitialMilestone(
         project._id,
         project.learnerId._id || project.learnerId,
@@ -306,7 +289,6 @@ const getActiveProjectWithMentor = async (req, res) => {
   }
 };
 
-// Helper function to create initial milestone entry
 const createInitialMilestone = async (projectId, learnerId, mentorId) => {
   try {
     console.log("Creating initial milestone with:", {
@@ -315,14 +297,13 @@ const createInitialMilestone = async (projectId, learnerId, mentorId) => {
       mentorId,
     });
 
-    // This is just a placeholder milestone that gets created when project starts
     const initialMilestone = new Milestone({
       title: "Project Setup & Planning",
       description: "Initial project setup and planning phase",
       projectId,
       learnerId,
       mentorId,
-      dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days from now
+      dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
       order: 1,
       status: "Not Started",
     });
@@ -336,7 +317,6 @@ const createInitialMilestone = async (projectId, learnerId, mentorId) => {
   }
 };
 
-// Learner verify milestone
 const learnerVerifyMilestone = async (req, res) => {
   try {
     const { milestoneId } = req.params;
@@ -363,14 +343,12 @@ const learnerVerifyMilestone = async (req, res) => {
       });
     }
 
-    // Update learner verification
     milestone.learnerVerification.isVerified = true;
     milestone.learnerVerification.verifiedAt = new Date();
     milestone.learnerVerification.verificationNotes =
       verificationNotes || "Marked as done by learner";
     milestone.learnerVerification.submissionUrl = submissionUrl || "";
 
-    // Update status based on verification state
     if (milestone.mentorVerification.isVerified) {
       milestone.status = "Completed";
       milestone.completedDate = new Date();
@@ -380,7 +358,6 @@ const learnerVerifyMilestone = async (req, res) => {
 
     await milestone.save();
 
-    // Populate and return updated milestone
     const updatedMilestone = await Milestone.findById(milestoneId)
       .populate("learnerId", "name email avatar")
       .populate("mentorId", "name email avatar")
@@ -401,7 +378,6 @@ const learnerVerifyMilestone = async (req, res) => {
   }
 };
 
-// Learner unverify milestone
 const learnerUnverifyMilestone = async (req, res) => {
   try {
     const { milestoneId } = req.params;
@@ -427,7 +403,6 @@ const learnerUnverifyMilestone = async (req, res) => {
       });
     }
 
-    // Can only undo if mentor hasn't verified yet
     if (milestone.mentorVerification.isVerified) {
       return res.status(400).json({
         success: false,
@@ -435,7 +410,6 @@ const learnerUnverifyMilestone = async (req, res) => {
       });
     }
 
-    // Reset learner verification
     milestone.learnerVerification.isVerified = false;
     milestone.learnerVerification.verifiedAt = null;
     milestone.learnerVerification.verificationNotes = "";
@@ -465,7 +439,6 @@ const learnerUnverifyMilestone = async (req, res) => {
   }
 };
 
-// Mentor verify milestone
 const mentorVerifyMilestone = async (req, res) => {
   try {
     const { milestoneId } = req.params;
@@ -492,7 +465,6 @@ const mentorVerifyMilestone = async (req, res) => {
       });
     }
 
-    // Mentor can only verify if learner has already verified
     if (!milestone.learnerVerification.isVerified) {
       return res.status(400).json({
         success: false,
@@ -500,7 +472,6 @@ const mentorVerifyMilestone = async (req, res) => {
       });
     }
 
-    // Update mentor verification
     milestone.mentorVerification.isVerified = true;
     milestone.mentorVerification.verifiedAt = new Date();
     milestone.mentorVerification.verificationNotes =
@@ -508,7 +479,6 @@ const mentorVerifyMilestone = async (req, res) => {
     milestone.mentorVerification.rating = rating || 5;
     milestone.mentorVerification.feedback = feedback || "";
 
-    // Both parties verified - mark as completed
     milestone.status = "Completed";
     milestone.completedDate = new Date();
 
@@ -534,7 +504,6 @@ const mentorVerifyMilestone = async (req, res) => {
   }
 };
 
-// Delete milestone
 const deleteMilestone = async (req, res) => {
   try {
     const { milestoneId } = req.params;
@@ -568,7 +537,6 @@ const deleteMilestone = async (req, res) => {
       });
     }
 
-    // Check if milestone is completed (both verifications done)
     if (
       milestone.learnerVerification.isVerified &&
       milestone.mentorVerification.isVerified
@@ -579,7 +547,6 @@ const deleteMilestone = async (req, res) => {
       });
     }
 
-    // Can't delete if any verification exists
     if (
       milestone.learnerVerification.isVerified ||
       milestone.mentorVerification.isVerified
@@ -592,7 +559,6 @@ const deleteMilestone = async (req, res) => {
 
     await Milestone.findByIdAndDelete(milestoneId);
 
-    // Reorder remaining milestones
     const remainingMilestones = await Milestone.find({
       projectId: milestone.projectId,
     }).sort({ order: 1 });
@@ -616,7 +582,6 @@ const deleteMilestone = async (req, res) => {
   }
 };
 
-// Get milestone by ID
 const getMilestoneById = async (req, res) => {
   try {
     const { milestoneId } = req.params;
@@ -672,7 +637,6 @@ const getMilestoneById = async (req, res) => {
   }
 };
 
-// Update milestone (edit functionality)
 const updateMilestone = async (req, res) => {
   try {
     const { milestoneId } = req.params;
@@ -707,7 +671,6 @@ const updateMilestone = async (req, res) => {
       });
     }
 
-    // Check if milestone is completed (both verifications done)
     if (
       milestone.learnerVerification.isVerified &&
       milestone.mentorVerification.isVerified
@@ -718,7 +681,6 @@ const updateMilestone = async (req, res) => {
       });
     }
 
-    // Update fields
     if (title) milestone.title = title.trim();
     if (description) milestone.description = description;
     if (dueDate) milestone.dueDate = dueDate;
@@ -763,7 +725,6 @@ const getMentorMilestones = async (req, res) => {
       });
     }
 
-    // Find mentor profile
     const mentorProfile = await Mentor.findOne({ userId });
     console.log("Mentor profile found:", mentorProfile ? "YES" : "NO");
 
@@ -774,7 +735,6 @@ const getMentorMilestones = async (req, res) => {
       });
     }
 
-    // Get all in-progress projects for this mentor
     const projects = await Project.find({
       mentorId: mentorProfile._id,
       status: "In Progress",
@@ -785,7 +745,6 @@ const getMentorMilestones = async (req, res) => {
 
     console.log("In-progress projects found:", projects.length);
 
-    // Get milestones for all projects
     const projectIds = projects.map((p) => p._id);
     const milestones = await Milestone.find({
       projectId: { $in: projectIds },
@@ -799,7 +758,6 @@ const getMentorMilestones = async (req, res) => {
       )
       .lean();
 
-    // Group milestones by project
     const projectsWithMilestones = projects.map((project) => ({
       ...project,
       milestones: milestones.filter(
@@ -825,7 +783,6 @@ const getMentorMilestones = async (req, res) => {
   }
 };
 
-// Add review note to milestone (Mentor only)
 const addReviewNote = async (req, res) => {
   try {
     const { milestoneId } = req.params;
@@ -857,7 +814,6 @@ const addReviewNote = async (req, res) => {
       });
     }
 
-    // Add review note using schema method
     await milestone.addReviewNote(userId, note);
 
     const updatedMilestone = await Milestone.findById(milestoneId)
@@ -881,7 +837,6 @@ const addReviewNote = async (req, res) => {
   }
 };
 
-// Mark review as read (Learner only)
 const markReviewAsRead = async (req, res) => {
   try {
     const { milestoneId } = req.params;
@@ -912,7 +867,6 @@ const markReviewAsRead = async (req, res) => {
       });
     }
 
-    // Mark review as read using schema method
     await milestone.markReviewAsRead();
 
     const updatedMilestone = await Milestone.findById(milestoneId)
@@ -961,7 +915,6 @@ const mentorUnverifyMilestone = async (req, res) => {
       });
     }
 
-    // Can only undo if learner has verified (mentor can't undo if learner hasn't verified)
     if (!milestone.learnerVerification.isVerified) {
       return res.status(400).json({
         success: false,
@@ -969,7 +922,6 @@ const mentorUnverifyMilestone = async (req, res) => {
       });
     }
 
-    // Reset mentor verification
     milestone.mentorVerification.isVerified = false;
     milestone.mentorVerification.verifiedAt = null;
     milestone.mentorVerification.verificationNotes = "";
@@ -1018,7 +970,6 @@ const getMentorActiveProjectProgress = async (req, res) => {
       });
     }
 
-    // Find mentor profile
     const mentorProfile = await Mentor.findOne({ userId });
     console.log("Mentor profile found:", mentorProfile ? "YES" : "NO");
 
@@ -1029,7 +980,6 @@ const getMentorActiveProjectProgress = async (req, res) => {
       });
     }
 
-    // Get active project for this mentor
     const activeProject = await Project.findOne({
       mentorId: mentorProfile._id,
       status: "In Progress",
@@ -1054,7 +1004,6 @@ const getMentorActiveProjectProgress = async (req, res) => {
       });
     }
 
-    // Get milestones for the active project
     const milestones = await Milestone.find({ projectId: activeProject._id })
       .sort({ order: 1, createdAt: 1 })
       .populate("learnerId", "name email avatar")
@@ -1063,7 +1012,6 @@ const getMentorActiveProjectProgress = async (req, res) => {
 
     console.log("Milestones found:", milestones.length);
 
-    // Transform milestone data to match frontend expectations
     const transformedMilestones = milestones.slice(0, 5).map((milestone) => ({
       id: milestone._id,
       title: milestone.title,
@@ -1079,7 +1027,6 @@ const getMentorActiveProjectProgress = async (req, res) => {
       updatedAt: milestone.updatedAt,
     }));
 
-    // Calculate progress statistics
     const completedMilestones = transformedMilestones.filter(
       (m) => m.userVerified && m.mentorVerified
     );
@@ -1099,7 +1046,6 @@ const getMentorActiveProjectProgress = async (req, res) => {
           )
         : 0;
 
-    // Extract learner details from the populated project
     const learnerDetails = {
       id: activeProject.learnerId._id,
       name: activeProject.learnerId.name,
@@ -1107,7 +1053,6 @@ const getMentorActiveProjectProgress = async (req, res) => {
       avatar: activeProject.learnerId.avatar,
     };
 
-    // Project details for frontend
     const projectDetails = {
       id: activeProject._id,
       name: activeProject.name,
@@ -1164,7 +1109,6 @@ const getMilestonesByProjectWithUserData = async (req, res) => {
     console.log("Extracted userId:", userId);
     console.log("User role:", userRole);
 
-    // First, let's just find the project without access check to debug
     const project = await Project.findById(projectId);
     console.log("Project found:", project ? "YES" : "NO");
     if (project) {
@@ -1173,11 +1117,9 @@ const getMilestonesByProjectWithUserData = async (req, res) => {
       console.log("Project status:", project.status);
     }
 
-    // Verify user has access to this project based on role
     let accessProject = null;
 
     if (userRole === "user") {
-      // For learners, find their learner profile first
       const learnerProfile = await Learner.findOne({ userId });
       console.log("Learner profile found:", learnerProfile ? "YES" : "NO");
       if (learnerProfile) {
@@ -1188,7 +1130,6 @@ const getMilestonesByProjectWithUserData = async (req, res) => {
         });
       }
     } else if (userRole === "mentor") {
-      // For mentors, find their mentor profile first
       const mentorProfile = await Mentor.findOne({ userId });
       console.log("Mentor profile found:", mentorProfile ? "YES" : "NO");
       if (mentorProfile) {
@@ -1215,7 +1156,6 @@ const getMilestonesByProjectWithUserData = async (req, res) => {
       });
     }
 
-    // Fetch milestones with nested user data population
     const milestones = await Milestone.find({ projectId })
       .sort({ order: 1, createdAt: 1 })
       .populate({
@@ -1236,7 +1176,6 @@ const getMilestonesByProjectWithUserData = async (req, res) => {
 
     console.log("Milestones found:", milestones.length);
 
-    // Transform the data to maintain backward compatibility
     const transformedMilestones = milestones.map((milestone) => {
       return {
         ...milestone,
@@ -1284,7 +1223,6 @@ const getMentorActiveProjectProgressWithAvatars = async (req, res) => {
       });
     }
 
-    // Find mentor profile
     const mentorProfile = await Mentor.findOne({ userId });
     console.log("Mentor profile found:", mentorProfile ? "YES" : "NO");
 
@@ -1295,7 +1233,6 @@ const getMentorActiveProjectProgressWithAvatars = async (req, res) => {
       });
     }
 
-    // Get active project for this mentor with enhanced population
     const activeProject = await Project.findOne({
       mentorId: mentorProfile._id,
       status: "In Progress",
@@ -1332,7 +1269,6 @@ const getMentorActiveProjectProgressWithAvatars = async (req, res) => {
       });
     }
 
-    // Get milestones for the active project with enhanced user data population
     const milestones = await Milestone.find({ projectId: activeProject._id })
       .sort({ order: 1, createdAt: 1 })
       .populate({
@@ -1353,7 +1289,6 @@ const getMentorActiveProjectProgressWithAvatars = async (req, res) => {
 
     console.log("Milestones found:", milestones.length);
 
-    // Transform milestone data to match frontend expectations with proper user data
     const transformedMilestones = milestones.slice(0, 5).map((milestone) => ({
       id: milestone._id,
       title: milestone.title,
@@ -1367,12 +1302,11 @@ const getMentorActiveProjectProgressWithAvatars = async (req, res) => {
       mentorVerification: milestone.mentorVerification,
       createdAt: milestone.createdAt,
       updatedAt: milestone.updatedAt,
-      // Include populated user data
+
       learnerUser: milestone.learnerId?.userId || null,
       mentorUser: milestone.mentorId?.userId || null,
     }));
 
-    // Calculate progress statistics
     const completedMilestones = transformedMilestones.filter(
       (m) => m.userVerified && m.mentorVerified
     );
@@ -1392,14 +1326,13 @@ const getMentorActiveProjectProgressWithAvatars = async (req, res) => {
           )
         : 0;
 
-    // Extract learner details with proper user data including avatar
     const learnerDetails = {
       id: activeProject.learnerId._id,
       name: activeProject.learnerId.userId?.name || "Unknown Learner",
       email: activeProject.learnerId.userId?.email || "",
       avatar:
         activeProject.learnerId.userId?.avatar || "/uploads/public/default.jpg",
-      // Include profile-specific data
+
       title: activeProject.learnerId.title || "Not mentioned",
       description: activeProject.learnerId.description || "To Lazy to type",
       location: activeProject.learnerId.location || "Home",
@@ -1408,7 +1341,6 @@ const getMentorActiveProjectProgressWithAvatars = async (req, res) => {
       rating: activeProject.learnerId.rating || 0,
     };
 
-    // Project details for frontend
     const projectDetails = {
       id: activeProject._id,
       name: activeProject.name,

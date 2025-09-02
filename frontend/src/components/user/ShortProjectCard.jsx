@@ -29,7 +29,6 @@ const ShortProjectCard = ({ project, onDelete, onToast }) => {
     return restrictedStatuses.includes(project.status);
   };
 
-  // Handle edit project
   const handleEditProject = () => {
     if (isProjectRestricted()) {
       onToast?.({
@@ -42,7 +41,6 @@ const ShortProjectCard = ({ project, onDelete, onToast }) => {
     window.location.href = `/projects/edit/${project._id}`;
   };
 
-  // Handle delete project
   const handleDeleteProject = () => {
     if (isProjectRestricted()) {
       onToast?.({
@@ -81,7 +79,6 @@ const ShortProjectCard = ({ project, onDelete, onToast }) => {
     };
   }, [project._id, project.name]);
 
-  // Get status color and icon
   const getStatusInfo = (status) => {
     switch (status) {
       case "Open":
@@ -122,7 +119,6 @@ const ShortProjectCard = ({ project, onDelete, onToast }) => {
     }
   };
 
-  // Get difficulty color
   const getDifficultyColor = (level) => {
     switch (level) {
       case "Beginner":
@@ -136,13 +132,11 @@ const ShortProjectCard = ({ project, onDelete, onToast }) => {
     }
   };
 
-  // Format price
   const formatPrice = (price) => {
     if (!price) return "Not set";
     return `₹${price.toLocaleString()}`;
   };
 
-  // Get active price (priority: closed > negotiated > opening)
   const getActivePrice = () => {
     if (project.closedPrice)
       return { price: project.closedPrice, type: "Final Price" };
@@ -155,10 +149,8 @@ const ShortProjectCard = ({ project, onDelete, onToast }) => {
   const StatusIcon = statusInfo.icon;
   const activePrice = getActivePrice();
 
-  // Handle view project - mark pitches as read
   const handleViewProject = async () => {
     try {
-      // If there are unread pitches, mark them as read
       if (project.hasUnreadPitch) {
         const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
         const token = localStorage.getItem("access_token");
@@ -181,16 +173,14 @@ const ShortProjectCard = ({ project, onDelete, onToast }) => {
         }
       }
 
-      // Navigate to project details
       window.location.href = `/projects/${project._id}`;
     } catch (error) {
       console.error("Error marking pitches as read:", error);
-      // Still navigate even if marking as read fails
+
       window.location.href = `/projects/${project._id}`;
     }
   };
 
-  // Handle delete
   const handleDelete = async () => {
     if (deleteConfirmText !== project.name) {
       onToast?.({

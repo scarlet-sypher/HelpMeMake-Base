@@ -33,13 +33,11 @@ const MentorProjectPage = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeItem, setActiveItem] = useState("projects");
 
-  // Projects state
   const [projects, setProjects] = useState([]);
   const [filteredProjects, setFilteredProjects] = useState([]);
   const [projectsLoading, setProjectsLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Mentor stats
   const [mentorStats, setMentorStats] = useState({
     totalApplications: 0,
     acceptedApplications: 0,
@@ -49,7 +47,6 @@ const MentorProjectPage = () => {
     successRate: 0,
   });
 
-  // Filter and search state
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("createdAt");
   const [sortOrder, setSortOrder] = useState("desc");
@@ -58,15 +55,12 @@ const MentorProjectPage = () => {
   const [selectedDifficulty, setSelectedDifficulty] = useState("");
   const [priceRange, setPriceRange] = useState({ min: "", max: "" });
 
-  // Toast state
-
   const [toast, setToast] = useState({
     open: false,
     message: "",
     status: "success",
   });
 
-  // Toast component (add before main component return)
   const Toast = ({ open, message, status, onClose }) => {
     useEffect(() => {
       if (open) {
@@ -176,7 +170,6 @@ const MentorProjectPage = () => {
             import.meta.env.VITE_API_URL || "http://localhost:5000";
           const token = localStorage.getItem("access_token");
 
-          // Fetch projects for mentors
           const projectsResponse = await fetch(
             `${apiUrl}/projects/mentor/available`,
             {
@@ -197,7 +190,6 @@ const MentorProjectPage = () => {
             setError(projectsData.message || "Failed to fetch projects");
           }
 
-          // Fetch mentor stats
           const statsResponse = await fetch(
             `${apiUrl}/mentor/application-stats`,
             {
@@ -225,11 +217,9 @@ const MentorProjectPage = () => {
     fetchProjectsAndStats();
   }, [isAuthenticated, user]);
 
-  // Filter and search logic
   useEffect(() => {
     let filtered = [...projects];
 
-    // Apply search filter
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
       filtered = filtered.filter((project) => {
@@ -247,21 +237,18 @@ const MentorProjectPage = () => {
       });
     }
 
-    // Apply category filter
     if (selectedCategory) {
       filtered = filtered.filter(
         (project) => project.category === selectedCategory
       );
     }
 
-    // Apply difficulty filter
     if (selectedDifficulty) {
       filtered = filtered.filter(
         (project) => project.difficultyLevel === selectedDifficulty
       );
     }
 
-    // Apply price range filter
     if (priceRange.min || priceRange.max) {
       filtered = filtered.filter((project) => {
         const price = project.openingPrice || 0;
@@ -271,7 +258,6 @@ const MentorProjectPage = () => {
       });
     }
 
-    // Apply sorting
     filtered.sort((a, b) => {
       let comparison = 0;
 
@@ -306,7 +292,6 @@ const MentorProjectPage = () => {
     priceRange,
   ]);
 
-  // Show loading spinner
   if (loading || projectsLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 flex items-center justify-center">
@@ -318,7 +303,6 @@ const MentorProjectPage = () => {
     );
   }
 
-  // Don't render if not authenticated or not a mentor
   if (!isAuthenticated || user?.role !== "mentor") {
     return null;
   }
@@ -677,7 +661,6 @@ const MentorProjectPage = () => {
                     project={project}
                     onToast={showToast}
                     onApply={(projectId) => {
-                      // Refresh the projects list or update the specific project
                       setFilteredProjects((prev) =>
                         prev.map((p) =>
                           p._id === projectId

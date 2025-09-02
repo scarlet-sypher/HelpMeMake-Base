@@ -25,9 +25,9 @@ const AdminMentorDashboard = ({ onReturn }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [stats, setStats] = useState(null);
   const [filters, setFilters] = useState({
-    status: "all", // all, online, offline, available, unavailable
-    rating: "all", // all, high (4+), medium (2-4), low (<2)
-    experience: "all", // all, junior (<2 years), senior (2-5), expert (5+)
+    status: "all",
+    rating: "all",
+    experience: "all",
     location: "all",
   });
 
@@ -96,7 +96,6 @@ const AdminMentorDashboard = ({ onReturn }) => {
 
   const filterMentors = () => {
     let filtered = mentors.filter((mentor) => {
-      // Search filter
       const searchMatch =
         !searchTerm ||
         mentor.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -109,7 +108,6 @@ const AdminMentorDashboard = ({ onReturn }) => {
           ?.toLowerCase()
           .includes(searchTerm.toLowerCase());
 
-      // Status filter
       let statusMatch = true;
       if (filters.status !== "all") {
         const mentorData = mentor.mentorProfile || {};
@@ -129,7 +127,6 @@ const AdminMentorDashboard = ({ onReturn }) => {
         }
       }
 
-      // Rating filter
       let ratingMatch = true;
       if (filters.rating !== "all") {
         const rating = mentor.mentorProfile?.rating || 0;
@@ -146,7 +143,6 @@ const AdminMentorDashboard = ({ onReturn }) => {
         }
       }
 
-      // Experience filter
       let experienceMatch = true;
       if (filters.experience !== "all") {
         const years = mentor.mentorProfile?.experience?.years || 0;

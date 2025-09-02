@@ -9,21 +9,17 @@ const XPProgressTracker = ({ learnerData, achievements }) => {
   const maxLevel = 10;
   const xpPerLevel = 1000;
 
-  // Calculate current level progress
   const currentLevelXP = learnerData.xp % xpPerLevel;
   const progressPercentage = (currentLevelXP / xpPerLevel) * 100;
 
-  // Next level XP needed
   const xpToNextLevel = xpPerLevel - currentLevelXP;
   const isMaxLevel = learnerData.level >= maxLevel;
 
-  // Animate XP changes
   useEffect(() => {
     if (learnerData.xp !== displayXP) {
       setAnimateXP(true);
 
-      // Animate XP counter
-      const duration = 2000; // 2 seconds
+      const duration = 2000;
       const steps = 60;
       const increment = (learnerData.xp - displayXP) / steps;
       const levelIncrement = (learnerData.level - displayLevel) / steps;

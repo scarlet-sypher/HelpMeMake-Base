@@ -50,7 +50,6 @@ const UserSessionItem = ({ session, isLast, onSessionUpdate }) => {
     };
   };
 
-  // Get status styling
   const getStatusStyle = (status) => {
     switch (status) {
       case "scheduled":
@@ -70,7 +69,6 @@ const UserSessionItem = ({ session, isLast, onSessionUpdate }) => {
     }
   };
 
-  // Get status icon
   const getStatusIcon = (status) => {
     switch (status) {
       case "scheduled":
@@ -199,7 +197,6 @@ const UserSessionItem = ({ session, isLast, onSessionUpdate }) => {
     return now >= thirtyMinutesBefore && now <= sessionTime;
   };
 
-  // Get avatar URL for mentor
   const getAvatarUrl = (avatar) => {
     if (!avatar) return "/uploads/public/default.jpg";
     if (avatar.startsWith("/uploads/")) {

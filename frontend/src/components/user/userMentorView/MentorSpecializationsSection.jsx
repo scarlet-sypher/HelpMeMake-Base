@@ -6,7 +6,6 @@ const MentorSpecializationsSection = ({ mentorData }) => {
     return null;
   }
 
-  // Color schemes for different specializations
   const colorSchemes = [
     {
       bg: "from-purple-500/20 to-pink-500/20",

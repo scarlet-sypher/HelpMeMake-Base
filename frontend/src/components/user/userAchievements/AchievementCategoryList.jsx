@@ -24,7 +24,7 @@ const AchievementCategoryList = ({
   const categoryIcons = {
     project: Target,
     social: Users,
-    learnerStats: BookOpen, // Add this line
+    learnerStats: BookOpen,
     milestone: CheckCircle,
   };
 
@@ -53,7 +53,7 @@ const AchievementCategoryList = ({
       text: "text-orange-400",
       icon: "text-orange-400",
     },
-    // Add this fallback for learnerStats
+
     learnerStats: {
       bg: "from-purple-500/20 to-indigo-500/20",
       border: "border-purple-400/30",
@@ -113,12 +113,11 @@ const AchievementCategoryList = ({
   };
 
   const renderBadge = (categoryKey, achievementKey, achievement, level) => {
-    const isUnlocked = achievement.earnedBadges?.includes(level) || false; // Add optional chaining and fallback
+    const isUnlocked = achievement.earnedBadges?.includes(level) || false;
     const BadgeIcon = getBadgeIcon(level);
     const style = badgeStyles[level];
     const badgeId = `${categoryKey}-${achievementKey}-${level}`;
 
-    // Check if this is a newly earned badge
     const isNewBadge = newBadges.some(
       (badge) =>
         badge.category === categoryKey &&
@@ -252,10 +251,8 @@ const AchievementCategoryList = ({
     const colors = categoryColors[categoryKey] || categoryColors.learner;
     const isExpanded = expandedCategory === categoryKey;
 
-    // Filter out invalid achievement data and count only valid achievement types
     const validAchievements = Object.entries(categoryData).filter(
       ([key, value]) => {
-        // Skip non-achievement fields and ensure the value is an object with the expected structure
         return (
           ![
             "_id",
@@ -277,7 +274,6 @@ const AchievementCategoryList = ({
       }
     );
 
-    // Don't render category if no valid achievements
     if (validAchievements.length === 0) {
       return null;
     }
@@ -334,7 +330,6 @@ const AchievementCategoryList = ({
           <div className="px-4 pb-6 sm:px-6">
             {validAchievements.map(([achievementKey, achievement]) => {
               if (achievementKey === "firstLogin") {
-                // Special handling for one-time achievements
                 return (
                   <div key={achievementKey} className="mb-6">
                     <div className="flex items-center justify-between mb-3">
@@ -464,7 +459,6 @@ const AchievementCategoryList = ({
   return (
     <div className="space-y-4 sm:space-y-6">
       {Object.entries(achievements).map(([categoryKey, categoryData]) => {
-        // Skip non-achievement fields
         if (
           [
             "_id",

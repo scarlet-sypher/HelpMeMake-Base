@@ -22,12 +22,10 @@ class ToastManager {
     this.toasts.push({ id, element: toast, timeout: null });
     this.container.appendChild(toast);
 
-    // Trigger animation
     setTimeout(() => {
       toast.classList.add("animate-slide-in");
     }, 10);
 
-    // Auto remove
     const timeout = setTimeout(() => {
       this.remove(id);
     }, duration);
@@ -137,11 +135,9 @@ class ToastManager {
   }
 }
 
-// Create global instance
 if (typeof window !== "undefined") {
   window.toastManager = new ToastManager();
 
-  // Add CSS for animations
   const style = document.createElement("style");
   style.textContent = `
     .animate-slide-in {
@@ -165,7 +161,6 @@ if (typeof window !== "undefined") {
   document.head.appendChild(style);
 }
 
-// Export toast functions
 export const toast = {
   success: (message, duration) =>
     window.toastManager?.show(message, "success", duration),

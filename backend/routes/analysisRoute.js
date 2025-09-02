@@ -14,7 +14,6 @@ router.use((req, res, next) => {
   next();
 });
 
-// Test route
 router.get("/test", (req, res) => {
   res.json({
     success: true,
@@ -23,13 +22,10 @@ router.get("/test", (req, res) => {
   });
 });
 
-// Get comprehensive mentor analytics
 router.get("/mentor", requireMentor, getMentorAnalysis);
 
-// Get detailed project analytics
 router.get("/projects", requireMentor, getProjectAnalytics);
 
-// Get comprehensive learner analytics
 router.get("/learner", requireUser, getLearnerAnalysis);
 
 module.exports = router;

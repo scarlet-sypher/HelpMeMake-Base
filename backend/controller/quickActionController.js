@@ -1,6 +1,5 @@
 const QuickAction = require("../Model/QuickAction");
 
-// Default quick action options for users
 const DEFAULT_USER_ACTIONS = [
   {
     icon: "Calendar",
@@ -32,7 +31,6 @@ const DEFAULT_USER_ACTIONS = [
   },
 ];
 
-// Default quick action options for mentors
 const DEFAULT_MENTOR_ACTIONS = [
   {
     icon: "Calendar",
@@ -64,7 +62,6 @@ const DEFAULT_MENTOR_ACTIONS = [
   },
 ];
 
-// All available quick action options for users
 const ALL_AVAILABLE_USER_ACTIONS = [
   {
     icon: "Calendar",
@@ -124,7 +121,6 @@ const ALL_AVAILABLE_USER_ACTIONS = [
   },
 ];
 
-// All available quick action options for mentors
 const ALL_AVAILABLE_MENTOR_ACTIONS = [
   {
     icon: "Calendar",
@@ -157,34 +153,33 @@ const ALL_AVAILABLE_MENTOR_ACTIONS = [
   {
     icon: "BookOpen",
     label: "Projects",
-    color: "from-purple-500 to-pink-500", // same as user "Start Adventure"
+    color: "from-purple-500 to-pink-500",
     path: "/mentor/projects",
     ariaLabel: "Navigate to mentor projects",
   },
   {
     icon: "Target",
     label: "Milestones",
-    color: "from-pink-500 to-rose-500", // same as user "Milestones"
+    color: "from-pink-500 to-rose-500",
     path: "/mentor/mileStone",
     ariaLabel: "Navigate to milestone management",
   },
   {
     icon: "Target",
     label: "Goals",
-    color: "from-yellow-500 to-amber-500", // mapped to user "Achievements"
+    color: "from-yellow-500 to-amber-500",
     path: "/mentor/goals",
     ariaLabel: "Navigate to goal management",
   },
   {
     icon: "Settings",
     label: "Settings",
-    color: "from-slate-500 to-gray-500", // same as user "Settings"
+    color: "from-slate-500 to-gray-500",
     path: "/mentor/settings",
     ariaLabel: "Navigate to mentor settings",
   },
 ];
 
-// Helper function to get role-based defaults and available actions
 const getRoleBasedActions = (userRole) => {
   console.log(`[DEBUG] Getting role-based actions for role: ${userRole}`); // debug
 
@@ -201,7 +196,6 @@ const getRoleBasedActions = (userRole) => {
   }
 };
 
-// Get user's quick actions (or default if not customized)
 const getUserQuickActions = async (req, res) => {
   try {
     const userId = req.user._id;
@@ -211,14 +205,11 @@ const getUserQuickActions = async (req, res) => {
       `[DEBUG] Getting quick actions for user: ${userId}, role: ${userRole}`
     ); // debug
 
-    // Get role-based actions
     const { defaultActions, availableActions } = getRoleBasedActions(userRole);
 
-    // Find user's quick action configuration
     const userQuickActions = await QuickAction.findOne({ userId });
 
     if (!userQuickActions || !userQuickActions.isCustomized) {
-      // User hasn't customized, return default actions based on role
       console.log(
         `[DEBUG] User hasn't customized, returning defaults for ${userRole}`
       ); // debug
@@ -254,7 +245,6 @@ const getUserQuickActions = async (req, res) => {
   }
 };
 
-// Get all available quick action options based on user role
 const getAvailableActions = async (req, res) => {
   try {
     const userId = req.user._id;
@@ -281,7 +271,6 @@ const getAvailableActions = async (req, res) => {
   }
 };
 
-// Save/Update user's customized quick actions
 const saveUserQuickActions = async (req, res) => {
   try {
     const userId = req.user._id;
@@ -293,7 +282,6 @@ const saveUserQuickActions = async (req, res) => {
     ); // debug
     console.log(`[DEBUG] Selected actions:`, selectedActions); // debug
 
-    // Validation
     if (!selectedActions || !Array.isArray(selectedActions)) {
       return res.status(400).json({
         success: false,
@@ -308,11 +296,9 @@ const saveUserQuickActions = async (req, res) => {
       });
     }
 
-    // Get role-based available actions for validation
     const { availableActions } = getRoleBasedActions(userRole);
     const validPaths = availableActions.map((action) => action.path);
 
-    // Validate each selected action against available actions for the user's role
     const invalidActions = selectedActions.filter(
       (action) => !validPaths.includes(action.path)
     );
@@ -326,7 +312,6 @@ const saveUserQuickActions = async (req, res) => {
       });
     }
 
-    // Update or create user's quick action configuration
     const updatedQuickActions = await QuickAction.findOneAndUpdate(
       { userId },
       {
@@ -336,7 +321,7 @@ const saveUserQuickActions = async (req, res) => {
       },
       {
         new: true,
-        upsert: true, // Create if doesn't exist
+        upsert: true,
       }
     );
 
@@ -354,7 +339,6 @@ const saveUserQuickActions = async (req, res) => {
   } catch (error) {
     console.error("Save user quick actions error:", error);
 
-    // Handle validation errors
     if (error.name === "ValidationError") {
       const errorMessages = Object.values(error.errors).map(
         (err) => err.message
@@ -372,7 +356,6 @@ const saveUserQuickActions = async (req, res) => {
   }
 };
 
-// Reset user's quick actions to default based on their role
 const resetToDefault = async (req, res) => {
   try {
     const userId = req.user._id;
@@ -382,10 +365,8 @@ const resetToDefault = async (req, res) => {
       `[DEBUG] Resetting quick actions to default for user: ${userId}, role: ${userRole}`
     ); // debug
 
-    // Get role-based default actions
     const { defaultActions } = getRoleBasedActions(userRole);
 
-    // Update or create user's quick action configuration with default values
     await QuickAction.findOneAndUpdate(
       { userId },
       {
@@ -394,7 +375,7 @@ const resetToDefault = async (req, res) => {
         isCustomized: false,
       },
       {
-        upsert: true, // Create if doesn't exist
+        upsert: true,
       }
     );
 

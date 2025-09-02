@@ -10,14 +10,12 @@ import {
   X,
 } from "lucide-react";
 
-// Import the new components
 import ProjectOverview from "../../components/user/userProject/ProjectOverview";
 import ProjectActions from "../../components/user/userProject/ProjectActions";
 import AssignedMentorSection from "../../components/user/userProject/AssignedMentorSection";
 import SetClosingPriceModal from "../../components/user/userProject/SetClosingPriceModal"; //toar error
 import ViewPitchesModal from "../../components/user/userProject/ViewPitchesModal";
 
-// Request system components
 import RequestMentorModal from "../../components/user/userProject/RequestModal";
 import MentorSelectionModal from "../../components/user/userProject/MentorSelectionModal";
 import ProjectActionsButtons from "../../components/user/userProject/ProjectActionsButtons";
@@ -37,7 +35,6 @@ const DetailedProjectView = () => {
   const [isLoadingPitches, setIsLoadingPitches] = useState(false);
   const [averagePitch, setAveragePitch] = useState(0);
 
-  // mentor request model states
   const [mentors, setMentors] = useState([]);
   const [mentorsLoading, setMentorsLoading] = useState(false);
   const [selectedMentor, setSelectedMentor] = useState(null);
@@ -53,7 +50,7 @@ const DetailedProjectView = () => {
 
   const showToast = ({ message, status = "info" }) => {
     setToast({ open: true, message, status });
-    // Auto-hide after 4 seconds
+
     setTimeout(() => {
       setToast((prev) => ({ ...prev, open: false }));
     }, 4000);
@@ -63,7 +60,6 @@ const DetailedProjectView = () => {
     setToast((prev) => ({ ...prev, open: false }));
   };
 
-  // Inline Toast component
   const Toast = () => {
     if (!toast.open) return null;
 
@@ -96,11 +92,10 @@ const DetailedProjectView = () => {
 
   useEffect(() => {
     if (project && project._id) {
-      fetchPitches(); // Load pitches when project is loaded
+      fetchPitches();
     }
   }, [project?._id]);
 
-  // Fetch project details
   useEffect(() => {
     const fetchProject = async () => {
       try {
@@ -154,7 +149,6 @@ const DetailedProjectView = () => {
     }
   };
 
-  // Fetch pitches
   const fetchPitches = async () => {
     try {
       setIsLoadingPitches(true);
@@ -184,7 +178,6 @@ const DetailedProjectView = () => {
     }
   };
 
-  // Handle setting closing price manually
   const handleSetClosingPrice = async () => {
     if (!closingPrice || closingPrice <= 0) {
       showToast("Please enter a valid price", "error");
@@ -228,7 +221,6 @@ const DetailedProjectView = () => {
     }
   };
 
-  // Handle setting closing price from pitch
   const handleSetClosingPriceFromPitch = async (pitchPrice, mentorId) => {
     if (project.closingPrice) {
       showToast(
@@ -274,7 +266,6 @@ const DetailedProjectView = () => {
     }
   };
 
-  // Handle viewing pitches
   const handleViewPitches = async () => {
     setShowPitchesModal(true);
     await fetchPitches();
@@ -285,7 +276,6 @@ const DetailedProjectView = () => {
     return `${currency} ${price.toLocaleString()}`;
   };
 
-  // Format date
   const formatDate = (dateString) => {
     if (!dateString) return "Not set";
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -295,14 +285,12 @@ const DetailedProjectView = () => {
     });
   };
 
-  // Handle view mentor profile
   const handleViewMentorProfile = (mentorId) => {
     navigate(`/user/mentor/${mentorId}`);
   };
 
   const handleAIMentorSelection = () => {
     if (mentors.length === 0) {
-      // Fetch mentors first if not already loaded
       fetchMentors().then(() => {
         setShowAIMentorSelection(true);
       });
@@ -341,10 +329,7 @@ const DetailedProjectView = () => {
     }
   };
 
-  // Handle request sent callback - this will be called when a request is successfully sent
   const handleRequestSent = (mentorId) => {
-    // You can add any additional logic here if needed
-    // The modal components will handle their own state updates
     console.log(`Request sent to mentor: ${mentorId}`);
   };
 

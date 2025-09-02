@@ -20,7 +20,6 @@ import {
   Star,
 } from "lucide-react";
 
-// Import components
 import LearnerProjectProfile from "../../components/mentor/mentorSessions/LearnerProjectProfile";
 import SessionList from "../../components/mentor/mentorSessions/SessionList";
 import AddSessionForm from "../../components/mentor/mentorSessions/AddSessionForm";
@@ -30,7 +29,6 @@ const MentorSessions = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeItem, setActiveItem] = useState("sessions");
 
-  // Data states
   const [sessionsData, setSessionsData] = useState(null);
   const [sessionsLoading, setSessionsLoading] = useState(true);
   const [showAddSession, setShowAddSession] = useState(false);
@@ -97,7 +95,6 @@ const MentorSessions = () => {
     );
   };
 
-  // Toast functions - add before the main component return
   const showToast = ({ message, status = "info" }) => {
     setToast({ open: true, message, status });
   };
@@ -106,14 +103,12 @@ const MentorSessions = () => {
     setToast({ open: false, message: "", status: "info" });
   };
 
-  // Redirect non-mentors
   useEffect(() => {
     if (!loading && (!isAuthenticated || (user && user.role !== "mentor"))) {
       window.location.href = "/login";
     }
   }, [loading, isAuthenticated, user]);
 
-  // Fetch sessions data
   useEffect(() => {
     const fetchSessions = async () => {
       if (!isAuthenticated) return;
@@ -148,12 +143,10 @@ const MentorSessions = () => {
     }
   }, [isAuthenticated, refreshTrigger]);
 
-  // Refresh data
   const refreshData = () => {
     setRefreshTrigger((prev) => prev + 1);
   };
 
-  // Show loading
   if (loading || sessionsLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 flex items-center justify-center">
@@ -175,7 +168,6 @@ const MentorSessions = () => {
     setSidebarOpen(!sidebarOpen);
   };
 
-  // No project state
   const NoProjectState = () => (
     <div className="flex flex-col items-center justify-center min-h-[300px] sm:min-h-[400px] bg-white/5 backdrop-blur-sm rounded-3xl border border-white/10 p-4 sm:p-6 lg:p-8 mx-2 sm:mx-0">
       <div className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 bg-gradient-to-r from-cyan-500/20 to-teal-500/20 rounded-full flex items-center justify-center mb-4 sm:mb-6">
@@ -197,7 +189,6 @@ const MentorSessions = () => {
     </div>
   );
 
-  // Past sessions only state
   const PastSessionsOnlyState = () => (
     <div className="space-y-4 sm:space-y-6">
       <div className="bg-amber-500/20 backdrop-blur-sm rounded-2xl p-4 sm:p-6 border border-amber-400/30 mx-2 sm:mx-0">

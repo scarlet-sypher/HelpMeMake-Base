@@ -20,7 +20,6 @@ import {
 const QuickActions = () => {
   const navigate = useNavigate();
 
-  // State management
   const [quickActions, setQuickActions] = useState([]);
   const [availableActions, setAvailableActions] = useState([]);
   const [isCustomized, setIsCustomized] = useState(false);
@@ -29,7 +28,6 @@ const QuickActions = () => {
   const [selectedActions, setSelectedActions] = useState([]);
   const [saving, setSaving] = useState(false);
 
-  // Icon mapping for dynamic icons
   const iconMap = {
     Calendar,
     PlayCircle,
@@ -46,7 +44,6 @@ const QuickActions = () => {
     console.log(`[DEBUG QuickActions] ${message}`, data); // debug
   };
 
-  // Get logged-in user ID from localStorage token
   const getUserIdFromToken = () => {
     try {
       const token = localStorage.getItem("access_token");
@@ -61,7 +58,6 @@ const QuickActions = () => {
     }
   };
 
-  // Fetch user's quick actions on component mount
   useEffect(() => {
     fetchUserQuickActions();
   }, []);
@@ -103,7 +99,7 @@ const QuickActions = () => {
   };
 
   const handleActionClick = (action) => {
-    if (isEditMode) return; // Don't navigate in edit mode
+    if (isEditMode) return;
 
     debugLog("Action clicked:", action); // debug
 
@@ -117,7 +113,7 @@ const QuickActions = () => {
   const handleEditClick = () => {
     debugLog("Entering edit mode"); // debug
     setIsEditMode(true);
-    // Initialize selected actions with current quick actions
+
     setSelectedActions([...quickActions]);
   };
 
@@ -133,7 +129,6 @@ const QuickActions = () => {
     );
 
     if (isSelected) {
-      // Remove from selection
       const updated = selectedActions.filter(
         (selected) => selected.path !== action.path
       );
@@ -141,7 +136,6 @@ const QuickActions = () => {
       debugLog("Removed action from selection:", action.label); // debug
       debugLog("Updated selection:", updated); // debug
     } else {
-      // Add to selection (max 4)
       if (selectedActions.length < 4) {
         const updated = [...selectedActions, action];
         setSelectedActions(updated);

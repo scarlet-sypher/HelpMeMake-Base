@@ -22,20 +22,15 @@ const githubStrategy = new GitHubStrategy(
         return done(new Error("No email found in GitHub profile"), null);
       }
 
-      // Step 1: Check if user exists by githubId
       let user = await User.findOne({ githubId });
 
       if (user) {
-        // User exists with this GitHub ID, just return them
         return done(null, user);
       }
 
-      // Step 2: Check if user exists by email
       user = await User.findOne({ email });
 
       if (user) {
-        // User exists with same email but different provider
-        // Update their GitHub ID and log them in
         user.githubId = githubId;
         user.name = user.name || name;
         user.avatar = user.avatar || avatar;
@@ -46,9 +41,7 @@ const githubStrategy = new GitHubStrategy(
         return done(null, user);
       }
 
-      // Step 3: Create new user if none exists
       try {
-        // Generate random password for GitHub users
         const crypto = require("crypto");
         const bcrypt = require("bcryptjs");
         const generatedPassword = crypto.randomBytes(8).toString("base64");
@@ -60,37 +53,32 @@ const githubStrategy = new GitHubStrategy(
           name,
           avatar,
           authProvider: "github",
-          password: hashedPassword, // Store hashed generated password
+          password: hashedPassword,
           isEmailVerified: true,
           isAccountActive: true,
-          tempPassword: generatedPassword, // Store in DB for later retrieval
-          isPasswordUpdated: false, // Flag for password update prompt
+          tempPassword: generatedPassword,
+          isPasswordUpdated: false,
           role: null,
         });
 
         await user.save();
 
-        // IMPORTANT: Set tempGeneratedPassword on the user object for the callback
-        // This ensures it persists through the authentication flow
         const userWithTempPassword = user.toObject();
         userWithTempPassword.tempGeneratedPassword = generatedPassword;
 
         console.log("New GitHub user created with temp password for:", email);
         return done(null, userWithTempPassword);
       } catch (error) {
-        // Handle duplicate key error gracefully
         if (
           error.code === 11000 &&
           error.keyPattern &&
           error.keyPattern.email
         ) {
-          // Another user was created with same email between our checks
-          // This is a race condition - redirect to user-exists page
           const err = new Error("USER_EXISTS");
           err.email = email;
           return done(err, null);
         }
-        throw error; // Re-throw other errors
+        throw error;
       }
     } catch (error) {
       console.error("GitHub Strategy Error:", error);

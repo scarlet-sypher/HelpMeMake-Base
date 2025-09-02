@@ -7,10 +7,8 @@ const streamifier = require("streamifier");
 const { generateOTP, sendOTPEmail } = require("../config/emailService");
 const path = require("path");
 
-// Get All Available Mentors
 const getAllMentors = async (req, res) => {
   try {
-    // Query parameters for filtering (optional)
     const {
       category,
       expertise,
@@ -22,35 +20,28 @@ const getAllMentors = async (req, res) => {
       limit = 50,
     } = req.query;
 
-    // Build filter object
     let filter = { isAvailable: true };
 
-    // Add category filter if provided
     if (category) {
       filter["expertise.skill"] = { $regex: category, $options: "i" };
     }
 
-    // Add expertise filter if provided
     if (expertise) {
       filter["expertise.skill"] = { $regex: expertise, $options: "i" };
     }
 
-    // Add rating filter if provided
     if (minRating) {
       filter.rating = { $gte: parseFloat(minRating) };
     }
 
-    // Add price filter if provided
     if (maxPrice) {
       filter["pricing.hourlyRate"] = { $lte: parseFloat(maxPrice) };
     }
 
-    // Add online status filter if provided
     if (isOnline !== undefined) {
       filter.isOnline = isOnline === "true";
     }
 
-    // Build sort object
     let sort = {};
     const validSortFields = [
       "rating",
@@ -64,24 +55,20 @@ const getAllMentors = async (req, res) => {
     if (validSortFields.includes(sortBy)) {
       sort[sortBy] = sortOrder === "asc" ? 1 : -1;
     } else {
-      sort.rating = -1; // Default sort by rating desc
+      sort.rating = -1;
     }
 
-    // Execute query
     const mentors = await Mentor.find(filter)
       .populate("userId", "name email avatar isEmailVerified")
       .sort(sort)
       .limit(parseInt(limit))
-      .lean(); // Use lean() for better performance
+      .lean();
 
-    // Filter out mentors whose user accounts are not active/verified
     const activeMentors = mentors.filter(
       (mentor) => mentor.userId && mentor.userId.isEmailVerified
     );
 
-    // Format response data
     const formattedMentors = activeMentors.map((mentor) => {
-      // Calculate profile completeness if not already calculated
       let profileCompleteness = mentor.profileCompleteness;
       if (profileCompleteness < 50) {
         profileCompleteness = calculateProfileCompleteness(mentor);
@@ -116,14 +103,14 @@ const getAllMentors = async (req, res) => {
         teachingPreferences: mentor.teachingPreferences,
         joinDate: mentor.joinDate,
         profileCompleteness,
-        // Virtual fields
+
         successRate:
           mentor.completedSessions > 0
             ? Math.floor(
                 (mentor.completedSessions / (mentor.completedSessions + 2)) *
                   100
               )
-            : 85, // Default success rate for new mentors
+            : 85,
         primaryExpertise:
           mentor.expertise
             ?.filter(
@@ -134,16 +121,12 @@ const getAllMentors = async (req, res) => {
       };
     });
 
-    // Sort by profile completeness and rating for better quality results
     const sortedMentors = formattedMentors.sort((a, b) => {
-      // First priority: profile completeness (minimum 60%)
       if (a.profileCompleteness >= 60 && b.profileCompleteness < 60) return -1;
       if (a.profileCompleteness < 60 && b.profileCompleteness >= 60) return 1;
 
-      // Second priority: rating
       if (a.rating !== b.rating) return b.rating - a.rating;
 
-      // Third priority: total students
       return b.totalStudents - a.totalStudents;
     });
 
@@ -173,9 +156,8 @@ const getAllMentors = async (req, res) => {
   }
 };
 
-// Helper function to calculate profile completeness
 const calculateProfileCompleteness = (mentor) => {
-  let completeness = 20; // Base for having a profile
+  let completeness = 20;
 
   if (mentor.bio && mentor.bio.length > 50) completeness += 15;
   if (mentor.expertise && mentor.expertise.length > 0) completeness += 20;
@@ -194,7 +176,6 @@ const calculateProfileCompleteness = (mentor) => {
   return Math.min(completeness, 100);
 };
 
-// Get Mentor by ID (detailed view)
 const getMentorById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -217,7 +198,6 @@ const getMentorById = async (req, res) => {
       });
     }
 
-    // Check if mentor's user account is active
     if (!mentor.userId || !mentor.userId.isEmailVerified) {
       return res.status(404).json({
         success: false,
@@ -247,7 +227,6 @@ const getMentorById = async (req, res) => {
   }
 };
 
-// Search Mentors by Skills/Categories
 const searchMentors = async (req, res) => {
   try {
     const { query, category, skills } = req.query;
@@ -261,7 +240,6 @@ const searchMentors = async (req, res) => {
 
     let searchFilter = { isAvailable: true };
 
-    // Build search conditions
     const searchConditions = [];
 
     if (query) {
@@ -299,7 +277,6 @@ const searchMentors = async (req, res) => {
       .limit(20)
       .lean();
 
-    // Filter active mentors
     const activeMentors = mentors.filter(
       (mentor) => mentor.userId && mentor.userId.isEmailVerified
     );
@@ -321,7 +298,6 @@ const searchMentors = async (req, res) => {
   }
 };
 
-// Get Mentor Statistics (for admin/analytics)
 const getMentorStats = async (req, res) => {
   try {
     const stats = await Mentor.aggregate([
@@ -377,7 +353,7 @@ const getMentorStats = async (req, res) => {
 const getMentorWithAIReason = async (req, res) => {
   try {
     const { id } = req.params;
-    const { projectId } = req.query; // Optional project context
+    const { projectId } = req.query;
 
     if (!id) {
       return res.status(400).json({
@@ -386,7 +362,6 @@ const getMentorWithAIReason = async (req, res) => {
       });
     }
 
-    // Get mentor details (reuse existing logic)
     const mentor = await Mentor.findById(id)
       .populate("userId", "name email avatar isEmailVerified createdAt")
       .populate("reviews.learnerId", "name avatar");
@@ -398,7 +373,6 @@ const getMentorWithAIReason = async (req, res) => {
       });
     }
 
-    // Check if mentor's user account is active
     if (!mentor.userId || !mentor.userId.isEmailVerified) {
       return res.status(404).json({
         success: false,
@@ -409,21 +383,18 @@ const getMentorWithAIReason = async (req, res) => {
     let aiReason = null;
     let aiScore = null;
 
-    // If projectId is provided, generate AI reasoning
     if (projectId) {
       try {
         const Project = require("../Model/Project");
         const project = await Project.findById(projectId);
 
         if (project) {
-          // Generate AI reasoning using existing Gemini integration
           const aiResponse = await generateMentorReasoning(project, mentor);
           aiReason = aiResponse.reason;
           aiScore = aiResponse.score;
         }
       } catch (aiError) {
         console.error("AI reasoning generation failed:", aiError);
-        // Continue without AI reasoning
       }
     }
 
@@ -451,7 +422,6 @@ const getMentorWithAIReason = async (req, res) => {
   }
 };
 
-// Helper function to generate AI reasoning for a single mentor
 const generateMentorReasoning = async (project, mentor) => {
   const { GoogleGenerativeAI } = require("@google/generative-ai");
   const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
@@ -548,7 +518,6 @@ const updateSocialLinks = async (req, res) => {
     const mentorId = req.user._id;
     const { github, linkedin, twitter, portfolio, blog } = req.body;
 
-    // Validate URLs if provided
     const urlPattern = /^https?:\/\/.+/;
     const socialLinks = { github, linkedin, twitter, portfolio, blog };
 
@@ -563,19 +532,17 @@ const updateSocialLinks = async (req, res) => {
       }
     }
 
-    // Clean up empty or '#' values
     Object.keys(socialLinks).forEach((key) => {
       if (socialLinks[key] === "" || socialLinks[key] === "#") {
         socialLinks[key] = "#";
       }
     });
 
-    // Find and update mentor social links
     const updatedMentor = await Mentor.findOneAndUpdate(
       { userId: mentorId },
       {
         socialLinks,
-        // Update profile completeness if social links are added
+
         $inc: {
           profileCompleteness:
             github && github !== "#" && linkedin && linkedin !== "#" ? 5 : 0,
@@ -599,13 +566,11 @@ const updateSocialLinks = async (req, res) => {
   }
 };
 
-// Change Password
 const changePassword = async (req, res) => {
   try {
     const userId = req.user._id;
     const { currentPassword, newPassword } = req.body;
 
-    // Validation
     if (!newPassword || newPassword.length < 6) {
       return res.status(400).json({
         success: false,
@@ -613,7 +578,6 @@ const changePassword = async (req, res) => {
       });
     }
 
-    // Get user with password
     const user = await User.findById(userId).select("+password");
     if (!user) {
       return res.status(404).json({
@@ -622,7 +586,6 @@ const changePassword = async (req, res) => {
       });
     }
 
-    // Check if user is OAuth user
     if (user.authProvider !== "local") {
       return res.status(400).json({
         success: false,
@@ -630,7 +593,6 @@ const changePassword = async (req, res) => {
       });
     }
 
-    // For users with existing password, verify current password
     if (user.password && !user.tempPassword) {
       if (!currentPassword) {
         return res.status(400).json({
@@ -651,23 +613,20 @@ const changePassword = async (req, res) => {
       }
     }
 
-    // Hash new password
     const saltRounds = 12;
     const hashedNewPassword = await bcrypt.hash(newPassword, saltRounds);
 
-    // Update password
     await User.findByIdAndUpdate(userId, {
       password: hashedNewPassword,
       isPasswordUpdated: true,
-      tempPassword: null, // Clear temp password if it exists
+      tempPassword: null,
     });
 
-    // Update mentor record if it exists
     await Mentor.findOneAndUpdate(
       { userId: userId },
       {
         isPasswordUpdated: true,
-        // Increment profile completeness for first-time password setup
+
         $inc: { profileCompleteness: user.tempPassword ? 10 : 0 },
       },
       { upsert: true }
@@ -687,7 +646,6 @@ const changePassword = async (req, res) => {
   }
 };
 
-// Update Personal/Professional Details
 const updatePersonalDetails = async (req, res) => {
   try {
     const mentorId = req.user._id;
@@ -699,7 +657,6 @@ const updatePersonalDetails = async (req, res) => {
       teachingPreferences,
     } = req.body;
 
-    // Validate expertise array
     if (expertise && Array.isArray(expertise)) {
       for (const skill of expertise) {
         if (!skill.skill || !skill.level) {
@@ -723,7 +680,6 @@ const updatePersonalDetails = async (req, res) => {
       }
     }
 
-    // Validate teaching preferences
     if (teachingPreferences) {
       if (
         teachingPreferences.maxStudentsPerSession &&
@@ -754,7 +710,6 @@ const updatePersonalDetails = async (req, res) => {
       }
     }
 
-    // Validate availability timezone
     if (availability && availability.timezone) {
       const validTimezones = [
         "UTC",
@@ -776,7 +731,6 @@ const updatePersonalDetails = async (req, res) => {
       }
     }
 
-    // Find existing mentor or create update object
     let updateData = {};
 
     if (experience) updateData.experience = experience;
@@ -786,14 +740,12 @@ const updatePersonalDetails = async (req, res) => {
     if (teachingPreferences)
       updateData.teachingPreferences = teachingPreferences;
 
-    // Update mentor record
     const updatedMentor = await Mentor.findOneAndUpdate(
       { userId: mentorId },
       updateData,
       { new: true, upsert: true }
     );
 
-    // Recalculate profile completeness
     if (updatedMentor.calculateProfileCompleteness) {
       updatedMentor.calculateProfileCompleteness();
       await updatedMentor.save();
@@ -814,13 +766,11 @@ const updatePersonalDetails = async (req, res) => {
   }
 };
 
-// Update Profile (Basic Info Only)
 const updateProfile = async (req, res) => {
   try {
     const userId = req.user._id;
     const { name, title, bio, description, location, pricing } = req.body;
 
-    // Update user basic info
     const userUpdateData = {};
     if (name) userUpdateData.name = name;
 
@@ -832,7 +782,6 @@ const updateProfile = async (req, res) => {
       });
     }
 
-    // Update mentor-specific info
     const mentorUpdateData = {};
     if (title) mentorUpdateData.title = title;
     if (bio !== undefined) mentorUpdateData.bio = bio;
@@ -846,13 +795,11 @@ const updateProfile = async (req, res) => {
       { new: true, upsert: true }
     );
 
-    // Recalculate profile completeness
     if (updatedMentor.calculateProfileCompleteness) {
       updatedMentor.calculateProfileCompleteness();
       await updatedMentor.save();
     }
 
-    // Combine user and mentor data
     const combinedData = {
       ...(updatedUser ? updatedUser.toObject() : req.user.toObject()),
       ...updatedMentor.toObject(),
@@ -875,7 +822,7 @@ const updateProfile = async (req, res) => {
 
 const upload = multer({
   storage: multer.memoryStorage(),
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+  limits: { fileSize: 5 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
     const allowedTypes = /jpeg|jpg|png|webp/;
     const extname = allowedTypes.test(
@@ -891,7 +838,6 @@ const upload = multer({
   },
 }).single("avatar");
 
-// Send OTP for Profile Verification
 const sendProfileOTP = async (req, res) => {
   try {
     console.log("🔄 Sending profile OTP for user:", req.user._id);
@@ -906,15 +852,13 @@ const sendProfileOTP = async (req, res) => {
       });
     }
 
-    // Generate OTP
     const otp = generateOTP();
-    const otpExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes from now
+    const otpExpires = new Date(Date.now() + 10 * 60 * 1000);
 
     console.log("🔑 Generated OTP:", otp);
     console.log("⏰ OTP expires at:", otpExpires);
     console.log("⏱️ Current time:", new Date());
 
-    // Store OTP in user document with explicit field updates
     const updateResult = await User.findByIdAndUpdate(
       req.user._id,
       {
@@ -930,7 +874,6 @@ const sendProfileOTP = async (req, res) => {
       expires: updateResult.profileOTPExpires,
     });
 
-    // Send OTP email
     await sendOTPEmail(
       user.email,
       otp,
@@ -954,7 +897,6 @@ const sendProfileOTP = async (req, res) => {
   }
 };
 
-// Verify OTP and Update Profile
 const verifyProfileUpdate = async (req, res) => {
   try {
     const { otp, profileData } = req.body;
@@ -964,7 +906,6 @@ const verifyProfileUpdate = async (req, res) => {
     console.log("📝 Received OTP:", otp);
     console.log("📋 Profile data:", profileData);
 
-    // Validation
     if (!otp || otp.length !== 6) {
       console.log("❌ Invalid OTP format:", otp);
       return res.status(400).json({
@@ -973,7 +914,6 @@ const verifyProfileUpdate = async (req, res) => {
       });
     }
 
-    // Get user with OTP fields - IMPORTANT: Use +select to include hidden fields
     const user = await User.findById(req.user._id).select(
       "+profileOTP +profileOTPExpires"
     );
@@ -993,7 +933,6 @@ const verifyProfileUpdate = async (req, res) => {
       currentTime: new Date(),
     });
 
-    // Check if OTP exists
     if (!user.profileOTP || !user.profileOTPExpires) {
       console.log("❌ No OTP found in database");
       return res.status(400).json({
@@ -1002,7 +941,6 @@ const verifyProfileUpdate = async (req, res) => {
       });
     }
 
-    // Check if OTP has expired
     const currentTime = new Date();
     const expiryTime = new Date(user.profileOTPExpires);
 
@@ -1013,7 +951,6 @@ const verifyProfileUpdate = async (req, res) => {
         timeDiff: currentTime - expiryTime,
       });
 
-      // Clear expired OTP
       await User.findByIdAndUpdate(req.user._id, {
         $unset: {
           profileOTP: 1,
@@ -1027,7 +964,6 @@ const verifyProfileUpdate = async (req, res) => {
       });
     }
 
-    // Verify OTP - Convert both to strings for comparison
     const storedOTP = user.profileOTP.toString().trim();
     const receivedOTP = otp.toString().trim();
 
@@ -1047,7 +983,6 @@ const verifyProfileUpdate = async (req, res) => {
 
     console.log("✅ OTP verified successfully, proceeding with profile update");
 
-    // Clear OTP fields first
     await User.findByIdAndUpdate(req.user._id, {
       $unset: {
         profileOTP: 1,
@@ -1055,7 +990,6 @@ const verifyProfileUpdate = async (req, res) => {
       },
     });
 
-    // Update base user info
     const userUpdateData = {};
     if (name && name.trim()) userUpdateData.name = name.trim();
 
@@ -1068,7 +1002,6 @@ const verifyProfileUpdate = async (req, res) => {
       console.log("✅ User data updated:", userUpdateData);
     }
 
-    // Update mentor-specific info - FIXED: Avoid triggering schema validation issues
     const mentorUpdateData = {};
     if (title && title.trim()) mentorUpdateData.title = title.trim();
     if (bio !== undefined) mentorUpdateData.bio = bio || "";
@@ -1086,20 +1019,18 @@ const verifyProfileUpdate = async (req, res) => {
 
     console.log("🔄 Updating mentor data:", mentorUpdateData);
 
-    // FIXED: Use findOneAndUpdate without triggering validation issues
     const updatedMentor = await Mentor.findOneAndUpdate(
       { userId: req.user._id },
       { $set: mentorUpdateData },
       {
         new: true,
         upsert: true,
-        runValidators: false, // Skip validation to avoid schema conflicts
+        runValidators: false,
       }
     );
 
     console.log("✅ Mentor data updated successfully");
 
-    // Recalculate profile completeness
     try {
       if (
         updatedMentor &&
@@ -1114,10 +1045,8 @@ const verifyProfileUpdate = async (req, res) => {
         "⚠️ Profile completeness calculation failed:",
         completenessError.message
       );
-      // Don't fail the entire request for this
     }
 
-    // Prepare response data
     const responseUser =
       updatedUser || (await User.findById(req.user._id).select("-password"));
     const combinedData = {
@@ -1135,7 +1064,6 @@ const verifyProfileUpdate = async (req, res) => {
   } catch (error) {
     console.error("❌ Verify profile update error:", error);
 
-    // Clear any stored OTP on error
     try {
       await User.findByIdAndUpdate(req.user._id, {
         $unset: {
@@ -1155,7 +1083,6 @@ const verifyProfileUpdate = async (req, res) => {
   }
 };
 
-// Upload Avatar
 const uploadAvatar = async (req, res) => {
   upload(req, res, async (err) => {
     if (err) {
@@ -1176,7 +1103,6 @@ const uploadAvatar = async (req, res) => {
     try {
       console.log("🖼️ Uploading avatar for user:", req.user._id);
 
-      // Upload to Cloudinary from buffer
       const streamUpload = (req) => {
         return new Promise((resolve, reject) => {
           const stream = cloudinary.uploader.upload_stream(
@@ -1206,7 +1132,6 @@ const uploadAvatar = async (req, res) => {
       const result = await streamUpload(req);
       const avatarUrl = result.secure_url;
 
-      // Update user avatar
       const updatedUser = await User.findByIdAndUpdate(
         req.user._id,
         { avatar: avatarUrl },

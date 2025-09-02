@@ -25,7 +25,6 @@ import {
   Award,
 } from "lucide-react";
 
-// Add custom styles for scrollbar hiding
 const customStyles = `
   .scrollbar-hide {
     -ms-overflow-style: none;
@@ -47,7 +46,6 @@ const AchievementsPage = () => {
   const [showTestPanel, setShowTestPanel] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
-  // Test panel state
   const [testValues, setTestValues] = useState({
     projectCount: 0,
     sessionCount: 0,
@@ -62,7 +60,6 @@ const AchievementsPage = () => {
     }
   }, [loading, isAuthenticated]);
 
-  // Fetch achievements data
   const fetchAchievements = async (showLoading = true) => {
     if (!isAuthenticated) return;
 
@@ -80,10 +77,9 @@ const AchievementsPage = () => {
         setLearnerData(data.learner);
         setAchievementData(data.achievements);
 
-        // Show new badges if any
         if (data.newBadges && data.newBadges.length > 0) {
           setNewBadges(data.newBadges);
-          // Clear new badges after 5 seconds
+
           setTimeout(() => setNewBadges([]), 5000);
         }
       }
@@ -94,7 +90,6 @@ const AchievementsPage = () => {
     }
   };
 
-  // Force recalculate achievements
   const recalculateAchievements = async () => {
     if (!isAuthenticated) return;
 
@@ -116,7 +111,6 @@ const AchievementsPage = () => {
         setLearnerData(data.learner);
         setAchievementData(data.achievements);
 
-        // Show new badges if any
         if (data.newBadges && data.newBadges.length > 0) {
           setNewBadges(data.newBadges);
           setTimeout(() => setNewBadges([]), 5000);
@@ -129,7 +123,6 @@ const AchievementsPage = () => {
     }
   };
 
-  // Test function to update values manually
   const updateTestValue = async (type, value) => {
     if (!isAuthenticated) return;
 
@@ -162,17 +155,15 @@ const AchievementsPage = () => {
     }
   };
 
-  // Initial load
   useEffect(() => {
     fetchAchievements();
   }, [isAuthenticated]);
 
-  // Auto-refresh every 30 seconds
   useEffect(() => {
     if (!isAuthenticated) return;
 
     const interval = setInterval(() => {
-      fetchAchievements(false); // Silent refresh
+      fetchAchievements(false);
     }, 30000);
 
     return () => clearInterval(interval);
@@ -184,7 +175,6 @@ const AchievementsPage = () => {
 
   const handleBadgeClick = (badgeInfo) => {
     console.log("Badge clicked:", badgeInfo);
-    // Handle badge click animation or effects
   };
 
   if (loading || achievementsLoading) {

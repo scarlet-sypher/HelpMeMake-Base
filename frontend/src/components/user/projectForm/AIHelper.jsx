@@ -33,7 +33,6 @@ const AIHelper = ({ formData, setFormData, onToast }) => {
       return;
     }
 
-    // Clear previous image before generating new one
     setGeneratedImage("");
     if (formData.thumbnail) {
       setFormData((prev) => ({ ...prev, thumbnail: "" }));
@@ -55,7 +54,6 @@ const AIHelper = ({ formData, setFormData, onToast }) => {
       );
 
       if (response.data.success) {
-        // Set the generated image URL to both local state and form data
         setGeneratedImage(response.data.imageUrl);
         setFormData((prev) => ({
           ...prev,
@@ -70,7 +68,6 @@ const AIHelper = ({ formData, setFormData, onToast }) => {
     } catch (error) {
       console.error("Real image generation error:", error);
 
-      // Handle specific error messages
       if (error.response?.status === 400) {
         onToast?.({
           message: "Invalid prompt. Please try a different description.",

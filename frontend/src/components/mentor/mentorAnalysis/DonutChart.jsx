@@ -1,5 +1,3 @@
-// =====================================================New==========================================================
-
 import React, { useState, useEffect, useMemo } from "react";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 import { Activity, TrendingUp } from "lucide-react";
@@ -8,7 +6,6 @@ const DonutChart = ({ data, title = "Project Distribution" }) => {
   const [animatedData, setAnimatedData] = useState([]);
   const [isVisible, setIsVisible] = useState(false);
 
-  // Prepare chart data with memoization
   const chartData = useMemo(() => {
     return [
       { name: "Completed", value: data.completed || 0, color: "#10B981" },
@@ -28,7 +25,6 @@ const DonutChart = ({ data, title = "Project Distribution" }) => {
 
   const total = animatedData.reduce((sum, item) => sum + item.value, 0);
 
-  // Custom tooltip
   const CustomTooltip = ({ active, payload }) => {
     if (active && payload && payload.length) {
       const item = payload[0].payload;

@@ -2,7 +2,6 @@ import React from "react";
 import { Star, Users, Award, TrendingUp } from "lucide-react";
 
 const TopMentorsList = ({ mentors, isLoading = false }) => {
-  // Loading skeleton
   if (isLoading) {
     return (
       <div className="relative group">
@@ -32,7 +31,6 @@ const TopMentorsList = ({ mentors, isLoading = false }) => {
     );
   }
 
-  // No mentors state
   if (!mentors || mentors.length === 0) {
     return (
       <div className="relative group">
@@ -85,9 +83,9 @@ const TopMentorsList = ({ mentors, isLoading = false }) => {
             const totalProjects = mentorData.totalProjects;
 
             const rankColors = {
-              0: "from-yellow-500 to-amber-500", // Gold
-              1: "from-gray-400 to-gray-500", // Silver
-              2: "from-amber-600 to-orange-600", // Bronze
+              0: "from-yellow-500 to-amber-500",
+              1: "from-gray-400 to-gray-500",
+              2: "from-amber-600 to-orange-600",
             };
 
             const rankColor =

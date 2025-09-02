@@ -48,7 +48,6 @@ const TechnicalDetails = ({ formData, setFormData, errors, onToast }) => {
     const file = event.target.files[0];
     if (!file) return;
 
-    // Validate file type
     const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
     if (!allowedTypes.includes(file.type)) {
       onToast?.({
@@ -58,7 +57,6 @@ const TechnicalDetails = ({ formData, setFormData, errors, onToast }) => {
       return;
     }
 
-    // Validate file size (5MB max)
     if (file.size > 5 * 1024 * 1024) {
       onToast?.({
         message: "File size must be less than 5MB",
@@ -73,7 +71,6 @@ const TechnicalDetails = ({ formData, setFormData, errors, onToast }) => {
       const formDataUpload = new FormData();
       formDataUpload.append("thumbnail", file);
 
-      // Get token from multiple possible sources
       const token =
         localStorage.getItem("access_token") ||
         localStorage.getItem("token") ||
@@ -124,8 +121,6 @@ const TechnicalDetails = ({ formData, setFormData, errors, onToast }) => {
           message: "Authentication failed. Please log in again.",
           status: "error",
         });
-        // Optionally redirect to login
-        // window.location.href = '/login';
       } else {
         onToast?.({
           message:

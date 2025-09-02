@@ -26,26 +26,23 @@ const AddSessionForm = ({ activeProject, onClose, onSuccess, onToast }) => {
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
-    // Focus on the modal to scroll it into view
     const modalElement = document.querySelector('[data-modal="edit-session"]');
     if (modalElement) {
       modalElement.scrollIntoView({
         behavior: "smooth",
         block: "center",
       });
-      // Also focus for accessibility
+
       modalElement.focus();
     }
   }, []);
 
-  // Get minimum date/time (current time + 1 hour)
   const getMinDateTime = () => {
     const now = new Date();
     now.setHours(now.getHours() + 1);
     return now.toISOString().slice(0, 16);
   };
 
-  // Handle input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -53,7 +50,6 @@ const AddSessionForm = ({ activeProject, onClose, onSuccess, onToast }) => {
       [name]: value,
     }));
 
-    // Clear error when user starts typing
     if (errors[name]) {
       setErrors((prev) => ({
         ...prev,
@@ -62,7 +58,6 @@ const AddSessionForm = ({ activeProject, onClose, onSuccess, onToast }) => {
     }
   };
 
-  // Validate form
   const validateForm = () => {
     const newErrors = {};
 
@@ -79,7 +74,7 @@ const AddSessionForm = ({ activeProject, onClose, onSuccess, onToast }) => {
     } else {
       const selectedDate = new Date(formData.scheduledAt);
       const minDate = new Date();
-      minDate.setMinutes(minDate.getMinutes() + 1); // ✅ 1 minute instead of 1 hour
+      minDate.setMinutes(minDate.getMinutes() + 1);
 
       if (selectedDate <= minDate) {
         newErrors.scheduledAt =
@@ -91,7 +86,6 @@ const AddSessionForm = ({ activeProject, onClose, onSuccess, onToast }) => {
     return Object.keys(newErrors).length === 0;
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -139,7 +133,6 @@ const AddSessionForm = ({ activeProject, onClose, onSuccess, onToast }) => {
 
   const learner = activeProject?.learnerId?.userId || activeProject?.learnerId;
 
-  // Get avatar URL
   const getAvatarUrl = (avatar) => {
     if (!avatar) return "/uploads/public/default.jpg";
     if (avatar.startsWith("/uploads/")) {

@@ -3,25 +3,21 @@ const jwt = require("jsonwebtoken");
 
 const authenticateJWT = passport.authenticate("jwt", { session: false });
 
-// Helper function to check for admin token
 const checkAdminToken = async (req, res, next) => {
   try {
-    // Check for admin token first
     let adminToken = req.cookies?.admin_token;
 
     if (!adminToken) {
       const authHeader = req.headers.authorization;
       if (authHeader && authHeader.startsWith("Bearer ")) {
         const token = authHeader.substring(7);
-        // Try to decode as admin token
+
         try {
           const decoded = jwt.verify(token, process.env.ADMIN_JWT_SECRET);
           if (decoded.type === "admin") {
             adminToken = token;
           }
-        } catch (error) {
-          // Not an admin token, continue with regular flow
-        }
+        } catch (error) {}
       }
     }
 
@@ -29,7 +25,6 @@ const checkAdminToken = async (req, res, next) => {
       try {
         const decoded = jwt.verify(adminToken, process.env.ADMIN_JWT_SECRET);
         if (decoded.type === "admin") {
-          // This is an admin token, verify admin exists
           const Admin = require("../Model/Admin");
           const admin = await Admin.findById(decoded.adminId).select(
             "-password"
@@ -42,12 +37,10 @@ const checkAdminToken = async (req, res, next) => {
           }
         }
       } catch (error) {
-        // Invalid admin token, continue with regular auth
         console.error("Invalid admin token:", error);
       }
     }
 
-    // No valid admin token found, continue with regular authentication
     next();
   } catch (error) {
     console.error("Admin token check error:", error);
@@ -58,9 +51,7 @@ const checkAdminToken = async (req, res, next) => {
 const requireRole = (allowedRoles) => {
   return async (req, res, next) => {
     try {
-      // First check if this is an admin request
       await checkAdminToken(req, res, () => {
-        // If admin is authenticated and requesting admin role
         if (
           req.isAdmin &&
           (allowedRoles === "admin" ||
@@ -69,7 +60,6 @@ const requireRole = (allowedRoles) => {
           return next();
         }
 
-        // Continue with regular user authentication for non-admin requests
         authenticateJWT(req, res, (err) => {
           if (err) {
             return res.status(401).json({
@@ -107,7 +97,6 @@ const requireRole = (allowedRoles) => {
             });
           }
 
-          // User is authenticated and authorized
           next();
         });
       });
@@ -121,13 +110,11 @@ const requireRole = (allowedRoles) => {
   };
 };
 
-// Specific role middlewares (unchanged)
 const requireUser = requireRole("user");
 const requireMentor = requireRole("mentor");
-const requireAdmin = requireRole("admin"); // This now works for both admin tokens and user admin role
+const requireAdmin = requireRole("admin");
 const requireUserOrMentor = requireRole(["user", "mentor"]);
 
-// Middleware to ensure user is authenticated (has valid JWT) - unchanged
 const requireAuth = (req, res, next) => {
   authenticateJWT(req, res, (err) => {
     if (err || !req.user) {
@@ -140,7 +127,6 @@ const requireAuth = (req, res, next) => {
   });
 };
 
-// Middleware to ensure user has selected a role - unchanged
 const requireRoleSelection = (req, res, next) => {
   authenticateJWT(req, res, (err) => {
     if (err || !req.user) {
@@ -162,7 +148,6 @@ const requireRoleSelection = (req, res, next) => {
   });
 };
 
-// NEW: Middleware specifically for admin-only routes (more explicit)
 const requireSuperAdmin = async (req, res, next) => {
   try {
     let adminToken = req.cookies?.admin_token;

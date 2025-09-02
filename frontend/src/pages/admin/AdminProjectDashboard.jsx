@@ -30,7 +30,7 @@ const AdminProjectDashboard = ({ onReturn }) => {
   const [stats, setStats] = useState(null);
 
   const statusOptions = ["", "Open", "In Progress", "Completed", "Cancelled"];
-  const itemsPerPage = 8; // 4x2 grid
+  const itemsPerPage = 8;
 
   useEffect(() => {
     fetchProjects();
@@ -97,12 +97,12 @@ const AdminProjectDashboard = ({ onReturn }) => {
 
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
-    setCurrentPage(1); // Reset to first page when searching
+    setCurrentPage(1);
   };
 
   const handleStatusFilter = (status) => {
     setStatusFilter(status);
-    setCurrentPage(1); // Reset to first page when filtering
+    setCurrentPage(1);
   };
 
   const handleViewProject = (projectId) => {
@@ -135,12 +135,12 @@ const AdminProjectDashboard = ({ onReturn }) => {
       }
 
       toast.success("Project deleted successfully");
-      fetchProjects(); // Refresh the list
-      fetchStats(); // Refresh stats
+      fetchProjects();
+      fetchStats();
     } catch (error) {
       console.error("Delete project error:", error);
       toast.error("Failed to delete project");
-      throw error; // Re-throw to handle in ProjectCard
+      throw error;
     }
   };
 
@@ -163,8 +163,6 @@ const AdminProjectDashboard = ({ onReturn }) => {
         return "text-gray-600 bg-gray-100";
     }
   };
-
-  // Render different views
 
   <ProjectView
     onReturn={() => {

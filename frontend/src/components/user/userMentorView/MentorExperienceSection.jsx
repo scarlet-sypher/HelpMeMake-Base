@@ -40,7 +40,7 @@ const MentorExperienceSection = ({ mentorData }) => {
     } else if (durationStr.includes("month")) {
       return parseFloat(durationStr.match(/[\d.]+/)?.[0] || 0);
     }
-    return 6; // default 6 months
+    return 6;
   };
 
   return (

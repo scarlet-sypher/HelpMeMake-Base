@@ -13,7 +13,6 @@ const messageRoomSchema = new mongoose.Schema(
       },
     },
 
-    // References to participants
     learnerId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Learner",
@@ -30,7 +29,6 @@ const messageRoomSchema = new mongoose.Schema(
       required: true,
     },
 
-    // Room configuration
     status: {
       type: String,
       enum: ["open", "close"],
@@ -43,7 +41,6 @@ const messageRoomSchema = new mongoose.Schema(
       trim: true,
     },
 
-    // Wallpaper settings for both users
     learnerWallpaper: {
       type: String,
       default: "/uploads/wallpapers/default-learner.jpg",
@@ -55,7 +52,6 @@ const messageRoomSchema = new mongoose.Schema(
       required: true,
     },
 
-    // Message tracking
     lastMessage: {
       content: {
         type: String,
@@ -72,7 +68,6 @@ const messageRoomSchema = new mongoose.Schema(
       },
     },
 
-    // Unread message counts
     learnerUnreadCount: {
       type: Number,
       default: 0,
@@ -84,7 +79,6 @@ const messageRoomSchema = new mongoose.Schema(
       min: 0,
     },
 
-    // Room metadata
     totalMessages: {
       type: Number,
       default: 0,
@@ -100,7 +94,6 @@ const messageRoomSchema = new mongoose.Schema(
   }
 );
 
-// Indexes for better performance
 messageRoomSchema.index({ roomId: 1 });
 messageRoomSchema.index({ learnerId: 1 });
 messageRoomSchema.index({ mentorId: 1 });
@@ -108,28 +101,23 @@ messageRoomSchema.index({ projectId: 1 });
 messageRoomSchema.index({ status: 1 });
 messageRoomSchema.index({ createdAt: -1 });
 
-// Compound indexes for common queries
 messageRoomSchema.index({ learnerId: 1, status: 1 });
 messageRoomSchema.index({ mentorId: 1, status: 1 });
 messageRoomSchema.index({ projectId: 1, status: 1 });
 
-// Virtual for checking if room is active
 messageRoomSchema.virtual("isActive").get(function () {
   return this.status === "open";
 });
 
-// Instance method to generate room name from project
 messageRoomSchema.methods.generateRoomName = function (projectName) {
   return `Chat - ${projectName}`;
 };
 
-// Instance method to close room
 messageRoomSchema.methods.closeRoom = function () {
   this.status = "close";
   return this.save();
 };
 
-// Instance method to increment unread count
 messageRoomSchema.methods.incrementUnreadCount = function (receiverRole) {
   if (receiverRole === "learner") {
     this.learnerUnreadCount += 1;
@@ -139,7 +127,6 @@ messageRoomSchema.methods.incrementUnreadCount = function (receiverRole) {
   return this.save();
 };
 
-// Instance method to reset unread count
 messageRoomSchema.methods.resetUnreadCount = function (userRole) {
   if (userRole === "learner") {
     this.learnerUnreadCount = 0;
@@ -149,7 +136,6 @@ messageRoomSchema.methods.resetUnreadCount = function (userRole) {
   return this.save();
 };
 
-// Static method to find rooms by learner
 messageRoomSchema.statics.findByLearner = function (learnerId, status = null) {
   const query = { learnerId };
   if (status) query.status = status;
@@ -160,7 +146,6 @@ messageRoomSchema.statics.findByLearner = function (learnerId, status = null) {
     .sort({ updatedAt: -1 });
 };
 
-// Static method to find rooms by mentor
 messageRoomSchema.statics.findByMentor = function (mentorId, status = null) {
   const query = { mentorId };
   if (status) query.status = status;
@@ -171,7 +156,6 @@ messageRoomSchema.statics.findByMentor = function (mentorId, status = null) {
     .sort({ updatedAt: -1 });
 };
 
-// Static method to find room by project
 messageRoomSchema.statics.findByProject = function (projectId) {
   return this.findOne({ projectId })
     .populate("learnerId", "userId")
@@ -179,7 +163,6 @@ messageRoomSchema.statics.findByProject = function (projectId) {
     .populate("projectId", "name status");
 };
 
-// Pre-save middleware to update totalMessages and lastMessage tracking
 messageRoomSchema.pre("save", function (next) {
   if (this.isModified("lastMessage.timestamp")) {
     this.updatedAt = new Date();
@@ -187,7 +170,6 @@ messageRoomSchema.pre("save", function (next) {
   next();
 });
 
-// Configure JSON output
 messageRoomSchema.set("toJSON", {
   virtuals: true,
   transform: function (doc, ret) {

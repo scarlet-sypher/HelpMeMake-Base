@@ -10,7 +10,6 @@ import {
 } from "lucide-react";
 
 const ReviewView = ({ reviews, totals = {} }) => {
-  // Render star ratings
   const renderStars = (rating) => {
     return (
       <div className="flex items-center gap-1">
@@ -27,7 +26,6 @@ const ReviewView = ({ reviews, totals = {} }) => {
     );
   };
 
-  // Format date
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     return date.toLocaleDateString("en-US", {
@@ -37,7 +35,6 @@ const ReviewView = ({ reviews, totals = {} }) => {
     });
   };
 
-  // Get status styling
   const getStatusStyling = (status) => {
     switch (status) {
       case "Completed":

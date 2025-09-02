@@ -17,7 +17,6 @@ const debugLog = (message, data = null) => {
   );
 };
 
-// Helper function to get user details from learner/mentor ID
 const getUserDetailsFromProfile = async (profileId, role) => {
   debugLog(`Getting user details for ${role}`, { profileId });
 
@@ -48,18 +47,15 @@ const getUserDetailsFromProfile = async (profileId, role) => {
   return profile.userId;
 };
 
-// Helper function to determine user role and get profile ID
 const getUserRoleAndProfileId = async (userId) => {
   debugLog("Determining user role and profile ID", { userId });
 
-  // Check if user is a learner
   const learner = await Learner.findOne({ userId });
   if (learner) {
     debugLog("User is a learner", { learnerId: learner._id });
     return { role: "learner", profileId: learner._id };
   }
 
-  // Check if user is a mentor
   const mentor = await Mentor.findOne({ userId });
   if (mentor) {
     debugLog("User is a mentor", { mentorId: mentor._id });
@@ -70,12 +66,10 @@ const getUserRoleAndProfileId = async (userId) => {
   return null;
 };
 
-// Create message room when project status becomes "In Progress"
 const createRoomForProject = async (projectId) => {
   debugLog("Creating room for project", { projectId });
 
   try {
-    // Check if room already exists for this project
     const existingRoom = await MessageRoom.findOne({ projectId });
     if (existingRoom) {
       debugLog("Room already exists for project", {
@@ -85,7 +79,6 @@ const createRoomForProject = async (projectId) => {
       return existingRoom;
     }
 
-    // Get project details with populated references
     const project = await Project.findById(projectId);
 
     if (!project) {
@@ -110,7 +103,6 @@ const createRoomForProject = async (projectId) => {
       throw new Error("Project must have both learner and mentor assigned");
     }
 
-    // Verify the learner and mentor exist in their respective collections
     const learner = await Learner.findById(project.learnerId);
     const mentor = await Mentor.findById(project.mentorId);
 
@@ -129,7 +121,6 @@ const createRoomForProject = async (projectId) => {
       mentorUserId: mentor.userId,
     });
 
-    // Create new room
     const roomName = `Chat - ${project.name}`;
     const newRoom = new MessageRoom({
       learnerId: project.learnerId,
@@ -167,7 +158,6 @@ const createRoomForProject = async (projectId) => {
   }
 };
 
-// Send message API
 const sendMessage = async (req, res) => {
   debugLog("Send message request", {
     roomId: req.params.roomId,
@@ -180,7 +170,6 @@ const sendMessage = async (req, res) => {
     const { message } = req.body;
     const senderId = req.user._id;
 
-    // Validate message
     if (!message || message.trim().length === 0) {
       debugLog("Empty message provided");
       return res.status(400).json({
@@ -197,7 +186,6 @@ const sendMessage = async (req, res) => {
       });
     }
 
-    // Find room
     const room = await MessageRoom.findById(roomId)
       .populate("learnerId", "userId")
       .populate("mentorId", "userId");
@@ -210,7 +198,6 @@ const sendMessage = async (req, res) => {
       });
     }
 
-    // Check if room is closed
     if (room.status === "close") {
       debugLog("Attempting to send message to closed room", { roomId });
       return res.status(403).json({
@@ -219,7 +206,6 @@ const sendMessage = async (req, res) => {
       });
     }
 
-    // Determine receiver
     let receiverId;
     let receiverRole;
 
@@ -243,7 +229,6 @@ const sendMessage = async (req, res) => {
       });
     }
 
-    // Create and save message
     const newMessage = new MessageChat({
       roomId: room._id,
       senderId,
@@ -255,7 +240,6 @@ const sendMessage = async (req, res) => {
     await newMessage.save();
     debugLog("Message saved", { messageId: newMessage._id });
 
-    // Update room's last message and unread count
     room.lastMessage = {
       content: message.trim(),
       timestamp: newMessage.time,
@@ -263,7 +247,6 @@ const sendMessage = async (req, res) => {
     };
     room.totalMessages += 1;
 
-    // Increment unread count for receiver
     if (receiverRole === "learner") {
       room.learnerUnreadCount += 1;
     } else {
@@ -273,7 +256,6 @@ const sendMessage = async (req, res) => {
     await room.save();
     debugLog("Room updated with last message and unread count");
 
-    // Populate sender info for response
     await newMessage.populate("senderId", "name avatar email");
     await newMessage.populate("receiverId", "name avatar email");
 
@@ -293,7 +275,6 @@ const sendMessage = async (req, res) => {
   }
 };
 
-// Fetch messages API
 const fetchMessages = async (req, res) => {
   debugLog("Fetch messages request", {
     roomId: req.params.roomId,
@@ -305,7 +286,6 @@ const fetchMessages = async (req, res) => {
     const { page = 1, limit = 50 } = req.query;
     const userId = req.user._id;
 
-    // Find and validate room
     const room = await MessageRoom.findById(roomId)
       .populate("learnerId", "userId")
       .populate("mentorId", "userId");
@@ -318,7 +298,6 @@ const fetchMessages = async (req, res) => {
       });
     }
 
-    // Verify user has access to this room
     const hasAccess =
       room.learnerId.userId._id.toString() === userId.toString() ||
       room.mentorId.userId._id.toString() === userId.toString();
@@ -331,7 +310,6 @@ const fetchMessages = async (req, res) => {
       });
     }
 
-    // Fetch messages with pagination
     const messages = await MessageChat.getMessagesByRoom(
       room._id,
       parseInt(page),
@@ -344,10 +322,8 @@ const fetchMessages = async (req, res) => {
       limit,
     });
 
-    // Mark messages as read for current user
     await MessageChat.markAllAsRead(room._id, userId);
 
-    // Reset unread count for current user in room
     const userRole =
       room.learnerId.userId._id.toString() === userId.toString()
         ? "learner"
@@ -384,7 +360,6 @@ const fetchMessages = async (req, res) => {
   }
 };
 
-// Check for new messages (polling endpoint)
 const checkNewMessages = async (req, res) => {
   debugLog("Check new messages request", {
     roomId: req.params.roomId,
@@ -405,7 +380,6 @@ const checkNewMessages = async (req, res) => {
       });
     }
 
-    // Find and validate room
     const room = await MessageRoom.findById(roomId)
       .populate("learnerId", "userId")
       .populate("mentorId", "userId");
@@ -418,7 +392,6 @@ const checkNewMessages = async (req, res) => {
       });
     }
 
-    // Verify user has access
     const hasAccess =
       room.learnerId.userId._id.toString() === userId.toString() ||
       room.mentorId.userId._id.toString() === userId.toString();
@@ -431,7 +404,6 @@ const checkNewMessages = async (req, res) => {
       });
     }
 
-    // Get new messages
     const newMessages = await MessageChat.getMessagesAfterTime(
       room._id,
       lastMessageTime
@@ -458,7 +430,6 @@ const checkNewMessages = async (req, res) => {
   }
 };
 
-// Fetch rooms for learner
 const fetchLearnerRooms = async (req, res) => {
   debugLog("Fetch learner rooms request", {
     learnerId: req.params.learnerId,
@@ -467,9 +438,8 @@ const fetchLearnerRooms = async (req, res) => {
 
   try {
     const { learnerId } = req.params;
-    const { status } = req.query; // optional filter: 'open' or 'close'
+    const { status } = req.query;
 
-    // Verify user is authorized (user's own rooms or admin access)
     const learnerProfile = await Learner.findById(learnerId);
     if (!learnerProfile) {
       debugLog("Learner not found", { learnerId });
@@ -490,10 +460,8 @@ const fetchLearnerRooms = async (req, res) => {
       });
     }
 
-    // Fetch rooms
     const rooms = await MessageRoom.findByLearner(learnerId, status);
 
-    // Populate additional user details
     const enrichedRooms = await Promise.all(
       rooms.map(async (room) => {
         const mentorUser = await getUserDetailsFromProfile(
@@ -531,7 +499,6 @@ const fetchLearnerRooms = async (req, res) => {
   }
 };
 
-// Fetch rooms for mentor
 const fetchMentorRooms = async (req, res) => {
   debugLog("Fetch mentor rooms request", {
     mentorId: req.params.mentorId,
@@ -540,9 +507,8 @@ const fetchMentorRooms = async (req, res) => {
 
   try {
     const { mentorId } = req.params;
-    const { status } = req.query; // optional filter: 'open' or 'close'
+    const { status } = req.query;
 
-    // Verify user is authorized
     const mentorProfile = await Mentor.findById(mentorId);
     if (!mentorProfile) {
       debugLog("Mentor not found", { mentorId });
@@ -563,10 +529,8 @@ const fetchMentorRooms = async (req, res) => {
       });
     }
 
-    // Fetch rooms
     const rooms = await MessageRoom.findByMentor(mentorId, status);
 
-    // Populate additional user details
     const enrichedRooms = await Promise.all(
       rooms.map(async (room) => {
         const learnerUser = await getUserDetailsFromProfile(
@@ -604,7 +568,6 @@ const fetchMentorRooms = async (req, res) => {
   }
 };
 
-// Update wallpaper API
 const updateWallpaper = async (req, res) => {
   debugLog("Update wallpaper request", {
     roomId: req.params.roomId,
@@ -625,7 +588,6 @@ const updateWallpaper = async (req, res) => {
       });
     }
 
-    // Find room
     const room = await MessageRoom.findById(roomId)
       .populate("learnerId", "userId")
       .populate("mentorId", "userId");
@@ -638,7 +600,6 @@ const updateWallpaper = async (req, res) => {
       });
     }
 
-    // Determine user role and update appropriate wallpaper
     let updated = false;
     if (room.learnerId.userId._id.toString() === userId.toString()) {
       room.learnerWallpaper = wallpaperUrl.trim();
@@ -681,7 +642,6 @@ const updateWallpaper = async (req, res) => {
   }
 };
 
-// Close room when project status changes
 const closeRoomForProject = async (projectId) => {
   debugLog("Closing room for project", { projectId });
 
@@ -713,7 +673,6 @@ const closeRoomForProject = async (projectId) => {
   }
 };
 
-// Get room details
 const getRoomDetails = async (req, res) => {
   debugLog("Get room details request", {
     roomId: req.params.roomId,
@@ -737,7 +696,6 @@ const getRoomDetails = async (req, res) => {
       });
     }
 
-    // Verify access
     const hasAccess =
       room.learnerId.userId._id.toString() === userId.toString() ||
       room.mentorId.userId._id.toString() === userId.toString();
@@ -753,7 +711,6 @@ const getRoomDetails = async (req, res) => {
       });
     }
 
-    // Get user details
     const learnerUser = await getUserDetailsFromProfile(
       room.learnerId._id,
       "learner"
@@ -763,7 +720,6 @@ const getRoomDetails = async (req, res) => {
       "mentor"
     );
 
-    // Determine current user's role and unread count
     const isLearner =
       room.learnerId.userId._id.toString() === userId.toString();
     const unreadCount = isLearner
@@ -803,15 +759,12 @@ const getRoomDetails = async (req, res) => {
   }
 };
 
-// Get user's active chat rooms (for both learner and mentor)
-// Updated getUserActiveRooms function in messageController.js
 const getUserActiveRooms = async (req, res) => {
   debugLog("Get user active rooms request", { userId: req.user._id });
 
   try {
     const userId = req.user._id;
 
-    // Determine if user is learner or mentor
     const roleInfo = await getUserRoleAndProfileId(userId);
 
     if (!roleInfo) {
@@ -833,7 +786,6 @@ const getUserActiveRooms = async (req, res) => {
     if (roleInfo.role === "mentor") {
       debugLog("Fetching mentor rooms", { mentorId: roleInfo.profileId });
 
-      // Get all rooms for mentor (both open and closed)
       const openRooms = await MessageRoom.findByMentor(
         roleInfo.profileId,
         "open"
@@ -850,7 +802,6 @@ const getUserActiveRooms = async (req, res) => {
         totalCount: rooms.length,
       });
 
-      // Check if we need to create rooms for "In Progress" projects without rooms
       const inProgressProjects = await Project.find({
         mentorId: roleInfo.profileId,
         status: "In Progress",
@@ -877,7 +828,6 @@ const getUserActiveRooms = async (req, res) => {
           try {
             const newRoom = await createRoomForProject(project._id);
             if (newRoom) {
-              // Re-fetch the room with populated fields
               const populatedRoom = await MessageRoom.findById(newRoom._id)
                 .populate("learnerId", "userId")
                 .populate("mentorId", "userId")
@@ -899,7 +849,6 @@ const getUserActiveRooms = async (req, res) => {
         }
       }
 
-      // Enrich with learner details
       rooms = await Promise.all(
         rooms.map(async (room) => {
           const learnerUser = await getUserDetailsFromProfile(
@@ -917,7 +866,6 @@ const getUserActiveRooms = async (req, res) => {
     } else if (roleInfo.role === "learner") {
       debugLog("Fetching learner rooms", { learnerId: roleInfo.profileId });
 
-      // Get all rooms for learner (both open and closed)
       const openRooms = await MessageRoom.findByLearner(
         roleInfo.profileId,
         "open"
@@ -934,7 +882,6 @@ const getUserActiveRooms = async (req, res) => {
         totalCount: rooms.length,
       });
 
-      // Check if we need to create rooms for "In Progress" projects without rooms
       const inProgressProjects = await Project.find({
         learnerId: roleInfo.profileId,
         status: "In Progress",
@@ -961,7 +908,6 @@ const getUserActiveRooms = async (req, res) => {
           try {
             const newRoom = await createRoomForProject(project._id);
             if (newRoom) {
-              // Re-fetch the room with populated fields
               const populatedRoom = await MessageRoom.findById(newRoom._id)
                 .populate("learnerId", "userId")
                 .populate("mentorId", "userId")
@@ -983,7 +929,6 @@ const getUserActiveRooms = async (req, res) => {
         }
       }
 
-      // Enrich with mentor details
       rooms = await Promise.all(
         rooms.map(async (room) => {
           const mentorUser = await getUserDetailsFromProfile(
@@ -1028,7 +973,7 @@ const getUserActiveRooms = async (req, res) => {
     });
   }
 };
-// Delete message (soft delete)
+
 const deleteMessage = async (req, res) => {
   debugLog("Delete message request", {
     messageId: req.params.messageId,
@@ -1049,7 +994,6 @@ const deleteMessage = async (req, res) => {
       });
     }
 
-    // Only sender can delete their message
     if (message.senderId.toString() !== userId.toString()) {
       debugLog("User not authorized to delete message", {
         userId,
@@ -1081,7 +1025,7 @@ const deleteMessage = async (req, res) => {
 
 const wallpaperUpload = multer({
   storage: multer.memoryStorage(),
-  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB limit for wallpapers
+  limits: { fileSize: 10 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
     const allowedTypes = /jpeg|jpg|png|webp/;
     const extname = allowedTypes.test(
@@ -1096,7 +1040,6 @@ const wallpaperUpload = multer({
   },
 }).single("wallpaper");
 
-// Upload custom wallpaper
 const uploadWallpaper = async (req, res) => {
   debugLog("Upload wallpaper request", {
     userId: req.user._id,
@@ -1125,7 +1068,6 @@ const uploadWallpaper = async (req, res) => {
         fileSize: req.file.size,
       });
 
-      // Upload to Cloudinary from buffer
       const streamUpload = (req) => {
         return new Promise((resolve, reject) => {
           const stream = cloudinary.uploader.upload_stream(
@@ -1181,7 +1123,7 @@ const uploadWallpaper = async (req, res) => {
 
 const imageUpload = multer({
   storage: multer.memoryStorage(),
-  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB limit
+  limits: { fileSize: 10 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
     const allowedTypes = /jpeg|jpg|png|gif|webp|bmp|svg/;
     const extname = allowedTypes.test(
@@ -1197,7 +1139,6 @@ const imageUpload = multer({
   },
 }).single("image");
 
-// Upload image for messages
 const uploadMessageImage = async (req, res) => {
   debugLog("Upload message image request", {
     userId: req.user._id,
@@ -1227,7 +1168,6 @@ const uploadMessageImage = async (req, res) => {
         fileName: req.file.originalname,
       });
 
-      // Upload to Cloudinary from buffer
       const streamUpload = (req) => {
         return new Promise((resolve, reject) => {
           const stream = cloudinary.uploader.upload_stream(
@@ -1288,7 +1228,6 @@ const uploadMessageImage = async (req, res) => {
   });
 };
 
-// Send image message
 const sendImageMessage = async (req, res) => {
   debugLog("Send image message request", {
     roomId: req.params.roomId,
@@ -1314,7 +1253,6 @@ const sendImageMessage = async (req, res) => {
       });
     }
 
-    // Find room
     const room = await MessageRoom.findById(roomId)
       .populate("learnerId", "userId")
       .populate("mentorId", "userId");
@@ -1327,7 +1265,6 @@ const sendImageMessage = async (req, res) => {
       });
     }
 
-    // Check if room is closed
     if (room.status === "close") {
       debugLog("Attempting to send image to closed room", { roomId });
       return res.status(403).json({
@@ -1336,7 +1273,6 @@ const sendImageMessage = async (req, res) => {
       });
     }
 
-    // Determine receiver
     let receiverId;
     let receiverRole;
 
@@ -1360,7 +1296,6 @@ const sendImageMessage = async (req, res) => {
       });
     }
 
-    // Create and save image message
     const newMessage = new MessageChat({
       roomId: room._id,
       senderId,
@@ -1377,7 +1312,6 @@ const sendImageMessage = async (req, res) => {
     await newMessage.save();
     debugLog("Image message saved", { messageId: newMessage._id });
 
-    // Update room's last message and unread count
     room.lastMessage = {
       content: caption.trim() || "📷 Image",
       timestamp: newMessage.time,
@@ -1385,7 +1319,6 @@ const sendImageMessage = async (req, res) => {
     };
     room.totalMessages += 1;
 
-    // Increment unread count for receiver
     if (receiverRole === "learner") {
       room.learnerUnreadCount += 1;
     } else {
@@ -1395,7 +1328,6 @@ const sendImageMessage = async (req, res) => {
     await room.save();
     debugLog("Room updated with last message and unread count");
 
-    // Populate sender info for response
     await newMessage.populate("senderId", "name avatar email");
     await newMessage.populate("receiverId", "name avatar email");
 
@@ -1423,7 +1355,6 @@ const getRecentMessages = async (req, res) => {
   try {
     const userId = req.user._id;
 
-    // Get recent 2 messages where current user is the receiver
     const recentMessages = await MessageChat.find({
       receiverId: userId,
       isDeleted: false,
@@ -1435,7 +1366,7 @@ const getRecentMessages = async (req, res) => {
         select: "roomName status",
       })
       .sort({ time: -1 })
-      .limit(2) // Changed from 3 to 2 as requested
+      .limit(2)
       .lean();
 
     debugLog("Recent messages fetched", {
@@ -1443,13 +1374,10 @@ const getRecentMessages = async (req, res) => {
       userId,
     });
 
-    // Transform messages to include additional info
     const transformedMessages = recentMessages.map((message) => {
-      // Calculate time ago
       const timeAgo = getTimeAgo(message.time);
 
-      // Determine if sender is online (you can implement this logic based on your needs)
-      const isOnline = Math.random() > 0.5; // Placeholder logic
+      const isOnline = Math.random() > 0.5;
 
       return {
         id: message._id,
@@ -1492,7 +1420,6 @@ const getRecentMessages = async (req, res) => {
   }
 };
 
-// Helper function to calculate time ago
 const getTimeAgo = (date) => {
   const now = new Date();
   const messageTime = new Date(date);
@@ -1515,13 +1442,11 @@ const getTimeAgo = (date) => {
 };
 
 module.exports = {
-  // Room management
   createRoomForProject,
   closeRoomForProject,
   getRoomDetails,
   getRecentMessages,
 
-  // Message operations
   sendMessage,
   fetchMessages,
   checkNewMessages,
@@ -1531,16 +1456,13 @@ module.exports = {
   uploadMessageImage,
   sendImageMessage,
 
-  // Room fetching
   fetchLearnerRooms,
   fetchMentorRooms,
   getUserActiveRooms,
 
-  // Settings
   updateWallpaper,
   uploadWallpaper,
 
-  // Helper functions (exported for use in other modules)
   getUserDetailsFromProfile,
   getUserRoleAndProfileId,
 };

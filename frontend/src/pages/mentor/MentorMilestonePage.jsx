@@ -18,7 +18,6 @@ const MentorMilestonePage = () => {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
-  // Projects and milestones data
   const [projects, setProjects] = useState([]);
 
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
@@ -79,7 +78,6 @@ const MentorMilestonePage = () => {
       const data = await response.json();
 
       if (data.success) {
-        // Update the milestone in the projects state
         setProjects((prevProjects) =>
           prevProjects.map((project) => ({
             ...project,
@@ -116,7 +114,6 @@ const MentorMilestonePage = () => {
       const data = await response.json();
 
       if (data.success) {
-        // Update the milestone in the projects state
         setProjects((prevProjects) =>
           prevProjects.map((project) => ({
             ...project,
@@ -151,7 +148,6 @@ const MentorMilestonePage = () => {
       const data = await response.json();
 
       if (data.success) {
-        // Update the milestone in the projects state
         setProjects((prevProjects) =>
           prevProjects.map((project) => ({
             ...project,
@@ -189,7 +185,6 @@ const MentorMilestonePage = () => {
       const data = await response.json();
 
       if (data.success) {
-        // Update the milestone in the projects state
         setProjects((prevProjects) =>
           prevProjects.map((project) => ({
             ...project,
@@ -277,7 +272,6 @@ const MentorMilestonePage = () => {
           )}
 
           {projects.length === 0 ? (
-            // No Projects Message
             <div className="bg-white/10 backdrop-blur-sm rounded-3xl shadow-2xl p-8 border border-white/20 text-center">
               <div className="flex flex-col items-center space-y-6">
                 <div className="p-6 bg-gradient-to-r from-cyan-500 to-teal-600 rounded-full">

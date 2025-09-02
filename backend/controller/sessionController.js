@@ -4,7 +4,6 @@ const User = require("../Model/User");
 const Learner = require("../Model/Learner");
 const Mentor = require("../Model/Mentor");
 
-// Create a new session
 const createSession = async (req, res) => {
   try {
     console.log("=== CREATE SESSION DEBUG ===");
@@ -34,7 +33,6 @@ const createSession = async (req, res) => {
       });
     }
 
-    // Find mentor profile
     const mentorProfile = await Mentor.findOne({ userId });
     if (!mentorProfile) {
       return res.status(404).json({
@@ -43,7 +41,6 @@ const createSession = async (req, res) => {
       });
     }
 
-    // Find active project for this mentor
     const activeProject = await Project.findOne({
       mentorId: mentorProfile._id,
       status: "In Progress",
@@ -56,7 +53,6 @@ const createSession = async (req, res) => {
       });
     }
 
-    // Validate scheduled time is in the future
     const scheduledDate = new Date(scheduledAt);
     if (scheduledDate <= new Date()) {
       return res.status(400).json({
@@ -65,7 +61,6 @@ const createSession = async (req, res) => {
       });
     }
 
-    // Create session
     const session = new Session({
       title: title.trim(),
       topic: topic.trim(),
@@ -96,7 +91,6 @@ const createSession = async (req, res) => {
       },
     });
 
-    // Populate session with required data
     const populatedSession = await Session.findById(session._id)
       .populate({
         path: "learnerId",
@@ -132,7 +126,6 @@ const createSession = async (req, res) => {
   }
 };
 
-// Get all sessions for a mentor
 const getMentorSessions = async (req, res) => {
   try {
     console.log("=== GET MENTOR SESSIONS DEBUG ===");
@@ -151,7 +144,6 @@ const getMentorSessions = async (req, res) => {
       });
     }
 
-    // Find mentor profile
     const mentorProfile = await Mentor.findOne({ userId });
     if (!mentorProfile) {
       return res.status(404).json({
@@ -160,7 +152,6 @@ const getMentorSessions = async (req, res) => {
       });
     }
 
-    // Get active project
     const activeProject = await Project.findOne({
       mentorId: mentorProfile._id,
       status: "In Progress",
@@ -172,7 +163,6 @@ const getMentorSessions = async (req, res) => {
       },
     });
 
-    // Get all sessions for this mentor
     const sessions = await Session.find({
       mentorId: mentorProfile._id,
     })
@@ -194,7 +184,6 @@ const getMentorSessions = async (req, res) => {
       .sort({ scheduledAt: -1 })
       .lean();
 
-    // Check for expired sessions and update them
     const now = new Date();
     const expiredSessions = sessions.filter((session) => {
       const sessionTime = new Date(session.scheduledAt);
@@ -206,7 +195,6 @@ const getMentorSessions = async (req, res) => {
       );
     });
 
-    // Update expired sessions
     for (let expiredSession of expiredSessions) {
       await Session.findByIdAndUpdate(expiredSession._id, {
         status: "expired",
@@ -234,7 +222,6 @@ const getMentorSessions = async (req, res) => {
   }
 };
 
-// NEW: Get upcoming sessions for learner (completely rewritten to match getMentorSessions pattern)
 const getLearnerSessions = async (req, res) => {
   try {
     console.log("=== GET LEARNER SESSIONS DEBUG ===");
@@ -253,7 +240,6 @@ const getLearnerSessions = async (req, res) => {
       });
     }
 
-    // Find learner profile
     const learnerProfile = await Learner.findOne({ userId });
     if (!learnerProfile) {
       return res.status(404).json({
@@ -262,7 +248,6 @@ const getLearnerSessions = async (req, res) => {
       });
     }
 
-    // Get active project for this learner
     const activeProject = await Project.findOne({
       learnerId: learnerProfile._id,
       status: "In Progress",
@@ -274,7 +259,6 @@ const getLearnerSessions = async (req, res) => {
       },
     });
 
-    // If no active project, return early
     if (!activeProject) {
       return res.json({
         success: true,
@@ -286,7 +270,6 @@ const getLearnerSessions = async (req, res) => {
 
     const now = new Date();
 
-    // Get ALL sessions for this learner from active project (following getMentorSessions pattern)
     const allSessions = await Session.find({
       learnerId: learnerProfile._id,
       projectId: activeProject._id,
@@ -299,36 +282,30 @@ const getLearnerSessions = async (req, res) => {
         },
       })
       .populate("projectId", "name shortDescription status")
-      .sort({ scheduledAt: 1 }) // Ascending order (earliest first)
+      .sort({ scheduledAt: 1 })
       .lean();
 
-    // Filter for upcoming sessions and handle expired sessions (similar to getMentorSessions)
     const upcomingSessions = allSessions.filter((session) => {
       const sessionTime = new Date(session.scheduledAt);
       const tenMinutesAfter = new Date(sessionTime.getTime() + 10 * 60 * 1000);
 
-      // Check if session should be expired
       if (
         now > tenMinutesAfter &&
         session.status === "scheduled" &&
         (!session.isLearnerPresent || !session.isMentorPresent)
       ) {
-        // Mark as expired (you might want to update this in the database too)
         session.status = "expired";
-        return false; // Don't include expired sessions
+        return false;
       }
 
-      // Only include future sessions that are scheduled, rescheduled, or ongoing
       return (
         sessionTime >= now &&
         ["scheduled", "rescheduled", "ongoing"].includes(session.status)
       );
     });
 
-    // Take only the first 3 upcoming sessions
     const sessions = upcomingSessions.slice(0, 3);
 
-    // Update any expired sessions in the database (similar to getMentorSessions)
     const expiredSessions = allSessions.filter((session) => {
       const sessionTime = new Date(session.scheduledAt);
       const tenMinutesAfter = new Date(sessionTime.getTime() + 10 * 60 * 1000);
@@ -339,7 +316,6 @@ const getLearnerSessions = async (req, res) => {
       );
     });
 
-    // Update expired sessions in database
     for (let expiredSession of expiredSessions) {
       await Session.findByIdAndUpdate(expiredSession._id, {
         status: "expired",
@@ -367,7 +343,6 @@ const getLearnerSessions = async (req, res) => {
   }
 };
 
-// Update session
 const updateSession = async (req, res) => {
   try {
     const { sessionId } = req.params;
@@ -382,7 +357,6 @@ const updateSession = async (req, res) => {
       });
     }
 
-    // Find mentor profile
     const mentorProfile = await Mentor.findOne({ userId });
     if (!mentorProfile) {
       return res.status(404).json({
@@ -391,7 +365,6 @@ const updateSession = async (req, res) => {
       });
     }
 
-    // Find and update session
     const session = await Session.findOne({
       _id: sessionId,
       mentorId: mentorProfile._id,
@@ -404,7 +377,6 @@ const updateSession = async (req, res) => {
       });
     }
 
-    // Don't allow updating completed or cancelled sessions
     if (session.status === "completed" || session.status === "cancelled") {
       return res.status(400).json({
         success: false,
@@ -412,7 +384,6 @@ const updateSession = async (req, res) => {
       });
     }
 
-    // Update allowed fields
     const allowedUpdates = [
       "title",
       "topic",
@@ -462,7 +433,6 @@ const updateSession = async (req, res) => {
   }
 };
 
-// Delete session
 const deleteSession = async (req, res) => {
   try {
     const { sessionId } = req.params;
@@ -476,7 +446,6 @@ const deleteSession = async (req, res) => {
       });
     }
 
-    // Find mentor profile
     const mentorProfile = await Mentor.findOne({ userId });
     if (!mentorProfile) {
       return res.status(404).json({
@@ -485,7 +454,6 @@ const deleteSession = async (req, res) => {
       });
     }
 
-    // Find session
     const session = await Session.findOne({
       _id: sessionId,
       mentorId: mentorProfile._id,
@@ -498,7 +466,6 @@ const deleteSession = async (req, res) => {
       });
     }
 
-    // Only allow deletion of cancelled sessions
     if (session.status !== "cancelled") {
       return res.status(400).json({
         success: false,
@@ -515,7 +482,6 @@ const deleteSession = async (req, res) => {
       },
     });
 
-    // Get learner ID from session to update their stats
     await Learner.findByIdAndUpdate(session.learnerId, {
       $inc: {
         userSessionsScheduled: -1,
@@ -537,7 +503,6 @@ const deleteSession = async (req, res) => {
   }
 };
 
-// Mark attendance
 const markAttendance = async (req, res) => {
   try {
     const { sessionId } = req.params;
@@ -551,7 +516,6 @@ const markAttendance = async (req, res) => {
       });
     }
 
-    // Find mentor profile
     const mentorProfile = await Mentor.findOne({ userId });
     if (!mentorProfile) {
       return res.status(404).json({
@@ -560,7 +524,6 @@ const markAttendance = async (req, res) => {
       });
     }
 
-    // Find session
     const session = await Session.findOne({
       _id: sessionId,
       mentorId: mentorProfile._id,
@@ -573,10 +536,8 @@ const markAttendance = async (req, res) => {
       });
     }
 
-    // Mark mentor as present
     session.isMentorPresent = true;
 
-    // If both are present, mark as completed
     if (session.isLearnerPresent && session.isMentorPresent) {
       session.status = "completed";
 
@@ -634,7 +595,6 @@ const markAttendance = async (req, res) => {
   }
 };
 
-// Reschedule session
 const rescheduleSession = async (req, res) => {
   try {
     const { sessionId } = req.params;
@@ -649,7 +609,6 @@ const rescheduleSession = async (req, res) => {
       });
     }
 
-    // Validate new scheduled time
     const newScheduledDate = new Date(scheduledAt);
     if (newScheduledDate <= new Date()) {
       return res.status(400).json({
@@ -658,7 +617,6 @@ const rescheduleSession = async (req, res) => {
       });
     }
 
-    // Find mentor profile
     const mentorProfile = await Mentor.findOne({ userId });
     if (!mentorProfile) {
       return res.status(404).json({
@@ -667,7 +625,6 @@ const rescheduleSession = async (req, res) => {
       });
     }
 
-    // Find session
     const session = await Session.findOne({
       _id: sessionId,
       mentorId: mentorProfile._id,
@@ -680,7 +637,6 @@ const rescheduleSession = async (req, res) => {
       });
     }
 
-    // Update session
     session.scheduledAt = newScheduledDate;
     session.status = "rescheduled";
     session.isMentorPresent = false;
@@ -721,7 +677,6 @@ const rescheduleSession = async (req, res) => {
   }
 };
 
-// Update session status
 const updateSessionStatus = async (req, res) => {
   try {
     const { sessionId } = req.params;
@@ -736,7 +691,6 @@ const updateSessionStatus = async (req, res) => {
       });
     }
 
-    // Find mentor profile
     const mentorProfile = await Mentor.findOne({ userId });
     if (!mentorProfile) {
       return res.status(404).json({
@@ -745,7 +699,6 @@ const updateSessionStatus = async (req, res) => {
       });
     }
 
-    // Find session
     const session = await Session.findOne({
       _id: sessionId,
       mentorId: mentorProfile._id,
@@ -758,7 +711,6 @@ const updateSessionStatus = async (req, res) => {
       });
     }
 
-    // Update status
     session.status = status;
 
     if (status === "cancelled" && reason) {
@@ -849,7 +801,6 @@ const getUserSessions = async (req, res) => {
       });
     }
 
-    // Find learner profile
     const learnerProfile = await Learner.findOne({ userId });
     if (!learnerProfile) {
       return res.status(404).json({
@@ -858,7 +809,6 @@ const getUserSessions = async (req, res) => {
       });
     }
 
-    // Get all sessions for this learner grouped by project
     const sessions = await Session.find({
       learnerId: learnerProfile._id,
     })
@@ -883,7 +833,6 @@ const getUserSessions = async (req, res) => {
       .sort({ scheduledAt: -1 })
       .lean();
 
-    // Check for expired sessions and update them
     const now = new Date();
     const expiredSessions = sessions.filter((session) => {
       const sessionTime = new Date(session.scheduledAt);
@@ -895,7 +844,6 @@ const getUserSessions = async (req, res) => {
       );
     });
 
-    // Update expired sessions
     for (let expiredSession of expiredSessions) {
       await Session.findByIdAndUpdate(expiredSession._id, {
         status: "expired",
@@ -903,7 +851,6 @@ const getUserSessions = async (req, res) => {
       expiredSession.status = "expired";
     }
 
-    // Group sessions by project
     const sessionsByProject = sessions.reduce((acc, session) => {
       const projectId = session.projectId._id.toString();
       if (!acc[projectId]) {
@@ -917,7 +864,6 @@ const getUserSessions = async (req, res) => {
       return acc;
     }, {});
 
-    // Sort sessions within each project by scheduled date
     Object.values(sessionsByProject).forEach((projectData) => {
       projectData.sessions.sort(
         (a, b) => new Date(a.scheduledAt) - new Date(b.scheduledAt)
@@ -946,7 +892,6 @@ const getUserSessions = async (req, res) => {
   }
 };
 
-// Mark user attendance for a session
 const markUserAttendance = async (req, res) => {
   try {
     const { sessionId } = req.params;
@@ -960,7 +905,6 @@ const markUserAttendance = async (req, res) => {
       });
     }
 
-    // Find learner profile
     const learnerProfile = await Learner.findOne({ userId });
     if (!learnerProfile) {
       return res.status(404).json({
@@ -969,7 +913,6 @@ const markUserAttendance = async (req, res) => {
       });
     }
 
-    // Find session
     const session = await Session.findOne({
       _id: sessionId,
       learnerId: learnerProfile._id,
@@ -982,7 +925,6 @@ const markUserAttendance = async (req, res) => {
       });
     }
 
-    // Check if session is scheduled and not expired
     const now = new Date();
     const sessionTime = new Date(session.scheduledAt);
     const tenMinutesAfter = new Date(sessionTime.getTime() + 10 * 60 * 1000);
@@ -1001,11 +943,9 @@ const markUserAttendance = async (req, res) => {
       });
     }
 
-    // Mark learner as present
     session.isLearnerPresent = true;
     session.learnerAttendedAt = now;
 
-    // If both are present, mark as completed
     if (session.isLearnerPresent && session.isMentorPresent) {
       session.status = "completed";
 
@@ -1063,7 +1003,6 @@ const markUserAttendance = async (req, res) => {
   }
 };
 
-// Submit learner absence reason
 const submitLearnerReason = async (req, res) => {
   try {
     const { sessionId } = req.params;
@@ -1078,7 +1017,6 @@ const submitLearnerReason = async (req, res) => {
       });
     }
 
-    // Find learner profile
     const learnerProfile = await Learner.findOne({ userId });
     if (!learnerProfile) {
       return res.status(404).json({
@@ -1087,7 +1025,6 @@ const submitLearnerReason = async (req, res) => {
       });
     }
 
-    // Find session
     const session = await Session.findOne({
       _id: sessionId,
       learnerId: learnerProfile._id,
@@ -1100,7 +1037,6 @@ const submitLearnerReason = async (req, res) => {
       });
     }
 
-    // Only allow reason submission for expired sessions
     if (session.status !== "expired") {
       return res.status(400).json({
         success: false,
@@ -1108,7 +1044,6 @@ const submitLearnerReason = async (req, res) => {
       });
     }
 
-    // Update learner reason
     session.learnerReason = reason;
     await session.save();
 
@@ -1145,7 +1080,6 @@ const submitLearnerReason = async (req, res) => {
   }
 };
 
-// Submit mentor absence reason
 const submitMentorReason = async (req, res) => {
   try {
     const { sessionId } = req.params;
@@ -1160,7 +1094,6 @@ const submitMentorReason = async (req, res) => {
       });
     }
 
-    // Find mentor profile
     const mentorProfile = await Mentor.findOne({ userId });
     if (!mentorProfile) {
       return res.status(404).json({
@@ -1169,7 +1102,6 @@ const submitMentorReason = async (req, res) => {
       });
     }
 
-    // Find session
     const session = await Session.findOne({
       _id: sessionId,
       mentorId: mentorProfile._id,
@@ -1182,7 +1114,6 @@ const submitMentorReason = async (req, res) => {
       });
     }
 
-    // Only allow reason submission for expired sessions
     if (session.status !== "expired") {
       return res.status(400).json({
         success: false,
@@ -1190,7 +1121,6 @@ const submitMentorReason = async (req, res) => {
       });
     }
 
-    // Update mentor reason
     session.mentorReason = reason;
     await session.save();
 
@@ -1227,7 +1157,6 @@ const submitMentorReason = async (req, res) => {
   }
 };
 
-// Update recording link
 const updateRecordingLink = async (req, res) => {
   try {
     const { sessionId } = req.params;
@@ -1242,7 +1171,6 @@ const updateRecordingLink = async (req, res) => {
       });
     }
 
-    // Find mentor profile
     const mentorProfile = await Mentor.findOne({ userId });
     if (!mentorProfile) {
       return res.status(404).json({
@@ -1251,7 +1179,6 @@ const updateRecordingLink = async (req, res) => {
       });
     }
 
-    // Find session
     const session = await Session.findOne({
       _id: sessionId,
       mentorId: mentorProfile._id,
@@ -1264,7 +1191,6 @@ const updateRecordingLink = async (req, res) => {
       });
     }
 
-    // Only allow updating for completed sessions
     if (session.status !== "completed") {
       return res.status(400).json({
         success: false,
@@ -1272,7 +1198,6 @@ const updateRecordingLink = async (req, res) => {
       });
     }
 
-    // Update recording link
     session.recordingLink = recordingLink;
     await session.save();
 
@@ -1309,25 +1234,21 @@ const updateRecordingLink = async (req, res) => {
   }
 };
 
-// Background job to update session statuses
 const updateSessionStatuses = async () => {
   try {
     const now = new Date();
 
-    // Find sessions that should be marked as ongoing
     const scheduledSessions = await Session.find({
       status: "scheduled",
       scheduledAt: { $lte: now },
     });
 
-    // Update scheduled sessions to ongoing
     for (let session of scheduledSessions) {
       session.status = "ongoing";
       await session.save();
       console.log(`Session ${session._id} marked as ongoing`);
     }
 
-    // Find ongoing sessions that should be expired (10 minutes after scheduled time)
     const ongoingSessions = await Session.find({
       status: "ongoing",
     });
@@ -1337,7 +1258,6 @@ const updateSessionStatuses = async () => {
       const tenMinutesAfter = new Date(sessionTime.getTime() + 10 * 60 * 1000);
 
       if (now > tenMinutesAfter) {
-        // Check if both participants joined
         if (session.isLearnerPresent && session.isMentorPresent) {
           session.status = "completed";
           console.log(`Session ${session._id} marked as completed`);

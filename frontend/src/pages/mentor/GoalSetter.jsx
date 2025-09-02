@@ -4,7 +4,7 @@ import Sidebar from "../../components/user/Sidebar";
 import GoalView from "../../components/mentor/mentorGoal/GoalView";
 import GoalForm from "../../components/mentor/mentorGoal/GoalForm";
 import ReviewView from "../../components/mentor/mentorGoal/ReviewView";
-// Using fetch instead of axios for API calls
+
 import { Menu, Target, Star, User, TrendingUp } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
 
@@ -19,7 +19,6 @@ const motivationalQuotes = [
   "Success doesn't just find you. You have to go out and get it.",
 ];
 
-// Custom toaster function
 const showToast = (message, type = "success") => {
   const toast = document.createElement("div");
   toast.className = `fixed top-4 right-4 z-50 px-6 py-3 rounded-lg shadow-lg text-white font-medium transition-all transform ${
@@ -42,12 +41,11 @@ const GoalSetter = () => {
   const [mentorData, setMentorData] = useState(null);
   const [goalData, setGoalData] = useState(null);
   const [reviews, setReviews] = useState([]);
-  const [totals, setTotals] = useState({}); // Add this state for totals
+  const [totals, setTotals] = useState({});
   const [dataLoading, setDataLoading] = useState(true);
   const [currentQuote, setCurrentQuote] = useState(0);
   const [searchParams] = useSearchParams();
 
-  // Redirect non-mentors
   useEffect(() => {
     if (!loading && (!isAuthenticated || (user && user.role !== "mentor"))) {
       window.location.href = "/login";
@@ -61,7 +59,6 @@ const GoalSetter = () => {
     }
   }, [searchParams]);
 
-  // Rotate motivational quotes
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentQuote((prev) => (prev + 1) % motivationalQuotes.length);
@@ -69,7 +66,6 @@ const GoalSetter = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // Fetch mentor goal and reviews data
   useEffect(() => {
     const fetchMentorData = async () => {
       if (isAuthenticated && user?.role === "mentor") {
@@ -93,11 +89,11 @@ const GoalSetter = () => {
           const data = await response.json();
 
           if (data.success) {
-            const { mentor, goal, reviews, totals } = data.data; // Extract totals from response
+            const { mentor, goal, reviews, totals } = data.data;
             setMentorData(mentor);
             setGoalData(goal);
             setReviews(reviews);
-            setTotals(totals || {}); // Set totals state with fallback
+            setTotals(totals || {});
 
             // Debug log to see if totals are received
             console.log("Received totals:", totals);
@@ -143,7 +139,6 @@ const GoalSetter = () => {
     }
   };
 
-  // Show loading
   if (loading || dataLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 flex items-center justify-center">
@@ -155,7 +150,6 @@ const GoalSetter = () => {
     );
   }
 
-  // Don't render if not authenticated
   if (!isAuthenticated || !mentorData) {
     return null;
   }
@@ -286,10 +280,7 @@ const GoalSetter = () => {
           )}
 
           {activeTab === "reviews" && (
-            <ReviewView
-              reviews={reviews}
-              totals={totals} // Pass the totals to ReviewView
-            />
+            <ReviewView reviews={reviews} totals={totals} />
           )}
         </div>
       </div>

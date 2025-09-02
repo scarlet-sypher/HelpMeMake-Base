@@ -23,19 +23,17 @@ const EditSessionModal = ({ session, onClose, onSuccess, onToast }) => {
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
-    // Focus on the modal to scroll it into view
     const modalElement = document.querySelector('[data-modal="edit-session"]');
     if (modalElement) {
       modalElement.scrollIntoView({
         behavior: "smooth",
         block: "center",
       });
-      // Also focus for accessibility
+
       modalElement.focus();
     }
   }, []);
 
-  // Handle input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -43,7 +41,6 @@ const EditSessionModal = ({ session, onClose, onSuccess, onToast }) => {
       [name]: value,
     }));
 
-    // Clear error when user starts typing
     if (errors[name]) {
       setErrors((prev) => ({
         ...prev,
@@ -52,7 +49,6 @@ const EditSessionModal = ({ session, onClose, onSuccess, onToast }) => {
     }
   };
 
-  // Validate form
   const validateForm = () => {
     const newErrors = {};
 
@@ -68,7 +64,6 @@ const EditSessionModal = ({ session, onClose, onSuccess, onToast }) => {
     return Object.keys(newErrors).length === 0;
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 

@@ -1,12 +1,12 @@
 export const importAllMentorImages = () => {
-  const images = import.meta.glob('../assets/MentorImages/*.{jpg,jpeg,png}', {
+  const images = import.meta.glob("../assets/MentorImages/*.{jpg,jpeg,png}", {
     eager: true,
-    import: 'default',
+    import: "default",
   });
 
   const imageMap = {};
   for (const path in images) {
-    const fileName = path.split('/').pop(); // e.g. "cat.jpg"
+    const fileName = path.split("/").pop();
     imageMap[fileName] = images[path];
   }
 

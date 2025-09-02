@@ -10,7 +10,7 @@ import {
   CheckCircle,
   XCircle,
   AlertCircle,
-  House, // Added import
+  House,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -23,7 +23,6 @@ import jk from "../../assets/SignupImages/jujutsu.jpg";
 
 const NUM_PARTICLES = 25;
 
-// Home Button Component
 const HomeButton = () => {
   const navigate = useNavigate();
 
@@ -47,7 +46,6 @@ const HomeButton = () => {
   );
 };
 
-// Toast notification component
 const Toast = ({ message, type, isVisible, onClose }) => {
   useEffect(() => {
     if (isVisible) {
@@ -92,7 +90,6 @@ const Toast = ({ message, type, isVisible, onClose }) => {
   );
 };
 
-// Mock hero images (you can replace with your actual images)
 const heroImages = [
   {
     id: 1,
@@ -127,7 +124,6 @@ const heroImages = [
   },
 ];
 
-// InputField component
 const InputField = ({
   label,
   name,
@@ -157,7 +153,6 @@ const InputField = ({
   </div>
 );
 
-// PasswordField component
 const PasswordField = ({
   label,
   name,
@@ -220,7 +215,6 @@ export default function Signup() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Initialize particles
     setParticles(
       Array.from({ length: NUM_PARTICLES }, (_, i) => ({
         id: i,
@@ -236,7 +230,6 @@ export default function Signup() {
     setIsVisible(true);
     setImageLoaded(true);
 
-    // Image carousel
     const imageInterval = setInterval(() => {
       setCurrentImageIndex((prev) => (prev + 1) % heroImages.length);
     }, 4500);
@@ -271,7 +264,6 @@ export default function Signup() {
           showToast("An error occurred during authentication.", "error");
       }
 
-      // Clean up URL
       window.history.replaceState({}, document.title, window.location.pathname);
     }
   }, []);
@@ -283,7 +275,6 @@ export default function Signup() {
       [name]: type === "checkbox" ? checked : value,
     });
 
-    // Clear errors when user starts typing
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: "" }));
     }
@@ -292,14 +283,12 @@ export default function Signup() {
   const validateForm = () => {
     const newErrors = {};
 
-    // Email validation
     if (!form.email.trim()) {
       newErrors.email = "Email is required";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
       newErrors.email = "Please enter a valid email address";
     }
 
-    // Password validation
     if (!form.password.trim()) {
       newErrors.password = "Password is required";
     } else if (form.password.length < 8) {
@@ -309,14 +298,12 @@ export default function Signup() {
         "Password must contain at least one uppercase letter, one lowercase letter, and one number";
     }
 
-    // Confirm password validation
     if (!form.confirmPassword.trim()) {
       newErrors.confirmPassword = "Please confirm your password";
     } else if (form.password !== form.confirmPassword) {
       newErrors.confirmPassword = "Passwords do not match";
     }
 
-    // Terms and conditions validation
     if (!form.agreeToTerms) {
       newErrors.agreeToTerms = "You must agree to the terms and conditions";
     }
@@ -325,7 +312,6 @@ export default function Signup() {
     return Object.keys(newErrors).length === 0;
   };
 
-  // Handle Enter key press
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
       e.preventDefault();
@@ -334,7 +320,7 @@ export default function Signup() {
   };
 
   async function handleSubmit(e) {
-    if (e) e.preventDefault(); // Make preventDefault conditional
+    if (e) e.preventDefault();
 
     if (!validateForm()) {
       showToast("Please fix the errors below", "error");
@@ -355,7 +341,7 @@ export default function Signup() {
           body: JSON.stringify({
             email: form.email,
             password: form.password,
-            name: form.name || form.email.split("@")[0], // Extract name from email if not provided
+            name: form.name || form.email.split("@")[0],
           }),
         }
       );
@@ -366,7 +352,6 @@ export default function Signup() {
         if (data.requiresVerification) {
           showToast("📧 Verification code sent! Check your email.", "success");
 
-          // Navigate to OTP verification page
           setTimeout(() => {
             navigate(`/verify-otp?email=${encodeURIComponent(form.email)}`);
           }, 2000);
@@ -396,7 +381,6 @@ export default function Signup() {
 
   function handleOAuth(provider) {
     if (provider === "Google") {
-      // Redirect to backend Google OAuth route
       window.location.href = `${import.meta.env.VITE_API_URL}/auth/google`;
     } else if (provider === "GitHub") {
       window.location.href = `${import.meta.env.VITE_API_URL}/auth/github`;
@@ -595,7 +579,6 @@ export default function Signup() {
   );
 }
 
-// Extracted SignupForm component
 function SignupForm({
   form,
   errors,

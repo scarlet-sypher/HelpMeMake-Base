@@ -8,12 +8,10 @@ const Learner = require("../Model/Learner");
 const Mentor = require("../Model/Mentor");
 const { finalizeProjectCompletion } = require("./completionController");
 
-// Get mentor project data for user
 const getMentorProjectData = async (req, res) => {
   try {
     const userId = req.user._id;
 
-    // ✅ First find the learner profile for this user
     const learner = await Learner.findOne({ userId: userId });
     if (!learner) {
       return res.status(404).json({
@@ -22,7 +20,6 @@ const getMentorProjectData = async (req, res) => {
       });
     }
 
-    // ✅ Updated query with proper population
     const project = await Project.findOne({
       learnerId: learner._id,
       mentorId: { $exists: true, $ne: null },
@@ -46,7 +43,6 @@ const getMentorProjectData = async (req, res) => {
       });
     }
 
-    // ✅ Combine mentor data (user info + profile info)
     const mentorData = {
       ...project.mentorId.userId,
       ...project.mentorId,
@@ -66,7 +62,6 @@ const getMentorProjectData = async (req, res) => {
   }
 };
 
-// Confirm expected end date from mentor's temp date
 const confirmExpectedEndDate = async (req, res) => {
   try {
     const { projectId } = req.body;
@@ -99,7 +94,6 @@ const confirmExpectedEndDate = async (req, res) => {
       });
     }
 
-    // Move temp date to expected date and clear temp
     project.expectedEndDate = project.tempExpectedEndDate;
     project.tempExpectedEndDate = null;
     project.isTempEndDateConfirmed = true;
@@ -120,7 +114,6 @@ const confirmExpectedEndDate = async (req, res) => {
   }
 };
 
-// Get progress history for a project
 const getProgressHistory = async (req, res) => {
   try {
     const { projectId } = req.params;
@@ -163,7 +156,6 @@ const getProgressHistory = async (req, res) => {
   }
 };
 
-// Send completion/cancellation request
 const sendCompletionRequest = async (req, res) => {
   console.log("=== this is sendCompletionRequest debugging line ====");
 
@@ -256,10 +248,9 @@ const sendCompletionRequest = async (req, res) => {
   }
 };
 
-// ✅ NEW: Handle mentor response to learner's request
 const handleMentorResponse = async (req, res) => {
   try {
-    const { requestId, response, mentorNotes } = req.body; // response: 'approve' or 'reject'
+    const { requestId, response, mentorNotes } = req.body;
     const userId = req.user._id;
 
     const learner = await Learner.findOne({ userId: userId });
@@ -284,7 +275,6 @@ const handleMentorResponse = async (req, res) => {
     }
 
     if (response === "approve") {
-      // Update project status based on request type
       if (project.completionRequest.type === "complete") {
         project.status = "Completed";
         project.actualEndDate = new Date();
@@ -318,7 +308,6 @@ const handleMentorResponse = async (req, res) => {
   }
 };
 
-// Submit mentor review after project completion
 const submitMentorReview = async (req, res) => {
   try {
     const { projectId, reviewData } = req.body;
@@ -335,7 +324,6 @@ const submitMentorReview = async (req, res) => {
     const project = await Project.findOne({
       _id: projectId,
       learnerId: learner._id,
-      // status: "Completed",
     }).populate("mentorId");
 
     if (!project) {
@@ -352,7 +340,6 @@ const submitMentorReview = async (req, res) => {
       });
     }
 
-    // Calculate average rating
     const {
       technicalSkills,
       communication,
@@ -368,7 +355,6 @@ const submitMentorReview = async (req, res) => {
         overallExperience) /
       5;
 
-    // Save learner's review
     project.learnerReview = {
       rating: parseFloat(averageRating.toFixed(1)),
       comment: reviewData.comment || "",
@@ -384,12 +370,10 @@ const submitMentorReview = async (req, res) => {
 
     await project.save();
 
-    // Update mentor's overall rating
     const mentorProfile = await Mentor.findOne({
       _id: project.mentorId,
     });
     if (mentorProfile) {
-      // Calculate new rating (simple average for now)
       const allProjects = await Project.find({
         mentorId: project.mentorId,
         "learnerReview.rating": { $exists: true },
@@ -409,7 +393,6 @@ const submitMentorReview = async (req, res) => {
     }
 
     if (project.status === "Completed") {
-      // Update learner stats
       await Learner.findByIdAndUpdate(learner._id, {
         $inc: {
           userTotalProjects: 1,
@@ -419,7 +402,6 @@ const submitMentorReview = async (req, res) => {
         },
       });
 
-      // Update mentor stats and add earnings
       const closingPrice =
         project.closingPrice ||
         project.negotiatedPrice ||
@@ -431,7 +413,7 @@ const submitMentorReview = async (req, res) => {
           mentorTotalEarningsChange: closingPrice,
           mentorActiveStudents: -1,
           mentorActiveStudentsChange: -1,
-          totalStudents: 1, // This tracks total students mentored over time
+          totalStudents: 1,
         },
       });
     }
@@ -452,7 +434,6 @@ const submitMentorReview = async (req, res) => {
   }
 };
 
-// Get completion requests for user (to handle mentor responses)
 const getCompletionRequests = async (req, res) => {
   try {
     const userId = req.user._id;

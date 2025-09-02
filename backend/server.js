@@ -8,7 +8,6 @@ const path = require("path");
 const db = require("./connection/conn");
 const { startSessionStatusJob } = require("./jobs/sessionStatusJob");
 
-// Import routes
 const userRoutes = require("./routes/userRoute");
 const mentorRoutes = require("./routes/mentorRoute");
 const authRoutes = require("./routes/authRoute");
@@ -40,7 +39,7 @@ const mentorTimelineRoutes = require("./routes/mentorTimelineRoute");
 const app = express();
 const PORT = process.env.PORT || 5000;
 startSessionStatusJob();
-// CORS Configuration
+
 const corsOptions = {
   origin: function (origin, callback) {
     const allowedOrigins = [
@@ -49,7 +48,6 @@ const corsOptions = {
       "http://localhost:3000",
     ];
 
-    // Allow requests with no origin (mobile apps, Postman, etc.)
     if (!origin) return callback(null, true);
 
     if (allowedOrigins.includes(origin)) {
@@ -71,10 +69,8 @@ const corsOptions = {
   optionsSuccessStatus: 200,
 };
 
-// Middleware
 app.use(cors(corsOptions));
 
-// Additional CORS headers
 app.use((req, res, next) => {
   res.header(
     "Access-Control-Allow-Origin",
@@ -96,18 +92,14 @@ app.use((req, res, next) => {
   next();
 });
 
-// Body parsing middleware
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// Static files
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// Passport initialization
 app.use(passport.initialize());
 
-// Routes
 app.use("/auth", authRoutes);
 app.use("/user", userRoutes);
 app.use("/users", userRoutes);
@@ -116,8 +108,6 @@ app.use("/mentors", mentorRoutes);
 app.use("/meta", metaRoutes);
 app.use("/projects", projectRoutes);
 
-// IMPORTANT: Order matters! Put milestone routes BEFORE project routes
-// to catch /api/project/active-with-mentor
 app.use("/api/project", projectRoutes);
 app.use("/api/milestone", milestoneRoutes);
 
@@ -143,7 +133,6 @@ app.use("/api/quick-actions", quickActionRoutes);
 app.use("/api/timeline", timelineRoutes);
 app.use("/api/mentor-timeline", mentorTimelineRoutes);
 
-// Health check endpoint
 app.get("/health", (req, res) => {
   res.json({
     success: true,
@@ -154,7 +143,6 @@ app.get("/health", (req, res) => {
   });
 });
 
-// 404 handler
 app.use((req, res) => {
   console.log(`404 - Route not found: ${req.method} ${req.originalUrl}`);
   res.status(404).json({
@@ -163,7 +151,6 @@ app.use((req, res) => {
   });
 });
 
-// Global Error Handler
 app.use((error, req, res, next) => {
   console.error("Global Error:", error);
   res.status(500).json({
@@ -173,7 +160,6 @@ app.use((error, req, res, next) => {
   });
 });
 
-// Graceful shutdown
 process.on("SIGINT", async () => {
   console.log("\n🛑 Received SIGINT. Graceful shutdown...");
   try {
@@ -202,9 +188,7 @@ app.get("/", (req, res) => {
   res.send("API is running...");
 });
 
-// Start server after database connection
 const startServer = async () => {
-  // Then start the server
   app.listen(PORT, () => {
     console.log(`🚀 Server running on port ${PORT}`);
     console.log(`📱 UI URL: ${process.env.UI_URL}`);
@@ -213,7 +197,6 @@ const startServer = async () => {
   });
 };
 
-// Start the application
 startServer().catch((error) => {
   console.error("❌ Failed to start server:", error);
   process.exit(1);

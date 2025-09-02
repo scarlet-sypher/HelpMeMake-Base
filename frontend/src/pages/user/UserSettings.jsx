@@ -23,7 +23,6 @@ const UserSettings = () => {
   const [userData, setUserData] = useState(null);
   const [userDataLoading, setUserDataLoading] = useState(true);
 
-  // Form states
   const [profileData, setProfileData] = useState({
     name: "",
     title: "",
@@ -45,7 +44,6 @@ const UserSettings = () => {
     confirmPassword: "",
   });
 
-  // UI states
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -86,7 +84,6 @@ const UserSettings = () => {
     "Other",
   ];
 
-  // Fetch Indian states
   useEffect(() => {
     const fetchIndianStates = async () => {
       try {
@@ -98,7 +95,7 @@ const UserSettings = () => {
         }
       } catch (error) {
         console.error("Error fetching Indian states:", error);
-        // Fallback to a basic list if API fails
+
         setIndianStates(["Delhi", "Mumbai", "Bangalore", "Chennai", "Kolkata"]);
       }
     };
@@ -113,16 +110,14 @@ const UserSettings = () => {
   }, [loading, isAuthenticated]);
 
   useEffect(() => {
-    // Check if user came from password update prompt
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get("updatePassword") === "true") {
       setActiveTab("security");
-      // Clear URL params
+
       window.history.replaceState({}, document.title, window.location.pathname);
     }
   }, []);
 
-  // Fetch user data
   useEffect(() => {
     const fetchUserData = async () => {
       if (isAuthenticated) {
@@ -141,7 +136,6 @@ const UserSettings = () => {
             const userData = response.data.user;
             setUserData(userData);
 
-            // Populate form data
             setProfileData({
               name: userData.name || userData.displayName || "",
               title: userData.title || "",
@@ -313,7 +307,6 @@ const UserSettings = () => {
           confirmPassword: "",
         });
 
-        // Update user data to reflect password has been updated
         if (userData) {
           setUserData({
             ...userData,
@@ -337,7 +330,6 @@ const UserSettings = () => {
     const file = e.target.files[0];
     if (file) {
       if (file.size > 5 * 1024 * 1024) {
-        // 5MB limit
         showNotification("avatar", "error", "Image size must be less than 5MB");
         return;
       }

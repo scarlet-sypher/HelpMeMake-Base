@@ -17,38 +17,33 @@ const LegendaryOverlay = ({ open, onClose, label = "LEGENDARY!" }) => {
   }, [open]);
 
   const startLegendarySequence = async () => {
-    // Generate stars for blast effect - more stars with varied sizes
     const newStars = Array.from({ length: 20 }, (_, i) => ({
       id: i,
-      // Random positions in a circle around center
+
       angle: (Math.PI * 2 * i) / 20 + Math.random() * 0.3,
-      distance: 100 + Math.random() * 150, // Varied distances
-      size: 12 + Math.random() * 16, // Varied sizes
+      distance: 100 + Math.random() * 150,
+      size: 12 + Math.random() * 16,
       delay: Math.random() * 0.3,
       duration: 1.5 + Math.random() * 0.8,
     }));
     setStars(newStars);
 
     try {
-      // Step 1: Small shake before the blast
       await badgeControls.start({
         x: [0, -4, 4, -3, 3, -2, 2, 0],
         y: [0, -2, 2, -1, 1, 0],
         transition: { duration: 0.5 },
       });
 
-      // Step 2: Brief pause for suspense
       await new Promise((resolve) => setTimeout(resolve, 200));
 
-      // Step 3: Simultaneous blast - scale up badge, show text, emit stars
       await Promise.all([
-        // Badge blast effect
         badgeControls.start({
           scale: [1, 1.4, 1.2, 1.3],
           rotate: [0, 5, -5, 0],
           transition: { duration: 0.8 },
         }),
-        // Text appearance with dramatic effect
+
         textControls.start({
           opacity: [0, 1],
           scale: [0.5, 1.2, 0.95, 1],
@@ -58,10 +53,8 @@ const LegendaryOverlay = ({ open, onClose, label = "LEGENDARY!" }) => {
         }),
       ]);
 
-      // Step 4: Hold the effect for dramatic pause
       await new Promise((resolve) => setTimeout(resolve, 1200));
 
-      // Step 5: Fade out and close
       await Promise.all([
         badgeControls.start({
           scale: 1,
@@ -75,7 +68,6 @@ const LegendaryOverlay = ({ open, onClose, label = "LEGENDARY!" }) => {
         }),
       ]);
 
-      // Step 6: Close overlay and return badge
       setShowOverlay(false);
       onClose?.();
     } catch (error) {
@@ -189,9 +181,7 @@ const LegendaryOverlay = ({ open, onClose, label = "LEGENDARY!" }) => {
           />
 
           {/* Crown icon - responsive sizing */}
-          <Crown
-            className="text-yellow-100 relative z-10 drop-shadow-lg w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 xl:w-16 xl:h-16"
-          />
+          <Crown className="text-yellow-100 relative z-10 drop-shadow-lg w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 xl:w-16 xl:h-16" />
 
           {/* Enhanced corner sparkles - responsive positioning and sizing */}
           <motion.div
@@ -320,8 +310,22 @@ const LegendaryOverlay = ({ open, onClose, label = "LEGENDARY!" }) => {
             rotate: 0,
           }}
           animate={{
-            x: Math.cos(star.angle) * star.distance * (window.innerWidth < 640 ? 0.6 : window.innerWidth < 1024 ? 0.8 : 1),
-            y: Math.sin(star.angle) * star.distance * (window.innerWidth < 640 ? 0.6 : window.innerWidth < 1024 ? 0.8 : 1),
+            x:
+              Math.cos(star.angle) *
+              star.distance *
+              (window.innerWidth < 640
+                ? 0.6
+                : window.innerWidth < 1024
+                ? 0.8
+                : 1),
+            y:
+              Math.sin(star.angle) *
+              star.distance *
+              (window.innerWidth < 640
+                ? 0.6
+                : window.innerWidth < 1024
+                ? 0.8
+                : 1),
             opacity: [0, 1, 1, 0],
             scale: [0, 1.5, 1, 0],
             rotate: [0, 180, 360],
@@ -335,7 +339,14 @@ const LegendaryOverlay = ({ open, onClose, label = "LEGENDARY!" }) => {
           style={{
             left: "50%",
             top: "50%",
-            fontSize: `${star.size * (window.innerWidth < 640 ? 0.7 : window.innerWidth < 1024 ? 0.85 : 1)}px`,
+            fontSize: `${
+              star.size *
+              (window.innerWidth < 640
+                ? 0.7
+                : window.innerWidth < 1024
+                ? 0.85
+                : 1)
+            }px`,
           }}
         >
           {star.id % 3 === 0 ? "✨" : star.id % 2 === 0 ? "⭐" : "💫"}
@@ -353,8 +364,20 @@ const LegendaryOverlay = ({ open, onClose, label = "LEGENDARY!" }) => {
             scale: 1,
           }}
           animate={{
-            x: (Math.random() - 0.5) * (window.innerWidth < 640 ? 200 : window.innerWidth < 1024 ? 300 : 400),
-            y: (Math.random() - 0.5) * (window.innerWidth < 640 ? 200 : window.innerWidth < 1024 ? 300 : 400),
+            x:
+              (Math.random() - 0.5) *
+              (window.innerWidth < 640
+                ? 200
+                : window.innerWidth < 1024
+                ? 300
+                : 400),
+            y:
+              (Math.random() - 0.5) *
+              (window.innerWidth < 640
+                ? 200
+                : window.innerWidth < 1024
+                ? 300
+                : 400),
             opacity: 0,
             scale: 0,
           }}

@@ -227,7 +227,6 @@ const CompleteCancelBox = ({ projectData, onUpdate, showToast }) => {
     }
   };
 
-  // Show review modal if project was completed
   if (
     (projectData?.status === "Completed" ||
       projectData?.completionRequest?.status === "approved") &&

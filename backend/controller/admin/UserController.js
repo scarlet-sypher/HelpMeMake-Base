@@ -7,10 +7,9 @@ const streamifier = require("streamifier");
 const multer = require("multer");
 const path = require("path");
 
-// Configure multer for memory storage
 const upload = multer({
   storage: multer.memoryStorage(),
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+  limits: { fileSize: 5 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
     const allowedTypes = /jpeg|jpg|png|webp/;
     const extname = allowedTypes.test(
@@ -27,15 +26,12 @@ const upload = multer({
 }).single("avatar");
 
 const adminUserController = {
-  // Get all users with their role-specific data
   getAllUsers: async (req, res) => {
     try {
       const { search, role, page = 1, limit = 20 } = req.query;
 
-      // Build query object
       let query = {};
 
-      // Search filter
       if (search) {
         query.$or = [
           { name: { $regex: search, $options: "i" } },
@@ -44,14 +40,12 @@ const adminUserController = {
         ].filter(Boolean);
       }
 
-      // Role filter
       if (role && role !== "all") {
         query.role = role;
       }
 
       const skip = (parseInt(page) - 1) * parseInt(limit);
 
-      // Get users with pagination
       const users = await User.find(query)
         .select("-password -otp -otpExpires -profileOTP -profileOTPExpires")
         .sort({ createdAt: -1 })
@@ -60,7 +54,6 @@ const adminUserController = {
 
       const totalUsers = await User.countDocuments(query);
 
-      // Enrich users with role-specific data
       const enrichedUsers = await Promise.all(
         users.map(async (user) => {
           let roleSpecificData = {};
@@ -122,7 +115,6 @@ const adminUserController = {
     }
   },
 
-  // Get single user by ID
   getUserById: async (req, res) => {
     try {
       const { userId } = req.params;
@@ -178,7 +170,6 @@ const adminUserController = {
     }
   },
 
-  // Update user data
   updateUser: async (req, res) => {
     try {
       const { userId } = req.params;
@@ -199,7 +190,6 @@ const adminUserController = {
         });
       }
 
-      // Extract base user fields
       const {
         name,
         email,
@@ -208,7 +198,7 @@ const adminUserController = {
         isAccountActive,
         authProvider,
         password,
-        // Role-specific fields
+
         title,
         description,
         location,
@@ -220,7 +210,6 @@ const adminUserController = {
         ...otherFields
       } = updateData;
 
-      // Update base user data
       const userUpdateData = {
         ...(name !== undefined && { name }),
         ...(email !== undefined && { email }),
@@ -230,7 +219,6 @@ const adminUserController = {
         ...(authProvider !== undefined && { authProvider }),
       };
 
-      // Handle password update
       if (password && password.trim()) {
         const saltRounds = 12;
         userUpdateData.password = await bcrypt.hash(password, saltRounds);
@@ -242,7 +230,6 @@ const adminUserController = {
         runValidators: true,
       }).select("-password -otp -otpExpires -profileOTP -profileOTPExpires");
 
-      // Update role-specific data
       let roleSpecificUpdate = null;
 
       if (updatedUser.role === "user") {
@@ -308,7 +295,6 @@ const adminUserController = {
     }
   },
 
-  // Update user avatar
   updateUserAvatar: async (req, res) => {
     upload(req, res, async (err) => {
       if (err) {
@@ -343,7 +329,6 @@ const adminUserController = {
           });
         }
 
-        // Upload to Cloudinary
         const streamUpload = (req) => {
           return new Promise((resolve, reject) => {
             const stream = cloudinary.uploader.upload_stream(
@@ -364,7 +349,6 @@ const adminUserController = {
         const result = await streamUpload(req);
         const avatarUrl = result.secure_url;
 
-        // Update user avatar
         const updatedUser = await User.findByIdAndUpdate(
           userId,
           { avatar: avatarUrl },
@@ -389,7 +373,6 @@ const adminUserController = {
     });
   },
 
-  // Delete user
   deleteUser: async (req, res) => {
     try {
       const { userId } = req.params;
@@ -409,14 +392,12 @@ const adminUserController = {
         });
       }
 
-      // Delete role-specific data
       if (user.role === "user") {
         await Learner.findOneAndDelete({ userId: user._id });
       } else if (user.role === "mentor") {
         await Mentor.findOneAndDelete({ userId: user._id });
       }
 
-      // Delete the user
       await User.findByIdAndDelete(userId);
 
       res.json({
@@ -433,7 +414,6 @@ const adminUserController = {
     }
   },
 
-  // Get user statistics
   getUserStats: async (req, res) => {
     try {
       const totalUsers = await User.countDocuments();
@@ -447,7 +427,6 @@ const adminUserController = {
         createdAt: { $gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) },
       });
 
-      // Get users by auth provider
       const authProviders = await User.aggregate([
         {
           $group: {

@@ -3,10 +3,8 @@ import { useAuth } from "../../hooks/useAuth";
 import Sidebar from "../../components/user/Sidebar";
 import { importAllUserImages } from "../../utils/importAllUserImages";
 
-// Import the new MentorHeroProfile component
 import MentorHeroProfile from "../../components/mentor/MentorHeroProfile";
 
-// Import mentor components
 import StatsGrid from "../../components/mentor/StatsGrid";
 import QuickActions from "../../components/mentor/QuickActions";
 import UpcomingSessions from "../../components/mentor/UpcomingSessions";
@@ -41,14 +39,12 @@ const MentorDashboard = () => {
   const [generatedPassword, setGeneratedPassword] = useState(null);
   const [showPasswordBanner, setShowPasswordBanner] = useState(false);
 
-  // Redirect non-mentors
   useEffect(() => {
     if (!loading && (!isAuthenticated || (user && user.role !== "mentor"))) {
       window.location.href = "/login";
     }
   }, [loading, isAuthenticated, user]);
 
-  // Handle OAuth redirects
   useEffect(() => {
     const handleOAuthRedirect = async () => {
       const isFromOAuth =
@@ -68,7 +64,6 @@ const MentorDashboard = () => {
     handleOAuthRedirect();
   }, [loading, isAuthenticated]);
 
-  // Fetch mentor data
   useEffect(() => {
     const fetchMentorData = async () => {
       if (isAuthenticated && mentorDataLoading) {
@@ -79,7 +74,6 @@ const MentorDashboard = () => {
             import.meta.env.VITE_API_URL || "http://localhost:5000";
           const token = localStorage.getItem("access_token");
 
-          // Updated endpoint to use dashboard route
           const response = await fetch(`${apiUrl}/api/dashboard/mentor/data`, {
             method: "GET",
             headers: {
@@ -116,7 +110,6 @@ const MentorDashboard = () => {
     fetchMentorData();
   }, [isAuthenticated, mentorDataLoading]);
 
-  // Handle password banner
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const newPassword = urlParams.get("newPassword");
@@ -134,7 +127,6 @@ const MentorDashboard = () => {
     }
   }, [mentorData]);
 
-  // Show loading
   if (loading || mentorDataLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 flex items-center justify-center">
@@ -148,7 +140,6 @@ const MentorDashboard = () => {
     );
   }
 
-  // Don't render if not authenticated or no mentor data
   if (!isAuthenticated || !mentorData) {
     return null;
   }
@@ -157,7 +148,6 @@ const MentorDashboard = () => {
     setSidebarOpen(!sidebarOpen);
   };
 
-  // Format date helper
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     return date.toLocaleDateString("en-US", {
@@ -166,7 +156,6 @@ const MentorDashboard = () => {
     });
   };
 
-  // Mock data for demonstration
   const upcomingSessions = [
     {
       id: 1,
@@ -226,7 +215,6 @@ const MentorDashboard = () => {
     },
   ];
 
-  // Profile data
   const mentorProfileData = {
     name: mentorData.name || mentorData.displayName || "Mentor",
     title: mentorData.title || "Software Engineering Mentor",
@@ -271,7 +259,7 @@ const MentorDashboard = () => {
         toggleSidebar={toggleSidebar}
         activeItem={activeItem}
         setActiveItem={setActiveItem}
-        userRole="mentor" // Pass mentor role for conditional rendering
+        userRole="mentor"
       />
 
       {/* Main Content */}
@@ -305,7 +293,7 @@ const MentorDashboard = () => {
           <StatsGrid
             mentorData={{
               ...mentorData,
-              // Override with calculated stats
+
               mentorActiveStudents: mentorData.mentorActiveStudents,
               mentorActiveStudentsChange: mentorData.mentorActiveStudentsChange,
               mentorSessionsCompleted: mentorData.mentorSessionsCompleted,

@@ -7,10 +7,10 @@ const generateAdminToken = (adminId, username) => {
     {
       adminId,
       username,
-      type: "admin", // Add type to differentiate from user tokens
+      type: "admin",
     },
     process.env.ADMIN_JWT_SECRET,
-    { expiresIn: "2h" } // Short-lived token as requested
+    { expiresIn: "2h" }
   );
 };
 
@@ -19,7 +19,6 @@ const adminAuthController = {
     try {
       const { username, password } = req.body;
 
-      // Validate input
       if (!username || !password) {
         return res.status(400).json({
           success: false,
@@ -27,7 +26,6 @@ const adminAuthController = {
         });
       }
 
-      // Step 1: Verify against environment variables
       const envAdminId = process.env.ADMIN_ID;
       const envAdminPassword = process.env.ADMIN_PASSWORD;
 
@@ -41,7 +39,6 @@ const adminAuthController = {
         });
       }
 
-      // Step 2: Check credentials against environment variables
       if (username !== envAdminId || password !== envAdminPassword) {
         return res.status(401).json({
           success: false,
@@ -49,7 +46,6 @@ const adminAuthController = {
         });
       }
 
-      // Step 3: Verify against MongoDB record
       const adminRecord = await Admin.findOne({ username });
 
       if (!adminRecord) {
@@ -59,7 +55,6 @@ const adminAuthController = {
         });
       }
 
-      // Compare password with database record
       const isValidPassword = await bcrypt.compare(
         password,
         adminRecord.password
@@ -72,22 +67,20 @@ const adminAuthController = {
         });
       }
 
-      // Step 4: All checks passed - generate JWT token
       const token = generateAdminToken(adminRecord._id, adminRecord.username);
 
-      // Set httpOnly cookie for security
       res.cookie("admin_token", token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-        maxAge: 2 * 60 * 60 * 1000, // 2 hours
+        maxAge: 2 * 60 * 60 * 1000,
         path: "/",
       });
 
       res.json({
         success: true,
         message: "Admin login successful",
-        token: token, // Also send in response for frontend storage
+        token: token,
         admin: {
           id: adminRecord._id,
           username: adminRecord.username,
@@ -102,7 +95,6 @@ const adminAuthController = {
     }
   },
 
-  // Get current admin info (for protected routes)
   getAdminInfo: async (req, res) => {
     try {
       const admin = await Admin.findById(req.admin.adminId).select("-password");
@@ -131,10 +123,8 @@ const adminAuthController = {
     }
   },
 
-  // Admin logout
   adminLogout: (req, res) => {
     try {
-      // Clear admin token cookie
       res.clearCookie("admin_token", {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",

@@ -20,7 +20,6 @@ import {
 
 const UserForm = ({ userId, onSave, onCancel }) => {
   const [userData, setUserData] = useState({
-    // Base user fields
     name: "",
     email: "",
     role: "",
@@ -29,7 +28,6 @@ const UserForm = ({ userId, onSave, onCancel }) => {
     authProvider: "local",
     password: "",
 
-    // Role-specific fields
     title: "",
     description: "",
     location: "",
@@ -39,7 +37,6 @@ const UserForm = ({ userId, onSave, onCancel }) => {
       twitter: "",
     },
 
-    // Mentor-specific fields
     expertise: [],
     experience: "",
     hourlyRate: "",
@@ -87,7 +84,7 @@ const UserForm = ({ userId, onSave, onCancel }) => {
       setUserData({
         ...userData,
         ...data.data,
-        password: "", // Don't pre-fill password
+        password: "",
         socialLinks: {
           github: data.data.socialLinks?.github || "",
           linkedin: data.data.socialLinks?.linkedin || "",
@@ -108,7 +105,6 @@ const UserForm = ({ userId, onSave, onCancel }) => {
       [field]: value,
     }));
 
-    // Clear error when user starts typing
     if (errors[field]) {
       setErrors((prev) => ({
         ...prev,
@@ -188,7 +184,6 @@ const UserForm = ({ userId, onSave, onCancel }) => {
     try {
       const token = localStorage.getItem("admin_token");
 
-      // Update user data
       const response = await fetch(
         `${import.meta.env.VITE_API_URL}/admin/users/${userId}`,
         {
@@ -205,7 +200,6 @@ const UserForm = ({ userId, onSave, onCancel }) => {
         throw new Error("Failed to update user");
       }
 
-      // Upload avatar if changed
       if (avatarFile) {
         const formData = new FormData();
         formData.append("avatar", avatarFile);

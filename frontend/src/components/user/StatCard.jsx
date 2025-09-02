@@ -2,7 +2,6 @@ import React from "react";
 import { TrendingUp, TrendingDown } from "lucide-react";
 
 const StatCard = ({ icon: Icon, label, value, change, color }) => {
-  // Extract the trend direction from the change text
   const isPositive = change.includes("+");
   const isNegative = change.includes("-");
 

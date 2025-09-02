@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
-// API function moved here
 const getRecentMessages = async () => {
   try {
     const token = localStorage.getItem("access_token");
@@ -46,12 +45,10 @@ const MessageCard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Navigate to messages page
   const handleNavigateToMessages = () => {
     navigate("/user/messages");
   };
 
-  // Fetch recent messages on component mount
   useEffect(() => {
     const fetchRecentMessages = async () => {
       try {
@@ -72,7 +69,6 @@ const MessageCard = () => {
     fetchRecentMessages();
   }, []);
 
-  // Loading state
   if (loading) {
     return (
       <div className="space-y-4">
@@ -94,7 +90,6 @@ const MessageCard = () => {
     );
   }
 
-  // Error state
   if (error) {
     return (
       <div className="text-center py-8 px-4">
@@ -112,7 +107,6 @@ const MessageCard = () => {
     );
   }
 
-  // No messages state - improved visibility
   if (messages.length === 0) {
     return (
       <div className="text-center py-10 px-6">
@@ -137,7 +131,6 @@ const MessageCard = () => {
     );
   }
 
-  // Render messages
   return (
     <div className="space-y-4">
       {messages.map((message) => (
@@ -160,7 +153,6 @@ const MessageCard = () => {
   );
 };
 
-// Individual message card component - improved readability
 const SingleMessageCard = ({
   id,
   senderName,

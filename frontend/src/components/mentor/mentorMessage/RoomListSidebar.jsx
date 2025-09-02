@@ -38,11 +38,10 @@ const RoomListSidebar = ({
       room.roomName?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Determine sidebar width based on collapsed state and screen size
   const getSidebarWidth = () => {
-    if (window.innerWidth < 768) return "w-full"; // Full width on mobile
-    if (roomListCollapsed) return "w-20"; // Collapsed width
-    return "w-80"; // Fixed expanded width
+    if (window.innerWidth < 768) return "w-full";
+    if (roomListCollapsed) return "w-20";
+    return "w-80";
   };
 
   return (

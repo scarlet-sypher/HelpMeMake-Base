@@ -5,7 +5,6 @@ const Pricing = ({ formData, setFormData, errors, onToast }) => {
   const handlePriceChange = (e) => {
     const value = e.target.value;
 
-    // Allow empty value for user to clear field
     if (value === "") {
       setFormData({ ...formData, openingPrice: value });
       return;
@@ -13,7 +12,6 @@ const Pricing = ({ formData, setFormData, errors, onToast }) => {
 
     const numericValue = parseFloat(value);
 
-    // Validate price range
     if (numericValue < 0) {
       onToast?.({ message: "Price cannot be negative", status: "error" });
       return;
@@ -26,7 +24,6 @@ const Pricing = ({ formData, setFormData, errors, onToast }) => {
 
     setFormData({ ...formData, openingPrice: value });
 
-    // Show success message for valid price
     if (numericValue >= 500) {
       onToast?.({ message: "Price updated successfully", status: "success" });
     }

@@ -9,10 +9,9 @@ const mentorSchema = new mongoose.Schema(
       unique: true,
     },
 
-    // Professional Profile
     title: {
       type: String,
-      default: "Software Engineer", // Professional title/designation
+      default: "Software Engineer",
       required: true,
     },
     description: {
@@ -31,7 +30,6 @@ const mentorSchema = new mongoose.Schema(
       required: true,
     },
 
-    // Professional Details
     experience: {
       years: {
         type: Number,
@@ -48,7 +46,6 @@ const mentorSchema = new mongoose.Schema(
       ],
     },
 
-    // Expertise & Skills
     expertise: [
       {
         skill: {
@@ -74,7 +71,6 @@ const mentorSchema = new mongoose.Schema(
       },
     ],
 
-    // Status & Availability
     isOnline: {
       type: Boolean,
       default: false,
@@ -86,7 +82,6 @@ const mentorSchema = new mongoose.Schema(
       required: true,
     },
 
-    // Ratings & Reviews
     rating: {
       type: Number,
       default: 0,
@@ -100,7 +95,6 @@ const mentorSchema = new mongoose.Schema(
       required: true,
     },
 
-    // Social Links
     socialLinks: {
       linkedin: { type: String, default: "#" },
       github: { type: String, default: "#" },
@@ -109,7 +103,6 @@ const mentorSchema = new mongoose.Schema(
       blog: { type: String, default: "#" },
     },
 
-    // Session & Engagement Metrics
     completedSessions: {
       type: Number,
       default: 0,
@@ -121,12 +114,11 @@ const mentorSchema = new mongoose.Schema(
       required: true,
     },
     responseTime: {
-      type: Number, // in minutes
+      type: Number,
       default: 30,
       required: true,
     },
 
-    // Achievement & Recognition
     badges: [
       {
         name: String,
@@ -145,7 +137,6 @@ const mentorSchema = new mongoose.Schema(
       required: true,
     },
 
-    // Pricing & Availability
     pricing: {
       hourlyRate: {
         type: Number,
@@ -181,8 +172,8 @@ const mentorSchema = new mongoose.Schema(
               "sunday",
             ],
           },
-          startTime: String, // HH:MM format
-          endTime: String, // HH:MM format
+          startTime: String,
+          endTime: String,
           available: Boolean,
         },
       ],
@@ -212,7 +203,6 @@ const mentorSchema = new mongoose.Schema(
       required: true,
     },
 
-    // Mentor Dashboard Stats
     mentorActiveStudents: {
       type: Number,
       default: 0,
@@ -254,7 +244,6 @@ const mentorSchema = new mongoose.Schema(
       required: true,
     },
 
-    // Session History & Reviews
     sessionHistory: [
       {
         learnerId: {
@@ -263,7 +252,7 @@ const mentorSchema = new mongoose.Schema(
         },
         sessionDate: Date,
         topic: String,
-        duration: Number, // in minutes
+        duration: Number,
         rating: Number,
         feedback: String,
         earnings: Number,
@@ -289,7 +278,6 @@ const mentorSchema = new mongoose.Schema(
       },
     ],
 
-    // Profile Verification
     verification: {
       isVerified: {
         type: Boolean,
@@ -319,7 +307,6 @@ const mentorSchema = new mongoose.Schema(
       ],
     },
 
-    // Teaching Preferences
     teachingPreferences: {
       maxStudentsPerSession: {
         type: Number,
@@ -346,7 +333,6 @@ const mentorSchema = new mongoose.Schema(
       ],
     },
 
-    // Onboarding & Status
     joinDate: {
       type: Date,
       default: Date.now,
@@ -360,7 +346,7 @@ const mentorSchema = new mongoose.Schema(
 
     profileCompleteness: {
       type: Number,
-      default: 20, // percentage
+      default: 20,
       min: 0,
       max: 100,
     },
@@ -369,7 +355,6 @@ const mentorSchema = new mongoose.Schema(
       default: false,
     },
 
-    // Notifications & Preferences
     notificationPreferences: {
       email: { type: Boolean, default: true },
       push: { type: Boolean, default: true },
@@ -385,30 +370,26 @@ const mentorSchema = new mongoose.Schema(
   }
 );
 
-// Indexes for better performance
-// mentorSchema.index({ userId: 1 });
 mentorSchema.index({ rating: -1 });
 mentorSchema.index({ "expertise.skill": 1 });
 mentorSchema.index({ isAvailable: 1 });
 mentorSchema.index({ joinDate: -1 });
 mentorSchema.index({ "pricing.hourlyRate": 1 });
 
-// Virtual for average rating calculation
 mentorSchema.virtual("averageRating").get(function () {
   if (!Array.isArray(this.reviews) || this.reviews.length === 0)
     return this.rating;
   const sum = this.reviews.reduce((acc, review) => acc + review.rating, 0);
   return (sum / this.reviews.length).toFixed(1);
 });
-// Virtual for success rate
+
 mentorSchema.virtual("successRate").get(function () {
   if (this.completedSessions === 0) return 0;
   return Math.floor(
     (this.completedSessions / (this.completedSessions + 5)) * 100
-  ); // Assuming some incomplete sessions
+  );
 });
 
-// Virtual for expertise summary
 mentorSchema.virtual("primaryExpertise").get(function () {
   if (!Array.isArray(this.expertise) || this.expertise.length === 0) return [];
   return this.expertise
@@ -417,9 +398,8 @@ mentorSchema.virtual("primaryExpertise").get(function () {
     .slice(0, 3);
 });
 
-// Method to calculate profile completeness
 mentorSchema.methods.calculateProfileCompleteness = function () {
-  let completeness = 20; // Base for having a profile
+  let completeness = 20;
 
   if (this.bio && this.bio.length > 50) completeness += 15;
   if (this.expertise.length > 0) completeness += 20;

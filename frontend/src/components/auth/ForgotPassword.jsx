@@ -2,7 +2,7 @@ import { useState } from "react";
 import { ChevronRight, Mail, ArrowLeft } from "lucide-react";
 
 export default function ForgotPassword() {
-  const [step, setStep] = useState(1); // 1: email, 2: otp, 3: new password
+  const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
     email: "",
     otp: ["", "", "", "", "", ""],
@@ -53,7 +53,6 @@ export default function ForgotPassword() {
     newOtp[index] = value;
     setFormData({ ...formData, otp: newOtp });
 
-    // Auto-focus next input
     if (value && index < 5) {
       const nextInput = document.getElementById(`reset-otp-${index + 1}`);
       if (nextInput) nextInput.focus();
@@ -104,7 +103,6 @@ export default function ForgotPassword() {
         setMessage("Password reset successfully! You can now login.");
         setMessageType("success");
         setTimeout(() => {
-          // In a real app, you'd use router navigation instead of window.location
           window.location.href = "/login";
         }, 2000);
       } else {
@@ -120,7 +118,6 @@ export default function ForgotPassword() {
   };
 
   const handleBackToLogin = () => {
-    // In a real app, you'd use router navigation instead of window.location
     window.location.href = "/login";
   };
 

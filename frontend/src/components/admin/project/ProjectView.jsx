@@ -38,7 +38,6 @@ const ProjectView = ({ onReturn, onEdit, onDelete }) => {
 
   const fetchProjectDetails = async () => {
     try {
-      // Validate projectId before making request
       if (!projectId || projectId === "undefined" || projectId === "null") {
         console.error("Invalid project ID:", projectId);
         toast.error("Invalid project ID");
@@ -77,7 +76,6 @@ const ProjectView = ({ onReturn, onEdit, onDelete }) => {
       console.error("Fetch project error:", error);
       toast.error(error.message || "Failed to load project details");
 
-      // Navigate back if project not found or invalid
       if (onReturn) {
         onReturn();
       } else {
@@ -115,7 +113,6 @@ const ProjectView = ({ onReturn, onEdit, onDelete }) => {
       toast.success("Project deleted successfully");
       setShowDeleteModal(false);
 
-      // Navigate back to dashboard or call onReturn
       if (onReturn) {
         onReturn();
       } else {

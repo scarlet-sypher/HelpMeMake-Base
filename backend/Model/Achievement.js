@@ -2,13 +2,13 @@ const mongoose = require("mongoose");
 
 const achievementLevelSchema = new mongoose.Schema(
   {
-    basic: { type: Number, default: 1 }, // Count needed for basic badge
-    common: { type: Number, default: 5 }, // Count needed for common badge
-    rare: { type: Number, default: 15 }, // Count needed for rare badge
-    epic: { type: Number, default: 25 }, // Count needed for epic badge
-    legendary: { type: Number, default: 40 }, // Count needed for legendary badge
-    currentCount: { type: Number, default: 0 }, // Current progress count
-    earnedBadges: { type: [String], default: [] }, // List of badges earned ['basic', 'common', etc.]
+    basic: { type: Number, default: 1 },
+    common: { type: Number, default: 5 },
+    rare: { type: Number, default: 15 },
+    epic: { type: Number, default: 25 },
+    legendary: { type: Number, default: 40 },
+    currentCount: { type: Number, default: 0 },
+    earnedBadges: { type: [String], default: [] },
   },
   { _id: false }
 );
@@ -19,15 +19,13 @@ const achievementSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Learner",
       required: true,
-      unique: true, // One achievement record per learner
+      unique: true,
     },
 
-    // XP & Level specific to achievements
     xp: { type: Number, default: 0, required: true },
     level: { type: Number, default: 0, required: true },
     nextLevelXp: { type: Number, default: 1000, required: true },
 
-    // Achievement Categories
     project: {
       completedProjects: achievementLevelSchema,
       projectsAdded: achievementLevelSchema,
@@ -39,7 +37,7 @@ const achievementSchema = new mongoose.Schema(
     },
 
     learnerStats: {
-      firstLogin: { type: Boolean, default: false }, // One-time achievement
+      firstLogin: { type: Boolean, default: false },
       streakDays: achievementLevelSchema,
       totalLogins: achievementLevelSchema,
     },
@@ -48,10 +46,9 @@ const achievementSchema = new mongoose.Schema(
       completedMilestones: achievementLevelSchema,
     },
 
-    // Store all unlocked achievements with details
     unlocked: [
       {
-        name: { type: String, required: true }, // e.g. "completedProjects - basic"
+        name: { type: String, required: true },
         category: {
           type: String,
           enum: ["project", "social", "learnerStats", "milestone"],
@@ -72,21 +69,18 @@ const achievementSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// Indexes for better performance
 achievementSchema.index({ level: 1 });
 achievementSchema.index({ xp: -1 });
 achievementSchema.index({ "unlocked.category": 1 });
 achievementSchema.index({ "unlocked.level": 1 });
 achievementSchema.index({ "unlocked.dateUnlocked": -1 });
 
-// Virtual for progress percentage to next level
 achievementSchema.virtual("progressPercentage").get(function () {
-  if (this.level >= 10) return 100; // Max level
+  if (this.level >= 10) return 100;
   const currentLevelXP = this.xp % 1000;
   return Math.floor((currentLevelXP / 1000) * 100);
 });
 
-// Static method to find or create achievement record
 achievementSchema.statics.findOrCreateByLearner = async function (learnerId) {
   let achievement = await this.findOne({ learner: learnerId });
 
@@ -173,7 +167,6 @@ achievementSchema.statics.findOrCreateByLearner = async function (learnerId) {
   return achievement;
 };
 
-// Instance method to add new unlocked achievement
 achievementSchema.methods.addUnlockedAchievement = function (
   name,
   category,
@@ -194,10 +187,9 @@ achievementSchema.methods.addUnlockedAchievement = function (
     this.totalAchievements = this.unlocked.length;
   }
 
-  return !exists; // Returns true if new achievement was added
+  return !exists;
 };
 
-// Instance method to calculate total XP
 achievementSchema.methods.calculateTotalXP = function (completedProjects = 0) {
   const badgeXP = {
     basic: 100,
@@ -209,20 +201,17 @@ achievementSchema.methods.calculateTotalXP = function (completedProjects = 0) {
 
   let totalXP = 0;
 
-  // Add XP for completed projects
   totalXP += completedProjects * 250;
 
-  // Add XP for badges
   this.unlocked.forEach((achievement) => {
     if (badgeXP[achievement.level]) {
       totalXP += badgeXP[achievement.level];
     }
   });
 
-  return Math.min(totalXP, 10000); // Cap at 10,000 XP
+  return Math.min(totalXP, 10000);
 };
 
-// Configure JSON output
 achievementSchema.set("toJSON", {
   virtuals: true,
   transform: function (doc, ret) {

@@ -21,48 +21,43 @@ const MonthlyTrend = ({ data, title = "Monthly Completion Trend" }) => {
   const averageCompleted =
     Math.round(totalCompleted / animatedData.length) || 0;
 
-  // Improved bar height calculation for high count values (30+)
   const getBarHeight = (completed) => {
-    const baseHeight = 160; // Base height for chart area
-    const minHeight = 8; // Minimum visible height
+    const baseHeight = 160;
+    const minHeight = 8;
 
     if (maxCompleted === 0) return minHeight;
 
-    // Use logarithmic scaling for better visualization of high values
     if (maxCompleted > 20) {
       const logMax = Math.log(maxCompleted + 1);
       const logValue = Math.log(completed + 1);
       const percentage = logValue / logMax;
       return Math.max(percentage * baseHeight, minHeight);
     } else {
-      // Linear scaling for smaller values
       const percentage = completed / maxCompleted;
       return Math.max(percentage * baseHeight, minHeight);
     }
   };
 
   const Colors = [
-    "#f43f5e", // rose-500
-    "#f97316", // orange-500
-    "#facc15", // yellow-400
-    "#84cc16", // lime-500
-    "#10b981", // emerald-500
-    "#14b8a6", // teal-500
-    "#0ea5e9", // sky-500
-    "#6366f1", // indigo-500
-    "#a855f7", // purple-500
-    "#ec4899", // pink-500
+    "#f43f5e",
+    "#f97316",
+    "#facc15",
+    "#84cc16",
+    "#10b981",
+    "#14b8a6",
+    "#0ea5e9",
+    "#6366f1",
+    "#a855f7",
+    "#ec4899",
   ];
 
   const getBarColor = (completed, index) => {
     return Colors[index % Colors.length];
   };
 
-  // Generate Y-axis labels with smart scaling
   const getYAxisLabels = () => {
     const labels = [];
     if (maxCompleted <= 10) {
-      // For small values, show each increment
       for (
         let i = maxCompleted;
         i >= 0;
@@ -71,19 +66,17 @@ const MonthlyTrend = ({ data, title = "Monthly Completion Trend" }) => {
         labels.push(i);
       }
     } else if (maxCompleted <= 50) {
-      // For medium values, show every 10 or appropriate increment
       const increment = Math.ceil(maxCompleted / 5);
       for (let i = maxCompleted; i >= 0; i -= increment) {
         labels.push(Math.round(i));
       }
     } else {
-      // For high values, use larger increments
       const increment = Math.ceil(maxCompleted / 4);
       for (let i = maxCompleted; i >= 0; i -= increment) {
         labels.push(Math.round(i));
       }
     }
-    return labels.slice(0, 6); // Limit to 6 labels max
+    return labels.slice(0, 6);
   };
 
   const yAxisLabels = getYAxisLabels();
@@ -308,7 +301,7 @@ const MonthlyTrend = ({ data, title = "Monthly Completion Trend" }) => {
                   <div
                     className="absolute left-1/2 transform -translate-x-1/2 bg-gray-900/95 backdrop-blur-sm border border-white/20 rounded-xl p-2 sm:p-3 opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none shadow-2xl z-20 whitespace-nowrap"
                     style={{
-                      bottom: `${40}px`, // positions tooltip above bar top
+                      bottom: `${40}px`,
                     }}
                   >
                     <div className="text-white text-xs sm:text-sm font-medium">

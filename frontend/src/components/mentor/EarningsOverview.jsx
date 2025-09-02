@@ -64,7 +64,6 @@ const EarningsOverview = () => {
     fetchEarningsData();
   }, []);
 
-  // Helper function to display values or "Not Set"
   const displayValue = (value, prefix = "", suffix = "") => {
     if (value === 0 || value === null || value === undefined) {
       return "Not Set";
@@ -72,7 +71,6 @@ const EarningsOverview = () => {
     return `${prefix}${value}${suffix}`;
   };
 
-  // Helper function to format currency
   const formatCurrency = (amount) => {
     if (amount === 0 || amount === null || amount === undefined) {
       return "Not Set";
@@ -80,7 +78,6 @@ const EarningsOverview = () => {
     return `$${amount.toLocaleString()}`;
   };
 
-  // Helper function to format percentage change
   const formatPercentageChange = (change) => {
     if (change === 0 || change === null || change === undefined) {
       return "No change";

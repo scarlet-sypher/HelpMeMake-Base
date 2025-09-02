@@ -23,16 +23,14 @@ const MessagesArea = ({
   const messagesContainerRef = useRef(null);
   const lastScrollTopRef = useRef(0);
 
-  // Enhanced scroll handler with progress tracking and improved scroll-to-bottom detection
   const handleScroll = () => {
     const container = messagesContainerRef.current;
     if (!container) return;
 
     const { scrollTop, scrollHeight, clientHeight } = container;
     const distanceFromBottom = scrollHeight - scrollTop - clientHeight;
-    const isNear = distanceFromBottom < 150; // Increased threshold for better UX
+    const isNear = distanceFromBottom < 150;
 
-    // Calculate scroll progress (0-100)
     const progress =
       scrollHeight > clientHeight
         ? Math.min(100, (scrollTop / (scrollHeight - clientHeight)) * 100)
@@ -41,7 +39,6 @@ const MessagesArea = ({
     setScrollProgress(progress);
     setIsNearBottom(isNear);
 
-    // Show scroll button when user scrolls up significantly
     setShowScrollButton(
       !isNear && scrollHeight > clientHeight && scrollTop > 300
     );
@@ -49,7 +46,6 @@ const MessagesArea = ({
     lastScrollTopRef.current = scrollTop;
   };
 
-  // Debounced scroll handler with better performance
   useEffect(() => {
     const container = messagesContainerRef.current;
     if (!container) return;
@@ -69,7 +65,6 @@ const MessagesArea = ({
       passive: true,
     });
 
-    // Initial call to set up state
     handleScroll();
 
     return () => {
@@ -77,23 +72,19 @@ const MessagesArea = ({
     };
   }, []);
 
-  // Fixed auto-scroll to bottom when new messages arrive
   useEffect(() => {
     const container = messagesContainerRef.current;
     if (!container || messages.length === 0) return;
 
-    // Always scroll to bottom for new messages if user is near bottom
-    // or if this is the first load of messages
     const shouldAutoScroll = isNearBottom || messages.length <= 1;
 
     if (shouldAutoScroll) {
-      // Use a small delay to ensure DOM has updated
       setTimeout(() => {
-        scrollToBottom(false); // Use immediate scroll for auto-scroll
-        setIsNearBottom(true); // Ensure state is updated
+        scrollToBottom(false);
+        setIsNearBottom(true);
       }, 10);
     }
-  }, [messages.length]); // Only trigger on message count change
+  }, [messages.length]);
 
   const scrollToBottom = (smooth = true) => {
     const container = messagesContainerRef.current;
@@ -108,17 +99,14 @@ const MessagesArea = ({
       container.scrollTop = container.scrollHeight;
     }
 
-    // Update state immediately for smooth scrolling
     setIsNearBottom(true);
     setShowScrollButton(false);
   };
 
-  // Helper function to format date sections
   const formatDateSection = (date) => {
     const today = new Date();
     const messageDate = new Date(date);
 
-    // Reset time to compare only dates
     today.setHours(0, 0, 0, 0);
     messageDate.setHours(0, 0, 0, 0);
 
@@ -128,7 +116,6 @@ const MessagesArea = ({
     if (diffDays === 0) return "Today";
     if (diffDays === 1) return "Yesterday";
 
-    // For older messages, show formatted date
     return messageDate.toLocaleDateString("en-US", {
       weekday: "long",
       year: "numeric",
@@ -137,7 +124,6 @@ const MessagesArea = ({
     });
   };
 
-  // Helper function to check if we should show a date separator
   const shouldShowDateSeparator = (currentMessage, previousMessage) => {
     if (!previousMessage) return true;
 
@@ -147,7 +133,6 @@ const MessagesArea = ({
     return currentDate.toDateString() !== previousDate.toDateString();
   };
 
-  // Group messages by date for rendering
   const groupMessagesByDate = () => {
     const grouped = [];
 
@@ -173,7 +158,6 @@ const MessagesArea = ({
     return grouped;
   };
 
-  // Enhanced loading skeleton
   if (messagesLoading) {
     return (
       <div className="flex-1 relative overflow-hidden">
@@ -311,7 +295,6 @@ const MessagesArea = ({
           <>
             {groupedMessages.map((item) => {
               if (item.type === "date-separator") {
-                // Date separator with improved responsive design
                 return (
                   <div
                     key={item.id}
@@ -333,7 +316,6 @@ const MessagesArea = ({
                 );
               }
 
-              // Regular message rendering with improved responsiveness
               const message = item.data;
               const index = item.index;
               const isCurrentUserMessage = message.senderId._id === user.userId;
@@ -344,7 +326,6 @@ const MessagesArea = ({
                 index > 0 &&
                 messages[index - 1]?.senderId._id === message.senderId._id;
 
-              // Check if this is the last message in a group
               const isLastInGroup =
                 index === messages.length - 1 ||
                 messages[index + 1]?.senderId._id !== message.senderId._id;

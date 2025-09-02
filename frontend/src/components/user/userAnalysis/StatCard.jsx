@@ -15,7 +15,6 @@ const StatCard = ({
   useEffect(() => {
     if (isLoading) return;
 
-    // Animate the main value
     const numericValue = parseInt(value) || 0;
     const duration = 1000;
     const steps = 50;
@@ -31,7 +30,6 @@ const StatCard = ({
       setAnimatedValue(Math.round(currentValue));
     }, duration / steps);
 
-    // Animate progress bar if progressValue is provided
     if (progressValue !== undefined) {
       let currentProgress = 0;
       const progressIncrement = progressValue / steps;
@@ -54,7 +52,6 @@ const StatCard = ({
     return () => clearInterval(valueInterval);
   }, [value, progressValue, isLoading]);
 
-  // Loading skeleton
   if (isLoading) {
     return (
       <div className="relative group">
@@ -86,13 +83,11 @@ const StatCard = ({
     );
   }
 
-  // Extract percentage from value for display
   const isPercentage = value.toString().includes("%");
   const displayValue = isPercentage
     ? `${animatedValue}%`
     : animatedValue.toString();
 
-  // Determine if change is positive or negative
   const isPositive =
     change &&
     (change.includes("+") || (!change.includes("-") && !change.includes("0")));

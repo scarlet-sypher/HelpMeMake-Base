@@ -2,7 +2,6 @@ const mongoose = require("mongoose");
 
 const milestoneSchema = new mongoose.Schema(
   {
-    // Unique Milestone Identifier
     milestoneId: {
       type: String,
       required: true,
@@ -14,7 +13,6 @@ const milestoneSchema = new mongoose.Schema(
       },
     },
 
-    // Core Milestone Information
     title: {
       type: String,
       required: true,
@@ -33,7 +31,6 @@ const milestoneSchema = new mongoose.Schema(
       maxlength: 100,
     },
 
-    // References to related entities
     projectId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Project",
@@ -50,7 +47,6 @@ const milestoneSchema = new mongoose.Schema(
       required: true,
     },
 
-    // Milestone Status & Progress
     status: {
       type: String,
       enum: [
@@ -73,7 +69,6 @@ const milestoneSchema = new mongoose.Schema(
       min: 1,
     },
 
-    // Verification System - Both parties must verify for completion
     learnerVerification: {
       isVerified: {
         type: Boolean,
@@ -90,7 +85,7 @@ const milestoneSchema = new mongoose.Schema(
       },
       submissionUrl: {
         type: String,
-        trim: true, // Link to GitHub, demo, etc.
+        trim: true,
       },
       submissionFiles: [
         {
@@ -130,7 +125,6 @@ const milestoneSchema = new mongoose.Schema(
       },
     },
 
-    // Timeline & Deadlines
     startDate: {
       type: Date,
       default: null,
@@ -154,7 +148,6 @@ const milestoneSchema = new mongoose.Schema(
       default: 0,
     },
 
-    // Technical Requirements
     acceptanceCriteria: [
       {
         criterion: {
@@ -202,7 +195,6 @@ const milestoneSchema = new mongoose.Schema(
       },
     ],
 
-    // Resources & References
     resources: [
       {
         title: String,
@@ -235,7 +227,7 @@ const milestoneSchema = new mongoose.Schema(
     },
     reviewReadByLearner: {
       type: Boolean,
-      default: true, // true = read, false = unread (blinking)
+      default: true,
     },
     reviewedAt: {
       type: Date,
@@ -247,7 +239,6 @@ const milestoneSchema = new mongoose.Schema(
       default: null,
     },
 
-    // Communication & Updates
     comments: [
       {
         authorId: {
@@ -284,7 +275,6 @@ const milestoneSchema = new mongoose.Schema(
       },
     ],
 
-    // Progress Tracking
     progressPercentage: {
       type: Number,
       default: 0,
@@ -300,7 +290,6 @@ const milestoneSchema = new mongoose.Schema(
       ref: "User",
     },
 
-    // Gamification & Rewards
     xpReward: {
       type: Number,
       default: 0,
@@ -319,7 +308,6 @@ const milestoneSchema = new mongoose.Schema(
       },
     ],
 
-    // Special Properties
     isBlocked: {
       type: Boolean,
       default: false,
@@ -378,7 +366,6 @@ const milestoneSchema = new mongoose.Schema(
   }
 );
 
-// Indexes for better query performance
 milestoneSchema.index({ projectId: 1 });
 milestoneSchema.index({ learnerId: 1 });
 milestoneSchema.index({ mentorId: 1 });
@@ -387,23 +374,20 @@ milestoneSchema.index({ dueDate: 1 });
 milestoneSchema.index({ order: 1 });
 milestoneSchema.index({ "learnerVerification.isVerified": 1 });
 milestoneSchema.index({ "mentorVerification.isVerified": 1 });
-// milestoneSchema.index({ milestoneId: 1 });
+
 milestoneSchema.index({ createdAt: -1 });
 
-// Compound indexes for common queries
 milestoneSchema.index({ projectId: 1, order: 1 });
 milestoneSchema.index({ projectId: 1, status: 1 });
 milestoneSchema.index({ learnerId: 1, status: 1 });
 milestoneSchema.index({ mentorId: 1, status: 1 });
 
-// Virtual for checking if milestone is fully completed (both verified)
 milestoneSchema.virtual("isFullyCompleted").get(function () {
   return (
     this.learnerVerification.isVerified && this.mentorVerification.isVerified
   );
 });
 
-// Virtual for checking if milestone is partially completed (one verified)
 milestoneSchema.virtual("isPartiallyCompleted").get(function () {
   return (
     (this.learnerVerification.isVerified ||
@@ -412,20 +396,17 @@ milestoneSchema.virtual("isPartiallyCompleted").get(function () {
   );
 });
 
-// Virtual for checking if milestone is overdue
 milestoneSchema.virtual("isOverdue").get(function () {
   if (this.isFullyCompleted || !this.dueDate) return false;
   return new Date() > this.dueDate;
 });
 
-// Virtual for days until due
 milestoneSchema.virtual("daysUntilDue").get(function () {
   if (!this.dueDate) return null;
   const diffTime = this.dueDate - new Date();
   return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 });
 
-// Virtual for completion percentage based on acceptance criteria
 milestoneSchema.virtual("criteriaCompletionPercentage").get(function () {
   if (this.acceptanceCriteria.length === 0) return 0;
   const completedCriteria = this.acceptanceCriteria.filter(
@@ -434,9 +415,7 @@ milestoneSchema.virtual("criteriaCompletionPercentage").get(function () {
   return Math.round((completedCriteria / this.acceptanceCriteria.length) * 100);
 });
 
-// Pre-save middleware to update completion status
 milestoneSchema.pre("save", function (next) {
-  // Update status based on verification
   if (this.isFullyCompleted) {
     this.status = "Completed";
     if (!this.completedDate) {
@@ -449,16 +428,14 @@ milestoneSchema.pre("save", function (next) {
     }
   }
 
-  // Update progress percentage based on criteria
   if (this.acceptanceCriteria.length > 0) {
     const completedCriteria = this.acceptanceCriteria.filter(
       (c) => c.isCompleted
     ).length;
     const baseProgress = Math.round(
       (completedCriteria / this.acceptanceCriteria.length) * 80
-    ); // 80% from criteria
+    );
 
-    // Add verification bonus
     let verificationBonus = 0;
     if (this.learnerVerification.isVerified) verificationBonus += 10;
     if (this.mentorVerification.isVerified) verificationBonus += 10;
@@ -466,20 +443,17 @@ milestoneSchema.pre("save", function (next) {
     this.progressPercentage = Math.min(baseProgress + verificationBonus, 100);
   }
 
-  // Update lastUpdated
   this.lastUpdated = new Date();
 
   next();
 });
 
-// Post-save middleware to update project progress
 milestoneSchema.post("save", async function (doc) {
   try {
     const Project = mongoose.model("Project");
     const project = await Project.findById(doc.projectId);
 
     if (project) {
-      // Recalculate project progress based on milestone completion
       const allMilestones = await mongoose
         .model("Milestone")
         .find({ projectId: doc.projectId });
@@ -500,7 +474,6 @@ milestoneSchema.post("save", async function (doc) {
   }
 });
 
-// Static method to find milestones by project
 milestoneSchema.statics.findByProject = function (
   projectId,
   populateRefs = true
@@ -512,7 +485,6 @@ milestoneSchema.statics.findByProject = function (
   return query;
 };
 
-// Static method to find pending milestones for learner
 milestoneSchema.statics.findPendingForLearner = function (learnerId) {
   return this.find({
     learnerId,
@@ -521,7 +493,6 @@ milestoneSchema.statics.findPendingForLearner = function (learnerId) {
   }).populate("projectId");
 };
 
-// Static method to find pending milestones for mentor
 milestoneSchema.statics.findPendingForMentor = function (mentorId) {
   return this.find({
     mentorId,
@@ -531,7 +502,6 @@ milestoneSchema.statics.findPendingForMentor = function (mentorId) {
   }).populate("projectId learnerId");
 };
 
-// Instance method to mark as learner verified
 milestoneSchema.methods.markLearnerVerified = function (
   notes,
   submissionUrl,
@@ -550,7 +520,6 @@ milestoneSchema.methods.markLearnerVerified = function (
   return this.save();
 };
 
-// Instance method to mark as mentor verified
 milestoneSchema.methods.markMentorVerified = function (
   notes,
   rating,
@@ -565,7 +534,6 @@ milestoneSchema.methods.markMentorVerified = function (
   return this.save();
 };
 
-// Instance method to add comment
 milestoneSchema.methods.addComment = function (
   authorId,
   authorType,
@@ -582,7 +550,6 @@ milestoneSchema.methods.addComment = function (
   return this.save();
 };
 
-// Instance method to check dependencies
 milestoneSchema.methods.areDependenciesMet = async function () {
   if (this.dependencies.length === 0) return true;
 
@@ -595,7 +562,7 @@ milestoneSchema.methods.areDependenciesMet = async function () {
 
 milestoneSchema.methods.addReviewNote = function (mentorId, note) {
   this.reviewNote = note;
-  this.reviewReadByLearner = false; // Mark as unread for blinking
+  this.reviewReadByLearner = false;
   this.reviewedAt = new Date();
   this.reviewedBy = mentorId;
   return this.save();
@@ -606,18 +573,13 @@ milestoneSchema.methods.markReviewAsRead = function () {
   return this.save();
 };
 
-// Add this virtual for checking if milestone can be edited
 milestoneSchema.virtual("canBeEdited").get(function () {
   return !(
     this.learnerVerification.isVerified && this.mentorVerification.isVerified
   );
 });
 
-// Update the pre-save middleware to handle review notifications
 milestoneSchema.pre("save", function (next) {
-  // Existing pre-save logic...
-
-  // Update status based on verification
   if (this.isFullyCompleted) {
     this.status = "Completed";
     if (!this.completedDate) {
@@ -630,16 +592,14 @@ milestoneSchema.pre("save", function (next) {
     }
   }
 
-  // Update progress percentage based on criteria
   if (this.acceptanceCriteria.length > 0) {
     const completedCriteria = this.acceptanceCriteria.filter(
       (c) => c.isCompleted
     ).length;
     const baseProgress = Math.round(
       (completedCriteria / this.acceptanceCriteria.length) * 80
-    ); // 80% from criteria
+    );
 
-    // Add verification bonus
     let verificationBonus = 0;
     if (this.learnerVerification.isVerified) verificationBonus += 10;
     if (this.mentorVerification.isVerified) verificationBonus += 10;
@@ -647,13 +607,11 @@ milestoneSchema.pre("save", function (next) {
     this.progressPercentage = Math.min(baseProgress + verificationBonus, 100);
   }
 
-  // Update lastUpdated
   this.lastUpdated = new Date();
 
   next();
 });
 
-// Configure JSON output
 milestoneSchema.set("toJSON", {
   virtuals: true,
   transform: function (doc, ret) {

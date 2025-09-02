@@ -26,7 +26,7 @@ const HeroSection = () => {
 
   useEffect(() => {
     setIsLoaded(true);
-    // Generate sparkles only once on mount
+
     setSparkles(
       Array.from({ length: NUM_SPARKLES }, () => ({
         left: `${Math.random() * 100}%`,

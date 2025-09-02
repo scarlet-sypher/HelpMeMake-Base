@@ -5,22 +5,19 @@ const cloudinary = require("../../utils/cloudinary");
 const streamifier = require("streamifier");
 
 const adminMentorController = {
-  // Get all mentors with user data
   getAllMentors: async (req, res) => {
     try {
       const { search } = req.query;
 
-      // Build search query for users
       let userSearchQuery = { role: "mentor" };
       if (search) {
         userSearchQuery.$or = [
           { name: { $regex: search, $options: "i" } },
           { email: { $regex: search, $options: "i" } },
-          { _id: search.length === 24 ? search : null }, // Valid ObjectId check
+          { _id: search.length === 24 ? search : null },
         ].filter(Boolean);
       }
 
-      // Find users with mentor role and populate mentor data
       const mentors = await User.aggregate([
         { $match: userSearchQuery },
         {
@@ -67,12 +64,10 @@ const adminMentorController = {
     }
   },
 
-  // Get single mentor by ID
   getMentorById: async (req, res) => {
     try {
       const { mentorId } = req.params;
 
-      // Find mentor and populate user data
       const mentor = await Mentor.findById(mentorId).populate({
         path: "userId",
         select:
@@ -106,13 +101,11 @@ const adminMentorController = {
     }
   },
 
-  // Update mentor profile
   updateMentor: async (req, res) => {
     try {
       const { mentorId } = req.params;
       const updateData = req.body;
 
-      // Separate user data from mentor data
       const userFields = ["name", "email"];
       const userData = {};
       const mentorData = {};
@@ -125,7 +118,6 @@ const adminMentorController = {
         }
       });
 
-      // Find mentor first
       const mentor = await Mentor.findById(mentorId);
       if (!mentor) {
         return res.status(404).json({
@@ -134,12 +126,10 @@ const adminMentorController = {
         });
       }
 
-      // Update user data if provided
       if (Object.keys(userData).length > 0) {
         await User.findByIdAndUpdate(mentor.userId, userData, { new: true });
       }
 
-      // Update mentor data
       const updatedMentor = await Mentor.findByIdAndUpdate(
         mentorId,
         mentorData,
@@ -170,7 +160,6 @@ const adminMentorController = {
     }
   },
 
-  // Update mentor profile picture
   updateMentorAvatar: async (req, res) => {
     try {
       const { mentorId } = req.params;
@@ -182,7 +171,6 @@ const adminMentorController = {
         });
       }
 
-      // Find mentor
       const mentor = await Mentor.findById(mentorId);
       if (!mentor) {
         return res.status(404).json({
@@ -191,7 +179,6 @@ const adminMentorController = {
         });
       }
 
-      // Upload to Cloudinary
       const streamUpload = () => {
         return new Promise((resolve, reject) => {
           const stream = cloudinary.uploader.upload_stream(
@@ -212,7 +199,6 @@ const adminMentorController = {
       const result = await streamUpload();
       const avatarUrl = result.secure_url;
 
-      // Update user avatar
       await User.findByIdAndUpdate(mentor.userId, { avatar: avatarUrl });
 
       res.json({
@@ -229,13 +215,11 @@ const adminMentorController = {
     }
   },
 
-  // Delete mentor (soft delete - deactivate account)
   deleteMentor: async (req, res) => {
     try {
       const { mentorId } = req.params;
       const { confirmationText } = req.body;
 
-      // Find mentor first
       const mentor = await Mentor.findById(mentorId).populate({
         path: "userId",
         select: "name email",
@@ -248,7 +232,6 @@ const adminMentorController = {
         });
       }
 
-      // Verify confirmation text
       const expectedText = `I want to delete ${mentor.userId.name}`;
       if (confirmationText !== expectedText) {
         return res.status(400).json({
@@ -259,10 +242,8 @@ const adminMentorController = {
         });
       }
 
-      // Delete mentor profile
       await Mentor.findByIdAndDelete(mentorId);
 
-      // Delete user account
       await User.findByIdAndDelete(mentor.userId._id);
 
       res.json({
@@ -284,7 +265,6 @@ const adminMentorController = {
     }
   },
 
-  // Get mentor statistics
   getMentorStats: async (req, res) => {
     try {
       const stats = await Mentor.aggregate([

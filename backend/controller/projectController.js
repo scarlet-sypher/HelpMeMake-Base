@@ -7,7 +7,6 @@ const path = require("path");
 const cloudinary = require("../utils/cloudinary");
 const streamifier = require("streamifier");
 
-// Create New Project
 const createProject = async (req, res) => {
   try {
     const {
@@ -30,7 +29,6 @@ const createProject = async (req, res) => {
       references,
     } = req.body;
 
-    // Validation
     if (
       !name ||
       !shortDescription ||
@@ -61,7 +59,6 @@ const createProject = async (req, res) => {
       });
     }
 
-    // Validate price
     const price = parseFloat(openingPrice);
     if (isNaN(price) || price <= 0) {
       return res.status(400).json({
@@ -70,10 +67,8 @@ const createProject = async (req, res) => {
       });
     }
 
-    // Get learner ID from authenticated user
     const learnerId = req.user._id;
 
-    // Verify user is a learner
     const learner = await Learner.findOne({ userId: learnerId });
     if (!learner) {
       return res.status(403).json({
@@ -82,7 +77,6 @@ const createProject = async (req, res) => {
       });
     }
 
-    // Create project with new fields initialized
     const projectData = {
       name: name.trim(),
       shortDescription: shortDescription.trim(),
@@ -111,18 +105,14 @@ const createProject = async (req, res) => {
         : [],
       knowledgeLevel,
       references: references || [],
-      learnerId: learner._id, // Use learner's ObjectId, not user's
+      learnerId: learner._id,
       isVisible: true,
 
-      // ✅ NEW FIELDS - Initialize with default values
-      // Expected End Date Management
       tempExpectedEndDate: null,
       isTempEndDateConfirmed: false,
 
-      // Progress History (empty array initially)
       progressHistory: [],
 
-      // Completion Request (null initially - will be set when needed)
       completionRequest: {
         from: null,
         type: null,
@@ -135,24 +125,20 @@ const createProject = async (req, res) => {
         learnerNotes: null,
       },
 
-      // Reviews (undefined initially - will be set after completion)
       learnerReview: undefined,
       mentorReview: undefined,
 
-      // Additional Project Tracking
       lastProgressUpdate: null,
       nextMilestoneDate: null,
       isOverdue: false,
       overduedays: 0,
 
-      // Initialize progress percentage to 0
       progressPercentage: 0,
     };
 
     const newProject = new Project(projectData);
     const savedProject = await newProject.save();
 
-    // Update learner's project count
     await Learner.findByIdAndUpdate(learner._id, {
       $inc: {
         userTotalProjects: 1,
@@ -168,7 +154,6 @@ const createProject = async (req, res) => {
   } catch (error) {
     console.error("Create project error:", error);
 
-    // Handle MongoDB validation errors
     if (error.name === "ValidationError") {
       const validationErrors = Object.values(error.errors).map(
         (err) => err.message
@@ -180,7 +165,6 @@ const createProject = async (req, res) => {
       });
     }
 
-    // Handle duplicate key error
     if (error.code === 11000) {
       return res.status(400).json({
         success: false,
@@ -195,7 +179,6 @@ const createProject = async (req, res) => {
   }
 };
 
-// Get Project by ID
 const getProjectById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -240,15 +223,9 @@ const getProjectById = async (req, res) => {
       });
     }
 
-    // Check if user has permission to view this project
     const userLearner = await Learner.findOne({ userId: req.user._id });
     const userMentor = await Mentor.findOne({ userId: req.user._id });
 
-    // Allow access if:
-    // 1. User is the project owner
-    // 2. Project is visible and open
-    // 3. User is the assigned mentor
-    // 4. User is a mentor (can view open projects)
     const isOwner =
       userLearner &&
       project.learnerId._id.toString() === userLearner._id.toString();
@@ -265,15 +242,13 @@ const getProjectById = async (req, res) => {
       });
     }
 
-    // Increment view count if not the owner
     if (!isOwner) {
       await Project.findByIdAndUpdate(id, { $inc: { viewCount: 1 } });
     }
 
-    // Format the response to match frontend expectations
     const formattedProject = {
       ...project.toObject(),
-      learner: project.learnerId, // Alias for easier access
+      learner: project.learnerId,
     };
 
     res.json({
@@ -298,13 +273,11 @@ const getProjectById = async (req, res) => {
   }
 };
 
-// Apply to Project (Mentor Application)
 const applyToProject = async (req, res) => {
   try {
     const { id } = req.params;
     const { proposedPrice, coverLetter, estimatedDuration } = req.body;
 
-    // Validation
     if (!proposedPrice || !coverLetter || !estimatedDuration) {
       return res.status(400).json({
         success: false,
@@ -313,7 +286,6 @@ const applyToProject = async (req, res) => {
       });
     }
 
-    // Validate price
     const price = parseFloat(proposedPrice);
     if (isNaN(price) || price <= 0) {
       return res.status(400).json({
@@ -322,7 +294,6 @@ const applyToProject = async (req, res) => {
       });
     }
 
-    // Find the project
     const project = await Project.findById(id);
     if (!project) {
       return res.status(404).json({
@@ -331,7 +302,6 @@ const applyToProject = async (req, res) => {
       });
     }
 
-    // Check if project is open for applications
     if (project.status !== "Open") {
       return res.status(400).json({
         success: false,
@@ -339,7 +309,6 @@ const applyToProject = async (req, res) => {
       });
     }
 
-    // Check if project already has a mentor
     if (project.mentorId) {
       return res.status(400).json({
         success: false,
@@ -347,7 +316,6 @@ const applyToProject = async (req, res) => {
       });
     }
 
-    // Verify user is a mentor
     const mentor = await Mentor.findOne({ userId: req.user._id });
     if (!mentor) {
       return res.status(403).json({
@@ -356,7 +324,6 @@ const applyToProject = async (req, res) => {
       });
     }
 
-    // Check if mentor already applied
     const existingApplication = project.applications.find(
       (app) => app.mentorId.toString() === mentor._id.toString()
     );
@@ -368,7 +335,6 @@ const applyToProject = async (req, res) => {
       });
     }
 
-    // Create application
     const newApplication = {
       mentorId: mentor._id,
       proposedPrice: price,
@@ -378,7 +344,6 @@ const applyToProject = async (req, res) => {
       appliedAt: new Date(),
     };
 
-    // Add application to project
     project.applications.push(newApplication);
     project.applicationsCount = project.applications.length;
 
@@ -386,11 +351,10 @@ const applyToProject = async (req, res) => {
 
     await Mentor.findByIdAndUpdate(mentor._id, {
       $inc: {
-        totalApplications: 1, // Make sure this field exists in Mentor schema
+        totalApplications: 1,
       },
     });
 
-    // Populate the new application for response
     const updatedProject = await Project.findById(id).populate({
       path: "applications.mentorId",
       populate: {
@@ -424,12 +388,10 @@ const applyToProject = async (req, res) => {
   }
 };
 
-// Accept Mentor Application (for learners)
 const acceptMentorApplication = async (req, res) => {
   try {
     const { id, applicationId } = req.params;
 
-    // Find the project
     const project = await Project.findById(id);
     if (!project) {
       return res.status(404).json({
@@ -438,7 +400,6 @@ const acceptMentorApplication = async (req, res) => {
       });
     }
 
-    // Verify user is the project owner
     const userLearner = await Learner.findOne({ userId: req.user._id });
     if (
       !userLearner ||
@@ -450,7 +411,6 @@ const acceptMentorApplication = async (req, res) => {
       });
     }
 
-    // Find the application
     const application = project.applications.id(applicationId);
     if (!application) {
       return res.status(404).json({
@@ -459,7 +419,6 @@ const acceptMentorApplication = async (req, res) => {
       });
     }
 
-    // Check if application is pending
     if (application.applicationStatus !== "Pending") {
       return res.status(400).json({
         success: false,
@@ -467,14 +426,12 @@ const acceptMentorApplication = async (req, res) => {
       });
     }
 
-    // Accept the application
     application.applicationStatus = "Accepted";
     project.mentorId = application.mentorId;
     project.negotiatedPrice = application.proposedPrice;
     project.status = "In Progress";
     project.startDate = new Date();
 
-    // Reject all other pending applications
     project.applications.forEach((app) => {
       if (
         app._id.toString() !== applicationId &&
@@ -486,21 +443,19 @@ const acceptMentorApplication = async (req, res) => {
 
     await project.save();
 
-    // Update learner stats
     await Learner.findByIdAndUpdate(userLearner._id, {
       $inc: {
-        userActiveProjects: -1, // Decrease active (Open) projects
-        userSessionsScheduled: 1, // Increase scheduled sessions
+        userActiveProjects: -1,
+        userSessionsScheduled: 1,
       },
     });
 
-    // Update mentor stats
     const mentorUser = await User.findById(application.mentorId);
     await Mentor.findByIdAndUpdate(application.mentorId, {
       $inc: {
         mentorActiveStudents: 1,
         totalStudents: 1,
-        mentorSessionsScheduled: 1, // MISSING: Track scheduled sessions
+        mentorSessionsScheduled: 1,
       },
     });
 
@@ -526,7 +481,6 @@ const acceptMentorApplication = async (req, res) => {
   }
 };
 
-// Update Existing Project
 const updateProject = async (req, res) => {
   try {
     const { id } = req.params;
@@ -557,7 +511,6 @@ const updateProject = async (req, res) => {
       });
     }
 
-    // Find the project
     const project = await Project.findById(id);
     if (!project) {
       return res.status(404).json({
@@ -566,7 +519,6 @@ const updateProject = async (req, res) => {
       });
     }
 
-    // Check if user owns this project
     const userLearner = await Learner.findOne({ userId: req.user._id });
     if (
       !userLearner ||
@@ -578,7 +530,6 @@ const updateProject = async (req, res) => {
       });
     }
 
-    // Validation for required fields
     if (
       !name ||
       !shortDescription ||
@@ -609,7 +560,6 @@ const updateProject = async (req, res) => {
       });
     }
 
-    // Validate price
     const price = parseFloat(openingPrice);
     if (isNaN(price) || price <= 0) {
       return res.status(400).json({
@@ -618,7 +568,6 @@ const updateProject = async (req, res) => {
       });
     }
 
-    // Check if project can be edited (not in certain states)
     if (project.status === "Completed" || project.status === "Cancelled") {
       return res.status(400).json({
         success: false,
@@ -626,11 +575,9 @@ const updateProject = async (req, res) => {
       });
     }
 
-    // Track status change for learner stats
     const oldStatus = project.status;
     const newStatus = status || project.status;
 
-    // Prepare update data
     const updateData = {
       name: name.trim(),
       shortDescription: shortDescription.trim(),
@@ -661,7 +608,6 @@ const updateProject = async (req, res) => {
       references: references || [],
     };
 
-    // Update project
     const updatedProject = await Project.findByIdAndUpdate(id, updateData, {
       new: true,
       runValidators: true,
@@ -669,18 +615,15 @@ const updateProject = async (req, res) => {
       .populate("learnerId", "userId title description location")
       .populate("mentorId", "userId title description location");
 
-    // Update learner stats if status changed
     if (oldStatus !== newStatus) {
       const statusChanges = {};
 
-      // Handle active projects count
       if (oldStatus === "Open" && newStatus !== "Open") {
         statusChanges.userActiveProjects = -1;
       } else if (oldStatus !== "Open" && newStatus === "Open") {
         statusChanges.userActiveProjects = 1;
       }
 
-      // Apply active project changes
       if (Object.keys(statusChanges).length > 0) {
         await Learner.findByIdAndUpdate(userLearner._id, {
           $inc: statusChanges,
@@ -695,7 +638,6 @@ const updateProject = async (req, res) => {
           },
         });
       } else if (newStatus === "Cancelled" && oldStatus !== "Cancelled") {
-        // Handle cancellation logic if needed
       }
     }
 
@@ -707,7 +649,6 @@ const updateProject = async (req, res) => {
   } catch (error) {
     console.error("Update project error:", error);
 
-    // Handle MongoDB validation errors
     if (error.name === "ValidationError") {
       const validationErrors = Object.values(error.errors).map(
         (err) => err.message
@@ -733,10 +674,8 @@ const updateProject = async (req, res) => {
   }
 };
 
-// Get all projects for authenticated user (Dashboard)
 const getProjectsForUser = async (req, res) => {
   try {
-    // Get learner profile for the authenticated user
     const userLearner = await Learner.findOne({ userId: req.user._id });
 
     if (!userLearner) {
@@ -746,13 +685,11 @@ const getProjectsForUser = async (req, res) => {
       });
     }
 
-    // Find all projects belonging to this learner
     const projects = await Project.find({ learnerId: userLearner._id })
       .populate("learnerId", "userId title description location")
       .populate("mentorId", "userId title description location")
-      .sort({ createdAt: -1 }); // Sort by newest first
+      .sort({ createdAt: -1 });
 
-    // Calculate some basic stats
     const stats = {
       total: projects.length,
       open: projects.filter((p) => p.status === "Open").length,
@@ -777,7 +714,6 @@ const getProjectsForUser = async (req, res) => {
   }
 };
 
-// Delete project by ID (only if user owns it)
 const deleteProjectById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -789,7 +725,6 @@ const deleteProjectById = async (req, res) => {
       });
     }
 
-    // Find the project first
     const project = await Project.findById(id);
 
     if (!project) {
@@ -799,7 +734,6 @@ const deleteProjectById = async (req, res) => {
       });
     }
 
-    // Check if user owns this project
     const userLearner = await Learner.findOne({ userId: req.user._id });
 
     if (!userLearner) {
@@ -816,7 +750,6 @@ const deleteProjectById = async (req, res) => {
       });
     }
 
-    // Check if project can be deleted (business logic)
     if (project.status === "In Progress" && project.mentorId) {
       return res.status(400).json({
         success: false,
@@ -825,24 +758,20 @@ const deleteProjectById = async (req, res) => {
       });
     }
 
-    // Store project status for stats update
     const projectStatus = project.status;
 
     if (project.mentorId) {
-      // Update mentor stats when deleting assigned project
       await Mentor.findByIdAndUpdate(project.mentorId, {
         $inc: {
           mentorActiveStudents: project.status === "In Progress" ? -1 : 0,
           mentorSessionsScheduled: project.status === "In Progress" ? -1 : 0,
-          totalStudents: -1, // Decrease total students
+          totalStudents: -1,
         },
       });
     }
 
-    // Delete the project
     await Project.findByIdAndDelete(id);
 
-    // Update learner's project count
     const statsUpdate = { userTotalProjects: -1 };
 
     if (projectStatus === "Open") {
@@ -873,7 +802,6 @@ const deleteProjectById = async (req, res) => {
   }
 };
 
-// Get Projects by User ID (for frontend dashboard)
 const getUserProjects = async (req, res) => {
   try {
     const { userId } = req.params;
@@ -885,7 +813,6 @@ const getUserProjects = async (req, res) => {
       });
     }
 
-    // Find the learner profile for this user ID
     const learner = await Learner.findOne({ userId: userId });
 
     if (!learner) {
@@ -895,21 +822,19 @@ const getUserProjects = async (req, res) => {
       });
     }
 
-    // Find all projects belonging to this learner
     const projects = await Project.find({ learnerId: learner._id })
       .populate("learnerId", "userId title description location")
       .populate("mentorId", "userId title description location")
-      .sort({ createdAt: -1 }); // Sort by newest first
+      .sort({ createdAt: -1 });
 
-    // Map projects to match frontend expectations
     const mappedProjects = projects.map((project) => ({
       _id: project._id,
       projectId: project.projectId,
-      title: project.name, // Map 'name' to 'title' for frontend
-      description: project.shortDescription, // Use shortDescription for card preview
+      title: project.name,
+      description: project.shortDescription,
       fullDescription: project.fullDescription,
-      status: project.status.toLowerCase().replace(" ", "-"), // Format status for frontend
-      skills: project.techStack, // Map 'techStack' to 'skills' for frontend
+      status: project.status.toLowerCase().replace(" ", "-"),
+      skills: project.techStack,
       category: project.category,
       difficultyLevel: project.difficultyLevel,
       duration: project.duration,
@@ -932,16 +857,15 @@ const getUserProjects = async (req, res) => {
       references: project.references,
       createdAt: project.createdAt,
       updatedAt: project.updatedAt,
-      // Include learner and mentor info if populated
+
       learner: project.learnerId,
       mentor: project.mentorId,
-      // Virtual fields
+
       projectAge: project.projectAge,
       isOverdue: project.isOverdue,
       activePrice: project.activePrice,
     }));
 
-    // Calculate some stats for the frontend
     const stats = {
       total: projects.length,
       open: projects.filter((p) => p.status === "Open").length,
@@ -978,7 +902,6 @@ const getActiveProjectWithMentor = async (req, res) => {
     console.log("=== GET ACTIVE PROJECT DEBUG ===");
     console.log("req.user:", req.user);
 
-    // Fix: Use _id from req.user, not userId
     const userId = req.user._id || req.user.userId;
 
     if (!userId) {
@@ -995,7 +918,6 @@ const getActiveProjectWithMentor = async (req, res) => {
 
     console.log("Looking for learner with userId:", userId);
 
-    // Search using the actual user _id from the token
     const learner = await Learner.findOne({ userId: userId });
     console.log("Learner found:", learner ? "YES" : "NO");
 
@@ -1019,7 +941,6 @@ const getActiveProjectWithMentor = async (req, res) => {
 
     console.log("Searching for projects with learnerId:", learner._id);
 
-    // First, let's check ALL projects for this learner for debugging
     const allProjects = await Project.find({ learnerId: learner._id });
     console.log("Total projects for learner:", allProjects.length); // debug
 
@@ -1034,7 +955,6 @@ const getActiveProjectWithMentor = async (req, res) => {
       });
     }
 
-    // Find the most recent "In Progress" project (prefer updatedAt, fallback to createdAt)
     const inProgressProject = await Project.findOne({
       learnerId: learner._id,
       status: "In Progress",
@@ -1047,7 +967,7 @@ const getActiveProjectWithMentor = async (req, res) => {
           select: "name email avatar",
         },
       })
-      .sort({ updatedAt: -1, createdAt: -1 }); // Most recently updated "In Progress" project
+      .sort({ updatedAt: -1, createdAt: -1 });
 
     console.log("In Progress project found:", inProgressProject ? "YES" : "NO"); // debug
 
@@ -1064,7 +984,6 @@ const getActiveProjectWithMentor = async (req, res) => {
       });
     }
 
-    // Log the found project details
     console.log("Found In Progress project details:"); // debug
     console.log("  Project ID:", inProgressProject._id); // debug
     console.log("  Project name:", inProgressProject.name); // debug
@@ -1072,7 +991,6 @@ const getActiveProjectWithMentor = async (req, res) => {
     console.log("  Project learnerId:", inProgressProject.learnerId); // debug
     console.log("  Project mentorId:", inProgressProject.mentorId); // debug
 
-    // Log mentor details if populated
     if (inProgressProject.mentorId) {
       console.log("Mentor profile details:"); // debug
       console.log("  Mentor _id:", inProgressProject.mentorId._id); // debug
@@ -1094,10 +1012,8 @@ const getActiveProjectWithMentor = async (req, res) => {
       }
     }
 
-    // Since we only get here if project is "In Progress", we can directly return it
     console.log("Project is In Progress - returning project data"); // debug
 
-    // Format project for frontend with proper mentor data
     const formattedProject = {
       ...inProgressProject.toObject(),
       mentorId: inProgressProject.mentorId
@@ -1138,7 +1054,7 @@ const getActiveProjectWithMentor = async (req, res) => {
 
 const thumbnailUpload = multer({
   storage: multer.memoryStorage(),
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+  limits: { fileSize: 5 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
     const allowedTypes = /jpeg|jpg|png|webp/;
     const extname = allowedTypes.test(
@@ -1154,7 +1070,6 @@ const thumbnailUpload = multer({
   },
 }).single("thumbnail");
 
-// Upload Project Thumbnail
 const uploadProjectThumbnail = async (req, res) => {
   console.log("Upload thumbnail endpoint hit");
   console.log("User from req:", req.user);
@@ -1182,7 +1097,6 @@ const uploadProjectThumbnail = async (req, res) => {
     });
 
     try {
-      // Upload to Cloudinary from buffer
       const streamUpload = (req) => {
         return new Promise((resolve, reject) => {
           const stream = cloudinary.uploader.upload_stream(
@@ -1228,7 +1142,6 @@ const uploadProjectThumbnail = async (req, res) => {
 
 const getAvailableProjectsForMentors = async (req, res) => {
   try {
-    // Verify user is a mentor
     const Mentor = require("../Model/Mentor");
     const mentor = await Mentor.findOne({ userId: req.user._id });
 
@@ -1239,17 +1152,15 @@ const getAvailableProjectsForMentors = async (req, res) => {
       });
     }
 
-    // Find all learners who have projects in progress
     const learnersWithInProgressProjects = await Project.find({
       status: "In Progress",
     }).distinct("learnerId");
 
-    // Find all open projects excluding those from learners with in-progress projects
     const availableProjects = await Project.find({
       status: "Open",
       isVisible: true,
-      learnerId: { $nin: learnersWithInProgressProjects }, // Exclude learners with in-progress projects
-      mentorId: null, // Only projects without assigned mentors
+      learnerId: { $nin: learnersWithInProgressProjects },
+      mentorId: null,
     })
       .populate("learnerId", "userId title description location")
       .populate({
@@ -1259,9 +1170,8 @@ const getAvailableProjectsForMentors = async (req, res) => {
           select: "name email avatar",
         },
       })
-      .sort({ createdAt: -1 }); // Sort by newest first
+      .sort({ createdAt: -1 });
 
-    // Format projects for frontend
     const formattedProjects = availableProjects.map((project) => ({
       _id: project._id,
       projectId: project.projectId,
@@ -1281,7 +1191,7 @@ const getAvailableProjectsForMentors = async (req, res) => {
       applicationsCount: project.applicationsCount,
       createdAt: project.createdAt,
       updatedAt: project.updatedAt,
-      // Include learner info
+
       learner: project.learnerId
         ? {
             _id: project.learnerId._id,
@@ -1292,7 +1202,7 @@ const getAvailableProjectsForMentors = async (req, res) => {
             location: project.learnerId.location,
           }
         : null,
-      // Check if current mentor has already applied
+
       hasApplied:
         project.applications?.some(
           (app) => app.mentorId.toString() === mentor._id.toString()
@@ -1315,7 +1225,6 @@ const getAvailableProjectsForMentors = async (req, res) => {
   }
 };
 
-// Get mentor application statistics
 const getMentorApplicationStats = async (req, res) => {
   try {
     const Mentor = require("../Model/Mentor");
@@ -1328,12 +1237,10 @@ const getMentorApplicationStats = async (req, res) => {
       });
     }
 
-    // Get all projects where this mentor has applied
     const projectsWithApplications = await Project.find({
       "applications.mentorId": mentor._id,
     });
 
-    // Calculate stats
     const totalApplications = projectsWithApplications.length;
     const acceptedApplications = projectsWithApplications.filter((project) =>
       project.applications.some(
@@ -1343,26 +1250,22 @@ const getMentorApplicationStats = async (req, res) => {
       )
     ).length;
 
-    // Get active projects (where mentor is assigned)
     const activeProjects = await Project.countDocuments({
       mentorId: mentor._id,
       status: "In Progress",
     });
 
-    // Get completed projects
     const completedProjects = await Project.countDocuments({
       mentorId: mentor._id,
       status: "Completed",
     });
 
-    // Calculate success rate
     const successRate =
       totalApplications > 0
         ? Math.round((acceptedApplications / totalApplications) * 100)
         : 0;
 
-    // Calculate total earnings (this would need to be implemented based on your payment system)
-    const totalEarnings = 0; // Placeholder - implement based on your payment model
+    const totalEarnings = 0;
 
     const stats = {
       totalApplications,
@@ -1392,7 +1295,6 @@ const takeProject = async (req, res) => {
   try {
     const { id } = req.params;
 
-    // Find the project
     const project = await Project.findById(id);
     if (!project) {
       return res.status(404).json({
@@ -1401,7 +1303,6 @@ const takeProject = async (req, res) => {
       });
     }
 
-    // Check if closing price is set
     if (!project.closingPrice) {
       return res.status(400).json({
         success: false,
@@ -1409,7 +1310,6 @@ const takeProject = async (req, res) => {
       });
     }
 
-    // Check if project is still available
     if (project.status !== "Open") {
       return res.status(400).json({
         success: false,
@@ -1417,7 +1317,6 @@ const takeProject = async (req, res) => {
       });
     }
 
-    // Verify user is a mentor
     const Mentor = require("../Model/Mentor");
     const mentor = await Mentor.findOne({ userId: req.user._id });
     if (!mentor) {
@@ -1427,23 +1326,20 @@ const takeProject = async (req, res) => {
       });
     }
 
-    // Assign mentor and update project status
     project.mentorId = mentor._id;
     project.status = "In Progress";
     project.startDate = new Date();
 
     await project.save();
 
-    // Update mentor stats
     await Mentor.findByIdAndUpdate(mentor._id, {
       $inc: {
         mentorActiveStudents: 1,
         totalStudents: 1,
-        mentorSessionsScheduled: 1, // MISSING: Track scheduled sessions
+        mentorSessionsScheduled: 1,
       },
     });
 
-    // Update learner stats
     const Learner = require("../Model/Learner");
     await Learner.findByIdAndUpdate(project.learnerId, {
       $inc: {
@@ -1486,12 +1382,10 @@ const completeProject = async (req, res) => {
       });
     }
 
-    // Update project status
     project.status = "Completed";
     project.actualEndDate = new Date();
     await project.save();
 
-    // Update Mentor stats
     await Mentor.findByIdAndUpdate(project.mentorId, {
       $inc: {
         mentorActiveStudents: -1,
@@ -1504,7 +1398,7 @@ const completeProject = async (req, res) => {
           learnerId: project.learnerId,
           sessionDate: new Date(),
           topic: project.name,
-          duration: 60, // Default duration
+          duration: 60,
           rating: rating || 0,
           feedback: feedback || "",
           earnings: earnings || 0,
@@ -1512,7 +1406,6 @@ const completeProject = async (req, res) => {
       },
     });
 
-    // Update Learner stats
     await Learner.findByIdAndUpdate(project.learnerId, {
       $inc: {
         userSessionsScheduled: -1,
@@ -1548,11 +1441,9 @@ const cancelProject = async (req, res) => {
       });
     }
 
-    // Update project status
     project.status = "Cancelled";
     await project.save();
 
-    // Update Mentor stats
     if (project.mentorId) {
       await Mentor.findByIdAndUpdate(project.mentorId, {
         $inc: {
@@ -1562,11 +1453,10 @@ const cancelProject = async (req, res) => {
       });
     }
 
-    // Update Learner stats
     await Learner.findByIdAndUpdate(project.learnerId, {
       $inc: {
         userSessionsScheduled: -1,
-        userActiveProjects: 1, // Project becomes available again
+        userActiveProjects: 1,
       },
     });
 
@@ -1587,7 +1477,7 @@ const cancelProject = async (req, res) => {
 const submitProjectReview = async (req, res) => {
   try {
     const { id } = req.params;
-    const { rating, comment, reviewType } = req.body; // reviewType: 'learner' or 'mentor'
+    const { rating, comment, reviewType } = req.body;
 
     const project = await Project.findById(id);
     if (!project || project.status !== "Completed") {
@@ -1597,7 +1487,6 @@ const submitProjectReview = async (req, res) => {
       });
     }
 
-    // Update project with review
     if (reviewType === "learner") {
       project.learnerReview = {
         rating,
@@ -1605,7 +1494,6 @@ const submitProjectReview = async (req, res) => {
         reviewDate: new Date(),
       };
 
-      // Update mentor's rating and review count
       await Mentor.findByIdAndUpdate(project.mentorId, {
         $inc: {
           totalReviews: 1,
@@ -1626,10 +1514,9 @@ const submitProjectReview = async (req, res) => {
         reviewDate: new Date(),
       };
 
-      // Update learner's rating if needed
       await Learner.findByIdAndUpdate(project.learnerId, {
         $inc: {
-          rating: rating, // You might want to calculate average instead
+          rating: rating,
         },
       });
     }
@@ -1663,15 +1550,12 @@ const updateProjectProgress = async (req, res) => {
       });
     }
 
-    // Use the schema method
     await project.addProgressUpdate(progressPercentage, note, req.user._id);
 
-    // If project reaches 100%, auto-trigger completion request
     if (progressPercentage >= 100) {
-      // Update mentor satisfaction rate
       await Mentor.findByIdAndUpdate(project.mentorId, {
         $inc: {
-          mentorSatisfactionRate: 1, // You might want to calculate this differently
+          mentorSatisfactionRate: 1,
         },
       });
     }
@@ -1693,7 +1577,7 @@ const updateProjectProgress = async (req, res) => {
 const setClosingPrice = async (req, res) => {
   try {
     const { id } = req.params;
-    const { price, mentorId } = req.body; // mentorId is optional - used when setting from a pitch
+    const { price, mentorId } = req.body;
 
     if (!price || price <= 0) {
       return res.status(400).json({
@@ -1702,7 +1586,6 @@ const setClosingPrice = async (req, res) => {
       });
     }
 
-    // Find the project
     const project = await Project.findById(id);
     if (!project) {
       return res.status(404).json({
@@ -1711,7 +1594,6 @@ const setClosingPrice = async (req, res) => {
       });
     }
 
-    // Verify user is the project owner
     const userLearner = await Learner.findOne({ userId: req.user._id });
     if (
       !userLearner ||
@@ -1723,10 +1605,8 @@ const setClosingPrice = async (req, res) => {
       });
     }
 
-    // Set the closing price
     project.closingPrice = parseFloat(price);
 
-    // If setting from a specific mentor's pitch, you might want to track that
     if (mentorId) {
       project.acceptedMentorForPrice = mentorId;
     }
@@ -1758,7 +1638,6 @@ const setClosingPrice = async (req, res) => {
   }
 };
 
-// Add pitch to a project (Mentor only)
 const addPitch = async (req, res) => {
   try {
     const { id } = req.params;
@@ -1771,7 +1650,6 @@ const addPitch = async (req, res) => {
       });
     }
 
-    // Find the project
     const project = await Project.findById(id);
     if (!project) {
       return res.status(404).json({
@@ -1780,7 +1658,6 @@ const addPitch = async (req, res) => {
       });
     }
 
-    // Check if project is open for pitches
     if (project.status !== "Open") {
       return res.status(400).json({
         success: false,
@@ -1788,7 +1665,6 @@ const addPitch = async (req, res) => {
       });
     }
 
-    // Verify user is a mentor
     const mentor = await Mentor.findOne({ userId: req.user._id }).populate(
       "userId",
       "name email avatar"
@@ -1800,20 +1676,17 @@ const addPitch = async (req, res) => {
       });
     }
 
-    // Use the instance method from your schema
     await project.addOrUpdatePitch(
       mentor.userId._id,
       parseFloat(price),
       note || ""
     );
 
-    // Populate the updated project to get the new pitch with mentor details
     const updatedProject = await Project.findById(id).populate({
       path: "pitches.mentor",
       select: "name email avatar",
     });
 
-    // Find the latest pitch (the one we just added/updated)
     const latestPitch =
       updatedProject.pitches[updatedProject.pitches.length - 1];
 
@@ -1839,12 +1712,10 @@ const addPitch = async (req, res) => {
   }
 };
 
-// Get all pitches for a project (User only)
 const getProjectPitches = async (req, res) => {
   try {
     const { id } = req.params;
 
-    // Find the project
     const project = await Project.findById(id).populate({
       path: "pitches.mentor",
       select: "name email avatar title location",
@@ -1857,7 +1728,6 @@ const getProjectPitches = async (req, res) => {
       });
     }
 
-    // Verify user is the project owner
     const userLearner = await Learner.findOne({ userId: req.user._id });
     if (
       !userLearner ||
@@ -1869,7 +1739,6 @@ const getProjectPitches = async (req, res) => {
       });
     }
 
-    // Sort pitches by timestamp (newest first)
     const sortedPitches = project.pitches.sort(
       (a, b) => new Date(b.timestamp) - new Date(a.timestamp)
     );
@@ -1897,12 +1766,10 @@ const getProjectPitches = async (req, res) => {
   }
 };
 
-// Mark pitches as read for a project (User only)
 const markPitchesAsRead = async (req, res) => {
   try {
     const { id } = req.params;
 
-    // Find the project
     const project = await Project.findById(id);
     if (!project) {
       return res.status(404).json({
@@ -1911,7 +1778,6 @@ const markPitchesAsRead = async (req, res) => {
       });
     }
 
-    // Verify user is the project owner
     const userLearner = await Learner.findOne({ userId: req.user._id });
     if (
       !userLearner ||
@@ -1923,7 +1789,6 @@ const markPitchesAsRead = async (req, res) => {
       });
     }
 
-    // Mark pitches as read
     project.hasUnreadPitch = false;
     await project.save();
 
@@ -1959,7 +1824,6 @@ const getMentorActiveProjectStatus = async (req, res) => {
       });
     }
 
-    // Check for any active project
     const activeProject = await Project.findOne({
       mentorId: mentor._id,
       status: "In Progress",
@@ -1982,10 +1846,8 @@ const getMentorActiveProjectStatus = async (req, res) => {
   }
 };
 
-// Updated getAvailableProjectsForMentors function
 const getAvailableProjectsForMentorsUpdated = async (req, res) => {
   try {
-    // Verify user is a mentor
     const Mentor = require("../Model/Mentor");
     const mentor = await Mentor.findOne({ userId: req.user._id });
 
@@ -1996,19 +1858,15 @@ const getAvailableProjectsForMentorsUpdated = async (req, res) => {
       });
     }
 
-    // Check if mentor has active project
     const hasActiveProject = await Project.findOne({
       mentorId: mentor._id,
       status: "In Progress",
     });
 
-    // Find all learners who have projects in progress
     const learnersWithInProgressProjects = await Project.find({
       status: "In Progress",
     }).distinct("learnerId");
 
-    // Find all open projects excluding those from learners with in-progress projects
-    // and excluding projects that are completed, cancelled, or in progress
     const availableProjects = await Project.find({
       status: "Open",
       isVisible: true,
@@ -2029,9 +1887,7 @@ const getAvailableProjectsForMentorsUpdated = async (req, res) => {
       })
       .sort({ createdAt: -1 });
 
-    // Format projects for frontend with negotiated price calculation
     const formattedProjects = availableProjects.map((project) => {
-      // Calculate negotiated price (average of all pitches)
       const negotiatedPrice =
         project.pitches && project.pitches.length > 0
           ? Math.round(
@@ -2053,15 +1909,15 @@ const getAvailableProjectsForMentorsUpdated = async (req, res) => {
         thumbnail: project.thumbnail,
         tags: project.tags,
         openingPrice: project.openingPrice,
-        negotiatedPrice: negotiatedPrice, // Add calculated negotiated price
+        negotiatedPrice: negotiatedPrice,
         currency: project.currency,
         status: project.status,
         viewCount: project.viewCount,
         applicationsCount: project.applicationsCount,
         createdAt: project.createdAt,
         updatedAt: project.updatedAt,
-        pitches: project.pitches, // Include pitches for frontend
-        // Include learner info
+        pitches: project.pitches,
+
         learner: project.learnerId
           ? {
               _id: project.learnerId._id,
@@ -2073,12 +1929,12 @@ const getAvailableProjectsForMentorsUpdated = async (req, res) => {
               location: project.learnerId.location,
             }
           : null,
-        // Check if current mentor has already applied
+
         hasApplied:
           project.applications?.some(
             (app) => app.mentorId.toString() === mentor._id.toString()
           ) || false,
-        // Check if current mentor has already pitched
+
         hasPitched:
           project.pitches?.some(
             (pitch) => pitch.mentor.toString() === req.user._id.toString()

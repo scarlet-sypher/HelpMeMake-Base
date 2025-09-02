@@ -12,7 +12,6 @@ const BadgeAnimations = ({
   const [cooldown, setCooldown] = useState(0);
   const [particles, setParticles] = useState([]);
 
-  // Enhanced animation types for different badge levels
   const animationTypes = {
     basic: "starBurst",
     common: "trophyRise",
@@ -37,7 +36,6 @@ const BadgeAnimations = ({
     return () => clearInterval(interval);
   }, [cooldown]);
 
-  // Generate particles for explosion effects
   const generateParticles = (count = 20) => {
     const newParticles = [];
     for (let i = 0; i < count; i++) {
@@ -62,7 +60,6 @@ const BadgeAnimations = ({
     const level = badge.earnedBadges[badge.earnedBadges.length - 1] || "basic";
     const animation = animationTypes[level] || "starBurst";
 
-    // Generate particles for explosive effects
     if (["crownExplosion", "sparkleStorm"].includes(animation)) {
       generateParticles(level === "legendary" ? 30 : 20);
     }

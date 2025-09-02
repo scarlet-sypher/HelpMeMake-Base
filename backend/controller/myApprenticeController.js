@@ -8,13 +8,10 @@ const Learner = require("../Model/Learner");
 const Mentor = require("../Model/Mentor");
 const { finalizeProjectCompletion } = require("./completionController");
 
-// Get apprentice project data for mentor
-// 1. Fixed getApprenticeProjectData
 const getApprenticeProjectData = async (req, res) => {
   try {
     const userId = req.user._id;
 
-    // ✅ Find the mentor profile for this user
     const mentor = await Mentor.findOne({ userId: userId });
     if (!mentor) {
       return res.status(404).json({
@@ -23,9 +20,8 @@ const getApprenticeProjectData = async (req, res) => {
       });
     }
 
-    // ✅ Find project where this mentor is assigned (using mentor profile ID)
     const project = await Project.findOne({
-      mentorId: mentor._id, // ✅ CORRECT - using mentor profile ID
+      mentorId: mentor._id,
       status: "In Progress",
     })
       .populate({
@@ -45,7 +41,6 @@ const getApprenticeProjectData = async (req, res) => {
       });
     }
 
-    // ✅ Combine learner data (user info + profile info)
     const learnerData = {
       ...project.learnerId.userId,
       ...project.learnerId,
@@ -65,13 +60,11 @@ const getApprenticeProjectData = async (req, res) => {
   }
 };
 
-// 2. Fixed setTempExpectedEndDate
 const setTempExpectedEndDate = async (req, res) => {
   try {
     const { projectId, date } = req.body;
     const userId = req.user._id;
 
-    // ✅ Find mentor profile first
     const mentor = await Mentor.findOne({ userId: userId });
     if (!mentor) {
       return res.status(404).json({
@@ -82,7 +75,7 @@ const setTempExpectedEndDate = async (req, res) => {
 
     const project = await Project.findOne({
       _id: projectId,
-      mentorId: mentor._id, // ✅ CORRECT - using mentor profile ID
+      mentorId: mentor._id,
       status: "In Progress",
     });
 
@@ -93,7 +86,6 @@ const setTempExpectedEndDate = async (req, res) => {
       });
     }
 
-    // Check if expected end date is already set permanently
     if (project.expectedEndDate && project.isTempEndDateConfirmed) {
       return res.status(400).json({
         success: false,
@@ -101,7 +93,6 @@ const setTempExpectedEndDate = async (req, res) => {
       });
     }
 
-    // Validate date
     const tempDate = new Date(date);
     if (tempDate <= new Date()) {
       return res.status(400).json({
@@ -110,7 +101,6 @@ const setTempExpectedEndDate = async (req, res) => {
       });
     }
 
-    // Set temporary end date
     project.tempExpectedEndDate = tempDate;
     project.isTempEndDateConfirmed = false;
 
@@ -130,13 +120,11 @@ const setTempExpectedEndDate = async (req, res) => {
   }
 };
 
-// 3. Fixed updateProjectProgress
 const updateProjectProgress = async (req, res) => {
   try {
     const { projectId, percentage, note } = req.body;
     const userId = req.user._id;
 
-    // Validation
     if (percentage < 0 || percentage > 100) {
       return res.status(400).json({
         success: false,
@@ -151,7 +139,6 @@ const updateProjectProgress = async (req, res) => {
       });
     }
 
-    // ✅ Find mentor profile first
     const mentor = await Mentor.findOne({ userId: userId });
     if (!mentor) {
       return res.status(404).json({
@@ -162,7 +149,7 @@ const updateProjectProgress = async (req, res) => {
 
     const project = await Project.findOne({
       _id: projectId,
-      mentorId: mentor._id, // ✅ CORRECT - using mentor profile ID
+      mentorId: mentor._id,
       status: "In Progress",
     });
 
@@ -173,7 +160,6 @@ const updateProjectProgress = async (req, res) => {
       });
     }
 
-    // Check if new percentage is higher than current
     if (percentage < project.trackerPercentage) {
       return res.status(400).json({
         success: false,
@@ -181,7 +167,6 @@ const updateProjectProgress = async (req, res) => {
       });
     }
 
-    // Add tracker update to history
     const trackerUpdate = {
       percentage: percentage,
       note: note.trim(),
@@ -210,7 +195,6 @@ const updateProjectProgress = async (req, res) => {
   }
 };
 
-// 4. Fixed sendCompletionRequest
 const sendCompletionRequest = async (req, res) => {
   try {
     const { projectId, type } = req.body;
@@ -244,7 +228,6 @@ const sendCompletionRequest = async (req, res) => {
       });
     }
 
-    // Check if there's already a pending request
     if (project.completionRequest?.status === "pending") {
       return res.status(400).json({
         success: false,
@@ -252,13 +235,12 @@ const sendCompletionRequest = async (req, res) => {
       });
     }
 
-    // ✅ Set completion request with all required fields
     project.completionRequest = {
-      from: "mentor", // ✅ Now provided
-      type: type, // ✅ Now provided
+      from: "mentor",
+      type: type,
       status: "pending",
       requestedAt: new Date(),
-      requestedBy: userId, // ✅ Now provided
+      requestedBy: userId,
     };
 
     await project.save();
@@ -279,7 +261,6 @@ const sendCompletionRequest = async (req, res) => {
   }
 };
 
-// 6. Fixed submitApprenticeReview
 const submitApprenticeReview = async (req, res) => {
   try {
     const { projectId, reviewData } = req.body;
@@ -316,7 +297,6 @@ const submitApprenticeReview = async (req, res) => {
       });
     }
 
-    // Calculate average rating
     const {
       communication,
       commitment,
@@ -332,7 +312,6 @@ const submitApprenticeReview = async (req, res) => {
         overallExperience) /
       5;
 
-    // Save mentor's review of apprentice
     project.mentorReview = {
       rating: parseFloat(averageRating.toFixed(1)),
       comment: reviewData.comment || "",
@@ -348,7 +327,6 @@ const submitApprenticeReview = async (req, res) => {
 
     await project.save();
 
-    // Update apprentice's overall rating in learner profile
     const learnerProfile = await Learner.findOne({
       _id: project.learnerId,
     });
@@ -372,7 +350,6 @@ const submitApprenticeReview = async (req, res) => {
     }
 
     if (project.status === "Completed") {
-      // Update learner stats
       await Learner.findByIdAndUpdate(project.learnerId, {
         $inc: {
           userTotalProjects: 1,
@@ -382,7 +359,6 @@ const submitApprenticeReview = async (req, res) => {
         },
       });
 
-      // Update mentor stats and add earnings
       const closingPrice =
         project.closingPrice ||
         project.negotiatedPrice ||
@@ -394,12 +370,11 @@ const submitApprenticeReview = async (req, res) => {
           mentorTotalEarningsChange: closingPrice,
           mentorActiveStudents: -1,
           mentorActiveStudentsChange: -1,
-          totalStudents: 1, // This tracks total students mentored over time
+          totalStudents: 1,
         },
       });
     }
 
-    // Try to finalize project completion
     await finalizeProjectCompletion(projectId);
 
     res.json({
@@ -416,13 +391,11 @@ const submitApprenticeReview = async (req, res) => {
   }
 };
 
-// 7. Fixed getProgressHistory
 const getProgressHistory = async (req, res) => {
   try {
     const { projectId } = req.params;
     const userId = req.user._id;
 
-    // ✅ Find mentor profile first
     const mentor = await Mentor.findOne({ userId: userId });
     if (!mentor) {
       return res.status(404).json({
@@ -433,7 +406,7 @@ const getProgressHistory = async (req, res) => {
 
     const project = await Project.findOne({
       _id: projectId,
-      mentorId: mentor._id, // ✅ CORRECT - using mentor profile ID
+      mentorId: mentor._id,
     });
 
     if (!project) {
@@ -460,12 +433,10 @@ const getProgressHistory = async (req, res) => {
   }
 };
 
-// 8. Fixed getCompletionRequests
 const getCompletionRequests = async (req, res) => {
   try {
     const userId = req.user._id;
 
-    // ✅ Find mentor profile first
     const mentor = await Mentor.findOne({ userId: userId });
     if (!mentor) {
       return res.status(404).json({
@@ -475,7 +446,7 @@ const getCompletionRequests = async (req, res) => {
     }
 
     const projects = await Project.find({
-      mentorId: mentor._id, // ✅ CORRECT - using mentor profile ID
+      mentorId: mentor._id,
       "completionRequest.status": { $in: ["pending", "approved", "rejected"] },
     })
       .populate("learnerId", "name email avatar")
