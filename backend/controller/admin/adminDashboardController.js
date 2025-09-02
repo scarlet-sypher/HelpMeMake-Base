@@ -6,10 +6,9 @@ const Session = require("../../Model/Session");
 const MessageRoom = require("../../Model/MessageRoom");
 
 const adminDashboardController = {
-  // Get all dashboard statistics
+  // dashboard statistics
   getDashboardStats: async (req, res) => {
     try {
-      // Get counts from all models
       const [
         totalUsers,
         totalLearners,
@@ -36,7 +35,6 @@ const adminDashboardController = {
         MessageRoom.countDocuments({ status: "open" }),
       ]);
 
-      // Additional calculations
       const totalEarnings = await Project.aggregate([
         { $match: { closingPrice: { $ne: null } } },
         { $group: { _id: null, total: { $sum: "$closingPrice" } } },
@@ -84,7 +82,7 @@ const adminDashboardController = {
     }
   },
 
-  // Get all users with basic info
+  //all users with basic info
   getAllUsers: async (req, res) => {
     try {
       const page = parseInt(req.query.page) || 1;
@@ -119,7 +117,7 @@ const adminDashboardController = {
     }
   },
 
-  // Get all learners with detailed info
+  //all learners with detailed info
   getAllLearners: async (req, res) => {
     try {
       const page = parseInt(req.query.page) || 1;
@@ -154,7 +152,7 @@ const adminDashboardController = {
     }
   },
 
-  // Get all mentors with detailed info
+  //all mentors with detailed info
   getAllMentors: async (req, res) => {
     try {
       const page = parseInt(req.query.page) || 1;
@@ -189,7 +187,7 @@ const adminDashboardController = {
     }
   },
 
-  // Get all projects with basic info
+  //projects with basic info
   getAllProjects: async (req, res) => {
     try {
       const page = parseInt(req.query.page) || 1;
@@ -239,7 +237,7 @@ const adminDashboardController = {
     }
   },
 
-  // Get all sessions with basic info
+  //all sessions with basic info
   getAllSessions: async (req, res) => {
     try {
       const page = parseInt(req.query.page) || 1;
@@ -288,7 +286,7 @@ const adminDashboardController = {
     }
   },
 
-  // Get all message rooms with basic info
+  //all message rooms with basic info
   getAllMessageRooms: async (req, res) => {
     try {
       const page = parseInt(req.query.page) || 1;
