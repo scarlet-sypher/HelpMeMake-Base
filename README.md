@@ -276,7 +276,6 @@ helpmemake-platform/
 ```
 
 ---
-
 ## 📸 Preview
 
 <div align="center">
@@ -286,43 +285,51 @@ helpmemake-platform/
 
 </div>
 
+<div align="center">
+    
 ### 📊 Dashboard Views
 
 <table>
 <tr>
 <td width="50%">
 
-**👨‍🎓 Student Dashboard**
-![Student Dashboard](https://github.com/user-attachments/assets/c970b3ed-3d62-4aae-b170-c8aef7d5ea3d)
+<p align="center"><b>👨‍🎓 Student Dashboard</b></p>  
+<img src="https://github.com/user-attachments/assets/c970b3ed-3d62-4aae-b170-c8aef7d5ea3d" alt="Student Dashboard">
 
 </td>
+    
 <td width="50%">
 
-**👨‍🏫 Mentor Dashboard**
-![Mentor Dashboard](https://github.com/user-attachments/assets/9847def4-f532-4bd9-b3c5-29e924fec055)
+<p align="center"><b>👨‍🏫 Mentor Dashboard</b></p>  
+<img src="https://github.com/user-attachments/assets/9847def4-f532-4bd9-b3c5-29e924fec055" alt="Mentor Dashboard">
 
 </td>
 </tr>
 </table>
 
+</div>
+
+<div align="center">
+    
 ### 💼 Milestone
 
 <table>
 <tr>
 <td width="50%">
 
-**📝 User Milestone Display**  
-![User Milestone Display](https://github.com/user-attachments/assets/8fc39422-256d-4f57-88da-0533f29ed457)
+<p align="center"><b>📝 User Milestone Display</b></p>  
+<img src="https://github.com/user-attachments/assets/8fc39422-256d-4f57-88da-0533f29ed457" alt="User Milestone Display">
 
 </td>
 <td width="50%">
 
-**📈 Mentor Milestone Display**  
-![Mentor Milestone Display](https://github.com/user-attachments/assets/08d3436e-4c67-4c25-bdde-477dbc08a8ec)
+<p align="center"><b>📈 Mentor Milestone Display</b></p>  
+<img src="https://github.com/user-attachments/assets/08d3436e-4c67-4c25-bdde-477dbc08a8ec" alt="Mentor Milestone Display">
 
 </td>
 </tr>
 </table>
+</div>
 
 
 <div align="center">
