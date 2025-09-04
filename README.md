@@ -282,7 +282,7 @@ helpmemake-platform/
 <div align="center">
 
 ### 🏠 Landing Page
-![Landing Page](https://via.placeholder.com/800x400/1a1a1a/ffffff?text=Modern+Landing+Page+with+AI+Features)
+![Landing Page](file:///C:/Users/HP/Desktop/ss/Screenshot%202025-09-02%20172610.png)
 
 </div>
 
@@ -293,41 +293,42 @@ helpmemake-platform/
 <td width="50%">
 
 **👨‍🎓 Student Dashboard**
-![Student Dashboard](https://via.placeholder.com/400x250/1a1a1a/ffffff?text=Student+Dashboard+Analytics)
+![Student Dashboard](file:///C:/Users/HP/Desktop/ss/Screenshot%202025-09-04%20184414.png)
 
 </td>
 <td width="50%">
 
 **👨‍🏫 Mentor Dashboard**
-![Mentor Dashboard](https://via.placeholder.com/400x250/1a1a1a/ffffff?text=Mentor+Dashboard+Analytics)
+![Mentor Dashboard](file:///C:/Users/HP/Desktop/ss/Screenshot%202025-09-04%20184746.png)
 
 </td>
 </tr>
 </table>
 
-### 💼 Project Management
+### 💼 Milestone
 
 <table>
 <tr>
 <td width="50%">
 
-**📝 Project Creation**
-![Project Creation](https://via.placeholder.com/400x250/1a1a1a/ffffff?text=AI-Powered+Project+Creation)
+**📝 User Milestone Display**  
+![User Milestone Display](file:///C:/Users/HP/Desktop/ss/HelpMeMake-09-04-2025_06_32_PM.png)
 
 </td>
 <td width="50%">
 
-**📈 Project Tracking**
-![Project Tracking](https://via.placeholder.com/400x250/1a1a1a/ffffff?text=Milestone+Progress+Tracking)
+**📈 Mentor Milestone Display**  
+![Mentor Milestone Display](file:///C:/Users/HP/Desktop/ss/HelpMeMake-09-04-2025_06_21_PM.png)
 
 </td>
 </tr>
 </table>
 
+
 <div align="center">
 
-### 🏆 Achievements System
-![Achievements](https://via.placeholder.com/800x400/1a1a1a/ffffff?text=Gamification+with+Badges+and+XP)
+### 🏆 Achievements 
+![Achievements](file:///C:/Users/HP/Desktop/ss/Screenshot%202025-09-04%20181334.png)
 
 *Screenshots showcase the modern, dark-themed interface with smooth animations and intuitive design* ✨
 
