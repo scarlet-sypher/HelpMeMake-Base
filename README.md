@@ -293,13 +293,13 @@ helpmemake-platform/
 <td width="50%">
 
 **👨‍🎓 Student Dashboard**
-![Student Dashboard](file:///C:/Users/HP/Desktop/ss/Screenshot%202025-09-04%20184414.png)
+![Student Dashboard](https://github.com/user-attachments/assets/c970b3ed-3d62-4aae-b170-c8aef7d5ea3d)
 
 </td>
 <td width="50%">
 
 **👨‍🏫 Mentor Dashboard**
-![Mentor Dashboard](file:///C:/Users/HP/Desktop/ss/Screenshot%202025-09-04%20184746.png)
+![Mentor Dashboard](https://github.com/user-attachments/assets/9847def4-f532-4bd9-b3c5-29e924fec055)
 
 </td>
 </tr>
@@ -312,13 +312,13 @@ helpmemake-platform/
 <td width="50%">
 
 **📝 User Milestone Display**  
-![User Milestone Display](file:///C:/Users/HP/Desktop/ss/HelpMeMake-09-04-2025_06_32_PM.png)
+![User Milestone Display](https://github.com/user-attachments/assets/8fc39422-256d-4f57-88da-0533f29ed457)
 
 </td>
 <td width="50%">
 
 **📈 Mentor Milestone Display**  
-![Mentor Milestone Display](file:///C:/Users/HP/Desktop/ss/HelpMeMake-09-04-2025_06_21_PM.png)
+![Mentor Milestone Display](https://github.com/user-attachments/assets/08d3436e-4c67-4c25-bdde-477dbc08a8ec)
 
 </td>
 </tr>
@@ -328,7 +328,7 @@ helpmemake-platform/
 <div align="center">
 
 ### 🏆 Achievements 
-![Achievements](file:///C:/Users/HP/Desktop/ss/Screenshot%202025-09-04%20181334.png)
+![Achievements](https://github.com/user-attachments/assets/55c1631d-2717-4624-9c72-c933d1205858)
 
 *Screenshots showcase the modern, dark-themed interface with smooth animations and intuitive design* ✨
 
