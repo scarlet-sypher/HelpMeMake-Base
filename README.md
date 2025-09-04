@@ -282,7 +282,7 @@ helpmemake-platform/
 <div align="center">
 
 ### 🏠 Landing Page
-![Landing Page](file:///C:/Users/HP/Desktop/ss/Screenshot%202025-09-02%20172610.png)
+![Landing Page](https://github.com/user-attachments/assets/2632277a-0662-4358-be99-96dd1f2af7eb)
 
 </div>
 
